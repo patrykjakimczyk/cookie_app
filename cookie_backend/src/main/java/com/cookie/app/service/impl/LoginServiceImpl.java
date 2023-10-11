@@ -1,6 +1,7 @@
 package com.cookie.app.service.impl;
 
 import com.cookie.app.exception.NotUniqueValueException;
+import com.cookie.app.model.enums.Role;
 import com.cookie.app.model.request.RegistrationRequest;
 import com.cookie.app.model.entity.User;
 import com.cookie.app.repository.UserRepository;
@@ -22,7 +23,7 @@ public class LoginServiceImpl implements LoginService {
     public void userRegistration(RegistrationRequest request) {
         User user = User
                 .builder()
-                .role(request.role())
+                .role(Role.USER)
                 .username(request.username())
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
@@ -36,8 +37,17 @@ public class LoginServiceImpl implements LoginService {
             this.userRepository.save(user);
             log.info("User has been successfully registered!");
         } catch (RuntimeException e) {
-            log.warn("Registration process failed. User used already taken email/username");
-            throw new NotUniqueValueException("Error has occurred during user's registration. E-mail/username isn't unique", e.getCause());
+            final String notUniqueKey = extractNotUniqueKey(e);
+            log.warn("Registration process failed. User used already taken {}", notUniqueKey);
+            throw new NotUniqueValueException(
+                    String.format("Error has occurred during user's registration. %s isn't unique", notUniqueKey),
+                    e.getCause()
+            );
         }
+    }
+
+    private String extractNotUniqueKey(Exception e) {
+        String message = e.getCause().getLocalizedMessage();
+        return (message.substring(message.indexOf("Key ("), message.indexOf(")="))).replace("Key (", "");
     }
 }

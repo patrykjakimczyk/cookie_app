@@ -3,12 +3,16 @@ package com.cookie.app.model.entity;
 import com.cookie.app.model.enums.Gender;
 import com.cookie.app.model.enums.Role;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Table(name = "user_table")
 @Entity

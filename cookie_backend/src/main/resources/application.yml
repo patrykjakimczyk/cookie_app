@@ -10,6 +10,7 @@ spring:
       ddl-auto: create
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+
 #  data:
 #    jdbc:
 #      repositories:

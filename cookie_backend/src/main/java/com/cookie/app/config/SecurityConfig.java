@@ -1,5 +1,6 @@
 package com.cookie.app.config;
 
+import com.cookie.app.config.filter.CsrfCookieFilter;
 import com.cookie.app.model.entity.User;
 import com.cookie.app.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 
@@ -31,7 +34,9 @@ public class SecurityConfig {
         requestHandler.setCsrfRequestAttributeName("_csrf");
 
         http
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .securityContext(context -> context.requireExplicitSave(false))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors(corsConfigurer -> corsConfigurer.configurationSource(request -> {
                     CorsConfiguration configuration = new CorsConfiguration();
                     configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
@@ -42,12 +47,12 @@ public class SecurityConfig {
                     configuration.setMaxAge(3600L);
                     return configuration;
                 }))
-//                .csrf(csrfConfigurer -> csrfConfigurer
-//                        .csrfTokenRequestHandler(requestHandler)
-//                        .ignoringRequestMatchers("")
-//                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-//                )
-                .csrf(csrfConfigurer -> csrfConfigurer.disable())
+                .csrf(csrfConfigurer -> csrfConfigurer
+                        .csrfTokenRequestHandler(requestHandler)
+                        .ignoringRequestMatchers("/register")
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                )
+                .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/register").permitAll()
                         .requestMatchers(
@@ -74,7 +79,7 @@ public class SecurityConfig {
             });
 
             return new org.springframework.security.core.userdetails.User(
-                    user.getUsername(), user.getUsername(), Collections.emptySet()
+                    user.getUsername(), user.getPassword(), Collections.emptySet()
             );
         };
     }
