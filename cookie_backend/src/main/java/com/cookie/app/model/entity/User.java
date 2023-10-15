@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.Instant;
+import java.sql.Timestamp;
 
 @Data
 @NoArgsConstructor
@@ -44,10 +44,10 @@ public class User {
     private Boolean activated;
 
     @Column(name = "creation_date", nullable = false)
-    private Instant creationDate;
+    private Timestamp creationDate;
 
     @Column(name = "birth_date", nullable = false)
-    private Instant birthDate;
+    private Timestamp birthDate;
 
     @Column(length = 6, updatable = false ,nullable = false)
     @Enumerated(EnumType.STRING)

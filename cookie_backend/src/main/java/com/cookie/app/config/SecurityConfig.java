@@ -1,6 +1,8 @@
 package com.cookie.app.config;
 
 import com.cookie.app.config.filter.CsrfCookieFilter;
+import com.cookie.app.config.filter.JwtGeneratorFilter;
+import com.cookie.app.config.filter.JwtValidatorFilter;
 import com.cookie.app.model.entity.User;
 import com.cookie.app.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +11,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,9 +23,7 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Configuration
@@ -35,8 +37,8 @@ public class SecurityConfig {
 
         http
                 .securityContext(context -> context.requireExplicitSave(false))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
-//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors(corsConfigurer -> corsConfigurer.configurationSource(request -> {
                     CorsConfiguration configuration = new CorsConfiguration();
                     configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
@@ -52,7 +54,9 @@ public class SecurityConfig {
                         .ignoringRequestMatchers("/register")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 )
+                .addFilterBefore(new JwtValidatorFilter(), BasicAuthenticationFilter.class)
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
+                .addFilterAfter(new JwtGeneratorFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/register").permitAll()
                         .requestMatchers(
@@ -64,7 +68,7 @@ public class SecurityConfig {
                                 "/webjars/**",
                                 "/swagger-ui/**").permitAll()
                         .anyRequest().authenticated())
-                .formLogin(Customizer.withDefaults())
+//                .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults());
 
         return http.build();
@@ -78,8 +82,11 @@ public class SecurityConfig {
                 throw new UsernameNotFoundException("User with given email does not exists!");
             });
 
+            List<GrantedAuthority> authorities = new ArrayList<>();
+            authorities.add(new SimpleGrantedAuthority(user.getRole().name()));
+
             return new org.springframework.security.core.userdetails.User(
-                    user.getUsername(), user.getPassword(), Collections.emptySet()
+                    user.getUsername(), user.getPassword(), authorities
             );
         };
     }

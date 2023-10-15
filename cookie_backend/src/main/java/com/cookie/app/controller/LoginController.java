@@ -17,14 +17,21 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 public class LoginController {
+    private static final String LOGIN_URL = "/login";
+    private static final String REGISTRATION_URL = "/register";
     private final LoginService loginService;
 
-    @GetMapping("/")
-    public String get() {
+    @GetMapping(LOGIN_URL)
+    public String login() {
         return "Hello world";
     }
 
-    @PostMapping("/register")
+    @GetMapping("/test")
+    public String test() {
+        return "test";
+    }
+
+    @PostMapping(REGISTRATION_URL)
     public ResponseEntity<Void> registerUser(@Valid @RequestBody RegistrationRequest request) {
         log.info("Performing user registration for email {}", request.email());
         this.loginService.userRegistration(request);

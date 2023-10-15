@@ -5,7 +5,7 @@ import com.cookie.app.model.enums.Gender;
 import com.cookie.app.model.RegexConstants;
 import jakarta.validation.constraints.*;
 
-import java.time.Instant;
+import java.sql.Timestamp;
 
 public record RegistrationRequest(
         @NotNull(message = "Username cannot be null")
@@ -30,7 +30,8 @@ public record RegistrationRequest(
         String password,
 
         @NotNull(message = "Birth date cannot be null")
-        Instant birthDate,
+        @Past(message = "Birth date cannot be after current date")
+        Timestamp birthDate,
 
         @NotNull(message = "Gender cannot be null")
         Gender gender

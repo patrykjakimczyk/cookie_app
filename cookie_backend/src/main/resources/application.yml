@@ -1,3 +1,6 @@
+server:
+  port: 8081
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/cookie_db
@@ -7,7 +10,7 @@ spring:
   jpa:
     hibernate:
       # Hibernate ddl auto (create, create-drop, validate, update)
-      ddl-auto: create
+      ddl-auto: update
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
@@ -15,6 +18,3 @@ spring:
 #    jdbc:
 #      repositories:
 #        enabled: 'false'
-
-server:
-  port: 8081

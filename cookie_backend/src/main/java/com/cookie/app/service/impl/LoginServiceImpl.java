@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 
 @RequiredArgsConstructor
@@ -28,7 +29,7 @@ public class LoginServiceImpl implements LoginService {
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
                 .activated(false)
-                .creationDate(Instant.now())
+                .creationDate(Timestamp.from(Instant.now()))
                 .birthDate(request.birthDate())
                 .gender(request.gender())
                 .build();
