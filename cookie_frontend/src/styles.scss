@@ -1,0 +1,72 @@
+
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use '@angular/material' as mat;
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat.core();
+
+$cookie-palette: (
+  50: #fffdea,
+  100: #fef9cb,
+  200: #fef4aa,
+  300: #fdf08a,
+  400: #fbeb72,
+  500: #f9e65d,
+  600: #fad85b,
+  700: #f5c253,
+  800: #f0ac4b,
+  900: #e7873e,
+  A100: #ece080,
+  A200: #dbcd61,
+  A400: #f9d45d,
+  A700: #f9a85d,
+  contrast: (
+    50: rgba(black, 0.87),
+    100: rgba(black, 0.87),
+    200: rgba(black, 0.87),
+    300: rgba(black, 0.87),
+    400: rgba(black, 0.87),
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+    A100: rgba(black, 0.87),
+    A200: rgba(black, 0.87),
+    A400: white,
+    A700: white,
+  )
+);
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$cookie_frontend-primary: mat.define-palette($cookie-palette);
+$cookie_frontend-accent: mat.define-palette($cookie-palette, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$cookie_frontend-warn: mat.define-palette(mat.$red-palette);
+
+// Create the theme object. A theme consists of configurations for individual
+// theming systems such as "color" or "typography".
+$cookie_frontend-theme: mat.define-light-theme((
+  color: (
+    primary: $cookie_frontend-primary,
+    accent: $cookie_frontend-accent,
+    warn: $cookie_frontend-warn,
+  )
+));
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include mat.all-component-themes($cookie_frontend-theme);
+
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
