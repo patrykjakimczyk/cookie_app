@@ -18,6 +18,13 @@ import io.swagger.v3.oas.annotations.servers.Server;
         }
 )
 @SecurityScheme(
+        name = "basicAuth",
+        description = "Insert your credentials",
+        scheme = "basic",
+        type = SecuritySchemeType.HTTP,
+        in = SecuritySchemeIn.HEADER
+)
+@SecurityScheme(
         name = "bearerAuth",
         description = "Insert JWT token",
         scheme = "bearer",

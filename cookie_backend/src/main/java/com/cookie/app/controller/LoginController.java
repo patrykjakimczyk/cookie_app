@@ -3,6 +3,7 @@ package com.cookie.app.controller;
 import com.cookie.app.model.request.RegistrationRequest;
 import com.cookie.app.service.LoginService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,11 +22,13 @@ public class LoginController {
     private static final String REGISTRATION_URL = "/register";
     private final LoginService loginService;
 
+    @SecurityRequirement(name = "basicAuth")
     @GetMapping(LOGIN_URL)
     public String login() {
         return "Hello world";
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/test")
     public String test() {
         return "test";

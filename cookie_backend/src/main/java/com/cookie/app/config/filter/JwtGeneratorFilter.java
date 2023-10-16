@@ -9,13 +9,17 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 public class JwtGeneratorFilter extends OncePerRequestFilter {
 
@@ -26,7 +30,7 @@ public class JwtGeneratorFilter extends OncePerRequestFilter {
 
         if (null != authentication) {
             String jwt = this.buildJwtToken(authentication);
-            response.setHeader(JwtConstants.HEADER, jwt);
+            response.setHeader(JwtConstants.HEADER, JwtConstants.JWT_PREFIX + jwt);
         }
 
         filterChain.doFilter(request, response);
@@ -42,10 +46,18 @@ public class JwtGeneratorFilter extends OncePerRequestFilter {
 
         return Jwts.builder()
                 .setSubject(authentication.getName())
-                .claim("role", "")
+                .claim("role", transformAutoritiesToString(authentication.getAuthorities()))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + 3600000))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    private String transformAutoritiesToString(Collection<? extends GrantedAuthority> collection) {
+        Set<String> authoritiesSet = new HashSet<>();
+        for (GrantedAuthority authority : collection) {
+            authoritiesSet.add(authority.getAuthority());
+        }
+        return String.join(",", authoritiesSet);
     }
 }
