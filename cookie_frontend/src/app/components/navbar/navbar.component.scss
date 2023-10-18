@@ -1,0 +1,40 @@
+@mixin centered-flex-with-gap($gap: 0px) {
+  display: flex;
+  align-items: center;
+  gap: $gap;
+}
+
+#container {
+  @include centered-flex-with-gap;
+  padding: 10px 20px;
+  justify-content: space-between;
+
+  #logo-container {
+    @include centered-flex-with-gap(10px);
+    flex-direction: row;
+    cursor: pointer;
+
+    img {
+      height: 50px;
+      width: auto;
+    }
+
+    p {
+      font-family: "Orelega One";
+      margin: 0;
+      font-size: 32px;
+      font-weight: 600;
+    }
+  }
+
+  #header-buttons {
+    @include centered-flex-with-gap(15px);
+
+    button {
+      padding: 20px;
+      border-radius: 20px;
+      font-size: 20px;
+      font-weight: 500;
+    }
+  }
+}
