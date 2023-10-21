@@ -1,0 +1,32 @@
+<div id="login-container">
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <p>Log in <mat-icon>key</mat-icon></p>
+
+    <mat-form-field color="accent">
+      <mat-label>E-mail</mat-label>
+      <input matInput required formControlName="email" name="email" />
+      <mat-error *ngIf="!form.controls.email.valid && formSubmitted">{{
+        getErrorMessage(form.controls.email)
+      }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field color="accent">
+      <mat-label>Password</mat-label>
+      <input matInput required formControlName="password" name="password" />
+      <mat-error *ngIf="!form.controls.password.valid && formSubmitted">{{
+        getErrorMessage(form.controls.password)
+      }}</mat-error>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" id="login-button" type="submit">
+      Log in
+    </button>
+  </form>
+
+  <mat-divider></mat-divider>
+
+  <div id="registration-link-container">
+    <p>Are you not a cookie yet? Create an</p>
+    <button routerLink="/registration">account</button>
+  </div>
+</div>

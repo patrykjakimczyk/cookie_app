@@ -41,11 +41,49 @@ $cookie-palette: (
   ),
 );
 
+$cookie-blackpalette: (
+  50: #e0e0e0,
+  100: #b3b3b3,
+  200: #808080,
+  300: #4d4d4d,
+  400: #262626,
+  500: #000000,
+  600: #000000,
+  700: #000000,
+  800: #000000,
+  900: #000000,
+  A100: #a6a6a6,
+  A200: #8c8c8c,
+  A400: #737373,
+  A700: #666666,
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #ffffff,
+    400: #ffffff,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+    A100: #000000,
+    A200: #000000,
+    A400: #ffffff,
+    A700: #ffffff,
+  ),
+);
+
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
 $cookie_frontend-primary: mat.define-palette($cookie-palette);
-$cookie_frontend-accent: mat.define-palette($cookie-palette, A200, A100, A400);
+$cookie_frontend-accent: mat.define-palette(
+  $cookie-blackpalette,
+  A200,
+  A100,
+  A400
+);
 
 // The warn palette is optional (defaults to red).
 $cookie_frontend-warn: mat.define-palette(mat.$red-palette);
@@ -76,4 +114,8 @@ body {
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.mat-form-field-appearance-fill .mat-form-field-flex {
+  background: none !important;
 }
