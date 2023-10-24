@@ -7,7 +7,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { RouterModule } from '@angular/router';
 import {
   ErrorStateMatcher,
@@ -24,17 +23,15 @@ import { LoginFormComponent } from './login-form.component';
     ReactiveFormsModule,
     RouterModule,
 
-    MatInputModule,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
     MatDividerModule,
-    MatCheckboxModule,
   ],
   exports: [LoginFormComponent],
   providers: [
-    { provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher },
+    [{ provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher }],
   ],
 })
 export class LoginFormModule {}

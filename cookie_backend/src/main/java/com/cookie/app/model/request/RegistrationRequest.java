@@ -25,7 +25,7 @@ public record RegistrationRequest(
         @NotNull(message = "Password cannot be null")
         @Pattern(
                 regexp = RegexConstants.PASSWORD_REGEX,
-                message = "Password has to contain those symbols atleast one time for each one: (a-z, A-Z, 0-9, '@$!%*?&') and its length has to be between 8 and 128"
+                message = "Password has to contain those symbols at least one time for each one: (a-z, A-Z, 0-9, '@$!%*?&') and its length has to be between 8 and 128"
         )
         String password,
 
@@ -33,7 +33,5 @@ public record RegistrationRequest(
         @Past(message = "Birth date cannot be after current date")
         Timestamp birthDate,
 
-        @NotNull(message = "Gender cannot be null")
         Gender gender
-) {
-}
+) {}

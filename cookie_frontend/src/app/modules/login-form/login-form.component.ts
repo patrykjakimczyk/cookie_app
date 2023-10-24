@@ -10,13 +10,9 @@ import { RegexConstants } from 'src/app/shared/model/regex-constants';
 export class LoginFormComponent {
   private regexes = RegexConstants;
   protected formSubmitted = false;
-  protected saveCredentials = false;
   protected form = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: [
-      '',
-      [Validators.required, Validators.pattern(this.regexes.passwordRegex)],
-    ],
+    email: [''],
+    password: [''],
   });
 
   constructor(private fb: FormBuilder) {}
@@ -35,15 +31,23 @@ export class LoginFormComponent {
 
   submit() {
     this.formSubmitted = true;
+    this.setValidators();
 
     if (this.form.invalid) {
       return;
     }
 
-    if (this.saveCredentials) {
-      console.log('save my credentials');
-    }
-
     console.log(this.form);
+  }
+
+  private setValidators() {
+    this.form.controls.email.setValidators([
+      Validators.required,
+      Validators.email,
+    ]);
+    this.form.controls.password.setValidators([
+      Validators.required,
+      Validators.pattern(this.regexes.passwordRegex),
+    ]);
   }
 }

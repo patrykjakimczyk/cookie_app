@@ -1,1 +1,134 @@
-<p>registration-form works!</p>
+<ng-container *ngIf="!registrationSucceded; else successView">
+  <div class="container">
+    <p class="header">
+      Register your account <mat-icon>account_circle</mat-icon>
+    </p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <mat-form-field color="accent">
+        <mat-label>Username (at least 6 characters)</mat-label>
+        <input matInput required formControlName="username" name="username" />
+        <mat-hint *ngIf="!formSubmitted"
+          >Username must contain only letters, digits and underscores</mat-hint
+        >
+
+        <mat-error *ngIf="!form.controls.username.valid">
+          {{ getErrorMessage(form.controls.username) }}
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field color="accent">
+        <mat-label>E-mail</mat-label>
+        <input matInput required formControlName="email" name="email" />
+
+        <mat-error *ngIf="!form.controls.email.valid">
+          {{ getErrorMessage(form.controls.email) }}
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field
+        color="accent"
+        [ngClass]="{
+          'expand-error':
+            !form.controls.password.dirty || !form.controls.password.errors,
+          'shrink-error': form.controls.password.dirty && form.controls.password.errors,
+        }"
+      >
+        <mat-label>Password (at least 8 characters)</mat-label>
+        <input
+          type="password"
+          matInput
+          required
+          formControlName="password"
+          name="password"
+        />
+        <mat-hint *ngIf="!formSubmitted"
+          >Password must contain at least one lowercase and capital letter, a
+          digit and a special character [@$!%*?&]
+        </mat-hint>
+
+        <mat-error *ngIf="!form.controls.password.valid">{{
+          getErrorMessage(form.controls.password)
+        }}</mat-error>
+      </mat-form-field>
+
+      <mat-form-field color="accent">
+        <mat-label>Confirm password</mat-label>
+        <input
+          type="password"
+          matInput
+          required
+          formControlName="confirmPassword"
+          name="confirmPassword"
+        />
+        <mat-error *ngIf="!form.controls.confirmPassword.valid">
+          {{ getErrorMessage(form.controls.confirmPassword) }}
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field color="accent">
+        <mat-label>Choose your birth date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="picker"
+          [max]="maxBirthDate"
+          formControlName="birthDate"
+          required
+        />
+        <mat-hint *ngIf="!formSubmitted">MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="picker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="!form.controls.birthDate.valid">
+          {{ getErrorMessage(form.controls.birthDate) }}
+        </mat-error>
+      </mat-form-field>
+
+      <mat-label>Choose your gender</mat-label>
+      <mat-radio-group color="primary" formControlName="gender">
+        <mat-radio-button
+          *ngFor="let gender of genders"
+          [value]="gender.toUpperCase()"
+        >
+          {{ gender }}
+        </mat-radio-button>
+        <mat-error *ngIf="!form.controls.gender.valid">
+          {{ getErrorMessage(form.controls.gender) }}
+        </mat-error>
+      </mat-radio-group>
+
+      <button
+        mat-raised-button
+        color="primary"
+        id="registration-button"
+        type="submit"
+      >
+        Sign in
+      </button>
+    </form>
+
+    <mat-divider></mat-divider>
+
+    <div id="login-link-container">
+      <p>Have you got an account already?</p>
+      <button routerLink="/registration" [disabled]="form.invalid">
+        Log in
+      </button>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #successView>
+  <div class="container success-view">
+    <p class="header">Congrats! <mat-icon>insert_emoticon</mat-icon></p>
+    <span
+      >You have successfully created your account. Now you can begin your Cookie
+      adventure!</span
+    >
+    <button mat-raised-button color="primary" routerLink="/login">
+      Log in
+    </button>
+  </div>
+</ng-template>

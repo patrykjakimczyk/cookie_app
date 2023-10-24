@@ -6,7 +6,8 @@
 
 #container {
   @include centered-flex-with-gap;
-  padding: 10px 20px;
+  height: 70px;
+  padding: 0 20px;
   justify-content: space-between;
 
   #logo-container {

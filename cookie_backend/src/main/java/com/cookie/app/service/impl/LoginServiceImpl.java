@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -21,7 +24,23 @@ public class LoginServiceImpl implements LoginService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public void userRegistration(RegistrationRequest request) {
+    public List<String> userRegistration(RegistrationRequest request) {
+        Optional<User> usernameOptional = this.userRepository.findByUsername(request.username());
+        Optional<User> emailOptional = this.userRepository.findByEmail(request.email());
+        final List<String> duplicatedFields = new ArrayList<>();
+
+        if (usernameOptional.isPresent()) {
+            duplicatedFields.add("username");
+        }
+
+        if (emailOptional.isPresent()) {
+            duplicatedFields.add("email");
+        }
+
+        if (!duplicatedFields.isEmpty()) {
+            return duplicatedFields;
+        }
+
         User user = User
                 .builder()
                 .role(Role.USER)
@@ -34,21 +53,9 @@ public class LoginServiceImpl implements LoginService {
                 .gender(request.gender())
                 .build();
 
-        try {
-            this.userRepository.save(user);
-            log.info("User has been successfully registered!");
-        } catch (RuntimeException e) {
-            final String notUniqueKey = extractNotUniqueKey(e);
-            log.warn("Registration process failed. User used already taken {}", notUniqueKey);
-            throw new NotUniqueValueException(
-                    String.format("Error has occurred during user's registration. %s isn't unique", notUniqueKey),
-                    e.getCause()
-            );
-        }
-    }
+        this.userRepository.save(user);
+        log.info("User has been successfully registered!");
 
-    private String extractNotUniqueKey(Exception e) {
-        String message = e.getCause().getLocalizedMessage();
-        return (message.substring(message.indexOf("Key ("), message.indexOf(")="))).replace("Key (", "");
+        return duplicatedFields;
     }
 }

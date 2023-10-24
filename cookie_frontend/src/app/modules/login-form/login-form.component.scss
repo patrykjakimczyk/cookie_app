@@ -7,6 +7,9 @@
   padding: 20px;
   border: 1px solid rgb(221, 221, 221);
   border-radius: 12px;
+  -webkit-box-shadow: 0px 0px 30px -20px rgba(66, 68, 90, 1);
+  -moz-box-shadow: 0px 0px 30px -20px rgba(66, 68, 90, 1);
+  box-shadow: 0px 0px 30px -20px rgba(66, 68, 90, 1);
 
   form {
     display: flex;
@@ -17,6 +20,16 @@
 
     mat-form-field {
       width: 100%;
+    }
+
+    #header {
+      font-size: 26px;
+
+      mat-icon {
+        position: relative;
+        top: 3px;
+        color: #f2b442;
+      }
     }
 
     #login-button {

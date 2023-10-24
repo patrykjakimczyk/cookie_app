@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { DashboardModule } from '../modules/dashboard/dashboard.module';
 import { LoginFormModule } from '../modules/login-form/login-form.module';
 import { RegistrationFormModule } from '../modules/registration-form/registration-form.module';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [AppComponent, NavbarComponent],
@@ -17,13 +18,13 @@ import { RegistrationFormModule } from '../modules/registration-form/registratio
     AppRoutingModule,
     BrowserAnimationsModule,
     MatButtonModule,
+    HttpClientModule,
 
     AppRoutingModule,
     DashboardModule,
     LoginFormModule,
     RegistrationFormModule,
   ],
-  providers: [],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

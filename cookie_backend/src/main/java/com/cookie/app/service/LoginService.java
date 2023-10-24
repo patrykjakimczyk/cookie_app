@@ -2,6 +2,8 @@ package com.cookie.app.service;
 
 import com.cookie.app.model.request.RegistrationRequest;
 
+import java.util.List;
+
 public interface LoginService {
-    void userRegistration(RegistrationRequest request);
+    List<String> userRegistration(RegistrationRequest request);
 }

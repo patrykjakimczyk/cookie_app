@@ -1,6 +1,7 @@
 package com.cookie.app.controller;
 
 import com.cookie.app.model.request.RegistrationRequest;
+import com.cookie.app.model.response.RegistrationResponse;
 import com.cookie.app.service.LoginService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -35,11 +38,14 @@ public class LoginController {
     }
 
     @PostMapping(REGISTRATION_URL)
-    public ResponseEntity<Void> registerUser(@Valid @RequestBody RegistrationRequest request) {
+    public ResponseEntity<RegistrationResponse> registerUser(@Valid @RequestBody RegistrationRequest request) {
         log.info("Performing user registration for email {}", request.email());
-        this.loginService.userRegistration(request);
+        RegistrationResponse response = new RegistrationResponse(this.loginService.userRegistration(request));
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(null);
+        if (response.duplicates().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
 

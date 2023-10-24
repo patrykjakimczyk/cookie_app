@@ -111,11 +111,38 @@ html,
 body {
   height: 100%;
 }
+
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-.mat-form-field-appearance-fill .mat-form-field-flex {
-  background: none !important;
+.expand-error {
+  animation: bigger;
+  animation-duration: 0.3s;
+  margin-bottom: 17px;
+}
+
+@keyframes bigger {
+  from {
+    margin-bottom: 0;
+  }
+  to {
+    margin-bottom: 17px;
+  }
+}
+
+.shrink-error {
+  animation: smaller;
+  animation-duration: 0.3s;
+  margin-bottom: 0px;
+}
+
+@keyframes smaller {
+  from {
+    margin-bottom: 17px;
+  }
+  to {
+    margin-bottom: 0;
+  }
 }
