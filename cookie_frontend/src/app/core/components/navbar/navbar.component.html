@@ -6,9 +6,19 @@
 
   <div id="header-buttons">
     <button mat-button routerLink="">Home</button>
-    <button mat-button routerLink="/login">Log in</button>
-    <button mat-raised-button color="primary" routerLink="/registration">
-      Sign in
-    </button>
+    <ng-container *ngIf="!isLogged">
+      <button mat-button routerLink="/login">Log in</button>
+      <button mat-raised-button color="primary" routerLink="/registration">
+        Sign in
+      </button>
+    </ng-container>
+    <ng-container *ngIf="isLogged">
+      <button mat-button [matMenuTriggerFor]="menu">
+        {{ "Hi, " + username }}
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="logout()">Log out</button>
+      </mat-menu>
+    </ng-container>
   </div>
 </div>

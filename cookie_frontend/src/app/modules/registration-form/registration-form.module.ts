@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { RegistrationFormComponent } from './registration-form.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatInputModule } from '@angular/material/input';
@@ -16,6 +15,8 @@ import {
   ShowOnDirtyErrorStateMatcher,
 } from '@angular/material/core';
 import { MatRadioModule } from '@angular/material/radio';
+
+import { RegistrationFormComponent } from './registration-form.component';
 
 @NgModule({
   declarations: [RegistrationFormComponent],

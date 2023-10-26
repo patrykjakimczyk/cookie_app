@@ -3,6 +3,7 @@ package com.cookie.app.model.request;
 
 import com.cookie.app.model.enums.Gender;
 import com.cookie.app.model.RegexConstants;
+import com.cookie.app.validation.AgeValidation;
 import jakarta.validation.constraints.*;
 
 import java.sql.Timestamp;
@@ -30,7 +31,7 @@ public record RegistrationRequest(
         String password,
 
         @NotNull(message = "Birth date cannot be null")
-        @Past(message = "Birth date cannot be after current date")
+        @AgeValidation
         Timestamp birthDate,
 
         Gender gender

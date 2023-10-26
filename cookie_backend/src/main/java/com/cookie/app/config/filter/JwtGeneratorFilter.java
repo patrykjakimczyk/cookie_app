@@ -43,7 +43,6 @@ public class JwtGeneratorFilter extends OncePerRequestFilter {
 
     private String buildJwtToken(Authentication authentication) {
         SecretKey key = Keys.hmacShaKeyFor(JwtConstants.SECRET_KEY.getBytes(StandardCharsets.UTF_8));
-
         return Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("role", transformAutoritiesToString(authentication.getAuthorities()))

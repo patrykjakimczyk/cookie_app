@@ -5,8 +5,9 @@ import {
   FormControl,
   Validators,
 } from '@angular/forms';
+
 import { genders } from 'src/app/shared/model/enums/gender-enum';
-import { RegexConstants } from 'src/app/shared/model/regex-constants';
+import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
 import { RegistrationFormService } from './registration-form.service';
 
 @Component({

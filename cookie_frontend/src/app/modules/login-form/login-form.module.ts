@@ -8,10 +8,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { RouterModule } from '@angular/router';
-import {
-  ErrorStateMatcher,
-  ShowOnDirtyErrorStateMatcher,
-} from '@angular/material/core';
 
 import { LoginFormComponent } from './login-form.component';
 
@@ -30,8 +26,9 @@ import { LoginFormComponent } from './login-form.component';
     MatDividerModule,
   ],
   exports: [LoginFormComponent],
-  providers: [
-    [{ provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher }],
-  ],
+  providers: [],
+  // [
+  //   [{ provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher }],
+  // ],
 })
 export class LoginFormModule {}

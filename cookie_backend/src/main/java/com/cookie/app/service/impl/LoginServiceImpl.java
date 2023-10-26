@@ -58,4 +58,11 @@ public class LoginServiceImpl implements LoginService {
 
         return duplicatedFields;
     }
+
+    @Override
+    public String getUsername(String email) {
+        Optional<User> userOptional = this.userRepository.findByEmail(email);
+
+        return userOptional.get().getUsername();  //user must be present if authentication passed
+    }
 }

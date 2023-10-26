@@ -6,8 +6,8 @@
       <mat-label>E-mail</mat-label>
       <input matInput required formControlName="email" name="email" />
 
-      <mat-error *ngIf="!form.controls.email.valid && formSubmitted">
-        {{ getErrorMessage(form.controls.email) }}
+      <mat-error *ngIf="!form.controls.email.valid"
+        >{{ getErrorMessage(form.controls.email) }}
       </mat-error>
     </mat-form-field>
 
@@ -21,8 +21,8 @@
         name="password"
       />
 
-      <mat-error *ngIf="!form.controls.password.valid && formSubmitted">
-        {{ getErrorMessage(form.controls.password) }}
+      <mat-error *ngIf="!form.controls.password.valid"
+        >{{ getErrorMessage(form.controls.password) }}
       </mat-error>
     </mat-form-field>
 

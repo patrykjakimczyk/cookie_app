@@ -1,6 +1,7 @@
 package com.cookie.app.controller;
 
 import com.cookie.app.model.request.RegistrationRequest;
+import com.cookie.app.model.response.LoginResponse;
 import com.cookie.app.model.response.RegistrationResponse;
 import com.cookie.app.service.LoginService;
 
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,8 +29,9 @@ public class LoginController {
 
     @SecurityRequirement(name = "basicAuth")
     @GetMapping(LOGIN_URL)
-    public String login() {
-        return "Hello world";
+    public ResponseEntity<LoginResponse> login(Authentication auth) {
+        LoginResponse response = new LoginResponse(this.loginService.getUsername(auth.getName()));
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @SecurityRequirement(name = "bearerAuth")
