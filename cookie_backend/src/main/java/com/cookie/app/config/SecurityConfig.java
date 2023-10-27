@@ -68,7 +68,6 @@ public class SecurityConfig {
                                 "/swagger-ui/**").permitAll()
                         .requestMatchers("/test").hasAuthority("USER")
                         .anyRequest().authenticated())
-//                .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults());
 
         return http.build();

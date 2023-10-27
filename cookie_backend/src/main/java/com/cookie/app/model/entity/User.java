@@ -31,7 +31,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(length = 30, unique = true,nullable = false)
+    @Column(length = 30, unique = true, nullable = false)
     private String username;
 
     @Column(length = 50, unique = true, nullable = false)
@@ -49,7 +49,10 @@ public class User {
     @Column(name = "birth_date", nullable = false)
     private Timestamp birthDate;
 
-    @Column(length = 6, updatable = false ,nullable = false)
+    @Column(length = 6, updatable = false)
     @Enumerated(EnumType.STRING)
     private Gender gender;
+
+    @OneToOne(mappedBy = "user")
+    private Pantry pantry;
 }
