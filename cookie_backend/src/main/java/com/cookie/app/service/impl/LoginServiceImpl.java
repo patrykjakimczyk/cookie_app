@@ -1,6 +1,5 @@
 package com.cookie.app.service.impl;
 
-import com.cookie.app.exception.NotUniqueValueException;
 import com.cookie.app.model.enums.Role;
 import com.cookie.app.model.request.RegistrationRequest;
 import com.cookie.app.model.entity.User;

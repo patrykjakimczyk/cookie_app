@@ -42,6 +42,7 @@ export class UserService {
     this.user.next(new User());
     window.sessionStorage.removeItem('user');
     window.sessionStorage.removeItem('JwtToken');
+    window.sessionStorage.removeItem('XSRF-TOKEN');
   }
 
   private extractUserDataFromJwt(user: User, jwt: string) {

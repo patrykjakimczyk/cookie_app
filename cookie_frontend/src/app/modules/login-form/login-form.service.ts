@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class LoginFormService {
   private readonly url = 'http://localhost:8081/';
-  private readonly register_path = 'login';
+  private readonly register_path = 'user';
 
   constructor(private http: HttpClient) {}
 

@@ -28,6 +28,7 @@ import java.util.*;
 @RequiredArgsConstructor
 @Configuration
 public class SecurityConfig {
+    private static final String ROLE_PREFIX = "ROLE_";
     private final UserRepository userRepository;
 
     @Bean
@@ -66,7 +67,6 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/webjars/**",
                                 "/swagger-ui/**").permitAll()
-                        .requestMatchers("/test").hasAuthority("USER")
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults());
 
@@ -82,7 +82,7 @@ public class SecurityConfig {
             });
 
             List<GrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(new SimpleGrantedAuthority(user.getRole().name()));
+            authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + user.getRole().name()));
 
             return new org.springframework.security.core.userdetails.User(
                     user.getUsername(), user.getPassword(), authorities

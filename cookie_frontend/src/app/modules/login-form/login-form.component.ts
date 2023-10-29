@@ -6,6 +6,7 @@ import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
 import { LoginFormService } from './login-form.service';
 import { UserService } from 'src/app/shared/services/user-service';
 import { User } from 'src/app/shared/model/user';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-login-form',
@@ -14,7 +15,7 @@ import { User } from 'src/app/shared/model/user';
 })
 export class LoginFormComponent {
   private regexes = RegexConstants;
-  protected formSubmitted = false;
+  protected authenticationFailed = false;
   protected form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: [
@@ -43,8 +44,7 @@ export class LoginFormComponent {
   }
 
   submit() {
-    this.formSubmitted = true;
-
+    this.form.markAsPristine();
     if (this.form.invalid) {
       return;
     }
@@ -61,9 +61,15 @@ export class LoginFormComponent {
     this.userService.saveUser(user);
     this.loginService.login().subscribe({
       next: (response: any) => {
+        this.authenticationFailed = false;
         const jwtToken = response.headers.get('Authorization')!;
         this.userService.saveUserLoginData(jwtToken, response.body.username);
         this.router.navigate(['/']);
+      },
+      error: (error: HttpErrorResponse) => {
+        if (error.status === 401) {
+          this.authenticationFailed = true;
+        }
       },
     });
   }

@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 public class LoginController {
-    private static final String LOGIN_URL = "/login";
-    private static final String REGISTRATION_URL = "/register";
+    private static final String LOGIN_URL = "/user";
+    private static final String REGISTRATION_URL = "/user";
     private final LoginService loginService;
 
     @SecurityRequirement(name = "basicAuth")
@@ -30,12 +30,6 @@ public class LoginController {
     public ResponseEntity<LoginResponse> login(Authentication auth) {
         LoginResponse response = new LoginResponse(this.loginService.getUsername(auth.getName()));
         return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-
-    @SecurityRequirement(name = "bearerAuth")
-    @GetMapping("/test")
-    public String test() {
-        return "test";
     }
 
     @PostMapping(REGISTRATION_URL)

@@ -26,6 +26,10 @@
       </mat-error>
     </mat-form-field>
 
+    <p *ngIf="authenticationFailed && !form.dirty" id="error-message">
+      E-mail or password is incorrect
+    </p>
+
     <button mat-raised-button color="primary" id="login-button" type="submit">
       Log in
     </button>

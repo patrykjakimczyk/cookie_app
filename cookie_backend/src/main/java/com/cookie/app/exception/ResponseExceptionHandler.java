@@ -31,4 +31,10 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
     }
+
+    @ExceptionHandler(UserHasAssignedPantryException.class)
+    public ResponseEntity<ExceptionMessage> userHasAssignedPantryException(NotUniqueValueException exception, WebRequest webRequest) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
+    }
 }
