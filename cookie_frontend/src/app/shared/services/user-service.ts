@@ -34,7 +34,6 @@ export class UserService {
     window.sessionStorage.setItem('XSRF-TOKEN', xsrf);
     window.sessionStorage.setItem('JwtToken', jwt);
     window.sessionStorage.setItem('user', JSON.stringify(user));
-
     this.user.next(user);
   }
 

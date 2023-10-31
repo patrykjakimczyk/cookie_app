@@ -7,7 +7,7 @@ import { RegistrationResponse } from 'src/app/shared/model/responses/registratio
 @Injectable({ providedIn: 'root' })
 export class RegistrationFormService {
   private readonly url = 'http://localhost:8081/';
-  private readonly register_path = 'user';
+  private readonly register_path = 'register';
 
   constructor(private http: HttpClient) {}
 

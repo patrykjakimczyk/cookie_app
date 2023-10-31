@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LoginController {
     private static final String LOGIN_URL = "/user";
-    private static final String REGISTRATION_URL = "/user";
+    private static final String REGISTRATION_URL = "/register";
     private final LoginService loginService;
 
     @SecurityRequirement(name = "basicAuth")

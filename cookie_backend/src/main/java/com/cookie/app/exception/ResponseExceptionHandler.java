@@ -37,4 +37,10 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
     }
+
+    @ExceptionHandler(UserWasNotFoundAfterAuthException.class)
+    public ResponseEntity<ExceptionMessage> userWasNotFoundAfterAuthException(NotUniqueValueException exception, WebRequest webRequest) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
+    }
 }

@@ -16,15 +16,4 @@ export class LoginFormService {
       withCredentials: true,
     });
   }
-
-  test() {
-    this.http
-      .get<any>(this.url + 'test', {
-        observe: 'response',
-        withCredentials: true,
-      })
-      .subscribe((response) => {
-        console.log(response);
-      });
-  }
 }

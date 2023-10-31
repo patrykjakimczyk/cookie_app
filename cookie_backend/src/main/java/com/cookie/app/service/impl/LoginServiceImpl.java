@@ -1,5 +1,6 @@
 package com.cookie.app.service.impl;
 
+import com.cookie.app.exception.UserWasNotFoundAfterAuthException;
 import com.cookie.app.model.enums.Role;
 import com.cookie.app.model.request.RegistrationRequest;
 import com.cookie.app.model.entity.User;
@@ -62,6 +63,9 @@ public class LoginServiceImpl implements LoginService {
     public String getUsername(String email) {
         Optional<User> userOptional = this.userRepository.findByEmail(email);
 
-        return userOptional.get().getUsername();  //user must be present if authentication passed
+        if (userOptional.isEmpty()) {
+            throw new UserWasNotFoundAfterAuthException("User was not found in database after authentication");
+        }
+        return userOptional.get().getUsername();
     }
 }

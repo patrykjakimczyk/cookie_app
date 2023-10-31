@@ -21,7 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
 public class JwtValidatorFilter extends OncePerRequestFilter {
-    private static final Set<String> NOT_FILTER_PATHS = Set.of("/login", "/register");
+    private static final Set<String> NOT_FILTER_PATHS = Set.of("/user", "/register");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
