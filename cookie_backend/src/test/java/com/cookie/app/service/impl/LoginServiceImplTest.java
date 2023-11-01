@@ -3,6 +3,7 @@ package com.cookie.app.service.impl;
 import com.cookie.app.exception.UserWasNotFoundAfterAuthException;
 import com.cookie.app.model.entity.User;
 import com.cookie.app.model.request.RegistrationRequest;
+import com.cookie.app.model.response.RegistrationResponse;
 import com.cookie.app.repository.UserRepository;
 import com.cookie.app.service.LoginService;
 import org.junit.jupiter.api.Test;
@@ -34,10 +35,10 @@ class LoginServiceImplTest {
         User user = User.builder().username("username").email("email2").build();
 
         Mockito.when(this.userRepository.findByUsername(Mockito.anyString())).thenReturn(Optional.of(user));
-        List<String> duplicates = this.loginService.userRegistration(userToRegister);
+        RegistrationResponse response = this.loginService.userRegistration(userToRegister);
 
-        assertEquals(1, duplicates.size());
-        assertEquals("username", duplicates.get(0));
+        assertEquals(1, response.duplicates().size());
+        assertEquals("username", response.duplicates().get(0));
     }
 
     @Test
@@ -46,10 +47,10 @@ class LoginServiceImplTest {
         User user = User.builder().username("username2").email("email").build();
 
         Mockito.when(this.userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.of(user));
-        List<String> duplicates = this.loginService.userRegistration(userToRegister);
+        RegistrationResponse response = this.loginService.userRegistration(userToRegister);
 
-        assertEquals(1, duplicates.size());
-        assertEquals("email", duplicates.get(0));
+        assertEquals(1, response.duplicates().size());
+        assertEquals("email", response.duplicates().get(0));
     }
 
     @Test
@@ -57,9 +58,9 @@ class LoginServiceImplTest {
         RegistrationRequest userToRegister = new RegistrationRequest("username", "email", null, null, null);
 
         Mockito.when(this.userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.empty());
-        List<String> duplicates = this.loginService.userRegistration(userToRegister);
+        RegistrationResponse response = this.loginService.userRegistration(userToRegister);
 
-        assertEquals(0, duplicates.size());
+        assertEquals(0, response.duplicates().size());
     }
 
     @Test

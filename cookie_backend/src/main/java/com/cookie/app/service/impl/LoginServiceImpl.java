@@ -4,6 +4,7 @@ import com.cookie.app.exception.UserWasNotFoundAfterAuthException;
 import com.cookie.app.model.enums.Role;
 import com.cookie.app.model.request.RegistrationRequest;
 import com.cookie.app.model.entity.User;
+import com.cookie.app.model.response.RegistrationResponse;
 import com.cookie.app.repository.UserRepository;
 import com.cookie.app.service.LoginService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +26,7 @@ public class LoginServiceImpl implements LoginService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public List<String> userRegistration(RegistrationRequest request) {
+    public RegistrationResponse userRegistration(RegistrationRequest request) {
         Optional<User> usernameOptional = this.userRepository.findByUsername(request.username());
         Optional<User> emailOptional = this.userRepository.findByEmail(request.email());
         final List<String> duplicatedFields = new ArrayList<>();
@@ -38,7 +40,7 @@ public class LoginServiceImpl implements LoginService {
         }
 
         if (!duplicatedFields.isEmpty()) {
-            return duplicatedFields;
+            return new RegistrationResponse(duplicatedFields);
         }
 
         User user = User
@@ -56,7 +58,7 @@ public class LoginServiceImpl implements LoginService {
         this.userRepository.save(user);
         log.info("User has been successfully registered!");
 
-        return duplicatedFields;
+        return new RegistrationResponse(duplicatedFields);
     }
 
     @Override

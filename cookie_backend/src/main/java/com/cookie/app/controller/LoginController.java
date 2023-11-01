@@ -35,7 +35,7 @@ public class LoginController {
     @PostMapping(REGISTRATION_URL)
     public ResponseEntity<RegistrationResponse> registerUser(@Valid @RequestBody RegistrationRequest request) {
         log.info("Performing user registration for email {}", request.email());
-        RegistrationResponse response = new RegistrationResponse(this.loginService.userRegistration(request));
+        RegistrationResponse response = this.loginService.userRegistration(request);
 
         if (response.duplicates().isEmpty()) {
             return ResponseEntity.status(HttpStatus.CREATED).body(response);

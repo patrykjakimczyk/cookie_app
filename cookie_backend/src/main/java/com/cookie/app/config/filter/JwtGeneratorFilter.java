@@ -45,14 +45,14 @@ public class JwtGeneratorFilter extends OncePerRequestFilter {
         SecretKey key = Keys.hmacShaKeyFor(JwtConstants.SECRET_KEY.getBytes(StandardCharsets.UTF_8));
         return Jwts.builder()
                 .setSubject(authentication.getName())
-                .claim("role", transformAutoritiesToString(authentication.getAuthorities()))
+                .claim("role", transformAuthoritiesToString(authentication.getAuthorities()))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + 3600000))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    private String transformAutoritiesToString(Collection<? extends GrantedAuthority> collection) {
+    private String transformAuthoritiesToString(Collection<? extends GrantedAuthority> collection) {
         Set<String> authoritiesSet = new HashSet<>();
         for (GrantedAuthority authority : collection) {
             authoritiesSet.add(authority.getAuthority());

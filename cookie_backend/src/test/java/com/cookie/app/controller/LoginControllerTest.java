@@ -53,7 +53,7 @@ class LoginControllerTest {
         RegistrationRequest request = new RegistrationRequest("user", "email", "pass", null, null);
 
         Mockito.when(loginService.userRegistration(Mockito.any(RegistrationRequest.class)))
-                .thenReturn(Collections.emptyList());
+                .thenReturn(new RegistrationResponse(Collections.emptyList()));
 
         ResponseEntity<RegistrationResponse> response = this.loginController.registerUser(request);
         assertTrue(response.getBody().duplicates().size() == 0);
@@ -66,7 +66,7 @@ class LoginControllerTest {
         String duplicate = "username";
 
         Mockito.when(loginService.userRegistration(Mockito.any(RegistrationRequest.class)))
-                .thenReturn(List.of(duplicate));
+                .thenReturn(new RegistrationResponse(List.of(duplicate)));
 
         ResponseEntity<RegistrationResponse> response = this.loginController.registerUser(request);
         assertEquals(1, response.getBody().duplicates().size());
