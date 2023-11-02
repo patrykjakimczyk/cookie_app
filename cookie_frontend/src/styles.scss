@@ -107,6 +107,11 @@ $cookie_frontend-theme: mat.define-light-theme(
 
 /* You can add global styles to this file, and also import other style files */
 
+@font-face {
+  font-family: "Agbalumo";
+  src: url("../src/assets/fonts/Agbalumo-Regular.ttf");
+}
+
 html,
 body {
   height: 100%;

@@ -1,18 +1,13 @@
-@mixin centered-flex-with-gap($gap: 0px) {
-  display: flex;
-  align-items: center;
-  gap: $gap;
-}
+@import "../../../../assets/styles/mixins";
 
 #container {
-  @include centered-flex-with-gap;
+  @include flex-with-gap($align: center);
   height: 70px;
   padding: 0 20px;
   justify-content: space-between;
 
   #logo-container {
-    @include centered-flex-with-gap(10px);
-    flex-direction: row;
+    @include flex-with-gap($gap: 10px);
     cursor: pointer;
 
     img {
@@ -21,15 +16,15 @@
     }
 
     p {
-      font-family: "Orelega One";
+      font-family: "Agbalumo";
       margin: 0;
       font-size: 32px;
-      font-weight: 600;
+      font-weight: 500;
     }
   }
 
   #header-buttons {
-    @include centered-flex-with-gap(15px);
+    @include flex-with-gap($gap: 15px);
 
     button {
       padding: 20px;

@@ -1,7 +1,8 @@
+@import "../../../assets/styles/mixins";
+@import "../../../assets/styles/colors";
+
 #login-container {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  @include flex-with-gap($direction: column, $gap: 16px);
   margin: auto;
   width: 330px;
   padding: 20px;
@@ -12,11 +13,8 @@
   box-shadow: 0px 0px 30px -20px rgba(66, 68, 90, 1);
 
   form {
-    display: flex;
-    flex-direction: column;
+    @include flex-with-gap($direction: column, $align: center, $gap: 10px);
     justify-content: center;
-    align-items: center;
-    gap: 10px;
 
     mat-form-field {
       width: 100%;
@@ -28,12 +26,12 @@
       mat-icon {
         position: relative;
         top: 3px;
-        color: #f2b442;
+        color: $main-color;
       }
     }
 
     #error-message {
-      color: #f44336;
+      color: $error-color;
     }
 
     #login-button {
@@ -45,11 +43,9 @@
   }
 
   #registration-link-container {
-    padding: 0;
-    display: flex;
-    flex-direction: row;
+    @include flex-with-gap($align: center);
     justify-content: center;
-    align-items: center;
+    padding: 0;
 
     p {
       margin: 0;
@@ -63,7 +59,7 @@
       position: relative;
       padding-left: 4px;
       cursor: pointer;
-      color: #f2b442;
+      color: $main-color;
       text-decoration: underline;
     }
   }

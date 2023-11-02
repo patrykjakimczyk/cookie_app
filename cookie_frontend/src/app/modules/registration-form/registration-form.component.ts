@@ -16,7 +16,9 @@ import { RegistrationFormService } from './registration-form.service';
   styleUrls: ['./registration-form.component.scss'],
 })
 export class RegistrationFormComponent {
+  readonly minBirthDate = new Date(new Date().getTime() - 3944619000000);
   readonly maxBirthDate = new Date(new Date().getTime() - 410240038000);
+
   private regexes = RegexConstants;
   protected genders = genders;
   protected registrationSucceded = false;

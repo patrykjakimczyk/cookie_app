@@ -6,12 +6,13 @@ import jakarta.validation.ConstraintValidatorContext;
 import java.sql.Timestamp;
 import java.time.Instant;
 
-
 public class AgeValidator implements ConstraintValidator<AgeValidation, Timestamp> {
-    private static final long AGE_IN_MILLIS = 410240376000L;
+    private static final long MIN_AGE_IN_MILLIS = 410240376000L; // 13 years
+    private static final long MAX_AGE_IN_MILLIS = 3944619000000L; // 125 years
 
     @Override
     public boolean isValid(Timestamp timestamp, ConstraintValidatorContext constraintValidatorContext) {
-        return timestamp.before(Timestamp.from(Instant.now().minusMillis(AGE_IN_MILLIS)));
+        return timestamp.after(Timestamp.from(Instant.now().minusMillis(MAX_AGE_IN_MILLIS))) &&
+                timestamp.before(Timestamp.from(Instant.now().minusMillis(MIN_AGE_IN_MILLIS)));
     }
 }

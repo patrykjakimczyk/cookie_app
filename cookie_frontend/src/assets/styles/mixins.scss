@@ -1,0 +1,12 @@
+@mixin flex-with-gap($direction: row, $align: normal, $gap: 0px) {
+  display: flex;
+  @if $align != normal {
+    align-items: $align;
+  }
+  @if $direction == column {
+    flex-direction: column;
+  }
+  @if $gap > 0px {
+    gap: $gap;
+  }
+}

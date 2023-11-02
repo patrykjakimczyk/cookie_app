@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { User } from '../model/user';
-import { getCookie } from 'typescript-cookie';
+import { getCookie, removeCookie } from 'typescript-cookie';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { BehaviorSubject } from 'rxjs';
 
@@ -42,6 +42,7 @@ export class UserService {
     window.sessionStorage.removeItem('user');
     window.sessionStorage.removeItem('JwtToken');
     window.sessionStorage.removeItem('XSRF-TOKEN');
+    removeCookie('XSRF-TOKEN', { path: '/' });
   }
 
   private extractUserDataFromJwt(user: User, jwt: string) {

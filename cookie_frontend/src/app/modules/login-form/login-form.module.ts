@@ -26,9 +26,5 @@ import { LoginFormComponent } from './login-form.component';
     MatDividerModule,
   ],
   exports: [LoginFormComponent],
-  providers: [],
-  // [
-  //   [{ provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher }],
-  // ],
 })
 export class LoginFormModule {}
