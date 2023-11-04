@@ -29,7 +29,7 @@ public class PantryProduct {
     @JoinColumn(name = "pantry_id", referencedColumnName = "id")
     private Pantry pantry;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
 

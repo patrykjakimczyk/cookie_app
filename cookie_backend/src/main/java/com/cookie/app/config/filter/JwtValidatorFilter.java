@@ -47,10 +47,10 @@ public class JwtValidatorFilter extends OncePerRequestFilter {
                     AuthorityUtils.commaSeparatedStringToAuthorityList(authorities));
 
             SecurityContextHolder.getContext().setAuthentication(auth);
-            return;
+        } else {
+            SecurityContextHolder.getContext().setAuthentication(null);
         }
 
-        SecurityContextHolder.getContext().setAuthentication(null);
         filterChain.doFilter(request, response);
     }
 

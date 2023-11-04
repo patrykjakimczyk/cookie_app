@@ -1,6 +1,8 @@
 package com.cookie.app.controller;
 
 import com.cookie.app.model.request.CreatePantryRequest;
+import com.cookie.app.model.request.UpdatePantryRequest;
+import com.cookie.app.model.response.DeletePantryResponse;
 import com.cookie.app.model.response.GetPantryResponse;
 import com.cookie.app.model.response.PantryProductDTO;
 import com.cookie.app.service.PantryService;
@@ -20,24 +22,43 @@ import java.util.List;
 @Slf4j
 @RestController
 public class PantryController {
-    private static final String CREATE_PANTRY_URL = "/pantry";
-    private static final String GET_PANTRY_URL = "/pantry/:id";
-    private static final String POST_PANTRY_PRODUCTS_URL = "/pantry/:id/products";
-    private static final String GET_PANTRY_PRODUCTS_URL = "/pantry/:id/products/:page";
+    private static final String PANTRY_URL = "/pantry";
+    private static final String POST_PANTRY_PRODUCTS_URL = "/pantry/{id}/products";
+    private static final String GET_PANTRY_PRODUCTS_URL = "/pantry/{id}/products/{page}";
     private final PantryService pantryService;
 
     @SecurityRequirement(name = "bearerAuth")
-    @PostMapping(CREATE_PANTRY_URL)
-    public ResponseEntity<Void> createPantry(@Valid CreatePantryRequest request, Authentication authentication) {
+    @PostMapping(PANTRY_URL)
+    public ResponseEntity<Void> createUserPantry(
+            @Valid @RequestBody CreatePantryRequest request,
+            Authentication authentication
+    ) {
         log.info("User with email={} is creating pantry", authentication.getName());
-        this.pantryService.createPantry(request, authentication.getName());
+        this.pantryService.createUserPantry(request, authentication.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
 
     @SecurityRequirement(name = "bearerAuth")
-    @GetMapping(GET_PANTRY_URL)
-    public ResponseEntity<GetPantryResponse> getPantry(@PathVariable("id") long id, Authentication authentication) {
+    @GetMapping(PANTRY_URL)
+    public ResponseEntity<GetPantryResponse> getUserPantry(Authentication authentication) {
         return ResponseEntity.status(HttpStatus.OK).body(this.pantryService.getUserPantry(authentication.getName()));
+    }
+
+    @SecurityRequirement(name = "bearerAuth")
+    @DeleteMapping(PANTRY_URL)
+    public ResponseEntity<DeletePantryResponse> deleteUserPantry(Authentication authentication) {
+        log.info("User with email={} is deleting pantry", authentication.getName());
+        return ResponseEntity.status(HttpStatus.OK).body(this.pantryService.deleteUserPantry(authentication.getName()));
+    }
+
+    @SecurityRequirement(name = "bearerAuth")
+    @PatchMapping(PANTRY_URL)
+    public ResponseEntity<GetPantryResponse> updateUserPantry(
+            @Valid @RequestBody UpdatePantryRequest request,
+            Authentication authentication
+    ) {
+        log.info("User with email={} is updating pantry", authentication.getName());
+        return ResponseEntity.status(HttpStatus.OK).body(this.pantryService.updateUserPantry(request, authentication.getName()));
     }
 
     @SecurityRequirement(name = "bearerAuth")
@@ -45,10 +66,29 @@ public class PantryController {
     public ResponseEntity<Page<PantryProductDTO>> getPantryProducts(
             @PathVariable(value = "id") long id,
             @PathVariable(value = "page") int page,
+            @RequestParam String filterCol,
+            @RequestParam String filterValue,
+            @RequestParam String sortColName,
+            @RequestParam String sortDirection,
             Authentication authentication
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(this.pantryService.getPantryProducts(id, page, authentication.getName()));
+                .body(this.pantryService.getPantryProducts(
+                        id, page, filterCol, filterValue, sortColName, sortDirection, authentication.getName())
+                );
+    }
+
+    @SecurityRequirement(name = "bearerAuth")
+    @PostMapping(POST_PANTRY_PRODUCTS_URL)
+    public ResponseEntity<Page<PantryProductDTO>> addProductsToPantry(
+            @PathVariable(value = "id") long id,
+            @RequestBody List<PantryProductDTO> products,
+            Authentication authentication
+    ) {
+        this.pantryService.addProductsToPantry(id, products, authentication.getName());
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(null);
     }
 }

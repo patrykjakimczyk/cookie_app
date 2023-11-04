@@ -33,19 +33,19 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(UserHasAssignedPantryException.class)
-    public ResponseEntity<ExceptionMessage> userHasAssignedPantryException(NotUniqueValueException exception, WebRequest webRequest) {
+    public ResponseEntity<ExceptionMessage> userHasAssignedPantryException(UserHasAssignedPantryException exception, WebRequest webRequest) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
     }
 
     @ExceptionHandler(UserWasNotFoundAfterAuthException.class)
-    public ResponseEntity<ExceptionMessage> userWasNotFoundAfterAuthException(NotUniqueValueException exception, WebRequest webRequest) {
+    public ResponseEntity<ExceptionMessage> userWasNotFoundAfterAuthException(UserWasNotFoundAfterAuthException exception, WebRequest webRequest) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
     }
 
     @ExceptionHandler(PantryNotFoundException.class)
-    public ResponseEntity<ExceptionMessage> pantryNotFoundException(NotUniqueValueException exception, WebRequest webRequest) {
+    public ResponseEntity<ExceptionMessage> pantryNotFoundException(PantryNotFoundException exception, WebRequest webRequest) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
     }
