@@ -4,13 +4,11 @@ import com.cookie.app.model.request.CreatePantryRequest;
 import com.cookie.app.model.request.UpdatePantryRequest;
 import com.cookie.app.model.response.DeletePantryResponse;
 import com.cookie.app.model.response.GetPantryResponse;
-import com.cookie.app.model.response.PantryProductDTO;
 import com.cookie.app.service.PantryService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -23,8 +21,6 @@ import java.util.List;
 @RestController
 public class PantryController {
     private static final String PANTRY_URL = "/pantry";
-    private static final String POST_PANTRY_PRODUCTS_URL = "/pantry/{id}/products";
-    private static final String GET_PANTRY_PRODUCTS_URL = "/pantry/{id}/products/{page}";
     private final PantryService pantryService;
 
     @SecurityRequirement(name = "bearerAuth")
@@ -59,36 +55,5 @@ public class PantryController {
     ) {
         log.info("User with email={} is updating pantry", authentication.getName());
         return ResponseEntity.status(HttpStatus.OK).body(this.pantryService.updateUserPantry(request, authentication.getName()));
-    }
-
-    @SecurityRequirement(name = "bearerAuth")
-    @GetMapping(GET_PANTRY_PRODUCTS_URL)
-    public ResponseEntity<Page<PantryProductDTO>> getPantryProducts(
-            @PathVariable(value = "id") long id,
-            @PathVariable(value = "page") int page,
-            @RequestParam String filterCol,
-            @RequestParam String filterValue,
-            @RequestParam String sortColName,
-            @RequestParam String sortDirection,
-            Authentication authentication
-    ) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(this.pantryService.getPantryProducts(
-                        id, page, filterCol, filterValue, sortColName, sortDirection, authentication.getName())
-                );
-    }
-
-    @SecurityRequirement(name = "bearerAuth")
-    @PostMapping(POST_PANTRY_PRODUCTS_URL)
-    public ResponseEntity<Page<PantryProductDTO>> addProductsToPantry(
-            @PathVariable(value = "id") long id,
-            @RequestBody List<PantryProductDTO> products,
-            Authentication authentication
-    ) {
-        this.pantryService.addProductsToPantry(id, products, authentication.getName());
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(null);
     }
 }

@@ -49,4 +49,10 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
     }
+
+    @ExceptionHandler(PantryProductIdSetException.class)
+    public ResponseEntity<ExceptionMessage> pantryProductIdSetException(PantryProductIdSetException exception, WebRequest webRequest) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
+    }
 }

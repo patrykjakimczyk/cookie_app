@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,4 +31,7 @@ public class Pantry {
     @OneToOne
     @JoinColumn(name = "creator_id", referencedColumnName = "id", unique = true)
     private User user;
+
+    @OneToMany(mappedBy = "pantry")
+    List<PantryProduct> pantryProducts;
 }

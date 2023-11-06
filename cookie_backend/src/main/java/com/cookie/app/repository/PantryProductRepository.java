@@ -5,14 +5,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface PantryProductRepository extends CrudRepository<PantryProduct, Long> {
-    @Query(value = "SELECT DISTINCT pp.* FROM pantry_product pp where pp.pantry_id = :id", nativeQuery = true)
-    Page<PantryProduct> findProductsInPantry(@Param("id") long id, PageRequest pageable);
+    void deleteByIdIn(List<Long> ids);
+    @Query(value = "SELECT DISTINCT pp.* FROM pantry_product pp JOIN product p ON p.id = pp.product_id " +
+            "where pp.pantry_id = ?1", nativeQuery = true)
+    Page<PantryProduct> findProductsInPantry(long id, PageRequest pageable);
 
-    @Query(value = "SELECT DISTINCT pp.* FROM pantry_product pp WHERE pp.pantry_id = :id AND :column LIKE LOWER(CONCAT('%', :filterValue, '%'))", nativeQuery = true)
-    Page<PantryProduct> findProductsInPantryWithFilter(@Param("id") long id, @Param("column") String column, @Param("filterValue") String filterValue, PageRequest pageable);
+    @Query(value = "SELECT DISTINCT pp.* FROM pantry_product pp JOIN product p ON p.id = pp.product_id " +
+            "WHERE pp.pantry_id = ?1 AND (LOWER(pp.placement) LIKE LOWER(CONCAT('%', ?2, '%')) OR " +
+            "LOWER(p.product_name) LIKE LOWER(CONCAT('%', ?2, '%')) OR " +
+            "LOWER(p.category) LIKE LOWER(CONCAT('%', ?2, '%')))", nativeQuery = true)
+    Page<PantryProduct> findProductsInPantryWithFilter(long id, String filterValue, PageRequest pageable);
 }
