@@ -1,7 +1,7 @@
 package com.cookie.app.service;
 
 
-import com.cookie.app.model.response.PantryProductDTO;
+import com.cookie.app.model.dto.PantryProductDTO;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

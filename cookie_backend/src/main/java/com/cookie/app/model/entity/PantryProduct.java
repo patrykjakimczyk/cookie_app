@@ -33,10 +33,10 @@ public class PantryProduct {
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
 
-    @Column(name = "purchase_date", nullable = false)
+    @Column(name = "purchase_date")
     private Timestamp purchaseDate;
 
-    @Column(name = "expiration_date", nullable = false)
+    @Column(name = "expiration_date")
     private Timestamp expirationDate;
 
     @Column

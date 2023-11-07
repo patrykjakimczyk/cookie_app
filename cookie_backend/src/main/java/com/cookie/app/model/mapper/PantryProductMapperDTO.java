@@ -1,7 +1,7 @@
 package com.cookie.app.model.mapper;
 
 import com.cookie.app.model.entity.PantryProduct;
-import com.cookie.app.model.response.PantryProductDTO;
+import com.cookie.app.model.dto.PantryProductDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.function.Function;

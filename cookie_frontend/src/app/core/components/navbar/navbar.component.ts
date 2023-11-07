@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { LoginFormService } from 'src/app/modules/login-form/login-form.service';
 
 import { UserService } from 'src/app/shared/services/user-service';
 
@@ -11,7 +12,10 @@ export class NavbarComponent implements OnInit {
   protected username: string = '';
   protected isLogged: boolean = false;
 
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private loginService: LoginFormService
+  ) {}
 
   ngOnInit(): void {
     this.userService.user.subscribe((user) => {

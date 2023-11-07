@@ -6,7 +6,7 @@ import com.cookie.app.model.entity.Pantry;
 import com.cookie.app.model.entity.PantryProduct;
 import com.cookie.app.model.entity.Product;
 import com.cookie.app.model.mapper.PantryProductMapperDTO;
-import com.cookie.app.model.response.PantryProductDTO;
+import com.cookie.app.model.dto.PantryProductDTO;
 import com.cookie.app.repository.PantryProductRepository;
 import com.cookie.app.repository.PantryRepository;
 import com.cookie.app.repository.ProductRepository;
@@ -117,8 +117,8 @@ public class PantryProductServiceImpl implements PantryProductService {
     }
 
     private PantryProduct mapToPantryProduct(PantryProductDTO pantryProductDTO, Pantry pantry) {
-        if (pantryProductDTO.id() != 0) {
-            throw new PantryProductIdSetException("Pantry product id must be zero while inserting it to pantry");
+        if (pantryProductDTO.id() != null) {
+            throw new PantryProductIdSetException("Pantry product id must be not set while inserting it to pantry");
         }
 
         Product product;

@@ -29,10 +29,7 @@ export class HttpRequestInterceptor implements HttpInterceptor {
     let user: User;
 
     if ((jwt = window.sessionStorage.getItem('JwtToken'))) {
-      httpHeaders = httpHeaders.append(
-        this.authorizationHeader,
-        this.bearer + jwt
-      );
+      httpHeaders = httpHeaders.append(this.authorizationHeader, jwt);
     } else if ((userJson = window.sessionStorage.getItem('user'))) {
       user = JSON.parse(userJson);
 

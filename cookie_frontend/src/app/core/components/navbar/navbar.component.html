@@ -13,6 +13,7 @@
       </button>
     </ng-container>
     <ng-container *ngIf="isLogged">
+      <button mat-button routerLink="/pantry">Pantry</button>
       <button mat-button [matMenuTriggerFor]="menu">
         {{ "Hi, " + username }}
       </button>

@@ -16,6 +16,7 @@ import { DashboardModule } from '../modules/dashboard/dashboard.module';
 import { LoginFormModule } from '../modules/login-form/login-form.module';
 import { RegistrationFormModule } from '../modules/registration-form/registration-form.module';
 import { HttpRequestInterceptor } from './interceptors/http-interceptor';
+import { PantryModule } from '../modules/pantry/pantry.module';
 
 @NgModule({
   declarations: [AppComponent, NavbarComponent],
@@ -35,6 +36,7 @@ import { HttpRequestInterceptor } from './interceptors/http-interceptor';
     DashboardModule,
     LoginFormModule,
     RegistrationFormModule,
+    PantryModule,
   ],
   providers: [
     {

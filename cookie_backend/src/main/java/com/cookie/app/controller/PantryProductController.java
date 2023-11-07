@@ -1,17 +1,22 @@
 package com.cookie.app.controller;
 
-import com.cookie.app.model.response.PantryProductDTO;
+import com.cookie.app.model.dto.PantryProductDTO;
 import com.cookie.app.service.PantryProductService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Validated
 @RequiredArgsConstructor
 @RestController
 public class PantryProductController {
@@ -40,7 +45,7 @@ public class PantryProductController {
     @PostMapping(PANTRY_PRODUCTS_URL)
     public ResponseEntity<Void> addProductsToPantry(
             @PathVariable(value = "id") long id,
-            @RequestBody List<PantryProductDTO> products,
+            @NotEmpty(message = "List of products cannot be empty") @RequestBody List<@Valid PantryProductDTO> products,
             Authentication authentication
     ) {
         this.pantryProductService.addProductsToPantry(id, products, authentication.getName());
@@ -51,7 +56,7 @@ public class PantryProductController {
     @DeleteMapping(PANTRY_PRODUCTS_URL)
     public ResponseEntity<Void> deleteProductsFromPantry(
             @PathVariable(value = "id") long id,
-            @RequestBody List<Long> productIds,
+            @NotEmpty(message = "List of ids cannot be empty") @RequestBody List<Long> productIds,
             Authentication authentication
     ) {
         this.pantryProductService.deleteProductsFromPantry(id, productIds, authentication.getName());
