@@ -1,19 +1,36 @@
 <div id="container">
-  <mat-accordion>
-    <mat-expansion-panel hideToggle>
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          {{ pantry.pantryName }}
-        </mat-panel-title>
-        <!-- <mat-panel-description>
-          This is a summary of the content
-        </mat-panel-description> -->
-      </mat-expansion-panel-header>
-      <button mat-button (click)="openChangePantryNameDialog()">
-        Change pantry name
-      </button>
-      <button mat-button color="warn">Delete pantry</button>
-    </mat-expansion-panel>
-  </mat-accordion>
-  <div id="table-container"></div>
+  <ng-container *ngIf="pantry.id && pantry.pantryName">
+    <mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{ pantry.pantryName }}
+          </mat-panel-title>
+          <mat-panel-description>
+            Click to see pantry options
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <button mat-button (click)="openChangePantryNameDialog()">
+          Change pantry name
+        </button>
+        <button mat-button color="warn" (click)="openDeletePantryDialog()">
+          Delete pantry
+        </button>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </ng-container>
+
+  <mat-card>
+    <mat-card-content>
+      <div
+        id="create-pantry-container"
+        *ngIf="!pantry.id && !pantry.pantryName"
+      >
+        <p>You have not a pantry</p>
+        <button mat-raised-button color="primary" routerLink="/pantry/create">
+          Create new pantry
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
 </div>

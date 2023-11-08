@@ -32,7 +32,6 @@ import { PantryModule } from '../modules/pantry/pantry.module';
       headerName: 'X-XSRF-TOKEN',
     }),
 
-    AppRoutingModule,
     DashboardModule,
     LoginFormModule,
     RegistrationFormModule,

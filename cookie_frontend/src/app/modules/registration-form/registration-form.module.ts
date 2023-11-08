@@ -17,6 +17,7 @@ import {
 import { MatRadioModule } from '@angular/material/radio';
 
 import { RegistrationFormComponent } from './registration-form.component';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 @NgModule({
   declarations: [RegistrationFormComponent],
@@ -25,6 +26,8 @@ import { RegistrationFormComponent } from './registration-form.component';
     BrowserAnimationsModule,
     ReactiveFormsModule,
     RouterModule,
+
+    SharedModule,
 
     MatInputModule,
     MatButtonModule,

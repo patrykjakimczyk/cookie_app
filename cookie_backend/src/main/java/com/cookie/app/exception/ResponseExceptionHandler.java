@@ -70,7 +70,13 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(PantryProductIdSetException.class)
     public ResponseEntity<ExceptionMessage> pantryProductIdSetException(PantryProductIdSetException exception, WebRequest webRequest) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ExceptionMessage> validationException(ValidationException exception, WebRequest webRequest) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
     }
 }

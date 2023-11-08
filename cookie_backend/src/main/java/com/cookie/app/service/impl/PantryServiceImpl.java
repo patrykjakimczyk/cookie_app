@@ -3,6 +3,7 @@ package com.cookie.app.service.impl;
 import com.cookie.app.exception.PantryNotFoundException;
 import com.cookie.app.exception.UserHasAssignedPantryException;
 import com.cookie.app.exception.UserWasNotFoundAfterAuthException;
+import com.cookie.app.exception.ValidationException;
 import com.cookie.app.model.RegexConstants;
 import com.cookie.app.model.entity.Pantry;
 import com.cookie.app.model.entity.User;
@@ -81,14 +82,13 @@ public class PantryServiceImpl implements PantryService {
             throw new PantryNotFoundException("User cannot update the pantry because it does not exist");
         }
 
-        if (request.pantryName().matches(RegexConstants.PANTRY_NAME_REGEX)) {
-            pantry.setPantryName(request.pantryName());
-            this.pantryRepository.save(pantry);
-
-            return new GetPantryResponse(pantry.getId(), pantry.getPantryName());
+        if (!request.pantryName().matches(RegexConstants.PANTRY_NAME_REGEX)) {
+            throw new ValidationException("Pantry name is incorrect");
         }
+        pantry.setPantryName(request.pantryName());
+        this.pantryRepository.save(pantry);
 
-        return new GetPantryResponse(null, null);
+        return new GetPantryResponse(pantry.getId(), pantry.getPantryName());
     }
 
     private Pantry getPantryForUser(String userEmail) {

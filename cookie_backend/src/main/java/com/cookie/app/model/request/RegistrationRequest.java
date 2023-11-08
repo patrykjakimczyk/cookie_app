@@ -27,7 +27,7 @@ public record RegistrationRequest(
         )
         String password,
 
-        @NotEmpty(message = "Birth date cannot be empty")
+        @NotNull(message = "Birth date cannot be empty")
         @AgeValidation
         Timestamp birthDate,
 

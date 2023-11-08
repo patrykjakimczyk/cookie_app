@@ -44,7 +44,9 @@ export class LoginFormComponent {
   }
 
   submit() {
+    this.authenticationFailed = false;
     this.form.markAsPristine();
+
     if (this.form.invalid) {
       return;
     }

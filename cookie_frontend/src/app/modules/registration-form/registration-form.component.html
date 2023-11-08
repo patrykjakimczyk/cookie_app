@@ -122,14 +122,12 @@
 </ng-container>
 
 <ng-template #successView>
-  <div class="container success-view">
-    <p class="header">Congrats! <mat-icon>insert_emoticon</mat-icon></p>
-    <span
-      >You have successfully created your account. Now you can begin your Cookie
-      adventure!</span
-    >
-    <button mat-raised-button color="primary" routerLink="/login">
-      Log in
-    </button>
-  </div>
+  <app-success-banner
+    headerText="Congrats! "
+    iconName="insert_emoticon"
+    mainText="You have successfully created your account. Now you can begin your Cookie
+  adventure!"
+    buttonText="Log in"
+    routerLink="/login"
+  ></app-success-banner>
 </ng-template>

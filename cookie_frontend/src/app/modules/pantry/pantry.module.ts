@@ -10,13 +10,27 @@ import { MatInputModule } from '@angular/material/input';
 import { ChangePantryNameComponent } from './change-pantry-name/change-pantry-name.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
+import { DeletePantryComponent } from './delete-pantry/delete-pantry.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { CreatePantryComponent } from './create-pantry/create-pantry.component';
+import { MatIconModule } from '@angular/material/icon';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
-  declarations: [PantryComponent, ChangePantryNameComponent],
+  declarations: [
+    PantryComponent,
+    ChangePantryNameComponent,
+    DeletePantryComponent,
+    CreatePantryComponent,
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
+    RouterModule,
+
+    SharedModule,
 
     MatButtonModule,
     MatDividerModule,
@@ -24,6 +38,8 @@ import { FormsModule } from '@angular/forms';
     MatCardModule,
     MatInputModule,
     MatDialogModule,
+    MatSnackBarModule,
+    MatIconModule,
   ],
   exports: [PantryComponent],
 })

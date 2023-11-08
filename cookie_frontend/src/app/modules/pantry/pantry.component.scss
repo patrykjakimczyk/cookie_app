@@ -1,7 +1,25 @@
 @import "../../../assets/styles/mixins";
 
 #container {
+  @include flex-with-gap($direction: column, $gap: 20px);
+  height: 100%;
+  // height: auto;
+  min-height: calc(100vh - 70px - 60px);
+
   mat-panel-title {
     font-size: 32px;
+  }
+
+  mat-card {
+    min-height: calc(100vh - 70px - 60px);
+    @include flex-with-gap($direction: row, $align: center, $gap: 10px);
+    justify-content: center;
+    // min-height: 100%;
+
+    #create-pantry-container {
+      @include flex-with-gap($direction: row, $align: center, $gap: 10px);
+      justify-content: center;
+      align-items: center;
+    }
   }
 }

@@ -3,7 +3,10 @@ import { Injectable } from '@angular/core';
 
 import { Observable } from 'rxjs';
 import { UpdatePantryRequest } from 'src/app/shared/model/requests/pantry-requests';
-import { GetPantryResponse } from 'src/app/shared/model/responses/pantry-response';
+import {
+  DeletePantryResponse,
+  GetPantryResponse,
+} from 'src/app/shared/model/responses/pantry-response';
 
 @Injectable({ providedIn: 'root' })
 export class PantryService {
@@ -16,6 +19,10 @@ export class PantryService {
     return this.http.get<GetPantryResponse>(this.url + this.pantry_path);
   }
 
+  createUserPantry(request: UpdatePantryRequest): Observable<any> {
+    return this.http.post<any>(this.url + this.pantry_path, request);
+  }
+
   updateUserPantry(
     request: UpdatePantryRequest
   ): Observable<GetPantryResponse> {
@@ -23,5 +30,9 @@ export class PantryService {
       this.url + this.pantry_path,
       request
     );
+  }
+
+  deleteUserPantry(): Observable<DeletePantryResponse> {
+    return this.http.delete<DeletePantryResponse>(this.url + this.pantry_path);
   }
 }

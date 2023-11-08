@@ -50,7 +50,7 @@ public class PantryController {
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(PANTRY_URL)
     public ResponseEntity<GetPantryResponse> updateUserPantry(
-            @Valid @RequestBody UpdatePantryRequest request,
+            @RequestBody UpdatePantryRequest request,
             Authentication authentication
     ) {
         log.info("User with email={} is updating pantry", authentication.getName());

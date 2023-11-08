@@ -32,6 +32,6 @@ public class Pantry {
     @JoinColumn(name = "creator_id", referencedColumnName = "id", unique = true)
     private User user;
 
-    @OneToMany(mappedBy = "pantry")
+    @OneToMany(mappedBy = "pantry", cascade = CascadeType.REMOVE)
     List<PantryProduct> pantryProducts;
 }

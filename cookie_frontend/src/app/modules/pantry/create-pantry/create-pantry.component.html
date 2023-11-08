@@ -1,0 +1,40 @@
+<div
+  id="create-pantry-container"
+  *ngIf="!createPantrySucceded; else successView"
+>
+  <p id="header">Create pantry <mat-icon>create</mat-icon></p>
+
+  <mat-form-field color="accent">
+    <mat-label>Pantry name(3 to 30 characters)</mat-label>
+    <input
+      matInput
+      [(ngModel)]="pantryName"
+      [pattern]="pantryNameRegex"
+      #name="ngModel"
+    />
+    <mat-hint *ngIf="name.valid"
+      >Pantry name can only contain lowercases, capital letters, digits and
+      whitespaces
+    </mat-hint>
+    <mat-error *ngIf="!name.valid">Pantry name is incorrect</mat-error>
+  </mat-form-field>
+
+  <button
+    mat-raised-button
+    color="primary"
+    id="create-button"
+    (click)="createPantry(name)"
+  >
+    Create
+  </button>
+</div>
+
+<ng-template #successView>
+  <app-success-banner
+    headerText="Congrats! "
+    iconName="insert_emoticon"
+    mainText="You have successfully created your pantry. Now you can return tou your pantry"
+    buttonText="Go to pantry"
+    routerLink="/pantry"
+  ></app-success-banner>
+</ng-template>

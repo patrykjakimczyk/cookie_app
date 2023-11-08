@@ -4,6 +4,7 @@ import { DashboardComponent } from '../../modules/dashboard/dashboard.component'
 import { RegistrationFormComponent } from '../../modules/registration-form/registration-form.component';
 import { LoginFormComponent } from '../../modules/login-form/login-form.component';
 import { PantryComponent } from 'src/app/modules/pantry/pantry.component';
+import { CreatePantryComponent } from 'src/app/modules/pantry/create-pantry/create-pantry.component';
 
 const routes: Routes = [
   {
@@ -21,6 +22,10 @@ const routes: Routes = [
   {
     path: 'pantry',
     component: PantryComponent,
+  },
+  {
+    path: 'pantry/create',
+    component: CreatePantryComponent,
   },
 ];
 
