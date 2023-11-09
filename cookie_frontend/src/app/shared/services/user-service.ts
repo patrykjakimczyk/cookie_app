@@ -3,6 +3,7 @@ import { User } from '../model/user';
 import { getCookie, removeCookie } from 'typescript-cookie';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { BehaviorSubject } from 'rxjs';
+import { LoginResponse } from '../model/responses/registration-response';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -23,11 +24,19 @@ export class UserService {
     this.user.next(user);
   }
 
-  saveUserLoginData(jwt: string, username: string) {
+  setUserAssignedPantry(assigned: boolean) {
+    const user = this.user.getValue();
+    user.assignedPantry = assigned;
+    this.saveUser(user);
+  }
+
+  saveUserLoginData(jwt: string, loginResponse: LoginResponse) {
+    console.log(loginResponse);
     const user = this.user.getValue();
     user.auth = true;
-    user.username = username;
+    user.username = loginResponse.username;
     user.password = '';
+    user.assignedPantry = loginResponse.assignedPantry;
     this.extractUserDataFromJwt(user, jwt);
 
     let xsrf = getCookie('XSRF-TOKEN')!;

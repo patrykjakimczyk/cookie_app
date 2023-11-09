@@ -5,6 +5,7 @@ import { RegistrationFormComponent } from '../../modules/registration-form/regis
 import { LoginFormComponent } from '../../modules/login-form/login-form.component';
 import { PantryComponent } from 'src/app/modules/pantry/pantry.component';
 import { CreatePantryComponent } from 'src/app/modules/pantry/create-pantry/create-pantry.component';
+import { AuthGuard } from './auth-guard';
 
 const routes: Routes = [
   {
@@ -21,11 +22,18 @@ const routes: Routes = [
   },
   {
     path: 'pantry',
+    canActivate: [AuthGuard],
     component: PantryComponent,
   },
   {
-    path: 'pantry/create',
-    component: CreatePantryComponent,
+    path: 'pantry',
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: 'create',
+        component: CreatePantryComponent,
+      },
+    ],
   },
 ];
 

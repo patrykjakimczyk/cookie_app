@@ -4,4 +4,5 @@ export type RegistrationResponse = {
 
 export type LoginResponse = {
   username: string;
+  assignedPantry: boolean;
 };

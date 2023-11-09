@@ -5,15 +5,30 @@
   </div>
 
   <div id="header-buttons">
-    <button mat-button routerLink="">Home</button>
     <ng-container *ngIf="!isLogged">
+      <button mat-button routerLink="">Home</button>
       <button mat-button routerLink="/login">Log in</button>
-      <button mat-raised-button color="primary" routerLink="/registration">
+      <button
+        mat-raised-button
+        color="primary"
+        routerLink="/registration"
+        routerLinkActive="active-route"
+      >
         Sign in
       </button>
     </ng-container>
     <ng-container *ngIf="isLogged">
-      <button mat-button routerLink="/pantry">Pantry</button>
+      <button
+        mat-button
+        routerLink=""
+        routerLinkActive="active-route"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        Home
+      </button>
+      <button mat-button routerLink="/pantry" routerLinkActive="active-route">
+        Pantry
+      </button>
       <button mat-button [matMenuTriggerFor]="menu">
         {{ "Hi, " + username }}
       </button>

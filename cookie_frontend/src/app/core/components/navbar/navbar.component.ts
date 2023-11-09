@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { LoginFormService } from 'src/app/modules/login-form/login-form.service';
 
 import { UserService } from 'src/app/shared/services/user-service';
@@ -14,7 +15,8 @@ export class NavbarComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private loginService: LoginFormService
+    private loginService: LoginFormService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -30,6 +32,7 @@ export class NavbarComponent implements OnInit {
   }
 
   logout() {
+    this.router.navigate(['/']);
     this.userService.logoutUser();
   }
 }

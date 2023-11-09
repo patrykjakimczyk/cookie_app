@@ -1,3 +1,3 @@
 package com.cookie.app.model.response;
 
-public record LoginResponse(String username) {}
+public record LoginResponse(String username, boolean assignedPantry) {}

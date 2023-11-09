@@ -28,7 +28,7 @@ public class LoginController {
     @SecurityRequirement(name = "basicAuth")
     @GetMapping(LOGIN_URL)
     public ResponseEntity<LoginResponse> login(Authentication auth) {
-        LoginResponse response = new LoginResponse(this.loginService.getUsername(auth.getName()));
+        LoginResponse response = this.loginService.getLoginInfo(auth.getName());
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

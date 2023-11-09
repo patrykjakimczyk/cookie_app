@@ -32,7 +32,7 @@ class LoginControllerTest {
     void test_loginWithAuthenticatedUser() {
         final Authentication authentication = new UsernamePasswordAuthenticationToken("username", "password", Collections.emptyList());
 
-        Mockito.when(loginService.getUsername(Mockito.anyString())).thenReturn("username");
+        Mockito.when(loginService.getLoginInfo(Mockito.anyString())).thenReturn(new LoginResponse("username", true));
 
         ResponseEntity<LoginResponse> response = this.loginController.login(authentication);
         assertTrue(response.getBody().username().equals("username"));
@@ -43,7 +43,7 @@ class LoginControllerTest {
     void test_loginUserWasNotFoundAfterAuthentication() {
         Authentication authentication = new UsernamePasswordAuthenticationToken("username", "password", Collections.emptyList());
 
-        Mockito.when(loginService.getUsername(Mockito.anyString())).thenThrow(new UserWasNotFoundAfterAuthException("User not found after authorization"));
+        Mockito.when(loginService.getLoginInfo(Mockito.anyString())).thenThrow(new UserWasNotFoundAfterAuthException("User not found after authorization"));
 
         assertThrows(UserWasNotFoundAfterAuthException.class, () -> this.loginController.login(authentication));
     }

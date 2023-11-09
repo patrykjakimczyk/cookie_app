@@ -1,11 +1,12 @@
 package com.cookie.app.service.impl;
 
 import com.cookie.app.exception.UserWasNotFoundAfterAuthException;
+import com.cookie.app.model.entity.Pantry;
 import com.cookie.app.model.entity.User;
 import com.cookie.app.model.request.RegistrationRequest;
+import com.cookie.app.model.response.LoginResponse;
 import com.cookie.app.model.response.RegistrationResponse;
 import com.cookie.app.repository.UserRepository;
-import com.cookie.app.service.LoginService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,7 +15,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -66,12 +66,14 @@ class LoginServiceImplTest {
     @Test
     void test_getUsernameSuccessful() {
         String email = "email";
-        User user = User.builder().username("username").email("email").build();
+        Pantry pantry = new Pantry();
+        User user = User.builder().username("username").email("email").pantry(pantry).build();
 
         Mockito.when(this.userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.of(user));
-        String username = this.loginService.getUsername(email);
+        LoginResponse response = this.loginService.getLoginInfo(email);
 
-        assertEquals("username", username);
+        assertEquals("username", response.username());
+        assertEquals(true, response.assignedPantry());
     }
 
     @Test
@@ -80,6 +82,6 @@ class LoginServiceImplTest {
 
         Mockito.when(this.userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.empty());
 
-        assertThrows(UserWasNotFoundAfterAuthException.class, () -> this.loginService.getUsername(email));
+        assertThrows(UserWasNotFoundAfterAuthException.class, () -> this.loginService.getLoginInfo(email));
     }
 }

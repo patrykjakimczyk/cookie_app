@@ -4,6 +4,7 @@ import com.cookie.app.exception.UserWasNotFoundAfterAuthException;
 import com.cookie.app.model.enums.Role;
 import com.cookie.app.model.request.RegistrationRequest;
 import com.cookie.app.model.entity.User;
+import com.cookie.app.model.response.LoginResponse;
 import com.cookie.app.model.response.RegistrationResponse;
 import com.cookie.app.repository.UserRepository;
 import com.cookie.app.service.LoginService;
@@ -62,12 +63,14 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public String getUsername(String email) {
+    public LoginResponse getLoginInfo(String email) {
         Optional<User> userOptional = this.userRepository.findByEmail(email);
 
         if (userOptional.isEmpty()) {
             throw new UserWasNotFoundAfterAuthException("User was not found in database after authentication");
         }
-        return userOptional.get().getUsername();
+
+        User user = userOptional.get();
+        return new LoginResponse(user.getUsername(), user.getPantry() != null);
     }
 }

@@ -3,6 +3,7 @@
 
 #login-container {
   @include flex-with-gap($direction: column, $gap: 16px);
+  background-color: white;
   margin: auto;
   width: 330px;
   padding: 20px;

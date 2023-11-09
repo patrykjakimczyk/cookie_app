@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ChangePantryNameComponent } from './change-pantry-name/change-pantry-name.component';
 import { DeletePantryComponent } from './delete-pantry/delete-pantry.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { UserService } from 'src/app/shared/services/user-service';
 
 @Component({
   selector: 'app-pantry',
@@ -17,7 +18,8 @@ export class PantryComponent implements OnInit {
   constructor(
     private pantryService: PantryService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
@@ -48,6 +50,7 @@ export class PantryComponent implements OnInit {
           'Okay'
         );
 
+        this.userService.setUserAssignedPantry(false);
         this.pantry = { id: 0, pantryName: '' };
       }
     });
