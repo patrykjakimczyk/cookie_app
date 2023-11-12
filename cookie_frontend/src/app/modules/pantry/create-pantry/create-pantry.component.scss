@@ -3,6 +3,7 @@
 
 #create-pantry-container {
   @include flex-with-gap($direction: column, $align: center, $gap: 16px);
+  background-color: white;
   justify-content: center;
   margin: auto;
   width: 330px;

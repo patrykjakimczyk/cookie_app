@@ -20,17 +20,5 @@
     </mat-accordion>
   </ng-container>
 
-  <mat-card>
-    <mat-card-content>
-      <div
-        id="create-pantry-container"
-        *ngIf="!pantry.id && !pantry.pantryName"
-      >
-        <p>You don't have a pantry yet</p>
-        <button mat-raised-button color="primary" routerLink="/pantry/create">
-          Create new pantry
-        </button>
-      </div>
-    </mat-card-content>
-  </mat-card>
+  <app-pantry-products-list [pantry]="pantry"></app-pantry-products-list>
 </div>

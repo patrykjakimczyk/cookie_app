@@ -1,0 +1,90 @@
+<mat-card>
+  <mat-card-content>
+    <div id="create-pantry-container" *ngIf="!pantry.id && !pantry.pantryName">
+      <p>You don't have a pantry yet</p>
+      <button mat-raised-button color="primary" routerLink="/pantry/create">
+        Create new pantry
+      </button>
+    </div>
+
+    <!-- <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+      <ng-container matColumnDef="select">
+        <th mat-header-cell *matHeaderCellDef>Select</th>
+        <td mat-cell *matCellDef="let element">
+          <mat-checkbox class="example-margin" color="primary"></mat-checkbox>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="productName">
+        <th mat-header-cell *matHeaderCellDef>Product</th>
+        <td mat-cell *matCellDef="let element">{{ element.productName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="category">
+        <th mat-header-cell *matHeaderCellDef>Category</th>
+        <td mat-cell *matCellDef="let element">{{ element.category }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="quantity">
+        <th mat-header-cell *matHeaderCellDef>Quantity</th>
+        <td mat-cell *matCellDef="let element">{{ element.quantity }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="expirationDate">
+        <th mat-header-cell *matHeaderCellDef>Expiration date</th>
+        <td mat-cell *matCellDef="let element">{{ element.expirationDate }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="edit">
+        <th mat-header-cell *matHeaderCellDef>Edit</th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-button><mat-icon>edit</mat-icon></button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table> -->
+    <div id="pantry-products-container" *ngIf="pantry.id && pantry.pantryName">
+      <mat-list role="list">
+        <mat-list-item>
+          <div class="product-container">
+            <span class="example-margin-header">Select</span>
+            <span class="product-name">Product</span>
+            <span class="product-category">Category</span>
+            <span class="product-category">Quantity</span>
+            <span class="expiration-date">Expiration date</span>
+            <span class="expiration-date">Edit</span>
+          </div>
+        </mat-list-item>
+
+        <mat-divider></mat-divider>
+
+        <ng-container *ngFor="let product of products">
+          <mat-list-item>
+            <div class="product-container">
+              <mat-checkbox
+                class="example-margin"
+                color="primary"
+              ></mat-checkbox>
+              <span class="product-name">{{ product.productName }}</span>
+              <span class="product-category">{{ product.category }}</span>
+              <span class="product-category">{{ product.quantity }}</span>
+              <span class="expiration-date">{{ product.expirationDate }}</span>
+              <button mat-button><mat-icon>edit</mat-icon></button>
+            </div>
+          </mat-list-item>
+
+          <mat-divider></mat-divider>
+        </ng-container>
+      </mat-list>
+      <mat-paginator
+        [length]="100"
+        [pageSize]="20"
+        aria-label="Select page"
+        color="accent"
+      >
+      </mat-paginator>
+    </div>
+  </mat-card-content>
+</mat-card>

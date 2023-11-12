@@ -16,6 +16,10 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { CreatePantryComponent } from './create-pantry/create-pantry.component';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
+import { MatListModule } from '@angular/material/list';
+import { PantryProductsListComponent } from './pantry-products-list/pantry-products-list.component';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @NgModule({
   declarations: [
@@ -23,6 +27,7 @@ import { RouterModule } from '@angular/router';
     ChangePantryNameComponent,
     DeletePantryComponent,
     CreatePantryComponent,
+    PantryProductsListComponent,
   ],
   imports: [
     BrowserModule,
@@ -40,6 +45,9 @@ import { RouterModule } from '@angular/router';
     MatDialogModule,
     MatSnackBarModule,
     MatIconModule,
+    MatListModule,
+    MatCheckboxModule,
+    MatPaginatorModule,
   ],
   exports: [PantryComponent],
 })

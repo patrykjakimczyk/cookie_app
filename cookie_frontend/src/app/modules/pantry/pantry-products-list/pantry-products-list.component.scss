@@ -1,0 +1,42 @@
+@import "../../../../assets/styles/mixins";
+
+mat-card {
+  // min-height: calc(100vh - 70px - 60px);
+  @include flex-with-gap($direction: row, $align: center, $gap: 10px);
+  justify-content: center;
+  // min-height: 100%;
+
+  mat-card-content {
+    width: 100%;
+    padding: 0;
+
+    #create-pantry-container {
+      @include flex-with-gap($direction: row, $align: center, $gap: 10px);
+      justify-content: center;
+      align-items: center;
+    }
+
+    #pantry-products-container {
+      width: 100%;
+
+      mat-list {
+        padding: 0;
+
+        mat-list-item {
+          height: 56px;
+
+          .product-container {
+            display: grid;
+            grid-template-columns: 15% repeat(4, 1fr) 5%;
+            grid-template-rows: 1fr;
+            align-items: center;
+          }
+        }
+
+        :hover {
+          background-color: darken($color: white, $amount: 4);
+        }
+      }
+    }
+  }
+}
