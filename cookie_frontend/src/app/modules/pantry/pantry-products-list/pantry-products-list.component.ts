@@ -1,5 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import { GetPantryResponse } from 'src/app/shared/model/responses/pantry-response';
+import { PantryService } from '../pantry.service';
+import { PageEvent } from '@angular/material/paginator';
+import { Subject } from 'rxjs';
 
 export interface PantryProduct {
   productName: string;
@@ -14,19 +17,39 @@ export interface PantryProduct {
   styleUrls: ['./pantry-products-list.component.scss'],
 })
 export class PantryProductsListComponent {
-  @Input() pantry!: GetPantryResponse;
-  products: PantryProduct[] = [
-    {
-      productName: 'Banana',
-      category: 'Fruits',
-      quantity: '3',
-      expirationDate: '23-11-2023',
-    },
-    {
-      productName: 'apple',
-      category: 'Fruits',
-      quantity: '33',
-      expirationDate: '11-11-2023',
-    },
-  ];
+  @Input() pantry$!: Subject<GetPantryResponse>;
+  protected pantry?: GetPantryResponse;
+  public readonly page_size = 20;
+  public page = 0;
+  public totalElements = 0;
+  public currentElementsLength = 0;
+  public products: PantryProduct[] = [];
+
+  constructor(private pantryService: PantryService) {}
+
+  ngOnInit(): void {
+    this.pantry$.subscribe((pantry: GetPantryResponse) => {
+      this.pantry = pantry;
+      this.getPantryProducts();
+    });
+  }
+
+  pageChange(event: PageEvent) {
+    this.page = event.pageIndex;
+    this.getPantryProducts();
+  }
+
+  private getPantryProducts() {
+    if (this.pantry && this.pantry.id && this.pantry.pantryName) {
+      this.pantryService
+        .getPantryProducts(this.pantry.id, this.page)
+        .subscribe({
+          next: (response) => {
+            this.products = response.content;
+            this.totalElements = response.totalElements;
+            this.currentElementsLength = response.content.length;
+          },
+        });
+    }
+  }
 }

@@ -42,9 +42,9 @@ export class HttpRequestInterceptor implements HttpInterceptor {
       }
     }
 
-    // if ((xsrf = sessionStorage.getItem('XSRF-TOKEN'))) {
-    //   httpHeaders = httpHeaders.append('X-XSRF-TOKEN', xsrf);
-    // }
+    if ((xsrf = sessionStorage.getItem('XSRF-TOKEN'))) {
+      httpHeaders = httpHeaders.append('X-XSRF-TOKEN', xsrf);
+    }
 
     httpHeaders = httpHeaders.append('X-Requested-With', 'XMLHttpRequest');
     const request = req.clone({

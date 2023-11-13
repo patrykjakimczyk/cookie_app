@@ -6,6 +6,7 @@ import { ChangePantryNameComponent } from './change-pantry-name/change-pantry-na
 import { DeletePantryComponent } from './delete-pantry/delete-pantry.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserService } from 'src/app/shared/services/user-service';
+import { Subject, config } from 'rxjs';
 
 @Component({
   selector: 'app-pantry',
@@ -14,6 +15,7 @@ import { UserService } from 'src/app/shared/services/user-service';
 })
 export class PantryComponent implements OnInit {
   protected pantry: GetPantryResponse = { id: 0, pantryName: '' };
+  protected pantry$ = new Subject<GetPantryResponse>();
 
   constructor(
     private pantryService: PantryService,
@@ -26,6 +28,7 @@ export class PantryComponent implements OnInit {
     this.pantryService.getUserPantry().subscribe({
       next: (response) => {
         this.pantry = response;
+        this.pantry$.next(response);
       },
     });
   }
@@ -33,11 +36,14 @@ export class PantryComponent implements OnInit {
   openChangePantryNameDialog() {
     const changePantryNameDialog = this.dialog.open(ChangePantryNameComponent);
 
-    changePantryNameDialog.afterClosed().subscribe((newPantryName) => {
-      if (newPantryName) {
-        this.pantry = newPantryName;
-      }
-    });
+    changePantryNameDialog
+      .afterClosed()
+      .subscribe((newPantry: GetPantryResponse) => {
+        if (newPantry) {
+          this.pantry = newPantry;
+          this.pantry$.next(newPantry);
+        }
+      });
   }
 
   openDeletePantryDialog() {
@@ -52,6 +58,7 @@ export class PantryComponent implements OnInit {
 
         this.userService.setUserAssignedPantry(false);
         this.pantry = { id: 0, pantryName: '' };
+        this.pantry$.next(this.pantry);
       }
     });
   }

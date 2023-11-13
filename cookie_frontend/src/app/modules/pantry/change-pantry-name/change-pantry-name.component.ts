@@ -3,6 +3,7 @@ import { NgModel } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
 import { PantryService } from '../pantry.service';
+import { GetPantryResponse } from 'src/app/shared/model/responses/pantry-response';
 
 @Component({
   selector: 'app-change-pantry-name',
@@ -30,7 +31,7 @@ export class ChangePantryNameComponent {
     this.pantryService
       .updateUserPantry({ pantryName: newPantryName.value })
       .subscribe({
-        next: (response) => {
+        next: (response: GetPantryResponse) => {
           this.dialog.close(response);
         },
       });

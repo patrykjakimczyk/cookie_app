@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { Observable } from 'rxjs';
@@ -12,6 +12,7 @@ import {
 export class PantryService {
   private readonly url = 'http://localhost:8081/';
   private readonly pantry_path = 'pantry';
+  private readonly pantry_products_path = '/products';
 
   constructor(private http: HttpClient) {}
 
@@ -34,5 +35,25 @@ export class PantryService {
 
   deleteUserPantry(): Observable<DeletePantryResponse> {
     return this.http.delete<DeletePantryResponse>(this.url + this.pantry_path);
+  }
+
+  getPantryProducts(
+    pantryId: number,
+    page: number,
+    filterValue?: string,
+    sortColName?: string,
+    sortDirection?: string
+  ): Observable<any> {
+    let params = new HttpParams();
+
+    params = params
+      .append('filterValue', filterValue ? filterValue : '')
+      .append('sortColName', sortColName ? sortColName : '')
+      .append('sortDirection', sortDirection ? sortDirection : '');
+
+    return this.http.get<any>(
+      `${this.url}${this.pantry_path}/${pantryId}${this.pantry_products_path}/${page}`,
+      { params: params }
+    );
   }
 }
