@@ -63,7 +63,6 @@ export class LoginFormComponent {
     this.userService.saveUser(user);
     this.loginService.login().subscribe({
       next: (response: any) => {
-        console.log(response.body);
         this.authenticationFailed = false;
         const jwtToken = response.headers.get('Authorization')!;
         this.userService.saveUserLoginData(jwtToken, response.body);

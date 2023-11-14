@@ -1,14 +1,23 @@
-import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
+import {
+  sortDirecitons,
+  sortColumnNames,
+} from './../../../shared/model/enums/sort-enum';
+import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { GetPantryResponse } from 'src/app/shared/model/responses/pantry-response';
 import { PantryService } from '../pantry.service';
 import { PageEvent } from '@angular/material/paginator';
 import { Subject } from 'rxjs';
+import { FormBuilder } from '@angular/forms';
+import { MatCheckbox, MatCheckboxChange } from '@angular/material/checkbox';
 
-export interface PantryProduct {
+export interface PantryProductDTO {
+  id: number;
   productName: string;
   category: string;
   quantity: string;
+  purchaseDate: string;
   expirationDate: string;
+  placement: string;
 }
 
 @Component({
@@ -18,14 +27,24 @@ export interface PantryProduct {
 })
 export class PantryProductsListComponent {
   @Input() pantry$!: Subject<GetPantryResponse>;
+  @ViewChild('removeButton', { read: ElementRef }) removeButton!: ElementRef;
   protected pantry?: GetPantryResponse;
   public readonly page_size = 20;
   public page = 0;
   public totalElements = 0;
   public currentElementsLength = 0;
-  public products: PantryProduct[] = [];
+  public products: PantryProductDTO[] = [];
+  public sortColumnNames = sortColumnNames;
+  public sortDirecitons = sortDirecitons;
+  public productsIdsToRemove: number[] = [];
 
-  constructor(private pantryService: PantryService) {}
+  protected form = this.fb.group({
+    filterValue: [''],
+    sortColName: [''],
+    sortDirection: [''],
+  });
+
+  constructor(private pantryService: PantryService, private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.pantry$.subscribe((pantry: GetPantryResponse) => {
@@ -39,10 +58,56 @@ export class PantryProductsListComponent {
     this.getPantryProducts();
   }
 
-  private getPantryProducts() {
+  checkboxClicked(event: MatCheckboxChange, product: PantryProductDTO) {
+    if (event.checked) {
+      this.productsIdsToRemove.push(product.id);
+    } else {
+      this.productsIdsToRemove = this.productsIdsToRemove.filter(
+        (currentProduct) => currentProduct !== product.id
+      );
+    }
+
+    if (this.productsIdsToRemove.length > 0) {
+      this.removeButton.nativeElement.disabled = false;
+    } else {
+      this.removeButton.nativeElement.disabled = true;
+    }
+  }
+
+  submit() {
+    this.page = 0;
+    this.getPantryProducts();
+  }
+
+  removeProductsFromPantry() {
     if (this.pantry && this.pantry.id && this.pantry.pantryName) {
       this.pantryService
-        .getPantryProducts(this.pantry.id, this.page)
+        .removeProductsFromPantry(this.pantry.id, this.productsIdsToRemove)
+        .subscribe({
+          next: (_) => {
+            this.productsIdsToRemove = [];
+            this.removeButton.nativeElement.disabled = true;
+            this.page = 0;
+            this.getPantryProducts();
+          },
+        });
+    }
+  }
+
+  private getPantryProducts() {
+    const filterValue = this.form.controls.filterValue.value!;
+    const sortColName = this.form.controls.sortColName.value!;
+    const SortDirection = this.form.controls.sortDirection.value!;
+
+    if (this.pantry && this.pantry.id && this.pantry.pantryName) {
+      this.pantryService
+        .getPantryProducts(
+          this.pantry.id,
+          this.page,
+          filterValue,
+          sortColName,
+          SortDirection
+        )
         .subscribe({
           next: (response) => {
             this.products = response.content;

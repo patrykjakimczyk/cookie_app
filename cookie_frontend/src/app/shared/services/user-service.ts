@@ -31,7 +31,6 @@ export class UserService {
   }
 
   saveUserLoginData(jwt: string, loginResponse: LoginResponse) {
-    console.log(loginResponse);
     const user = this.user.getValue();
     user.auth = true;
     user.username = loginResponse.username;

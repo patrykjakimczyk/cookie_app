@@ -2,6 +2,7 @@ package com.cookie.app.service.impl;
 
 import com.cookie.app.exception.PantryNotFoundException;
 import com.cookie.app.exception.PantryProductIdSetException;
+import com.cookie.app.exception.RemovingProductsFromWrongPantryException;
 import com.cookie.app.model.entity.Pantry;
 import com.cookie.app.model.entity.PantryProduct;
 import com.cookie.app.model.entity.Product;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -88,19 +90,39 @@ public class PantryProductServiceImpl implements PantryProductService {
 
     @Transactional
     @Override
-    public void deleteProductsFromPantry(long pantryId, List<Long> productIds, String userEmail) {
+    public void removeProductsFromPantry(long pantryId, List<Long> productIds, String userEmail) {
         Optional<Pantry> pantryOptional = this.pantryRepository.findById(pantryId);
         Pantry pantry = pantryOptional.orElseThrow(() -> {
-            log.info("User with email={} tried to delete products from pantry which does not exist", userEmail);
+            log.info("User with email={} tried to remove products from pantry which does not exist", userEmail);
             return new PantryNotFoundException("Pantry was not found");
         });
 
         if (this.cannotUserAccessPantry(pantry, userEmail)) {
-            log.info("User with email={} tried to delete products not to his pantry", userEmail);
+            log.info("User with email={} tried to remove products not from his pantry", userEmail);
             throw new PantryNotFoundException("Pantry was not found");
         }
 
+        if (this.cannotUserRemoveProducts(pantry.getPantryProducts(), productIds)) {
+            log.info("User with email={} tried to remove products from different pantry", userEmail);
+            throw new RemovingProductsFromWrongPantryException("Cannot remove products from different pantry");
+        }
+
         this.pantryProductRepository.deleteByIdIn(productIds);
+    }
+
+    private boolean cannotUserRemoveProducts(List<PantryProduct> pantryProducts, List<Long> productIds) {
+        List<Long> pantryProductsIds = pantryProducts
+                .stream()
+                .map(PantryProduct::getId)
+                .toList();
+
+        for (Long productIdToRemove : productIds) {
+            if (!pantryProductsIds.contains(productIdToRemove)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private PageRequest createPageRequest(int page, String sortColName, String sortDirection) {

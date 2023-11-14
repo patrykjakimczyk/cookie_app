@@ -9,7 +9,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { ChangePantryNameComponent } from './change-pantry-name/change-pantry-name.component';
 import { MatDialogModule } from '@angular/material/dialog';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DeletePantryComponent } from './delete-pantry/delete-pantry.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -20,6 +20,7 @@ import { MatListModule } from '@angular/material/list';
 import { PantryProductsListComponent } from './pantry-products-list/pantry-products-list.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     BrowserAnimationsModule,
     FormsModule,
     RouterModule,
+    ReactiveFormsModule,
 
     SharedModule,
 
@@ -48,6 +50,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     MatListModule,
     MatCheckboxModule,
     MatPaginatorModule,
+    MatSelectModule,
   ],
   exports: [PantryComponent],
 })

@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { SuccessBannerComponent } from './components/success-banner/success-banner.component';
 import { RouterModule } from '@angular/router';
 import { DateFromStringPipe } from './pipes/date-from-string.pipe';
-import { FirstCapitalPipe } from './pipes/first-capital.pipe';
+import { CategoryNameFormatterPipe } from './pipes/category-name-formatter.pipe';
 
 @NgModule({
   declarations: [SuccessBannerComponent],
@@ -17,11 +17,15 @@ import { FirstCapitalPipe } from './pipes/first-capital.pipe';
     BrowserAnimationsModule,
     RouterModule,
     DateFromStringPipe,
-    FirstCapitalPipe,
+    CategoryNameFormatterPipe,
 
     MatIconModule,
     MatButtonModule,
   ],
-  exports: [SuccessBannerComponent, DateFromStringPipe, FirstCapitalPipe],
+  exports: [
+    SuccessBannerComponent,
+    DateFromStringPipe,
+    CategoryNameFormatterPipe,
+  ],
 })
 export class SharedModule {}

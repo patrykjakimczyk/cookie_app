@@ -1,5 +1,25 @@
 @import "../../../../assets/styles/mixins";
 
+#action-container {
+  @include flex-with-gap($align: center);
+  justify-content: space-between;
+
+  #remove-button {
+    position: relative;
+    bottom: 8px;
+  }
+
+  form {
+    @include flex-with-gap($gap: 15px);
+
+    align-items: center;
+
+    button {
+      @extend #remove-button;
+    }
+  }
+}
+
 mat-card {
   // min-height: calc(100vh - 70px - 60px);
   @include flex-with-gap($direction: row, $align: center, $gap: 10px);
@@ -27,7 +47,7 @@ mat-card {
 
           .product-container {
             display: grid;
-            grid-template-columns: 15% repeat(4, 1fr) 5%;
+            grid-template-columns: 15% repeat(6, 1fr) 5%;
             grid-template-rows: 1fr;
             align-items: center;
           }

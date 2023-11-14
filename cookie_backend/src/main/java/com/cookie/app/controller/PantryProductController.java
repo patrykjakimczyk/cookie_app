@@ -5,7 +5,6 @@ import com.cookie.app.service.PantryProductService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -54,12 +53,12 @@ public class PantryProductController {
 
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping(PANTRY_PRODUCTS_URL)
-    public ResponseEntity<Void> deleteProductsFromPantry(
+    public ResponseEntity<Void> removeProductsFromPantry(
             @PathVariable(value = "id") long id,
             @NotEmpty(message = "List of ids cannot be empty") @RequestBody List<Long> productIds,
             Authentication authentication
     ) {
-        this.pantryProductService.deleteProductsFromPantry(id, productIds, authentication.getName());
+        this.pantryProductService.removeProductsFromPantry(id, productIds, authentication.getName());
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }

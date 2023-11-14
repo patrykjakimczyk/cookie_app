@@ -2,13 +2,13 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   standalone: true,
-  name: 'firstCapital',
+  name: 'categoryNameFormatter',
 })
-export class FirstCapitalPipe implements PipeTransform {
+export class CategoryNameFormatterPipe implements PipeTransform {
   transform(value: string): string {
     return (
       `${value.charAt(0).toUpperCase()}` +
-      `${value.slice(1, value.length).toLowerCase()}`
+      `${value.slice(1, value.length).toLowerCase()}`.replaceAll('_', ' ')
     );
   }
 }

@@ -7,6 +7,7 @@ import {
   DeletePantryResponse,
   GetPantryResponse,
 } from 'src/app/shared/model/responses/pantry-response';
+import { PantryProductDTO } from './pantry-products-list/pantry-products-list.component';
 
 @Injectable({ providedIn: 'root' })
 export class PantryService {
@@ -40,20 +41,30 @@ export class PantryService {
   getPantryProducts(
     pantryId: number,
     page: number,
-    filterValue?: string,
-    sortColName?: string,
-    sortDirection?: string
+    filterValue: string,
+    sortColName: string,
+    sortDirection: string
   ): Observable<any> {
     let params = new HttpParams();
 
     params = params
-      .append('filterValue', filterValue ? filterValue : '')
-      .append('sortColName', sortColName ? sortColName : '')
-      .append('sortDirection', sortDirection ? sortDirection : '');
+      .append('filterValue', filterValue)
+      .append('sortColName', sortColName)
+      .append('sortDirection', sortDirection);
 
     return this.http.get<any>(
       `${this.url}${this.pantry_path}/${pantryId}${this.pantry_products_path}/${page}`,
       { params: params }
+    );
+  }
+
+  removeProductsFromPantry(
+    pantryId: number,
+    productsIds: number[]
+  ): Observable<any> {
+    return this.http.delete<void>(
+      `${this.url}${this.pantry_path}/${pantryId}${this.pantry_products_path}`,
+      { body: productsIds }
     );
   }
 }

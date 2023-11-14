@@ -79,4 +79,10 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
     }
+
+    @ExceptionHandler(RemovingProductsFromWrongPantryException.class)
+    public ResponseEntity<ExceptionMessage> removingFromWrongPantryException(RemovingProductsFromWrongPantryException exception, WebRequest webRequest) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
+    }
 }

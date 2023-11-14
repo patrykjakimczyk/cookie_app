@@ -1,7 +1,43 @@
-<mat-form-field color="accent">
-  <mat-label>Filter</mat-label>
-  <input type="text" matInput />
-</mat-form-field>
+<div id="action-container">
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <mat-form-field color="accent">
+      <mat-label>Filter</mat-label>
+      <input type="text" matInput formControlName="filterValue" />
+    </mat-form-field>
+    <mat-form-field color="accent">
+      <mat-label>Choose column to sort</mat-label>
+      <mat-select formControlName="sortColName">
+        <mat-option
+          *ngFor="let columnName of sortColumnNames"
+          [value]="columnName.value"
+          >{{ columnName.name }}</mat-option
+        >
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field color="accent">
+      <mat-label>Choose sort direction</mat-label>
+      <mat-select formControlName="sortDirection">
+        <mat-option
+          *ngFor="let sortDireciton of sortDirecitons"
+          [value]="sortDireciton.value"
+          >{{ sortDireciton.name }}</mat-option
+        >
+      </mat-select>
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="submit()">Search</button>
+  </form>
+
+  <button
+    mat-raised-button
+    color="warn"
+    disabled
+    id="remove-button"
+    #removeButton
+    (click)="removeProductsFromPantry()"
+  >
+    Remove
+  </button>
+</div>
 
 <mat-card>
   <mat-card-content>
@@ -26,6 +62,8 @@
             <span class="product-name">Product</span>
             <span class="product-category">Category</span>
             <span class="product-category">Quantity</span>
+            <span class="placement">Placement</span>
+            <span class="purchase-date">Purchase date</span>
             <span class="expiration-date">Expiration date</span>
             <span class="expiration-date">Edit</span>
           </div>
@@ -37,14 +75,19 @@
           <mat-list-item>
             <div class="product-container">
               <mat-checkbox
+                (change)="checkboxClicked($event, product)"
                 class="example-margin"
                 color="primary"
               ></mat-checkbox>
               <span class="product-name">{{ product.productName }}</span>
               <span class="product-category">{{
-                product.category | firstCapital
+                product.category | categoryNameFormatter
               }}</span>
               <span class="product-category">{{ product.quantity }}</span>
+              <span class="product-category">{{ product.placement }}</span>
+              <span class="purchase-date">{{
+                product.purchaseDate | dateFromString
+              }}</span>
               <span class="expiration-date">{{
                 product.expirationDate | dateFromString
               }}</span>
