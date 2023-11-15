@@ -61,4 +61,15 @@ public class PantryProductController {
         this.pantryProductService.removeProductsFromPantry(id, productIds, authentication.getName());
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
+
+    @SecurityRequirement(name = "bearerAuth")
+    @DeleteMapping(PANTRY_PRODUCTS_URL)
+    public ResponseEntity<Void> modifyPantryProduct(
+            @PathVariable(value = "id") long id,
+            @Valid @RequestBody PantryProductDTO pantryProductDTO,
+            Authentication authentication
+    ) {
+        this.pantryProductService.modifyPantryProduct(id, pantryProductDTO, authentication.getName());
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
 }

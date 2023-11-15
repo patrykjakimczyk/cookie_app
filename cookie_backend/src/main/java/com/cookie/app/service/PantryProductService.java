@@ -18,4 +18,6 @@ public interface PantryProductService {
 
     void addProductsToPantry(long pantryId, List<PantryProductDTO> productDTOs, String userEmail);
     void removeProductsFromPantry(long pantryId, List<Long> productIds, String userEmail);
+
+    void modifyPantryProduct(long pantryId, PantryProductDTO pantryProduct, String userEmail);
 }
