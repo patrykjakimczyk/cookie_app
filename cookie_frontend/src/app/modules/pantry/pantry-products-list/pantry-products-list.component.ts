@@ -9,6 +9,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { Subject } from 'rxjs';
 import { FormBuilder } from '@angular/forms';
 import { MatCheckbox, MatCheckboxChange } from '@angular/material/checkbox';
+import { CheckboxEvent } from './pantry-product-list-elem/pantry-product-list-elem.component';
 
 export interface PantryProductDTO {
   id: number;
@@ -58,12 +59,12 @@ export class PantryProductsListComponent {
     this.getPantryProducts();
   }
 
-  checkboxClicked(event: MatCheckboxChange, product: PantryProductDTO) {
+  checkboxClicked(event: CheckboxEvent) {
     if (event.checked) {
-      this.productsIdsToRemove.push(product.id);
+      this.productsIdsToRemove.push(event.pantryProductId);
     } else {
       this.productsIdsToRemove = this.productsIdsToRemove.filter(
-        (currentProduct) => currentProduct !== product.id
+        (currentProduct) => currentProduct !== event.pantryProductId
       );
     }
 

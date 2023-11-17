@@ -63,10 +63,10 @@ public class PantryProductController {
     }
 
     @SecurityRequirement(name = "bearerAuth")
-    @DeleteMapping(PANTRY_PRODUCTS_URL)
+    @PatchMapping(PANTRY_PRODUCTS_URL)
     public ResponseEntity<Void> modifyPantryProduct(
             @PathVariable(value = "id") long id,
-            @Valid @RequestBody PantryProductDTO pantryProductDTO,
+             @RequestBody PantryProductDTO pantryProductDTO,
             Authentication authentication
     ) {
         this.pantryProductService.modifyPantryProduct(id, pantryProductDTO, authentication.getName());

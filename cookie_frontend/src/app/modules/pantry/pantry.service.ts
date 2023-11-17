@@ -67,4 +67,14 @@ export class PantryService {
       { body: productsIds }
     );
   }
+
+  modifyPantryProduct(
+    pantryId: number,
+    product: PantryProductDTO
+  ): Observable<any> {
+    return this.http.patch<void>(
+      `${this.url}${this.pantry_path}/${pantryId}${this.pantry_products_path}`,
+      product
+    );
+  }
 }

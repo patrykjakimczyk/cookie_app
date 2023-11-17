@@ -72,30 +72,11 @@
         <mat-divider></mat-divider>
 
         <ng-container *ngFor="let product of products">
-          <mat-list-item>
-            <div class="product-container">
-              <mat-checkbox
-                (change)="checkboxClicked($event, product)"
-                class="example-margin"
-                color="primary"
-              ></mat-checkbox>
-              <span class="product-name">{{ product.productName }}</span>
-              <span class="product-category">{{
-                product.category | categoryNameFormatter
-              }}</span>
-              <span class="product-category">{{ product.quantity }}</span>
-              <span class="product-category">{{ product.placement }}</span>
-              <span class="purchase-date">{{
-                product.purchaseDate | dateFromString
-              }}</span>
-              <span class="expiration-date">{{
-                product.expirationDate | dateFromString
-              }}</span>
-              <button mat-button><mat-icon>edit</mat-icon></button>
-            </div>
-          </mat-list-item>
-
-          <mat-divider></mat-divider>
+          <app-pantry-product-list-elem
+            [pantry]="pantry"
+            [pantryProduct]="product"
+            (checkboxEvent)="checkboxClicked($event)"
+          ></app-pantry-product-list-elem>
         </ng-container>
       </mat-list>
       <mat-paginator

@@ -17,7 +17,7 @@ public record PantryProductDTO(
         Category category,
         Timestamp purchaseDate,
         Timestamp expirationDate,
-        @NotEmpty(message = "Quantity cannot be empty")
+//        @NotEmpty(message = "Quantity cannot be empty")
         String quantity,
         String placement
 ) {}

@@ -1,0 +1,22 @@
+mat-list-item {
+  height: 56px;
+
+  &.edit-product {
+    height: auto;
+  }
+
+  &:hover {
+    background-color: darken($color: white, $amount: 4);
+  }
+
+  .product-container {
+    display: grid;
+    grid-template-columns: 15% repeat(6, 1fr) 5%;
+    grid-template-rows: 1fr;
+    align-items: center;
+  }
+
+  #save-button {
+    background-color: rgb(50, 165, 50);
+  }
+}

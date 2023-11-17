@@ -21,6 +21,9 @@ import { PantryProductsListComponent } from './pantry-products-list/pantry-produ
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
+import { PantryProductListElemComponent } from './pantry-products-list/pantry-product-list-elem/pantry-product-list-elem.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @NgModule({
   declarations: [
@@ -29,6 +32,7 @@ import { MatSelectModule } from '@angular/material/select';
     DeletePantryComponent,
     CreatePantryComponent,
     PantryProductsListComponent,
+    PantryProductListElemComponent,
   ],
   imports: [
     BrowserModule,
@@ -51,6 +55,8 @@ import { MatSelectModule } from '@angular/material/select';
     MatCheckboxModule,
     MatPaginatorModule,
     MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
   ],
   exports: [PantryComponent],
 })
