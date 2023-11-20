@@ -2,7 +2,10 @@ package com.cookie.app.model.dto;
 
 import com.cookie.app.model.RegexConstants;
 import com.cookie.app.model.enums.Category;
+import com.cookie.app.model.enums.Unit;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 import java.sql.Timestamp;
@@ -17,7 +20,9 @@ public record PantryProductDTO(
         Category category,
         Timestamp purchaseDate,
         Timestamp expirationDate,
-//        @NotEmpty(message = "Quantity cannot be empty")
-        String quantity,
+        @NotNull(message = "Quantity must be a positive number")
+        @Min(value = 1, message = "Quantity must be equal or greater than 1")
+        int quantity,
+        Unit unit,
         String placement
 ) {}

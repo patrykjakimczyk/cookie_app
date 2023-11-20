@@ -1,5 +1,6 @@
 package com.cookie.app.model.entity;
 
+import com.cookie.app.model.enums.Unit;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,8 +40,11 @@ public class PantryProduct {
     @Column(name = "expiration_date")
     private Timestamp expirationDate;
 
-    @Column
-    private String quantity;
+    @Column(nullable = false)
+    private int quantity;
+
+    @Column(nullable = false)
+    private Unit unit;
 
     @Column
     private String placement;

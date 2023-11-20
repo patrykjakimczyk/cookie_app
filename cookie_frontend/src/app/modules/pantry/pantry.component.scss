@@ -3,11 +3,8 @@
 #container {
   @include flex-with-gap($direction: column, $gap: 20px);
   height: 100%;
-  width: 80%;
-  max-width: 1400px;
+  max-width: 1920px;
   margin: auto;
-  // height: auto;
-  min-height: calc(100vh - 70px - 60px);
 
   mat-panel-title {
     font-size: 32px;

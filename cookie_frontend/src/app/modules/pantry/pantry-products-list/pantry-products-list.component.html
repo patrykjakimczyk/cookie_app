@@ -1,4 +1,4 @@
-<div id="action-container">
+<div id="action-container" *ngIf="pantry && pantry.id && pantry.pantryName">
   <form [formGroup]="form" (ngSubmit)="submit()">
     <mat-form-field color="accent">
       <mat-label>Filter</mat-label>
@@ -24,7 +24,14 @@
         >
       </mat-select>
     </mat-form-field>
-    <button mat-raised-button color="primary" (click)="submit()">Search</button>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="submit()"
+      [disabled]="!totalElements"
+    >
+      Search
+    </button>
   </form>
 
   <button
@@ -55,38 +62,44 @@
       id="pantry-products-container"
       *ngIf="pantry && pantry.id && pantry.pantryName"
     >
-      <mat-list role="list">
-        <mat-list-item>
-          <div class="product-container">
-            <span class="example-margin-header">Select</span>
-            <span class="product-name">Product</span>
-            <span class="product-category">Category</span>
-            <span class="product-category">Quantity</span>
-            <span class="placement">Placement</span>
-            <span class="purchase-date">Purchase date</span>
-            <span class="expiration-date">Expiration date</span>
-            <span class="expiration-date">Edit</span>
-          </div>
-        </mat-list-item>
+      <div id="empty-pantry-container" *ngIf="!totalElements">
+        <p>You pantry is currently empty</p>
+      </div>
 
-        <mat-divider></mat-divider>
+      <ng-container *ngIf="totalElements">
+        <mat-list role="list">
+          <mat-list-item>
+            <div class="product-container">
+              <span>Select</span>
+              <span>Product</span>
+              <span>Category</span>
+              <span>Quantity</span>
+              <span>Placement</span>
+              <span>Expiration date</span>
+              <span>Options</span>
+            </div>
+          </mat-list-item>
 
-        <ng-container *ngFor="let product of products">
-          <app-pantry-product-list-elem
-            [pantry]="pantry"
-            [pantryProduct]="product"
-            (checkboxEvent)="checkboxClicked($event)"
-          ></app-pantry-product-list-elem>
-        </ng-container>
-      </mat-list>
-      <mat-paginator
-        [length]="totalElements"
-        [pageSize]="page_size"
-        aria-label="Select page"
-        (page)="pageChange($event)"
-        color="accent"
-      >
-      </mat-paginator>
+          <mat-divider></mat-divider>
+
+          <ng-container *ngFor="let product of products">
+            <app-pantry-product-list-elem
+              [pantry]="pantry"
+              [pantryProduct]="product"
+              (checkboxEvent)="checkboxClicked($event)"
+              (reloadEvent)="reloadPage()"
+            ></app-pantry-product-list-elem>
+          </ng-container>
+        </mat-list>
+        <mat-paginator
+          [length]="totalElements"
+          [pageSize]="page_size"
+          aria-label="Select page"
+          (page)="pageChange($event)"
+          color="accent"
+        >
+        </mat-paginator>
+      </ng-container>
     </div>
   </mat-card-content>
 </mat-card>

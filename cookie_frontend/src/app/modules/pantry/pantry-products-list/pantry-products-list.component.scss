@@ -21,10 +21,8 @@
 }
 
 mat-card {
-  // min-height: calc(100vh - 70px - 60px);
   @include flex-with-gap($direction: row, $align: center, $gap: 10px);
   justify-content: center;
-  // min-height: 100%;
 
   mat-card-content {
     width: 100%;
@@ -34,6 +32,11 @@ mat-card {
       @include flex-with-gap($direction: row, $align: center, $gap: 10px);
       justify-content: center;
       align-items: center;
+      height: calc(100vh - 70px - 60px);
+    }
+
+    #empty-pantry-container {
+      text-align: center;
     }
 
     #pantry-products-container {
@@ -47,9 +50,17 @@ mat-card {
 
           .product-container {
             display: grid;
-            grid-template-columns: 15% repeat(6, 1fr) 5%;
+            grid-template-columns:
+              5% 20% repeat(4, minmax(calc((100% - 30%) / 4), 1fr))
+              5%;
             grid-template-rows: 1fr;
             align-items: center;
+          }
+
+          * {
+            padding: 5px;
+            text-wrap: wrap;
+            word-wrap: break-word;
           }
         }
 

@@ -30,4 +30,15 @@ public class Product {
     @Column(name = "category", nullable = false)
     @Enumerated(EnumType.STRING)
     private Category category;
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Product)) {
+            return false;
+        }
+
+        Product product = (Product) o;
+
+        return this.getProductName().equals(product.getProductName()) && this.getCategory() == product.getCategory();
+    }
 }

@@ -8,14 +8,15 @@ import { PantryService } from '../pantry.service';
 import { PageEvent } from '@angular/material/paginator';
 import { Subject } from 'rxjs';
 import { FormBuilder } from '@angular/forms';
-import { MatCheckbox, MatCheckboxChange } from '@angular/material/checkbox';
 import { CheckboxEvent } from './pantry-product-list-elem/pantry-product-list-elem.component';
+import { Unit } from 'src/app/shared/model/enums/unit.enum';
 
 export interface PantryProductDTO {
   id: number;
   productName: string;
   category: string;
-  quantity: string;
+  quantity: number;
+  unit: Unit;
   purchaseDate: string;
   expirationDate: string;
   placement: string;
@@ -56,6 +57,11 @@ export class PantryProductsListComponent {
 
   pageChange(event: PageEvent) {
     this.page = event.pageIndex;
+    this.getPantryProducts();
+  }
+
+  reloadPage() {
+    this.page = 0;
     this.getPantryProducts();
   }
 

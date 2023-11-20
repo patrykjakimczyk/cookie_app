@@ -1,13 +1,13 @@
 export enum SortColumnName {
-  PURCHASE_DATE = 'purchase_date',
-  EXPIRATION_DATE = 'expiration_date',
+  QUANTITY = 'quantity',
   PLACEMENT = 'placement',
+  EXPIRATION_DATE = 'expiration_date',
 }
 
 export const sortColumnNames = [
-  { name: 'Purchase date', value: SortColumnName.PURCHASE_DATE },
-  { name: 'Expiration date', value: SortColumnName.EXPIRATION_DATE },
+  { name: 'Quantity', value: SortColumnName.QUANTITY },
   { name: 'Placement', value: SortColumnName.PLACEMENT },
+  { name: 'Expiration date', value: SortColumnName.EXPIRATION_DATE },
 ];
 
 export enum SortDirection {

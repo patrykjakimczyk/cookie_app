@@ -24,6 +24,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { PantryProductListElemComponent } from './pantry-products-list/pantry-product-list-elem/pantry-product-list-elem.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { EditPantryProductComponent } from './pantry-products-list/pantry-product-list-elem/edit-pantry-product/edit-pantry-product.component';
+import { MatMenuModule } from '@angular/material/menu';
+import { PantryProductDetailsComponent } from './pantry-products-list/pantry-product-list-elem/pantry-product-details/pantry-product-details.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +36,8 @@ import { MatNativeDateModule } from '@angular/material/core';
     CreatePantryComponent,
     PantryProductsListComponent,
     PantryProductListElemComponent,
+    EditPantryProductComponent,
+    PantryProductDetailsComponent,
   ],
   imports: [
     BrowserModule,
@@ -57,6 +62,7 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatMenuModule,
   ],
   exports: [PantryComponent],
 })

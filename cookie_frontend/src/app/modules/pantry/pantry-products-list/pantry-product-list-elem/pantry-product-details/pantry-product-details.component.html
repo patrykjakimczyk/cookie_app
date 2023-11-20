@@ -1,0 +1,38 @@
+<h1 mat-dialog-title>Product details</h1>
+<div mat-dialog-content id="content">
+  <div class="details-container">
+    <span>Product name: </span>
+    <span>{{ pantryProduct.productName }}</span>
+  </div>
+
+  <div class="details-container">
+    <span>Category: </span>
+    <span>{{ pantryProduct.category | enumPrintFormatter }}</span>
+  </div>
+
+  <div class="details-container">
+    <span>Quantity: </span>
+    <span>{{ pantryProduct.quantity }}</span>
+  </div>
+
+  <div class="details-container">
+    <span>Placement: </span>
+    <span>{{ pantryProduct.placement | valueOrDash }}</span>
+  </div>
+
+  <div class="details-container">
+    <span>Purchase date: </span>
+    <span>{{ pantryProduct.purchaseDate | dateFromString | valueOrDash }}</span>
+  </div>
+
+  <div class="details-container">
+    <span>Expiration date: </span>
+    <span>{{
+      pantryProduct.expirationDate | dateFromString | valueOrDash
+    }}</span>
+  </div>
+</div>
+
+<div mat-dialog-actions id="action-buttons">
+  <button mat-button (click)="close()">Close</button>
+</div>

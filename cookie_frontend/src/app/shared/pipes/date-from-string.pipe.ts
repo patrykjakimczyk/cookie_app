@@ -6,6 +6,10 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class DateFromStringPipe implements PipeTransform {
   transform(value: string): string {
+    if (!value) {
+      return '';
+    }
+
     const date = new Date(value);
 
     return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;

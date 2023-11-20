@@ -1,0 +1,21 @@
+@import "../../../../../../assets/styles/mixins";
+
+h1 {
+  font-size: 24px !important;
+}
+
+#content {
+  @include flex-with-gap($direction: column, $align: flex-start, $gap: 10px);
+  width: 400px;
+  padding-bottom: 0;
+
+  .details-container {
+    span:nth-child(2) {
+      color: black;
+    }
+  }
+}
+
+#action-buttons {
+  float: right;
+}

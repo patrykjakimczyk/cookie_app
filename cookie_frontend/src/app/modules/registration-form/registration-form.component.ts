@@ -89,7 +89,6 @@ export class RegistrationFormComponent {
 
     this.service.register(this.form.value).subscribe({
       next: (response) => {
-        console.log(response);
         if (response.length === 0) {
           this.registrationSucceded = true;
           return;

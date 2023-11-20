@@ -1,85 +1,30 @@
-<mat-list-item [ngClass]="{ 'edit-product': editClicked }">
-  <ng-container *ngIf="!editClicked">
-    <div class="product-container">
-      <mat-checkbox
-        (change)="checkboxClicked($event)"
-        class="example-margin"
-        color="primary"
-      ></mat-checkbox>
-      <span class="product-name">{{ pantryProduct.productName }}</span>
-      <span class="product-category">{{
-        pantryProduct.category | categoryNameFormatter
-      }}</span>
-      <span class="product-category">{{ pantryProduct.quantity }}</span>
-      <span class="product-category">{{ pantryProduct.placement }}</span>
-      <span class="purchase-date">{{
-        pantryProduct.purchaseDate | dateFromString
-      }}</span>
-      <span class="expiration-date">{{
-        pantryProduct.expirationDate | dateFromString
-      }}</span>
-      <button mat-button (click)="editButtonClicked()">
-        <mat-icon>edit</mat-icon>
-      </button>
-    </div>
-  </ng-container>
+<mat-list-item>
+  <div class="product-container">
+    <mat-checkbox
+      (change)="checkboxClicked($event)"
+      color="primary"
+    ></mat-checkbox>
 
-  <ng-container *ngIf="editClicked">
-    <div class="product-container">
-      <mat-checkbox
-        (change)="checkboxClicked($event)"
-        class="example-margin"
-        color="primary"
-      ></mat-checkbox>
-      <span class="product-name">{{ pantryProduct.productName }}</span>
-      <span class="product-category">{{
-        pantryProduct.category | categoryNameFormatter
-      }}</span>
-      <mat-form-field color="accent">
-        <mat-label>Quantity</mat-label>
-        <input type="text" matInput [(ngModel)]="pantryProduct.quantity" />
-      </mat-form-field>
-      <mat-form-field color="accent">
-        <mat-label>Placement</mat-label>
-        <input type="text" matInput [(ngModel)]="pantryProduct.placement" />
-      </mat-form-field>
-      <mat-form-field color="accent">
-        <mat-label>Choose purchase date</mat-label>
-        <input
-          matInput
-          [matDatepicker]="purchaseDatePicker"
-          [(ngModel)]="pantryProduct.purchaseDate"
-          required
-          disabled
-        />
-        <mat-hint>MM/DD/YYYY</mat-hint>
-        <mat-datepicker-toggle
-          matIconSuffix
-          [for]="purchaseDatePicker"
-        ></mat-datepicker-toggle>
-        <mat-datepicker #purchaseDatePicker disabled="false"></mat-datepicker>
-      </mat-form-field>
-      <mat-form-field color="accent">
-        <mat-label>Choose expiration date</mat-label>
-        <input
-          matInput
-          [matDatepicker]="expDatePicker"
-          [(ngModel)]="pantryProduct.expirationDate"
-          required
-          disabled
-        />
-        <mat-hint>MM/DD/YYYY</mat-hint>
-        <mat-datepicker-toggle
-          matIconSuffix
-          [for]="expDatePicker"
-        ></mat-datepicker-toggle>
-        <mat-datepicker #expDatePicker disabled="false"></mat-datepicker>
-      </mat-form-field>
-      <button mat-button (click)="saveButtonClicked()" id="save-button">
-        <mat-icon>check</mat-icon>
+    <span>{{ pantryProduct.productName }}</span>
+    <span>{{ pantryProduct.category | enumPrintFormatter }}</span>
+    <span>{{ pantryProduct.quantity }} {{ printShortUnit() }}</span>
+    <span>{{ pantryProduct.placement | valueOrDash }}</span>
+    <span>{{
+      pantryProduct.expirationDate | dateFromString | valueOrDash
+    }}</span>
+
+    <button mat-button [matMenuTriggerFor]="menu">
+      <mat-icon>more_horiz</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="showDetailsButtonClicked()">
+        Show details
       </button>
-    </div>
-  </ng-container>
+      <button mat-menu-item (click)="editButtonClicked()">
+        Edit pantry product
+      </button>
+    </mat-menu>
+  </div>
 </mat-list-item>
 
 <mat-divider></mat-divider>

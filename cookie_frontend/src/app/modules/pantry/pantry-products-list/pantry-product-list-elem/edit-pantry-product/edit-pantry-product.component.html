@@ -1,0 +1,82 @@
+<h1 mat-dialog-title>Edit pantry product</h1>
+<div mat-dialog-content id="content">
+  <form [formGroup]="editForm" (ngSubmit)="submit()">
+    <div class="details-container">
+      <span>Product name: </span>
+      <span>{{ pantryProduct.productName }}</span>
+    </div>
+
+    <div class="details-container">
+      <span>Category: </span>
+      <span>{{ pantryProduct.category | enumPrintFormatter }}</span>
+    </div>
+
+    <mat-form-field color="accent">
+      <mat-label>Quantity</mat-label>
+      <input type="text" matInput formControlName="quantity" required />
+      <mat-hint>Must be greater than 0</mat-hint>
+      <mat-error *ngIf="!editForm.controls['quantity'].valid">
+        {{ getErrorMessage(editForm.controls["quantity"]) }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field color="accent">
+      <mat-label>Choose units</mat-label>
+      <mat-select formControlName="unit" required>
+        <mat-option *ngFor="let unit of units" [value]="unit">{{
+          unit | enumPrintFormatter
+        }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field color="accent">
+      <mat-label>Choose purchase date</mat-label>
+      <input
+        matInput
+        [matDatepicker]="purchaseDatePicker"
+        formControlName="purchaseDate"
+      />
+      <mat-hint>MM/DD/YYYY</mat-hint>
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="purchaseDatePicker"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #purchaseDatePicker></mat-datepicker>
+      <mat-error *ngIf="!editForm.controls['purchaseDate'].valid">
+        {{ getErrorMessage(editForm.controls["purchaseDate"]) }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field color="accent">
+      <mat-label>Choose expiration date</mat-label>
+      <input
+        matInput
+        [matDatepicker]="expDatePicker"
+        formControlName="expirationDate"
+      />
+      <mat-hint>MM/DD/YYYY</mat-hint>
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="expDatePicker"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #expDatePicker></mat-datepicker>
+      <mat-error *ngIf="!editForm.controls['expirationDate'].valid">
+        {{ getErrorMessage(editForm.controls["expirationDate"]) }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field color="accent">
+      <mat-label>Placement</mat-label>
+      <input type="text" matInput formControlName="placement" />
+    </mat-form-field>
+
+    <button type="submit" style="display: none"></button>
+  </form>
+</div>
+
+<div mat-dialog-actions id="action-buttons">
+  <button mat-button (click)="close()">Close</button>
+  <button mat-raised-button cdkFocusInitial color="primary" (click)="submit()">
+    Save pantry product
+  </button>
+</div>

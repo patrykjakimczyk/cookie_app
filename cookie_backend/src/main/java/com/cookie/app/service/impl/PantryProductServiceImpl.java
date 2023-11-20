@@ -155,16 +155,16 @@ public class PantryProductServiceImpl implements PantryProductService {
 
     private PageRequest createPageRequest(int page, String sortColName, String sortDirection) {
         PageRequest pageRequest = PageRequest.of(page, PRODUCTS_PAGE_SIZE);
-        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        Sort sort = Sort.by(Sort.Order.desc("id"));
 
         if (StringUtil.isBlank(sortColName) && StringUtil.isBlank(sortDirection)) {
             return pageRequest.withSort(sort);
         }
 
         if (sortDirection.equals("DESC")) {
-            sort = sort.and((Sort.by(Sort.Direction.DESC, sortColName)));
+            sort = sort.and(Sort.by(Sort.Order.desc(sortColName)));
         } else {
-            sort = sort.and((Sort.by(Sort.Direction.ASC, sortColName)));
+            sort = sort.and(Sort.by(Sort.Order.asc(sortColName)));
         }
 
         return pageRequest.withSort(sort);
@@ -189,16 +189,69 @@ public class PantryProductServiceImpl implements PantryProductService {
             product.setCategory(pantryProductDTO.category());
         }
 
+        // if product id > 0 then there is a chance that we have that product in our pantry, because product is in database
+        PantryProduct foundPantryProduct = this.findPantryProductInPantry(pantry, pantryProductDTO, product);
+
+        if (foundPantryProduct != null) {
+            return foundPantryProduct;
+        }
+
         return PantryProduct
                 .builder()
-                .id(pantryProductDTO.id())
                 .pantry(pantry)
                 .product(product)
                 .purchaseDate(pantryProductDTO.purchaseDate())
                 .expirationDate(pantryProductDTO.expirationDate())
                 .quantity(pantryProductDTO.quantity())
+                .unit(pantryProductDTO.unit())
                 .placement(pantryProductDTO.placement())
                 .build();
+    }
+
+    private PantryProduct findPantryProductInPantry(Pantry pantry, PantryProductDTO pantryProductDTO, Product product) {
+        if (product.getId() > 0) {
+            List<PantryProduct> pantryProducts = pantry.getPantryProducts();
+
+            if (pantryProductDTO.id() != null) {
+                for (PantryProduct pantryProduct : pantryProducts) {
+                    if (pantryProduct.getId() == pantryProductDTO.id()) {
+                        // if pantry products ids are equal, we are modifying pantry product
+                        pantryProduct.setQuantity(pantryProductDTO.quantity());
+                        pantryProduct.setUnit(pantryProductDTO.unit());
+                        pantryProduct.setPlacement(pantryProductDTO.placement());
+                        pantryProduct.setPurchaseDate(pantryProductDTO.purchaseDate());
+                        pantryProduct.setExpirationDate(pantryProductDTO.expirationDate());
+
+                        return pantryProduct;
+                    } else if (this.arePantryProductsEqual(pantryProduct, pantryProductDTO, product)) {
+                        this.pantryProductRepository.deleteById(pantryProductDTO.id());
+                        // if pantry products ids are not equal, we are adding exact same pantry product, so we need to sum quantities
+                        pantryProduct.setQuantity(pantryProduct.getQuantity() + pantryProductDTO.quantity());
+
+                        return pantryProduct;
+                    }
+                }
+            } else {
+                for (PantryProduct pantryProduct : pantryProducts) {
+                    if (this.arePantryProductsEqual(pantryProduct, pantryProductDTO, product)) {
+                        // if pantry products are equal, we are adding exact same pantry product, so we need to sum quantities
+                        pantryProduct.setQuantity(pantryProduct.getQuantity() + pantryProductDTO.quantity());
+
+                        return pantryProduct;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private boolean arePantryProductsEqual(PantryProduct pantryProduct, PantryProductDTO pantryProductDTO, Product product) {
+        return pantryProduct.getProduct().equals(product) &&
+                pantryProduct.getUnit() == pantryProductDTO.unit() &&
+                pantryProduct.getPurchaseDate().equals(pantryProductDTO.purchaseDate()) &&
+                pantryProduct.getExpirationDate().equals(pantryProductDTO.expirationDate()) &&
+                pantryProduct.getPlacement().equals(pantryProductDTO.placement());
     }
 
     private boolean cannotUserAccessPantry(Pantry pantry, String userEmail) {
