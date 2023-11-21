@@ -27,6 +27,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { EditPantryProductComponent } from './pantry-products-list/pantry-product-list-elem/edit-pantry-product/edit-pantry-product.component';
 import { MatMenuModule } from '@angular/material/menu';
 import { PantryProductDetailsComponent } from './pantry-products-list/pantry-product-list-elem/pantry-product-details/pantry-product-details.component';
+import { ReservePantryProductComponent } from './pantry-products-list/pantry-product-list-elem/reserve-pantry-product/reserve-pantry-product.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { PantryProductDetailsComponent } from './pantry-products-list/pantry-pro
     PantryProductListElemComponent,
     EditPantryProductComponent,
     PantryProductDetailsComponent,
+    ReservePantryProductComponent,
   ],
   imports: [
     BrowserModule,

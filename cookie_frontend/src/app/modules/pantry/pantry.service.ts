@@ -77,4 +77,15 @@ export class PantryService {
       product
     );
   }
+
+  reservePantryProduct(
+    pantryId: number,
+    pantryProductId: number,
+    reserved: number
+  ): Observable<PantryProductDTO> {
+    return this.http.patch<PantryProductDTO>(
+      `${this.url}${this.pantry_path}/${pantryId}${this.pantry_products_path}/${pantryProductId}`,
+      { reserved: reserved }
+    );
+  }
 }

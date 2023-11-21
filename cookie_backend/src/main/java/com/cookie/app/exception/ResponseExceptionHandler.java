@@ -68,8 +68,8 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                 .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
     }
 
-    @ExceptionHandler(PantryProductIdSetException.class)
-    public ResponseEntity<ExceptionMessage> pantryProductIdSetException(PantryProductIdSetException exception, WebRequest webRequest) {
+    @ExceptionHandler(InvalidPantryProductDataException.class)
+    public ResponseEntity<ExceptionMessage> pantryProductIdSetException(InvalidPantryProductDataException exception, WebRequest webRequest) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
     }
@@ -83,6 +83,12 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ModifyingProductsFromWrongPantryException.class)
     public ResponseEntity<ExceptionMessage> removingFromWrongPantryException(ModifyingProductsFromWrongPantryException exception, WebRequest webRequest) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
+    }
+
+    @ExceptionHandler(PantryProductNotFoundException.class)
+    public ResponseEntity<ExceptionMessage> pantryProductNotFoundException(PantryProductNotFoundException exception, WebRequest webRequest) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
     }
 }

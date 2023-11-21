@@ -1,3 +1,5 @@
+@import "../../../../../assets/styles/colors";
+
 mat-list-item {
   min-height: 56px;
 
@@ -7,7 +9,7 @@ mat-list-item {
 
   .product-container {
     display: grid;
-    grid-template-columns: 5% 20% repeat(4, minmax(calc((100% - 30%) / 4), 1fr)) 5%;
+    grid-template-columns: 5% 20% repeat(5, minmax(calc((100% - 30%) / 5), 1fr)) 5%;
     align-items: center;
 
     * {
@@ -20,4 +22,8 @@ mat-list-item {
   #save-button {
     background-color: rgb(50, 165, 50);
   }
+}
+
+.reserved {
+  background-color: lighten($color: $main-color, $amount: 30);
 }

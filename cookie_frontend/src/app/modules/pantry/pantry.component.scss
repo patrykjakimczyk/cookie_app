@@ -10,6 +10,11 @@
     font-size: 32px;
   }
 
+  .mat-expansion-panel-header-description {
+    display: flex;
+    justify-content: flex-end;
+  }
+
   mat-accordion {
     margin-bottom: 32px;
   }

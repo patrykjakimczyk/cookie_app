@@ -4,7 +4,6 @@ import com.cookie.app.model.RegexConstants;
 import com.cookie.app.model.enums.Category;
 import com.cookie.app.model.enums.Unit;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
@@ -24,5 +23,8 @@ public record PantryProductDTO(
         @Min(value = 1, message = "Quantity must be equal or greater than 1")
         int quantity,
         Unit unit,
+        @NotNull(message = "Reserved count must be present")
+        @Min(value = 0, message = "Reserved count must be equal or greater than 0")
+        int reserved,
         String placement
 ) {}

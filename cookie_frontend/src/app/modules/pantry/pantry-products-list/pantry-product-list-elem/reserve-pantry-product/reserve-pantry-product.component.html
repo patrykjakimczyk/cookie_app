@@ -1,0 +1,42 @@
+<h1 mat-dialog-title>{{ printReserveType() }} product</h1>
+<div mat-dialog-content id="content">
+  <form [formGroup]="reserveForm" (ngSubmit)="submit()">
+    <div class="details-container">
+      <span>Product name: </span>
+      <span>{{ pantryProduct.productName }}</span>
+    </div>
+
+    <div class="details-container">
+      <span>Category: </span>
+      <span>{{ pantryProduct.category | enumPrintFormatter }}</span>
+    </div>
+
+    <div class="details-container">
+      <span>Current quantity: </span>
+      <span>{{ pantryProduct.quantity }}</span>
+    </div>
+
+    <div class="details-container">
+      <span>Current reserved quantity: </span>
+      <span>{{ pantryProduct.reserved }}</span>
+    </div>
+
+    <mat-form-field color="accent">
+      <mat-label>{{ printReserveType() }}</mat-label>
+      <input type="text" matInput formControlName="reserved" required />
+      <mat-hint>Must be greater than 0</mat-hint>
+      <mat-error *ngIf="!reserveForm.controls['reserved'].valid">
+        {{ getErrorMessage(reserveForm.controls["reserved"]) }}
+      </mat-error>
+    </mat-form-field>
+
+    <button type="submit" style="display: none"></button>
+  </form>
+</div>
+
+<div mat-dialog-actions id="action-buttons">
+  <button mat-button (click)="close()">Close</button>
+  <button mat-raised-button cdkFocusInitial color="primary" (click)="submit()">
+    {{ printReserveType() }}
+  </button>
+</div>

@@ -19,6 +19,7 @@ public class PantryProductMapperDTO implements Function<PantryProduct, PantryPro
                 pantryProduct.getExpirationDate(),
                 pantryProduct.getQuantity(),
                 pantryProduct.getUnit(),
+                pantryProduct.getReserved(),
                 pantryProduct.getPlacement()
         );
     }

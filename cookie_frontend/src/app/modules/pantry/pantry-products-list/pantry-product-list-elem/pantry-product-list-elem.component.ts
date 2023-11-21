@@ -7,6 +7,10 @@ import { Unit, units } from 'src/app/shared/model/enums/unit.enum';
 import { MatDialog } from '@angular/material/dialog';
 import { EditPantryProductComponent } from './edit-pantry-product/edit-pantry-product.component';
 import { PantryProductDetailsComponent } from './pantry-product-details/pantry-product-details.component';
+import {
+  ReservePantryProductComponent,
+  ReserveType,
+} from './reserve-pantry-product/reserve-pantry-product.component';
 
 export type CheckboxEvent = {
   checked: boolean;
@@ -27,13 +31,13 @@ export class PantryProductListElemComponent {
 
   constructor(private dialog: MatDialog) {}
 
-  printShortUnit() {
+  printShortUnit(quantity: number) {
     if (this.pantryProduct.unit === Unit.GRAMS) {
       return 'g';
     } else if (this.pantryProduct.unit === Unit.MILLILITERS) {
       return 'ml';
     } else {
-      return this.pantryProduct.quantity > 1 ? 'pcs' : 'pc';
+      return quantity > 1 ? 'pcs' : 'pc';
     }
   }
 
@@ -41,6 +45,20 @@ export class PantryProductListElemComponent {
     this.checkboxEvent.emit({
       checked: event.checked,
       pantryProductId: this.pantryProduct.id,
+    });
+  }
+
+  reserveButtonClicked() {
+    this.showReservePopup('RESERVE');
+  }
+
+  unreserveButtonClicked() {
+    this.showReservePopup('UNRESERVE');
+  }
+
+  showDetailsButtonClicked() {
+    this.dialog.open(PantryProductDetailsComponent, {
+      data: this.pantryProduct,
     });
   }
 
@@ -52,9 +70,19 @@ export class PantryProductListElemComponent {
     editDialog.afterClosed().subscribe(() => this.reloadEvent.emit(true));
   }
 
-  showDetailsButtonClicked() {
-    this.dialog.open(PantryProductDetailsComponent, {
-      data: this.pantryProduct,
+  private showReservePopup(reserveType: ReserveType) {
+    const reserveDialog = this.dialog.open(ReservePantryProductComponent, {
+      data: {
+        pantryId: this.pantry.id,
+        pantryProduct: this.pantryProduct,
+        reserve: reserveType,
+      },
+    });
+
+    reserveDialog.afterClosed().subscribe((result: PantryProductDTO) => {
+      if (result) {
+        this.pantryProduct = result;
+      }
     });
   }
 }

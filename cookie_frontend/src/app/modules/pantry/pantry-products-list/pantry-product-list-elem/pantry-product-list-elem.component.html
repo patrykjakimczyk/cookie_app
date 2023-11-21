@@ -1,4 +1,4 @@
-<mat-list-item>
+<mat-list-item [ngClass]="{ reserved: pantryProduct.reserved }">
   <div class="product-container">
     <mat-checkbox
       (change)="checkboxClicked($event)"
@@ -7,7 +7,14 @@
 
     <span>{{ pantryProduct.productName }}</span>
     <span>{{ pantryProduct.category | enumPrintFormatter }}</span>
-    <span>{{ pantryProduct.quantity }} {{ printShortUnit() }}</span>
+    <span
+      >{{ pantryProduct.quantity }}
+      {{ printShortUnit(pantryProduct.quantity) }}</span
+    >
+    <span
+      >{{ pantryProduct.reserved }}
+      {{ printShortUnit(pantryProduct.reserved) }}</span
+    >
     <span>{{ pantryProduct.placement | valueOrDash }}</span>
     <span>{{
       pantryProduct.expirationDate | dateFromString | valueOrDash
@@ -17,6 +24,12 @@
       <mat-icon>more_horiz</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="reserveButtonClicked()">
+        Reserve product
+      </button>
+      <button mat-menu-item (click)="unreserveButtonClicked()">
+        Unreserve product
+      </button>
       <button mat-menu-item (click)="showDetailsButtonClicked()">
         Show details
       </button>

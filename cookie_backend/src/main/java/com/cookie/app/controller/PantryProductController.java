@@ -1,10 +1,12 @@
 package com.cookie.app.controller;
 
 import com.cookie.app.model.dto.PantryProductDTO;
+import com.cookie.app.model.request.ReservePantryProductRequest;
 import com.cookie.app.service.PantryProductService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,7 @@ import java.util.List;
 public class PantryProductController {
     private static final String PANTRY_PRODUCTS_URL = "/pantry/{id}/products";
     private static final String GET_PANTRY_PRODUCTS_URL = "/pantry/{id}/products/{page}";
+    private static final String PANTRY_PRODUCT_URL = "/pantry/{id}/products/{productId}";
     private final PantryProductService pantryProductService;
 
     @SecurityRequirement(name = "bearerAuth")
@@ -66,10 +69,24 @@ public class PantryProductController {
     @PatchMapping(PANTRY_PRODUCTS_URL)
     public ResponseEntity<Void> modifyPantryProduct(
             @PathVariable(value = "id") long id,
-             @RequestBody PantryProductDTO pantryProductDTO,
+            @RequestBody PantryProductDTO pantryProductDTO,
             Authentication authentication
     ) {
         this.pantryProductService.modifyPantryProduct(id, pantryProductDTO, authentication.getName());
         return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    @SecurityRequirement(name = "bearerAuth")
+    @PatchMapping(PANTRY_PRODUCT_URL)
+    public ResponseEntity<PantryProductDTO> reservePantryProduct(
+            @PathVariable(value = "id") long id,
+            @PathVariable(value = "productId") long pantryProductId,
+            @Valid @RequestBody ReservePantryProductRequest reserveBody,
+            Authentication authentication
+    ) {
+        PantryProductDTO response = this.pantryProductService
+                .reservePantryProduct(id, pantryProductId, reserveBody.reserved(), authentication.getName());
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

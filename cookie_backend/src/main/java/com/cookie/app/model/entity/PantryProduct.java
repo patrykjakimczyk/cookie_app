@@ -46,6 +46,9 @@ public class PantryProduct {
     @Column(nullable = false)
     private Unit unit;
 
+    @Column(nullable = false)
+    private int reserved;
+
     @Column
     private String placement;
 }

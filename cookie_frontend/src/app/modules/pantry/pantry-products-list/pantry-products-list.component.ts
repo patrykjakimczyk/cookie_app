@@ -17,6 +17,7 @@ export interface PantryProductDTO {
   category: string;
   quantity: number;
   unit: Unit;
+  reserved: number;
   purchaseDate: string;
   expirationDate: string;
   placement: string;
