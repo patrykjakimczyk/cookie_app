@@ -1,61 +1,68 @@
 @import "../../../../assets/styles/mixins";
 
-#action-container {
-  @include flex-with-gap($align: center);
-  justify-content: space-between;
-
-  #remove-button {
-    position: relative;
-    bottom: 8px;
-  }
-
-  form {
-    @include flex-with-gap($gap: 15px);
-
-    align-items: center;
-
-    button {
-      @extend #remove-button;
-    }
-  }
+.transform-button-position {
+  position: relative;
+  bottom: 8px;
 }
 
-mat-card {
-  @include flex-with-gap($direction: row, $align: center, $gap: 10px);
-  justify-content: center;
+#container {
+  @include flex-with-gap($direction: column, $gap: 20px);
 
-  mat-card-content {
-    width: 100%;
-    padding: 0;
+  .action-container {
+    @include flex-with-gap($align: center);
+    justify-content: space-between;
 
-    #create-pantry-container {
-      @include flex-with-gap($direction: row, $align: center, $gap: 10px);
-      justify-content: center;
+    #remove-button {
+      @extend .transform-button-position;
+    }
+
+    #add-remove-buttons-container {
+      @include flex-with-gap($gap: 8px);
+
+      #show-add-products-button {
+        @extend .transform-button-position;
+      }
+    }
+
+    form {
+      @include flex-with-gap($gap: 15px);
+
       align-items: center;
-      height: calc(100vh - 70px - 60px);
-    }
 
-    #empty-pantry-container {
-      text-align: center;
+      button {
+        @extend .transform-button-position;
+      }
     }
+  }
 
-    #pantry-products-container {
+  mat-panel-title {
+    font-size: 26px;
+  }
+
+  mat-card {
+    @include flex-with-gap($direction: row, $align: center, $gap: 10px);
+    justify-content: center;
+
+    mat-card-content {
       width: 100%;
+      padding: 0;
+
+      #create-pantry-container {
+        @include flex-with-gap($direction: row, $align: center, $gap: 10px);
+        justify-content: center;
+        align-items: center;
+        padding: 30px;
+      }
+
+      .empty-product-list-container {
+        text-align: center;
+      }
 
       mat-list {
         padding: 0;
 
         mat-list-item {
           height: 56px;
-
-          .product-container {
-            display: grid;
-            grid-template-columns:
-              5% 20% repeat(5, minmax(calc((100% - 30%) / 5), 1fr))
-              5%;
-            grid-template-rows: 1fr;
-            align-items: center;
-          }
 
           * {
             padding: 5px;
@@ -68,6 +75,43 @@ mat-card {
           background-color: darken($color: white, $amount: 4);
         }
       }
+
+      #pantry-products-container {
+        width: 100%;
+
+        .product-container {
+          display: grid;
+          grid-template-columns:
+            5% 20% repeat(5, minmax(calc((100% - 30%) / 5), 1fr))
+            5%;
+          grid-template-rows: 1fr;
+          align-items: center;
+        }
+      }
+
+      #add-products-container {
+        width: 100%;
+
+        .product-container {
+          display: grid;
+          grid-template-columns:
+            5% 20% repeat(4, minmax(calc((100% - 30%) / 4), 1fr))
+            5%;
+          grid-template-rows: 1fr;
+          align-items: center;
+        }
+      }
     }
+  }
+}
+
+#add-products-action-buttons {
+  margin-top: 10px;
+  @include flex-with-gap($direction: row, $align: center, $gap: 10px);
+  justify-content: space-between;
+
+  #close-send-buttons-container {
+    @include flex-with-gap($gap: 8px);
+    justify-content: flex-end;
   }
 }

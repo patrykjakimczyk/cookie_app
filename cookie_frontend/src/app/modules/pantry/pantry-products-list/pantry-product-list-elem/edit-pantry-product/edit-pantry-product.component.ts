@@ -14,6 +14,7 @@ import {
 export type EditPantryInfo = {
   pantryId: number;
   pantryProduct: PantryProductDTO;
+  isPantryProduct: boolean;
 };
 
 @Component({
@@ -24,6 +25,7 @@ export type EditPantryInfo = {
 export class EditPantryProductComponent implements OnInit {
   private pantryId!: number;
   protected pantryProduct!: PantryProductDTO;
+  protected isPantryProduct!: boolean;
   protected units = units;
   protected editForm!: FormGroup;
 
@@ -37,6 +39,8 @@ export class EditPantryProductComponent implements OnInit {
   ngOnInit(): void {
     this.pantryId = this.data.pantryId;
     this.pantryProduct = this.data.pantryProduct;
+    console.log(this.pantryProduct);
+    this.isPantryProduct = this.data.isPantryProduct;
     this.editForm = this.fb.group({
       id: [this.pantryProduct.id],
       productName: [this.pantryProduct.productName],
@@ -75,12 +79,16 @@ export class EditPantryProductComponent implements OnInit {
       return;
     }
 
-    this.pantryService
-      .modifyPantryProduct(this.pantryId, this.editForm.value)
-      .subscribe({
-        next: (_) => {
-          this.dialog.close();
-        },
-      });
+    if (this.isPantryProduct) {
+      this.pantryService
+        .modifyPantryProduct(this.pantryId, this.editForm.value)
+        .subscribe({
+          next: (_) => {
+            this.dialog.close();
+          },
+        });
+    } else {
+      this.dialog.close(this.editForm.value);
+    }
   }
 }

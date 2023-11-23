@@ -25,6 +25,7 @@ export type CheckboxEvent = {
 export class PantryProductListElemComponent {
   @Input() pantry!: GetPantryResponse;
   @Input() pantryProduct!: PantryProductDTO;
+  @Input() isPantryProduct!: boolean;
   @Output() checkboxEvent = new EventEmitter<CheckboxEvent>();
   @Output() reloadEvent = new EventEmitter<boolean>();
   protected units = units;
@@ -44,7 +45,7 @@ export class PantryProductListElemComponent {
   checkboxClicked(event: MatCheckboxChange) {
     this.checkboxEvent.emit({
       checked: event.checked,
-      pantryProductId: this.pantryProduct.id,
+      pantryProductId: this.pantryProduct.id!,
     });
   }
 
@@ -64,10 +65,19 @@ export class PantryProductListElemComponent {
 
   editButtonClicked() {
     const editDialog = this.dialog.open(EditPantryProductComponent, {
-      data: { pantryId: this.pantry.id, pantryProduct: this.pantryProduct },
+      data: {
+        pantryId: this.pantry.id,
+        pantryProduct: this.pantryProduct,
+        isPantryProduct: this.isPantryProduct,
+      },
     });
 
-    editDialog.afterClosed().subscribe(() => this.reloadEvent.emit(true));
+    editDialog
+      .afterClosed()
+      .subscribe((modifiedPantryProduct: PantryProductDTO) => {
+        this.reloadEvent.emit(true);
+        this.pantryProduct = modifiedPantryProduct;
+      });
   }
 
   private showReservePopup(reserveType: ReserveType) {

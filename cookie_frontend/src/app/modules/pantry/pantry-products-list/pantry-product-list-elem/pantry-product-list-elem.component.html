@@ -1,5 +1,8 @@
 <mat-list-item [ngClass]="{ reserved: pantryProduct.reserved }">
-  <div class="product-container">
+  <div
+    class="product-container"
+    [ngClass]="{ 'product-to-add-container': !isPantryProduct }"
+  >
     <mat-checkbox
       (change)="checkboxClicked($event)"
       color="primary"
@@ -11,7 +14,7 @@
       >{{ pantryProduct.quantity }}
       {{ printShortUnit(pantryProduct.quantity) }}</span
     >
-    <span
+    <span *ngIf="isPantryProduct"
       >{{ pantryProduct.reserved }}
       {{ printShortUnit(pantryProduct.reserved) }}</span
     >
@@ -24,10 +27,18 @@
       <mat-icon>more_horiz</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item (click)="reserveButtonClicked()">
+      <button
+        mat-menu-item
+        *ngIf="isPantryProduct"
+        (click)="reserveButtonClicked()"
+      >
         Reserve product
       </button>
-      <button mat-menu-item (click)="unreserveButtonClicked()">
+      <button
+        mat-menu-item
+        *ngIf="isPantryProduct"
+        (click)="unreserveButtonClicked()"
+      >
         Unreserve product
       </button>
       <button mat-menu-item (click)="showDetailsButtonClicked()">

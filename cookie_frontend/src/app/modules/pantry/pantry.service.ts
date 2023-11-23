@@ -58,6 +58,16 @@ export class PantryService {
     );
   }
 
+  addProductsToPantry(
+    pantryId: number,
+    pantryProducts: PantryProductDTO[]
+  ): Observable<any> {
+    return this.http.post<any>(
+      `${this.url}${this.pantry_path}/${pantryId}${this.pantry_products_path}`,
+      pantryProducts
+    );
+  }
+
   removeProductsFromPantry(
     pantryId: number,
     productsIds: number[]

@@ -62,22 +62,19 @@ public class PantryProductServiceImpl implements PantryProductService {
     public void addProductsToPantry(long pantryId, List<PantryProductDTO> productDTOs, String userEmail) {
         Pantry pantry = this.getPantryForUser(pantryId, userEmail, "add");
 
-        List<PantryProduct> products = productDTOs
-                .stream()
-                .map(productDTO -> {
-                    if (productDTO.id() != null) {
-                        throw new InvalidPantryProductDataException(
-                                "Pantry product id must be not set while inserting it to pantry");
-                    } else if (productDTO.reserved() > 0) {
-                        throw new InvalidPantryProductDataException(
-                                "Pantry product reserved quantity must be 0 while inserting it to pantry");
-                    }
+        productDTOs.forEach(productDTO -> {
+            if (productDTO.id() != null) {
+                throw new InvalidPantryProductDataException(
+                        "Pantry product id must be not set while inserting it to pantry");
+            } else if (productDTO.reserved() > 0) {
+                throw new InvalidPantryProductDataException(
+                        "Pantry product reserved quantity must be 0 while inserting it to pantry");
+            }
 
-                    return this.mapToPantryProduct(productDTO, pantry);
-                })
-                .toList();
-
-        this.pantryProductRepository.saveAll(products);
+            PantryProduct pantryProduct = mapToPantryProduct(productDTO, pantry);
+            pantry.getPantryProducts().add(pantryProduct);
+            this.pantryProductRepository.save(pantryProduct);
+        });
     }
 
     @Transactional
@@ -197,11 +194,13 @@ public class PantryProductServiceImpl implements PantryProductService {
                 product = new Product();
                 product.setProductName(pantryProductDTO.productName());
                 product.setCategory(pantryProductDTO.category());
+                this.productRepository.save(product);
             }
         } else {
             product = new Product();
             product.setProductName(pantryProductDTO.productName());
             product.setCategory(pantryProductDTO.category());
+            this.productRepository.save(product);
         }
 
         PantryProduct foundPantryProduct = null;

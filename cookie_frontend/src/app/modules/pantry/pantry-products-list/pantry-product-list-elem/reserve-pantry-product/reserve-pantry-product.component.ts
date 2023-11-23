@@ -98,7 +98,11 @@ export class ReservePantryProductComponent {
     console.log(reservedCount);
 
     this.pantryService
-      .reservePantryProduct(this.pantryId, this.pantryProduct.id, reservedCount)
+      .reservePantryProduct(
+        this.pantryId,
+        this.pantryProduct.id!,
+        reservedCount
+      )
       .subscribe({
         next: (response: PantryProductDTO) => {
           this.dialog.close(response);
