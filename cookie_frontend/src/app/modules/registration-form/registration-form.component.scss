@@ -41,7 +41,11 @@
       width: 100%;
 
       mat-hint {
-        font-size: 10px;
+        font-size: 12px;
+      }
+
+      mat-error {
+        font-size: 12px;
       }
     }
 

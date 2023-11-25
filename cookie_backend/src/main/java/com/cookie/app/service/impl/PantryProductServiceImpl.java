@@ -167,18 +167,20 @@ public class PantryProductServiceImpl implements PantryProductService {
 
     private PageRequest createPageRequest(int page, String sortColName, String sortDirection) {
         PageRequest pageRequest = PageRequest.of(page, PRODUCTS_PAGE_SIZE);
-        Sort sort = Sort.by(Sort.Order.desc("id"));
+        Sort idSort = Sort.by(Sort.Direction.DESC, "id");
+        Sort sort = null;
 
         if (StringUtil.isBlank(sortColName) && StringUtil.isBlank(sortDirection)) {
-            return pageRequest.withSort(sort);
+            return pageRequest.withSort(idSort);
         }
 
         if (sortDirection.equals("DESC")) {
-            sort = sort.and(Sort.by(Sort.Order.desc(sortColName)));
+            sort = Sort.by(Sort.Direction.DESC, sortColName);
         } else {
-            sort = sort.and(Sort.by(Sort.Order.asc(sortColName)));
+            sort = Sort.by(Sort.Direction.ASC, sortColName);
         }
 
+        sort = sort.and(idSort);
         return pageRequest.withSort(sort);
     }
 

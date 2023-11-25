@@ -1,11 +1,8 @@
 package com.cookie.app.model.request;
 
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 public record ReservePantryProductRequest(
-        @Min(
-                value = 1,
-                message = "Invalid email provided"
-        )
+        @NotNull(message = "Reserved quantity must be present")
         int reserved
 ) {}

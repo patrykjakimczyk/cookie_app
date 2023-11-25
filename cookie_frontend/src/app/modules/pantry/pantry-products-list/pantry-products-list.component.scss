@@ -8,9 +8,14 @@
 #container {
   @include flex-with-gap($direction: column, $gap: 20px);
 
+  mat-panel-title {
+    font-size: 26px;
+  }
+
   .action-container {
     @include flex-with-gap($align: center);
     justify-content: space-between;
+    padding-bottom: 12px;
 
     #remove-button {
       @extend .transform-button-position;
@@ -26,8 +31,16 @@
 
     form {
       @include flex-with-gap($gap: 15px);
-
+      flex-wrap: wrap;
       align-items: center;
+
+      mat-hint {
+        font-size: 12px;
+      }
+
+      mat-error {
+        font-size: 12px;
+      }
 
       button {
         @extend .transform-button-position;
@@ -35,8 +48,8 @@
     }
   }
 
-  mat-panel-title {
-    font-size: 26px;
+  .first-action-container {
+    padding-bottom: 28px;
   }
 
   mat-card {
@@ -52,6 +65,32 @@
         justify-content: center;
         align-items: center;
         padding: 30px;
+      }
+
+      #add-products-container {
+        width: 100%;
+
+        .product-container {
+          display: grid;
+          grid-template-columns:
+            5% 20% repeat(4, minmax(calc((100% - 30%) / 4), 1fr))
+            5%;
+          grid-template-rows: 1fr;
+          align-items: center;
+        }
+      }
+
+      #pantry-products-container {
+        width: 100%;
+
+        .product-container {
+          display: grid;
+          grid-template-columns:
+            5% 20% repeat(5, minmax(calc((100% - 30%) / 5), 1fr))
+            5%;
+          grid-template-rows: 1fr;
+          align-items: center;
+        }
       }
 
       .empty-product-list-container {
@@ -75,43 +114,17 @@
           background-color: darken($color: white, $amount: 4);
         }
       }
-
-      #pantry-products-container {
-        width: 100%;
-
-        .product-container {
-          display: grid;
-          grid-template-columns:
-            5% 20% repeat(5, minmax(calc((100% - 30%) / 5), 1fr))
-            5%;
-          grid-template-rows: 1fr;
-          align-items: center;
-        }
-      }
-
-      #add-products-container {
-        width: 100%;
-
-        .product-container {
-          display: grid;
-          grid-template-columns:
-            5% 20% repeat(4, minmax(calc((100% - 30%) / 4), 1fr))
-            5%;
-          grid-template-rows: 1fr;
-          align-items: center;
-        }
-      }
     }
   }
-}
 
-#add-products-action-buttons {
-  margin-top: 10px;
-  @include flex-with-gap($direction: row, $align: center, $gap: 10px);
-  justify-content: space-between;
+  #add-products-action-buttons {
+    margin-top: 10px;
+    @include flex-with-gap($direction: row, $align: center, $gap: 10px);
+    justify-content: space-between;
 
-  #close-send-buttons-container {
-    @include flex-with-gap($gap: 8px);
-    justify-content: flex-end;
+    #close-send-buttons-container {
+      @include flex-with-gap($gap: 8px);
+      justify-content: flex-end;
+    }
   }
 }

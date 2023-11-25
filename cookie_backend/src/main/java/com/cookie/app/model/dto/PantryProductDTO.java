@@ -20,7 +20,7 @@ public record PantryProductDTO(
         Timestamp purchaseDate,
         Timestamp expirationDate,
         @NotNull(message = "Quantity must be a positive number")
-        @Min(value = 1, message = "Quantity must be equal or greater than 1")
+        @Min(value = 0, message = "Quantity must be equal or greater than 1")
         int quantity,
         Unit unit,
         @NotNull(message = "Reserved count must be present")

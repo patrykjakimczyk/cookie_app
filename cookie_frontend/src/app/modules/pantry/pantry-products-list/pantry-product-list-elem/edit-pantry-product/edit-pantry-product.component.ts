@@ -39,7 +39,6 @@ export class EditPantryProductComponent implements OnInit {
   ngOnInit(): void {
     this.pantryId = this.data.pantryId;
     this.pantryProduct = this.data.pantryProduct;
-    console.log(this.pantryProduct);
     this.isPantryProduct = this.data.isPantryProduct;
     this.editForm = this.fb.group({
       id: [this.pantryProduct.id],
@@ -50,6 +49,7 @@ export class EditPantryProductComponent implements OnInit {
         [Validators.required, Validators.min(1), Validators.pattern('[0-9]+')],
       ],
       unit: [this.pantryProduct.unit],
+      reserved: [this.pantryProduct.reserved],
       purchaseDate: [this.pantryProduct.purchaseDate],
       expirationDate: [this.pantryProduct.expirationDate],
       placement: [this.pantryProduct.placement],

@@ -1,4 +1,5 @@
 <div id="container">
+  <!-- displaying with block because rendering with ngif triggers bug with mat date pickers styling -->
   <mat-accordion
     [ngStyle]="{
       display:
@@ -13,18 +14,25 @@
       </mat-expansion-panel-header>
 
       <div
-        class="action-container"
+        class="action-container first-action-container"
         *ngIf="pantry && pantry.id && pantry.pantryName"
       >
         <form [formGroup]="addForm" (ngSubmit)="submitAddForm()">
           <mat-form-field color="accent">
-            <mat-label>Product name</mat-label>
+            <mat-label>Product name (3 to 50 characters) </mat-label>
             <input
               type="text"
               matInput
               formControlName="productName"
               required
             />
+            <mat-hint
+              >Product name can only contains letters, digits, dots, commas and
+              whitespaces</mat-hint
+            >
+            <mat-error *ngIf="!addForm.controls.productName.valid">{{
+              getErrorMessage(addForm.controls.productName)
+            }}</mat-error>
           </mat-form-field>
           <mat-form-field color="accent">
             <mat-label>Category</mat-label>
@@ -35,10 +43,18 @@
                 >{{ category | enumPrintFormatter }}</mat-option
               >
             </mat-select>
+            <mat-hint>Pick category of your product</mat-hint>
+            <mat-error *ngIf="!addForm.controls.category.valid">
+              {{ getErrorMessage(addForm.controls.category) }}
+            </mat-error>
           </mat-form-field>
           <mat-form-field color="accent">
             <mat-label>Quantity</mat-label>
             <input type="text" matInput formControlName="quantity" required />
+            <mat-hint>Quantity must be at least 1</mat-hint>
+            <mat-error *ngIf="!addForm.controls.quantity.valid">{{
+              getErrorMessage(addForm.controls.quantity)
+            }}</mat-error>
           </mat-form-field>
           <mat-form-field color="accent">
             <mat-label>Unit</mat-label>
@@ -47,6 +63,10 @@
                 unit | enumPrintFormatter
               }}</mat-option>
             </mat-select>
+            <mat-hint>Pick unit for your product</mat-hint>
+            <mat-error *ngIf="!addForm.controls.unit.valid">
+              {{ getErrorMessage(addForm.controls.unit) }}
+            </mat-error>
           </mat-form-field>
           <mat-form-field color="accent">
             <mat-label>Purchase date</mat-label>
@@ -56,6 +76,9 @@
               formControlName="purchaseDate"
             />
             <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-error *ngIf="!addForm.controls.purchaseDate.valid">
+              {{ getErrorMessage(addForm.controls.purchaseDate) }}
+            </mat-error>
             <mat-datepicker-toggle
               matIconSuffix
               [for]="purchaseDatePicker"
@@ -70,6 +93,9 @@
               formControlName="expirationDate"
             />
             <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-error *ngIf="!addForm.controls.expirationDate.valid">
+              {{ getErrorMessage(addForm.controls.expirationDate) }}
+            </mat-error>
             <mat-datepicker-toggle
               matIconSuffix
               [for]="expirationDatePicker"
@@ -79,13 +105,14 @@
           <mat-form-field color="accent">
             <mat-label>Placement</mat-label>
             <input type="text" matInput formControlName="placement" />
+            <mat-hint
+              >Placement can only contains letters and whitespaces</mat-hint
+            >
+            <mat-error *ngIf="!addForm.controls.placement.valid">
+              {{ getErrorMessage(addForm.controls.placement) }}
+            </mat-error>
           </mat-form-field>
-          <button
-            mat-raised-button
-            color="primary"
-            (click)="submitAddForm()"
-            [disabled]="!addForm.valid"
-          >
+          <button mat-raised-button color="primary" (click)="submitAddForm()">
             Add
           </button>
         </form>

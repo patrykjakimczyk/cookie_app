@@ -7,8 +7,8 @@ import { Component, Input } from '@angular/core';
 import { GetPantryResponse } from 'src/app/shared/model/responses/pantry-response';
 import { PantryService } from '../pantry.service';
 import { PageEvent } from '@angular/material/paginator';
-import { Observable, Subject, debounceTime } from 'rxjs';
-import { FormBuilder } from '@angular/forms';
+import { Observable, Subject, debounceTime, config } from 'rxjs';
+import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { CheckboxEvent } from './pantry-product-list-elem/pantry-product-list-elem.component';
 import { Unit } from 'src/app/shared/model/enums/unit.enum';
 import { categories } from 'src/app/shared/model/enums/cateory-enum';
@@ -51,14 +51,20 @@ export class PantryProductsListComponent {
 
   protected addForm = this.fb.group({
     id: [0],
-    productName: [''],
-    category: [''],
-    quantity: [''],
-    unit: [''],
+    productName: [
+      '',
+      [Validators.required, Validators.pattern('[a-zA-Z0-9., ]{3,50}')],
+    ],
+    category: ['', [Validators.required]],
+    quantity: [
+      '',
+      [Validators.required, Validators.min(1), Validators.pattern('[0-9]+')],
+    ],
+    unit: ['', [Validators.required]],
     reserved: [0],
     purchaseDate: [''],
     expirationDate: [''],
-    placement: [''],
+    placement: ['', [Validators.pattern('[a-zA-Z ]*')]],
   });
 
   protected searchForm = this.fb.group({
@@ -74,6 +80,20 @@ export class PantryProductsListComponent {
       this.pantry = pantry;
       this.getPantryProducts();
     });
+  }
+
+  getErrorMessage(control: AbstractControl): string {
+    if (control.hasError('required')) {
+      return 'Field is required';
+    } else if (control.hasError('min')) {
+      return 'Quantity must be greater than 0';
+    } else if (control.hasError('pattern')) {
+      return 'Field does not match required pattern';
+    } else if (control.hasError('matDatepickerParse')) {
+      return 'Date is incorrect';
+    }
+
+    return '';
   }
 
   pageChange(event: PageEvent) {
@@ -107,7 +127,10 @@ export class PantryProductsListComponent {
   }
 
   submitAddForm() {
-    console.log(new Date().getMilliseconds());
+    if (!this.addForm.valid) {
+      return;
+    }
+
     setTimeout(() => {
       if (!this.addProduct) {
         this.addProduct = true;
@@ -165,15 +188,11 @@ export class PantryProductsListComponent {
   }
 
   removeProductsFromAdding() {
-    console.log(this.productsToAdd);
-
     if (this.pantry && this.pantry.id && this.pantry.pantryName) {
       this.productsToAddIdsToRemove.forEach((id) => {
-        console.log(id);
         this.productsToAdd = this.productsToAdd.filter(
           (pantryProductDTO) => pantryProductDTO.id !== id
         );
-        console.log(this.productsToAdd);
       });
 
       this.productsToAddIdsToRemove = [];
@@ -210,6 +229,7 @@ export class PantryProductsListComponent {
         )
         .subscribe({
           next: (response) => {
+            console.log(response.content);
             this.products = response.content;
             this.totalElements = response.totalElements;
             this.currentElementsLength = response.content.length;
