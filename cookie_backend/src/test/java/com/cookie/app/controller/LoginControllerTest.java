@@ -35,8 +35,8 @@ class LoginControllerTest {
         Mockito.when(loginService.getLoginInfo(Mockito.anyString())).thenReturn(new LoginResponse("username", true));
 
         ResponseEntity<LoginResponse> response = this.loginController.login(authentication);
-        assertTrue(response.getBody().username().equals("username"));
-        assertTrue(response.getStatusCode() == HttpStatus.OK);
+        assertEquals("username", response.getBody().username());
+        assertSame(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
@@ -56,8 +56,8 @@ class LoginControllerTest {
                 .thenReturn(new RegistrationResponse(Collections.emptyList()));
 
         ResponseEntity<RegistrationResponse> response = this.loginController.registerUser(request);
-        assertTrue(response.getBody().duplicates().size() == 0);
-        assertTrue(response.getStatusCode() == HttpStatus.CREATED);
+        assertEquals(0, response.getBody().duplicates().size());
+        assertSame(HttpStatus.CREATED, response.getStatusCode());
     }
 
     @Test

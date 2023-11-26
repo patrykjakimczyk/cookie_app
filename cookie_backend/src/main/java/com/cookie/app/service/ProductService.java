@@ -1,9 +1,8 @@
 package com.cookie.app.service;
 
 import com.cookie.app.model.dto.ProductDTO;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 public interface ProductService {
-    List<ProductDTO> getProducts(String filterValue);
+    Page<ProductDTO> getProductsWithFilter(String filterValue);
 }

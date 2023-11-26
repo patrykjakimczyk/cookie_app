@@ -13,9 +13,9 @@ import com.cookie.app.repository.PantryProductRepository;
 import com.cookie.app.repository.PantryRepository;
 import com.cookie.app.repository.ProductRepository;
 import com.cookie.app.service.PantryProductService;
-import com.cookie.app.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -29,7 +29,7 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class PantryProductServiceImpl implements PantryProductService {
-    private static final int PRODUCTS_PAGE_SIZE = 20;
+    private static final int PRODUCTS_PAGE_SIZE = 2;
     private final PantryRepository pantryRepository;
     private final PantryProductRepository pantryProductRepository;
     private final ProductRepository productRepository;
@@ -47,8 +47,7 @@ public class PantryProductServiceImpl implements PantryProductService {
         Pantry pantry = this.getPantryForUser(pantryId, userEmail, "download");
 
         PageRequest pageRequest = this.createPageRequest(page, sortColName, sortDirection);
-
-        if (!StringUtil.isBlank(filterValue)) {
+        if (!StringUtils.isBlank(filterValue)) {
             return pantryProductRepository
                     .findProductsInPantryWithFilter(pantry.getId(), filterValue, pageRequest)
                     .map(pantryProductMapper);
@@ -170,7 +169,7 @@ public class PantryProductServiceImpl implements PantryProductService {
         Sort idSort = Sort.by(Sort.Direction.DESC, "id");
         Sort sort = null;
 
-        if (StringUtil.isBlank(sortColName) && StringUtil.isBlank(sortDirection)) {
+        if (StringUtils.isBlank(sortColName) && StringUtils.isBlank(sortDirection)) {
             return pageRequest.withSort(idSort);
         }
 

@@ -24,15 +24,30 @@
               type="text"
               matInput
               formControlName="productName"
+              [matAutocomplete]="auto"
               required
+              (input)="searchForProducts()"
             />
+            <mat-autocomplete #auto="matAutocomplete">
+              <mat-option
+                *ngFor="let product of filteredProducts | async"
+                [value]="product.productName"
+                (onSelectionChange)="selectCategoryForProduct(product.category)"
+                >{{
+                  product.productName +
+                    " (" +
+                    (product.category | enumPrintFormatter) +
+                    ")"
+                }}</mat-option
+              >
+            </mat-autocomplete>
             <mat-hint
               >Product name can only contains letters, digits, dots, commas and
               whitespaces</mat-hint
             >
-            <mat-error *ngIf="!addForm.controls.productName.valid">{{
-              getErrorMessage(addForm.controls.productName)
-            }}</mat-error>
+            <mat-error *ngIf="!addForm.controls.productName.valid">
+              {{ getErrorMessage(addForm.controls.productName) }}</mat-error
+            >
           </mat-form-field>
           <mat-form-field color="accent">
             <mat-label>Category</mat-label>
@@ -144,9 +159,7 @@
 
                 <mat-divider></mat-divider>
 
-                <ng-container
-                  *ngFor="let product of productsToAdd; index as idx"
-                >
+                <ng-container *ngFor="let product of productsToAddCurrPage">
                   <app-pantry-product-list-elem
                     [pantry]="pantry"
                     [pantryProduct]="product"
@@ -159,7 +172,8 @@
                 [length]="productsToAdd.length"
                 [pageSize]="page_size"
                 aria-label="Select page"
-                (page)="pageChange($event)"
+                (page)="productsToAddPageChange($event)"
+                [pageIndex]="productsToAddPage"
                 color="accent"
               >
               </mat-paginator>
@@ -314,13 +328,14 @@
                 [pageSize]="page_size"
                 aria-label="Select page"
                 (page)="pageChange($event)"
+                [pageIndex]="page"
                 color="accent"
               >
               </mat-paginator>
             </ng-container>
           </div>
-        </mat-card-content>
-      </mat-card>
+        </mat-card-content> </mat-card
+      >gi
     </mat-expansion-panel>
   </mat-accordion>
 </div>

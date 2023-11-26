@@ -82,9 +82,6 @@ public class PantryServiceImpl implements PantryService {
             throw new PantryNotFoundException("User cannot update the pantry because it does not exist");
         }
 
-        if (!request.pantryName().matches(RegexConstants.PANTRY_NAME_REGEX)) {
-            throw new ValidationException("Pantry name is incorrect");
-        }
         pantry.setPantryName(request.pantryName());
         this.pantryRepository.save(pantry);
 

@@ -28,6 +28,7 @@ import { EditPantryProductComponent } from './pantry-products-list/pantry-produc
 import { MatMenuModule } from '@angular/material/menu';
 import { PantryProductDetailsComponent } from './pantry-products-list/pantry-product-list-elem/pantry-product-details/pantry-product-details.component';
 import { ReservePantryProductComponent } from './pantry-products-list/pantry-product-list-elem/reserve-pantry-product/reserve-pantry-product.component';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @NgModule({
   declarations: [
@@ -65,6 +66,7 @@ import { ReservePantryProductComponent } from './pantry-products-list/pantry-pro
     MatDatepickerModule,
     MatNativeDateModule,
     MatMenuModule,
+    MatAutocompleteModule,
   ],
   exports: [PantryComponent],
 })

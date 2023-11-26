@@ -7,12 +7,16 @@ import {
   DeletePantryResponse,
   GetPantryResponse,
 } from 'src/app/shared/model/responses/pantry-response';
-import { PantryProductDTO } from './pantry-products-list/pantry-products-list.component';
+import {
+  PantryProductDTO,
+  ProductDTO,
+} from './pantry-products-list/pantry-products-list.component';
 
 @Injectable({ providedIn: 'root' })
 export class PantryService {
   private readonly url = 'http://localhost:8081/';
   private readonly pantry_path = 'pantry';
+  private readonly products_path = 'products';
   private readonly pantry_products_path = '/products';
 
   constructor(private http: HttpClient) {}
@@ -97,5 +101,15 @@ export class PantryService {
       `${this.url}${this.pantry_path}/${pantryId}${this.pantry_products_path}/${pantryProductId}`,
       { reserved: reserved }
     );
+  }
+
+  getProductsWithFilter(filterValue: string): Observable<any> {
+    let params = new HttpParams();
+
+    params = params.append('filterValue', filterValue);
+
+    return this.http.get<any>(`${this.url}${this.products_path}`, {
+      params: params,
+    });
   }
 }

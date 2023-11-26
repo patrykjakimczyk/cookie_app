@@ -7,11 +7,18 @@ import { Component, Input } from '@angular/core';
 import { GetPantryResponse } from 'src/app/shared/model/responses/pantry-response';
 import { PantryService } from '../pantry.service';
 import { PageEvent } from '@angular/material/paginator';
-import { Observable, Subject, debounceTime, config } from 'rxjs';
+import { Observable, Subject, debounceTime, of } from 'rxjs';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { CheckboxEvent } from './pantry-product-list-elem/pantry-product-list-elem.component';
 import { Unit } from 'src/app/shared/model/enums/unit.enum';
-import { categories } from 'src/app/shared/model/enums/cateory-enum';
+import { Category, categories } from 'src/app/shared/model/enums/cateory-enum';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatOptionSelectionChange } from '@angular/material/core';
+
+export interface ProductDTO {
+  productName: string;
+  category: Category;
+}
 
 export interface PantryProductDTO {
   id: number | null;
@@ -33,13 +40,15 @@ export interface PantryProductDTO {
 export class PantryProductsListComponent {
   @Input() pantry$!: Subject<GetPantryResponse>;
   protected pantry?: GetPantryResponse;
-  public readonly page_size = 20;
+  public readonly page_size = 2;
   public showAddProducts = false;
   public page = 0;
+  public productsToAddPage = 0;
   public totalElements = 0;
   public currentElementsLength = 0;
   public products: PantryProductDTO[] = [];
   public productsToAdd: PantryProductDTO[] = [];
+  public productsToAddCurrPage: PantryProductDTO[] = [];
   public productsToAddIdsToRemove: number[] = [];
   public sortColumnNames = sortColumnNames;
   public sortDirecitons = sortDirecitons;
@@ -48,6 +57,7 @@ export class PantryProductsListComponent {
   public categories = categories;
   public addProduct = false;
   public sendProducts = false;
+  public filteredProducts = new Observable<ProductDTO[]>();
 
   protected addForm = this.fb.group({
     id: [0],
@@ -94,6 +104,35 @@ export class PantryProductsListComponent {
     }
 
     return '';
+  }
+
+  searchForProducts() {
+    if (this.addForm.controls.productName.value) {
+      this.pantryService
+        .getProductsWithFilter(this.addForm.controls.productName.value)
+        .subscribe({
+          next: (response) => {
+            this.filteredProducts = of(response.content);
+          },
+        });
+    }
+  }
+
+  selectCategoryForProduct(category: string) {
+    this.addForm.controls.category.setValue(category);
+  }
+
+  productsToAddPageChange(event: PageEvent) {
+    this.displayProductsToAddPage(event.pageIndex);
+  }
+
+  displayProductsToAddPage(pageNr: number) {
+    this.productsToAddPage = pageNr;
+    console.log((pageNr + 1) * this.page_size - 1);
+    this.productsToAddCurrPage = this.productsToAdd.slice(
+      pageNr * this.page_size,
+      (pageNr + 1) * this.page_size
+    );
   }
 
   pageChange(event: PageEvent) {
@@ -154,6 +193,7 @@ export class PantryProductsListComponent {
         Object.entries(this.addForm.controls).forEach((control) => {
           control[1].setErrors(null);
         });
+        this.displayProductsToAddPage(0);
       } else {
         this.addProduct = false;
       }
@@ -168,7 +208,7 @@ export class PantryProductsListComponent {
     this.pantryService
       .addProductsToPantry(this.pantry!.id, this.productsToAdd)
       .subscribe({
-        next: (response) => {
+        next: (_) => {
           this.productsToAdd = [];
           this.productsToAddIdsToRemove = [];
           this.page = 0;
@@ -196,6 +236,7 @@ export class PantryProductsListComponent {
       });
 
       this.productsToAddIdsToRemove = [];
+      this.displayProductsToAddPage(0);
     }
   }
 
@@ -229,7 +270,6 @@ export class PantryProductsListComponent {
         )
         .subscribe({
           next: (response) => {
-            console.log(response.content);
             this.products = response.content;
             this.totalElements = response.totalElements;
             this.currentElementsLength = response.content.length;
