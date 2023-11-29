@@ -1,6 +1,5 @@
 import { Component, Inject } from '@angular/core';
 import { PantryService } from '../../../pantry.service';
-import { PantryProductDTO } from '../../pantry-products-list.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   AbstractControl,
@@ -8,14 +7,11 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-
-export type ReserveType = 'RESERVE' | 'UNRESERVE';
-
-export type ReservePantryProductInfo = {
-  pantryId: number;
-  pantryProduct: PantryProductDTO;
-  reserve: ReserveType;
-};
+import {
+  PantryProductDTO,
+  ReservePantryProductInfo,
+  ReserveType,
+} from 'src/app/shared/model/types/pantry-types';
 
 @Component({
   selector: 'app-reserve-pantry-product',

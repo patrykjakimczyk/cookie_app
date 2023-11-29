@@ -30,7 +30,7 @@ public class PantryProduct {
     @JoinColumn(name = "pantry_id", referencedColumnName = "id")
     private Pantry pantry;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
 
@@ -49,6 +49,6 @@ public class PantryProduct {
     @Column(nullable = false)
     private int reserved;
 
-    @Column
+    @Column(length = 60)
     private String placement;
 }

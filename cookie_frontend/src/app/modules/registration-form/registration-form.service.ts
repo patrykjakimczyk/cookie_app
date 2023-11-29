@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs';
 
-import { RegistrationResponse } from 'src/app/shared/model/responses/registration-response';
+import { RegistrationResponse } from 'src/app/shared/model/responses/registration-responses';
 
 @Injectable({ providedIn: 'root' })
 export class RegistrationFormService {

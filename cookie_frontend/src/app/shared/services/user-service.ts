@@ -3,7 +3,7 @@ import { User } from '../model/user';
 import { getCookie, removeCookie } from 'typescript-cookie';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { BehaviorSubject } from 'rxjs';
-import { LoginResponse } from '../model/responses/registration-response';
+import { LoginResponse } from '../model/responses/registration-responses';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {

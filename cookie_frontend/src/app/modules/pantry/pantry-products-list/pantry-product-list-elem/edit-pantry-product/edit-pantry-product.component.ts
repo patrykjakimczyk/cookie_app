@@ -1,21 +1,17 @@
 import { PantryService } from './../../../pantry.service';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { PantryProductDTO } from '../../pantry-products-list.component';
 import { units } from 'src/app/shared/model/enums/unit.enum';
 import {
   AbstractControl,
   FormBuilder,
-  FormControl,
   FormGroup,
   Validators,
 } from '@angular/forms';
-
-export type EditPantryInfo = {
-  pantryId: number;
-  pantryProduct: PantryProductDTO;
-  isPantryProduct: boolean;
-};
+import {
+  EditPantryInfo,
+  PantryProductDTO,
+} from 'src/app/shared/model/types/pantry-types';
 
 @Component({
   selector: 'app-edit-pantry-product',

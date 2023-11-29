@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -53,6 +55,12 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private Pantry pantry;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private Set<Authority> authority;
+
+    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
+    private List<Group> groups;
 }

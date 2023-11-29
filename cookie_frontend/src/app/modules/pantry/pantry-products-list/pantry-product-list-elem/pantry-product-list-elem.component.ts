@@ -1,16 +1,15 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { PantryProductDTO } from '../pantry-products-list.component';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { PantryService } from '../../pantry.service';
 import { GetPantryResponse } from 'src/app/shared/model/responses/pantry-response';
 import { Unit, units } from 'src/app/shared/model/enums/unit.enum';
 import { MatDialog } from '@angular/material/dialog';
 import { EditPantryProductComponent } from './edit-pantry-product/edit-pantry-product.component';
 import { PantryProductDetailsComponent } from './pantry-product-details/pantry-product-details.component';
+import { ReservePantryProductComponent } from './reserve-pantry-product/reserve-pantry-product.component';
 import {
-  ReservePantryProductComponent,
+  PantryProductDTO,
   ReserveType,
-} from './reserve-pantry-product/reserve-pantry-product.component';
+} from 'src/app/shared/model/types/pantry-types';
 
 export type CheckboxEvent = {
   checked: boolean;

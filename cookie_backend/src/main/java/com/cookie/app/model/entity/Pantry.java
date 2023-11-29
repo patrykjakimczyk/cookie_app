@@ -28,10 +28,14 @@ public class Pantry {
     @Column(length = 30, nullable = false)
     private String pantryName;
 
-    @OneToOne
-    @JoinColumn(name = "creator_id", referencedColumnName = "id", unique = true)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
     @OneToMany(mappedBy = "pantry", cascade = CascadeType.REMOVE)
-    List<PantryProduct> pantryProducts;
+    private List<PantryProduct> pantryProducts;
+
+    @OneToOne
+    @JoinColumn(name = "group_id", referencedColumnName = "id", unique = true)
+    private Group group;
 }

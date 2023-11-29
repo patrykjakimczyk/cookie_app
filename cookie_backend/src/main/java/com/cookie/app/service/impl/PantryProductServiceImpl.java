@@ -29,7 +29,7 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class PantryProductServiceImpl implements PantryProductService {
-    private static final int PRODUCTS_PAGE_SIZE = 2;
+    private static final int PRODUCTS_PAGE_SIZE = 20;
     private final PantryRepository pantryRepository;
     private final PantryProductRepository pantryProductRepository;
     private final ProductRepository productRepository;

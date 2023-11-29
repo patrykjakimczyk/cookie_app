@@ -7,20 +7,17 @@ import { Component, Input } from '@angular/core';
 import { GetPantryResponse } from 'src/app/shared/model/responses/pantry-response';
 import { PantryService } from '../pantry.service';
 import { PageEvent } from '@angular/material/paginator';
-import { Observable, Subject, debounceTime, of } from 'rxjs';
+import { Observable, Subject, of } from 'rxjs';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { CheckboxEvent } from './pantry-product-list-elem/pantry-product-list-elem.component';
 import { Unit } from 'src/app/shared/model/enums/unit.enum';
 import { Category, categories } from 'src/app/shared/model/enums/cateory-enum';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatOptionSelectionChange } from '@angular/material/core';
-
-export interface ProductDTO {
+export type ProductDTO = {
   productName: string;
   category: Category;
-}
+};
 
-export interface PantryProductDTO {
+export type PantryProductDTO = {
   id: number | null;
   productName: string;
   category: string;
@@ -30,8 +27,7 @@ export interface PantryProductDTO {
   purchaseDate: string;
   expirationDate: string;
   placement: string;
-}
-
+};
 @Component({
   selector: 'app-pantry-products-list',
   templateUrl: './pantry-products-list.component.html',
@@ -40,7 +36,7 @@ export interface PantryProductDTO {
 export class PantryProductsListComponent {
   @Input() pantry$!: Subject<GetPantryResponse>;
   protected pantry?: GetPantryResponse;
-  public readonly page_size = 2;
+  public readonly page_size = 20;
   public showAddProducts = false;
   public page = 0;
   public productsToAddPage = 0;

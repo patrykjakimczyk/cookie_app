@@ -5,12 +5,14 @@ import com.cookie.app.exception.UserHasAssignedPantryException;
 import com.cookie.app.exception.UserWasNotFoundAfterAuthException;
 import com.cookie.app.exception.ValidationException;
 import com.cookie.app.model.RegexConstants;
+import com.cookie.app.model.entity.Group;
 import com.cookie.app.model.entity.Pantry;
 import com.cookie.app.model.entity.User;
 import com.cookie.app.model.request.CreatePantryRequest;
 import com.cookie.app.model.request.UpdatePantryRequest;
 import com.cookie.app.model.response.DeletePantryResponse;
 import com.cookie.app.model.response.GetPantryResponse;
+import com.cookie.app.model.response.GetUserPantriesResponse;
 import com.cookie.app.repository.PantryRepository;
 import com.cookie.app.repository.UserRepository;
 import com.cookie.app.service.PantryService;
@@ -28,7 +30,7 @@ public class PantryServiceImpl implements PantryService {
     private final PantryRepository pantryRepository;
 
     @Override
-    public void createUserPantry(CreatePantryRequest request, String userEmail) {
+    public void createPantry(CreatePantryRequest request, String userEmail) {
         Optional<User> userOptional = this.userRepository.findByEmail(userEmail);
 
         if (userOptional.isEmpty()) {
@@ -51,7 +53,7 @@ public class PantryServiceImpl implements PantryService {
     }
 
     @Override
-    public GetPantryResponse getUserPantry(String userEmail) {
+    public GetPantryResponse getPantry(String userEmail) {
         Pantry pantry = this.getPantryForUser(userEmail);
 
         if (pantry == null) {
@@ -62,7 +64,7 @@ public class PantryServiceImpl implements PantryService {
     }
 
     @Override
-    public DeletePantryResponse deleteUserPantry(String userEmail) {
+    public DeletePantryResponse deletePantry(String userEmail) {
         Pantry pantry = this.getPantryForUser(userEmail);
 
         if (pantry == null) {
@@ -75,7 +77,7 @@ public class PantryServiceImpl implements PantryService {
     }
 
     @Override
-    public GetPantryResponse updateUserPantry(UpdatePantryRequest request, String userEmail) {
+    public GetPantryResponse updatePantry(UpdatePantryRequest request, String userEmail) {
         Pantry pantry = this.getPantryForUser(userEmail);
 
         if (pantry == null) {

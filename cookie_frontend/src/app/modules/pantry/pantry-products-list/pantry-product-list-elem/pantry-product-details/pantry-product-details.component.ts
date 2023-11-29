@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { PantryProductDTO } from '../../pantry-products-list.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Unit } from 'src/app/shared/model/enums/unit.enum';
+import { PantryProductDTO } from 'src/app/shared/model/types/pantry-types';
 
 @Component({
   selector: 'app-pantry-product-details',
