@@ -63,4 +63,15 @@ public class User {
 
     @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
     private List<Group> groups;
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof User)) {
+            return false;
+        }
+
+        User user = (User) o;
+
+        return this.getId() == user.getId();
+    }
 }

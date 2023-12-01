@@ -1,6 +1,5 @@
 package com.cookie.app.model.enums;
 
-import java.util.HashSet;
 import java.util.Set;
 
 public enum AuthorityEnum {
@@ -10,7 +9,10 @@ public enum AuthorityEnum {
     RESERVE,
     MODIFY,
     MODIFY_PANTRY,
-    DELETE_PANTRY;
+    DELETE_PANTRY,
+    MODIFY_GROUP,
+    DELETE_GROUP,
+    ADD_TO_GROUP;
 
-    public final static Set<AuthorityEnum> ALL_AUTHORITIES = Set.of(READ, ADD, DELETE, RESERVE, MODIFY, MODIFY_PANTRY, DELETE_PANTRY);
+    public static final Set<AuthorityEnum> ALL_AUTHORITIES = Set.of(READ, ADD, DELETE, RESERVE, MODIFY, MODIFY_PANTRY, DELETE_PANTRY, MODIFY_GROUP, DELETE_GROUP, ADD_TO_GROUP);
 }
