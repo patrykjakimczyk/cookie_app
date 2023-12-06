@@ -20,12 +20,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-@RequiredArgsConstructor
 @Slf4j
 @Service
-public class LoginServiceImpl implements LoginService {
-    private final UserRepository userRepository;
+public class LoginServiceImpl extends AbstractCookieService implements LoginService {
     private final PasswordEncoder passwordEncoder;
+
+    public LoginServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        super(userRepository);
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public RegistrationResponse userRegistration(RegistrationRequest request) {
         Optional<User> usernameOptional = this.userRepository.findByUsername(request.username());
@@ -64,13 +67,7 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public LoginResponse getLoginInfo(String email) {
-        Optional<User> userOptional = this.userRepository.findByEmail(email);
-
-        if (userOptional.isEmpty()) {
-            throw new UserWasNotFoundAfterAuthException("User was not found in database after authentication");
-        }
-
-        User user = userOptional.get();
+        User user = this.getUserByEmail(email);
         return new LoginResponse(user.getUsername(), user.getPantry() != null);
     }
 }

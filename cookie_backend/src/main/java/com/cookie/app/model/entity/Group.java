@@ -26,7 +26,7 @@ public class Group {
     @Column(name = "id", insertable = false, updatable = false, unique = true, nullable = false)
     private long id;
 
-    @Column(name = "id", nullable = false)
+    @Column(name = "group_name", nullable = false)
     private String groupName;
 
     @ManyToOne

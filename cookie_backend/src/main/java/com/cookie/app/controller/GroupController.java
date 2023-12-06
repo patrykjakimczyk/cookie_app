@@ -2,6 +2,7 @@ package com.cookie.app.controller;
 
 import com.cookie.app.model.dto.GroupDTO;
 import com.cookie.app.model.request.AddUserToGroupRequest;
+import com.cookie.app.model.request.AssignAuthoritiesToUserRequest;
 import com.cookie.app.model.request.CreateGroupRequest;
 import com.cookie.app.model.request.UpdateGroupRequest;
 import com.cookie.app.model.response.GetUserGroupsResponse;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 public class GroupController {
     private static final String GROUP_URL = "/group";
     private static final String GROUP_ID_URL = "/group/{id}";
+    private static final String GROUP_ID_USERS_URL = "/group/{id}/users";
+    private static final String GROUP_ID_AUTHORITIES_URL = "/group/{id}/authorities";
     private final GroupService groupService;
 
     @SecurityRequirement(name = "bearerAuth")
@@ -29,7 +32,9 @@ public class GroupController {
             @RequestBody @Valid CreateGroupRequest createGroupRequest,
             Authentication authentication
     ) {
+        log.info("Performing group creation for email {}", authentication.getName());
         this.groupService.createGroup(createGroupRequest, authentication.getName());
+
         return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
 
@@ -42,37 +47,74 @@ public class GroupController {
 
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping(GROUP_URL)
-    public ResponseEntity<GetUserGroupsResponse> getUserGroupsIds(Authentication authentication) {
+    public ResponseEntity<GetUserGroupsResponse> getUserGroups(Authentication authentication) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(this.groupService.getUserGroupsIds(authentication.getName()));
+                .body(this.groupService.getUserGroups(authentication.getName()));
     }
 
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(GROUP_ID_URL)
-    public ResponseEntity<Void> createGroup(
+    public ResponseEntity<Void> updateGroup(
             @PathVariable("id") long groupId,
             @RequestBody @Valid UpdateGroupRequest updateGroupRequest,
             Authentication authentication
     ) {
+        log.info("Performing group update for email {}", authentication.getName());
         this.groupService.updateGroup(groupId, updateGroupRequest, authentication.getName());
+
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping(GROUP_ID_URL)
     public ResponseEntity<Void> deleteGroup(@PathVariable("id") long groupId, Authentication authentication) {
+        log.info("Performing group deletion for email {}", authentication.getName());
         this.groupService.deleteGroup(groupId, authentication.getName());
+
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
     @SecurityRequirement(name = "bearerAuth")
-    @PostMapping(GROUP_ID_URL)
+    @PostMapping(GROUP_ID_USERS_URL)
     public ResponseEntity<Void> addUserToGroup(
             @PathVariable("id") long groupId,
             @RequestBody @Valid AddUserToGroupRequest addUserToGroupRequest,
             Authentication authentication
     ) {
         this.groupService.addUserToGroup(groupId, addUserToGroupRequest, authentication.getName());
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    @SecurityRequirement(name = "bearerAuth")
+    @DeleteMapping(GROUP_ID_USERS_URL)
+    public ResponseEntity<Void> removeUserFromGroup(
+            @PathVariable("id") long groupId,
+            @RequestParam Long userToRemoveId,
+            Authentication authentication
+    ) {
+        this.groupService.removeUserFromGroup(groupId, userToRemoveId, authentication.getName());
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    @SecurityRequirement(name = "bearerAuth")
+    @PostMapping(GROUP_ID_AUTHORITIES_URL)
+    public ResponseEntity<Void> assignAuthoritiesToUser(
+            @PathVariable("id") long groupId,
+            @RequestBody @Valid AssignAuthoritiesToUserRequest request,
+            Authentication authentication
+    ) {
+        this.groupService.assignAuthoritiesToUser(groupId, request, authentication.getName());
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    @SecurityRequirement(name = "bearerAuth")
+    @DeleteMapping(GROUP_ID_AUTHORITIES_URL)
+    public ResponseEntity<Void> takeAwayAuthoritiesFromUser(
+            @PathVariable("id") long groupId,
+            @RequestBody @Valid AssignAuthoritiesToUserRequest request,
+            Authentication authentication
+    ) {
+        this.groupService.takeAwayAuthoritiesFromUser(groupId, request, authentication.getName());
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }

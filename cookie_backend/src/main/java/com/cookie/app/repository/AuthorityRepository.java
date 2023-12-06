@@ -10,4 +10,6 @@ import java.util.List;
 public interface AuthorityRepository extends CrudRepository<Authority, Long> {
 
     List<Authority> findAuthoritiesByUserAndGroup(User user, Group group);
+    void deleteByUserAndGroup(User user, Group group);
+    void deleteByGroup(Group group);
 }

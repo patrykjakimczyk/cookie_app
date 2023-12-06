@@ -59,7 +59,7 @@ public class User {
     private Pantry pantry;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
-    private Set<Authority> authority;
+    private Set<Authority> authorities;
 
     @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
     private List<Group> groups;

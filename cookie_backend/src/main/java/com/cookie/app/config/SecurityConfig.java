@@ -19,8 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+import org.springframework.security.web.csrf.*;
 import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.*;
@@ -36,12 +35,20 @@ public class SecurityConfig {
         CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
         requestHandler.setCsrfRequestAttributeName("_csrf");
 
+//        CookieCsrfTokenRepository tokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+//        XorCsrfTokenRequestAttributeHandler delegate = new XorCsrfTokenRequestAttributeHandler();
+//        // set the name of the attribute the CsrfToken will be populated on
+//        delegate.setCsrfRequestAttributeName("_csrf");
+//        // Use only the handle() method of XorCsrfTokenRequestAttributeHandler and the
+//        // default implementation of resolveCsrfTokenValue() from CsrfTokenRequestHandler
+//        CsrfTokenRequestHandler requestHandler = delegate::handle;
+
         http
 //                .securityContext(context -> context.requireExplicitSave(false))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors(corsConfigurer -> corsConfigurer.configurationSource(request -> {
                     CorsConfiguration configuration = new CorsConfiguration();
-                    configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+                    configuration.setAllowedOrigins(List.of("http://localhost:4200"));
                     configuration.setAllowedMethods(Collections.singletonList("*"));
                     configuration.setAllowCredentials(true);
                     configuration.setAllowedHeaders(Collections.singletonList("*"));
@@ -51,7 +58,7 @@ public class SecurityConfig {
                 }))
                 .csrf(csrfConfigurer -> csrfConfigurer
                         .csrfTokenRequestHandler(requestHandler)
-                        .ignoringRequestMatchers("/register", "/pantry", "/pantry/**", "/product")
+                        .ignoringRequestMatchers("/register", "/pantry", "/pantry/**", "/product", "/group", "/group/**")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 )
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
@@ -72,6 +79,12 @@ public class SecurityConfig {
 
         return http.build();
     }
+//
+//    private CsrfTokenRepository csrfTokenRepository() {
+//        HttpSessionCsrfTokenRepository repository = new HttpSessionCsrfTokenRepository();
+//        repository.setHeaderName("XSRF-TOKEN");
+//        return repository;
+//    }
 
     @Bean
     public UserDetailsService userDetailsService() {
