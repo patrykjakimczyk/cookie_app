@@ -3,12 +3,13 @@ package com.cookie.app.service.impl;
 import com.cookie.app.exception.UserAlreadyAddedToGroupException;
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.model.dto.GroupDTO;
+import com.cookie.app.model.dto.GroupDetailsDTO;
 import com.cookie.app.model.entity.Authority;
 import com.cookie.app.model.entity.Group;
 import com.cookie.app.model.entity.User;
 import com.cookie.app.model.enums.AuthorityEnum;
+import com.cookie.app.model.mapper.GroupDetailsMapperDTO;
 import com.cookie.app.model.mapper.GroupMapperDTO;
-import com.cookie.app.model.request.AddUserToGroupRequest;
 import com.cookie.app.model.request.AssignAuthoritiesToUserRequest;
 import com.cookie.app.model.request.CreateGroupRequest;
 import com.cookie.app.model.request.UpdateGroupRequest;
@@ -36,17 +37,20 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
     private final GroupRepository groupRepository;
     private final AuthorityRepository authorityRepository;
     private final GroupMapperDTO groupMapperDTO;
+    private final GroupDetailsMapperDTO groupDetailsMapperDTO;
 
     public GroupServiceImpl(
             UserRepository userRepository,
             GroupRepository groupRepository,
             AuthorityRepository authorityRepository,
-            GroupMapperDTO groupMapperDTO
+            GroupMapperDTO groupMapperDTO,
+            GroupDetailsMapperDTO groupDetailsMapperDTO
     ) {
         super(userRepository);
         this.groupRepository = groupRepository;
         this.authorityRepository = authorityRepository;
         this.groupMapperDTO = groupMapperDTO;
+        this.groupDetailsMapperDTO = groupDetailsMapperDTO;
     }
 
     @Override
@@ -67,7 +71,7 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
     }
 
     @Override
-    public GroupDTO getGroup(Long groupId, String userEmail) {
+    public GroupDetailsDTO getGroup(Long groupId, String userEmail) {
         User user = this.getUserByEmail(userEmail);
 
         Optional<Group> groupOptional = this.groupRepository.findById(groupId);
@@ -84,7 +88,7 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
             throw new UserPerformedForbiddenActionException("Group does not exists");
         }
 
-        return this.groupMapperDTO.apply(group);
+        return this.groupDetailsMapperDTO.apply(group);
     }
 
     @Override
@@ -158,7 +162,7 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
     }
 
     @Override
-    public void addUserToGroup(Long groupId, AddUserToGroupRequest request, String userEmail) {
+    public void addUserToGroup(Long groupId, Long userToAddId, String userEmail) {
         User user = this.getUserByEmail(userEmail);
 
         Optional<Group> groupOptional = this.groupRepository.findById(groupId);
@@ -182,7 +186,7 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
             throw new UserAlreadyAddedToGroupException("You have no permissions to do that");
         }
 
-        Optional<User> userToAddOptional = this.userRepository.findById(request.userId());
+        Optional<User> userToAddOptional = this.userRepository.findById(userToAddId);
 
         if (userToAddOptional.isEmpty()) {
             throw new UserPerformedForbiddenActionException("User tried to add non existing user to group");
@@ -287,7 +291,11 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
         List<Authority> authoritiesToAssign = this.createAuthoritiesList(userToAssignAuthorities, group, request.authoritiesToAssign());
         authoritiesToAssign = authoritiesToAssign
                 .stream()
-                .filter(authority -> !userToAssignAuthorities.getAuthorities().contains(authority))
+                .filter(authority -> !userToAssignAuthorities.getAuthorities()
+                        .stream()
+                        .map(Authority::getAuthority)
+                        .collect(Collectors.toSet())
+                        .contains(authority.getAuthority()))
                 .toList();
 
         this.authorityRepository.saveAll(authoritiesToAssign);
@@ -331,10 +339,10 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
             throw new UserPerformedForbiddenActionException("You tried to take away authorities from user which is not in the group");
         }
 
-        List<Authority> authoritiesToTakeAway = this.createAuthoritiesList(userToTakeAwayAuthorities, group, request.authoritiesToAssign());
-        authoritiesToTakeAway = authoritiesToTakeAway
+        List<Authority> authoritiesToTakeAway =
+                userToTakeAwayAuthorities.getAuthorities()
                 .stream()
-                .filter(authority -> userToTakeAwayAuthorities.getAuthorities().contains(authority))
+                .filter(authority -> request.authoritiesToAssign().contains(authority.getAuthority()))
                 .toList();
 
         this.authorityRepository.deleteAll(authoritiesToTakeAway);

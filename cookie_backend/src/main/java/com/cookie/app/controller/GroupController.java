@@ -1,7 +1,6 @@
 package com.cookie.app.controller;
 
-import com.cookie.app.model.dto.GroupDTO;
-import com.cookie.app.model.request.AddUserToGroupRequest;
+import com.cookie.app.model.dto.GroupDetailsDTO;
 import com.cookie.app.model.request.AssignAuthoritiesToUserRequest;
 import com.cookie.app.model.request.CreateGroupRequest;
 import com.cookie.app.model.request.UpdateGroupRequest;
@@ -9,6 +8,7 @@ import com.cookie.app.model.response.GetUserGroupsResponse;
 import com.cookie.app.service.GroupService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -40,7 +40,10 @@ public class GroupController {
 
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping(GROUP_ID_URL)
-    public ResponseEntity<GroupDTO> getGroup(@PathVariable("id") long groupId, Authentication authentication) {
+    public ResponseEntity<GroupDetailsDTO> getGroup(
+            @PathVariable("id") @Valid @Min(1) long groupId,
+            Authentication authentication
+    ) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(this.groupService.getGroup(groupId, authentication.getName()));
     }
@@ -55,7 +58,7 @@ public class GroupController {
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(GROUP_ID_URL)
     public ResponseEntity<Void> updateGroup(
-            @PathVariable("id") long groupId,
+            @PathVariable("id") @Valid @Min(1) long groupId,
             @RequestBody @Valid UpdateGroupRequest updateGroupRequest,
             Authentication authentication
     ) {
@@ -67,7 +70,10 @@ public class GroupController {
 
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping(GROUP_ID_URL)
-    public ResponseEntity<Void> deleteGroup(@PathVariable("id") long groupId, Authentication authentication) {
+    public ResponseEntity<Void> deleteGroup(
+            @PathVariable("id") @Valid @Min(1) long groupId,
+            Authentication authentication
+    ) {
         log.info("Performing group deletion for email {}", authentication.getName());
         this.groupService.deleteGroup(groupId, authentication.getName());
 
@@ -77,19 +83,19 @@ public class GroupController {
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping(GROUP_ID_USERS_URL)
     public ResponseEntity<Void> addUserToGroup(
-            @PathVariable("id") long groupId,
-            @RequestBody @Valid AddUserToGroupRequest addUserToGroupRequest,
+            @PathVariable("id") @Valid @Min(1) long groupId,
+            @RequestParam @Valid @Min(1) long userToAddId,
             Authentication authentication
     ) {
-        this.groupService.addUserToGroup(groupId, addUserToGroupRequest, authentication.getName());
+        this.groupService.addUserToGroup(groupId, userToAddId, authentication.getName());
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping(GROUP_ID_USERS_URL)
     public ResponseEntity<Void> removeUserFromGroup(
-            @PathVariable("id") long groupId,
-            @RequestParam Long userToRemoveId,
+            @PathVariable("id") @Valid @Min(1) long groupId,
+            @RequestParam @Valid @Min(1) long userToRemoveId,
             Authentication authentication
     ) {
         this.groupService.removeUserFromGroup(groupId, userToRemoveId, authentication.getName());
@@ -99,7 +105,7 @@ public class GroupController {
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping(GROUP_ID_AUTHORITIES_URL)
     public ResponseEntity<Void> assignAuthoritiesToUser(
-            @PathVariable("id") long groupId,
+            @PathVariable("id") @Valid @Min(1) long groupId,
             @RequestBody @Valid AssignAuthoritiesToUserRequest request,
             Authentication authentication
     ) {
@@ -110,7 +116,7 @@ public class GroupController {
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping(GROUP_ID_AUTHORITIES_URL)
     public ResponseEntity<Void> takeAwayAuthoritiesFromUser(
-            @PathVariable("id") long groupId,
+            @PathVariable("id") @Valid @Min(1) long groupId,
             @RequestBody @Valid AssignAuthoritiesToUserRequest request,
             Authentication authentication
     ) {

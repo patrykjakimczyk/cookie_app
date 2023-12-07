@@ -5,6 +5,7 @@ import com.cookie.app.model.request.ReservePantryProductRequest;
 import com.cookie.app.service.PantryProductService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,8 +29,8 @@ public class PantryProductController {
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping(GET_PANTRY_PRODUCTS_URL)
     public ResponseEntity<Page<PantryProductDTO>> getPantryProducts(
-            @PathVariable(value = "id") long id,
-            @PathVariable(value = "page") int page,
+            @PathVariable(value = "id") @Valid @Min(1) long id,
+            @PathVariable(value = "page") @Valid @Min(1) int page,
             @RequestParam String filterValue,
             @RequestParam String sortColName,
             @RequestParam String sortDirection,
@@ -45,8 +46,8 @@ public class PantryProductController {
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping(PANTRY_PRODUCTS_URL)
     public ResponseEntity<Void> addProductsToPantry(
-            @PathVariable(value = "id") long id,
-            @NotEmpty(message = "List of products cannot be empty") @RequestBody List<@Valid PantryProductDTO> products,
+            @PathVariable(value = "id") @Valid @Min(1) long id,
+            @Valid @NotEmpty(message = "List of products cannot be empty") @RequestBody List<@Valid PantryProductDTO> products,
             Authentication authentication
     ) {
         this.pantryProductService.addProductsToPantry(id, products, authentication.getName());
@@ -56,8 +57,8 @@ public class PantryProductController {
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping(PANTRY_PRODUCTS_URL)
     public ResponseEntity<Void> removeProductsFromPantry(
-            @PathVariable(value = "id") long id,
-            @NotEmpty(message = "List of ids cannot be empty") @RequestBody List<Long> productIds,
+            @PathVariable(value = "id") @Valid @Min(1) long id,
+            @Valid @NotEmpty(message = "List of ids cannot be empty") @RequestBody List<Long> productIds,
             Authentication authentication
     ) {
         this.pantryProductService.removeProductsFromPantry(id, productIds, authentication.getName());
@@ -67,8 +68,8 @@ public class PantryProductController {
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(PANTRY_PRODUCTS_URL)
     public ResponseEntity<Void> modifyPantryProduct(
-            @PathVariable(value = "id") long id,
-            @RequestBody PantryProductDTO pantryProductDTO,
+            @PathVariable(value = "id") @Valid @Min(1) long id,
+            @Valid @RequestBody PantryProductDTO pantryProductDTO,
             Authentication authentication
     ) {
         this.pantryProductService.modifyPantryProduct(id, pantryProductDTO, authentication.getName());
@@ -78,8 +79,8 @@ public class PantryProductController {
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(PANTRY_PRODUCT_URL)
     public ResponseEntity<PantryProductDTO> reservePantryProduct(
-            @PathVariable(value = "id") long id,
-            @PathVariable(value = "productId") long pantryProductId,
+            @PathVariable(value = "id") @Valid @Min(1) long id,
+            @PathVariable(value = "productId") @Valid @Min(1) long pantryProductId,
             @Valid @RequestBody ReservePantryProductRequest reserveBody,
             Authentication authentication
     ) {
