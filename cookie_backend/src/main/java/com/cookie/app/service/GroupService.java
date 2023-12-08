@@ -1,7 +1,7 @@
 package com.cookie.app.service;
 
 import com.cookie.app.model.dto.GroupDetailsDTO;
-import com.cookie.app.model.request.AssignAuthoritiesToUserRequest;
+import com.cookie.app.model.request.UserWithAuthoritiesRequest;
 import com.cookie.app.model.request.CreateGroupRequest;
 import com.cookie.app.model.request.UpdateGroupRequest;
 import com.cookie.app.model.response.GetUserGroupsResponse;
@@ -21,7 +21,7 @@ public interface GroupService {
 
     void removeUserFromGroup(Long groupId, Long userToRemoveId, String userEmail);
 
-    void assignAuthoritiesToUser(Long groupId, AssignAuthoritiesToUserRequest request, String userEmail);
+    void assignAuthoritiesToUser(Long groupId, UserWithAuthoritiesRequest request, String userEmail);
 
-    void takeAwayAuthoritiesFromUser(Long groupId, AssignAuthoritiesToUserRequest request, String userEmail);
+    void takeAwayAuthoritiesFromUser(Long groupId, UserWithAuthoritiesRequest request, String userEmail);
 }

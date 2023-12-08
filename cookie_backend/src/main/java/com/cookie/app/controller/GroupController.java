@@ -1,7 +1,7 @@
 package com.cookie.app.controller;
 
 import com.cookie.app.model.dto.GroupDetailsDTO;
-import com.cookie.app.model.request.AssignAuthoritiesToUserRequest;
+import com.cookie.app.model.request.UserWithAuthoritiesRequest;
 import com.cookie.app.model.request.CreateGroupRequest;
 import com.cookie.app.model.request.UpdateGroupRequest;
 import com.cookie.app.model.response.GetUserGroupsResponse;
@@ -106,7 +106,7 @@ public class GroupController {
     @PostMapping(GROUP_ID_AUTHORITIES_URL)
     public ResponseEntity<Void> assignAuthoritiesToUser(
             @PathVariable("id") @Valid @Min(1) long groupId,
-            @RequestBody @Valid AssignAuthoritiesToUserRequest request,
+            @RequestBody @Valid UserWithAuthoritiesRequest request,
             Authentication authentication
     ) {
         this.groupService.assignAuthoritiesToUser(groupId, request, authentication.getName());
@@ -117,7 +117,7 @@ public class GroupController {
     @DeleteMapping(GROUP_ID_AUTHORITIES_URL)
     public ResponseEntity<Void> takeAwayAuthoritiesFromUser(
             @PathVariable("id") @Valid @Min(1) long groupId,
-            @RequestBody @Valid AssignAuthoritiesToUserRequest request,
+            @RequestBody @Valid UserWithAuthoritiesRequest request,
             Authentication authentication
     ) {
         this.groupService.takeAwayAuthoritiesFromUser(groupId, request, authentication.getName());

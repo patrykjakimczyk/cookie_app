@@ -1,0 +1,15 @@
+<mat-card>
+  <mat-card-content>
+    <span id="name"
+      >{{ type === "GROUP" ? "Group name: " : "Pantry name: " }}{{ name }}</span
+    >
+    <span>Creator's name: {{ creatorName }}</span>
+    <span>Users: {{ nrOfUsers }}</span>
+    <div id="buttons-container">
+      <button mat-raised-button>Go to pantry</button>
+      <button mat-raised-button color="primary">
+        Go to {{ type.toLowerCase() }}
+      </button>
+    </div>
+  </mat-card-content>
+</mat-card>

@@ -9,9 +9,11 @@ import { RouterModule } from '@angular/router';
 import { DateFromStringPipe } from './pipes/date-from-string.pipe';
 import { EnumPrintFormatterPipe } from './pipes/enum-print-formatter.pipe';
 import { ValueOrDashPipe } from './pipes/value-or-dash.pipe';
+import { PreviewCardComponent } from './components/preview-card/preview-card.component';
+import { MatCardModule } from '@angular/material/card';
 
 @NgModule({
-  declarations: [SuccessBannerComponent],
+  declarations: [SuccessBannerComponent, PreviewCardComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -22,9 +24,11 @@ import { ValueOrDashPipe } from './pipes/value-or-dash.pipe';
 
     MatIconModule,
     MatButtonModule,
+    MatCardModule,
   ],
   exports: [
     SuccessBannerComponent,
+    PreviewCardComponent,
     DateFromStringPipe,
     EnumPrintFormatterPipe,
     ValueOrDashPipe,

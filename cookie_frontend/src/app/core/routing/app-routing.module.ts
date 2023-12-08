@@ -6,6 +6,7 @@ import { LoginFormComponent } from '../../modules/login-form/login-form.componen
 import { PantryComponent } from 'src/app/modules/pantry/pantry.component';
 import { CreatePantryComponent } from 'src/app/modules/pantry/create-pantry/create-pantry.component';
 import { AuthGuard } from './auth-guard';
+import { GroupComponent } from 'src/app/modules/group/group.component';
 
 const routes: Routes = [
   {
@@ -34,6 +35,11 @@ const routes: Routes = [
         component: CreatePantryComponent,
       },
     ],
+  },
+  {
+    path: 'groups',
+    canActivate: [AuthGuard],
+    component: GroupComponent,
   },
 ];
 

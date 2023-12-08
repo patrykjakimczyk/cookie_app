@@ -10,7 +10,7 @@ import com.cookie.app.model.entity.User;
 import com.cookie.app.model.enums.AuthorityEnum;
 import com.cookie.app.model.mapper.GroupDetailsMapperDTO;
 import com.cookie.app.model.mapper.GroupMapperDTO;
-import com.cookie.app.model.request.AssignAuthoritiesToUserRequest;
+import com.cookie.app.model.request.UserWithAuthoritiesRequest;
 import com.cookie.app.model.request.CreateGroupRequest;
 import com.cookie.app.model.request.UpdateGroupRequest;
 import com.cookie.app.model.response.GetUserGroupsResponse;
@@ -251,7 +251,7 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
     }
 
     @Override
-    public void assignAuthoritiesToUser(Long groupId, AssignAuthoritiesToUserRequest request, String userEmail) {
+    public void assignAuthoritiesToUser(Long groupId, UserWithAuthoritiesRequest request, String userEmail) {
         User user = this.getUserByEmail(userEmail);
 
         Optional<Group> groupOptional = this.groupRepository.findById(groupId);
@@ -288,7 +288,7 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
             throw new UserPerformedForbiddenActionException("You tried to assign authorities to user which is not in the group");
         }
 
-        List<Authority> authoritiesToAssign = this.createAuthoritiesList(userToAssignAuthorities, group, request.authoritiesToAssign());
+        List<Authority> authoritiesToAssign = this.createAuthoritiesList(userToAssignAuthorities, group, request.authorities());
         authoritiesToAssign = authoritiesToAssign
                 .stream()
                 .filter(authority -> !userToAssignAuthorities.getAuthorities()
@@ -302,7 +302,7 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
     }
 
     @Override
-    public void takeAwayAuthoritiesFromUser(Long groupId, AssignAuthoritiesToUserRequest request, String userEmail) {
+    public void takeAwayAuthoritiesFromUser(Long groupId, UserWithAuthoritiesRequest request, String userEmail) {
         User user = this.getUserByEmail(userEmail);
 
         Optional<Group> groupOptional = this.groupRepository.findById(groupId);
@@ -342,7 +342,7 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
         List<Authority> authoritiesToTakeAway =
                 userToTakeAwayAuthorities.getAuthorities()
                 .stream()
-                .filter(authority -> request.authoritiesToAssign().contains(authority.getAuthority()))
+                .filter(authority -> request.authorities().contains(authority.getAuthority()))
                 .toList();
 
         this.authorityRepository.deleteAll(authoritiesToTakeAway);

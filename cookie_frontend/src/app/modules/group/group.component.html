@@ -1,0 +1,11 @@
+<div id="container">
+  <h1>Your groups</h1>
+  <ng-container *ngFor="let group of userGroups">
+    <app-preview-card
+      [name]="group.groupName"
+      [creatorName]="group.creator.username"
+      [nrOfUsers]="group.users"
+      [type]="'GROUP'"
+    ></app-preview-card>
+  </ng-container>
+</div>

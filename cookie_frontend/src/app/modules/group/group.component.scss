@@ -1,0 +1,13 @@
+@import "../../../assets/styles/mixins";
+
+#container {
+  @include flex-with-gap($direction: column, $gap: 20px);
+  height: 100%;
+  max-width: 1920px;
+  margin: auto;
+
+  h1 {
+    margin: 0;
+    font-weight: 500;
+  }
+}
