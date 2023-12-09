@@ -1,5 +1,10 @@
 <div id="container">
-  <h1>Your groups</h1>
+  <div id="upper-container">
+    <h1>Your groups</h1>
+    <button mat-raised-button color="primary" routerLink="/groups/create">
+      Create group
+    </button>
+  </div>
   <ng-container *ngFor="let group of userGroups">
     <app-preview-card
       [name]="group.groupName"

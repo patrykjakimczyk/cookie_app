@@ -6,6 +6,15 @@
   max-width: 1920px;
   margin: auto;
 
+  #upper-container {
+    @include flex-with-gap;
+    justify-content: space-between;
+
+    button {
+      font-weight: 600;
+    }
+  }
+
   h1 {
     margin: 0;
     font-weight: 500;

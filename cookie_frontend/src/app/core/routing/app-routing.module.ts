@@ -7,6 +7,7 @@ import { PantryComponent } from 'src/app/modules/pantry/pantry.component';
 import { CreatePantryComponent } from 'src/app/modules/pantry/create-pantry/create-pantry.component';
 import { AuthGuard } from './auth-guard';
 import { GroupComponent } from 'src/app/modules/group/group.component';
+import { CreateGroupComponent } from 'src/app/modules/group/create-group/create-group.component';
 
 const routes: Routes = [
   {
@@ -40,6 +41,16 @@ const routes: Routes = [
     path: 'groups',
     canActivate: [AuthGuard],
     component: GroupComponent,
+  },
+  {
+    path: 'groups',
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: 'create',
+        component: CreateGroupComponent,
+      },
+    ],
   },
 ];
 

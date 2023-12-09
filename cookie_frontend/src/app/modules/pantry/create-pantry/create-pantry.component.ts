@@ -10,7 +10,6 @@ import { UserService } from 'src/app/shared/services/user-service';
   styleUrls: ['./create-pantry.component.scss'],
 })
 export class CreatePantryComponent {
-  protected pantryName = '';
   protected pantryNameRegex = RegexConstants.pantryNameRegex;
   protected createPantrySucceded = false;
 
@@ -19,12 +18,8 @@ export class CreatePantryComponent {
     private userService: UserService
   ) {}
 
-  createPantry(name: NgModel) {
-    if (!name.valid) {
-      return;
-    }
-
-    this.pantryService.createUserPantry({ pantryName: name.value }).subscribe({
+  createPantry(name: string) {
+    this.pantryService.createUserPantry({ pantryName: name }).subscribe({
       next: (_) => {
         this.createPantrySucceded = true;
         this.userService.setUserAssignedPantry(true);

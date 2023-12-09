@@ -1,0 +1,17 @@
+<ng-container *ngIf="!createGroupSucceded; else successView">
+  <app-insert-name
+    [regex]="groupNameRegex"
+    type="GROUP"
+    (insertedNameEmitter)="createGroup($event)"
+  ></app-insert-name>
+</ng-container>
+
+<ng-template #successView>
+  <app-success-banner
+    headerText="Congrats! "
+    iconName="insert_emoticon"
+    mainText="You have successfully created your Group. Now you can view your group in group list"
+    buttonText="Go to groups"
+    routerLink="/groups"
+  ></app-success-banner>
+</ng-template>

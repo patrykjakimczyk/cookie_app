@@ -1,0 +1,45 @@
+@import "../../../../assets/styles/mixins";
+@import "../../../../assets/styles/colors";
+
+#insert-name-container {
+  @include flex-with-gap($direction: column, $align: center, $gap: 16px);
+  background-color: white;
+  justify-content: center;
+  margin: auto;
+  width: 330px;
+  padding: 20px;
+  border: 1px solid rgb(221, 221, 221);
+  border-radius: 12px;
+  -webkit-box-shadow: 0px 0px 30px -20px rgba(66, 68, 90, 1);
+  -moz-box-shadow: 0px 0px 30px -20px rgba(66, 68, 90, 1);
+  box-shadow: 0px 0px 30px -20px rgba(66, 68, 90, 1);
+
+  mat-form-field {
+    width: 100%;
+
+    mat-hint {
+      font-size: 12px;
+    }
+
+    mat-error {
+      font-size: 12px;
+    }
+  }
+
+  #header {
+    font-size: 26px;
+
+    mat-icon {
+      position: relative;
+      top: 3px;
+      color: $main-color;
+    }
+  }
+
+  #create-button {
+    margin-top: 20px;
+    width: 80%;
+    font-size: 16px;
+    font-weight: 500;
+  }
+}

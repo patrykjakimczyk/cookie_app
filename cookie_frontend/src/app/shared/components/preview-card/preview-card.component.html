@@ -6,10 +6,8 @@
     <span>Creator's name: {{ creatorName }}</span>
     <span>Users: {{ nrOfUsers }}</span>
     <div id="buttons-container">
-      <button mat-raised-button>Go to pantry</button>
-      <button mat-raised-button color="primary">
-        Go to {{ type.toLowerCase() }}
-      </button>
+      <button mat-button>Go to pantry</button>
+      <button mat-raised-button>Go to {{ type.toLowerCase() }}</button>
     </div>
   </mat-card-content>
 </mat-card>
