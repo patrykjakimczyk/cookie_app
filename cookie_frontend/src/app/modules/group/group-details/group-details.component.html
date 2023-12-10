@@ -1,0 +1,37 @@
+<mat-card>
+  <mat-card-content>
+    <div id="upper-container">
+      <span>Group name: {{ group?.groupName }}</span>
+
+      <div class="action-buttons">
+        <button mat-button>Change group name</button>
+        <button mat-button color="warn">Delete group</button>
+        <button mat-raised-button color="primary">Add user</button>
+      </div>
+    </div>
+
+    <span id="users-header">Users:</span>
+    <mat-list role="list">
+      <ng-container *ngFor="let user of group?.users; index as i">
+        <mat-list-item>
+          <div class="user-container">
+            <span>{{ user.username }}</span>
+
+            <div class="action-buttons">
+              <button mat-button>Add authorities</button>
+              <button mat-button color="warn">Remove authorities</button>
+              <button mat-raised-button color="warn">Remove user</button>
+            </div>
+          </div>
+        </mat-list-item>
+        <mat-divider
+          *ngIf="
+            group && group.users && group.users.length
+              ? i < group.users.length - 1
+              : false
+          "
+        ></mat-divider>
+      </ng-container>
+    </mat-list>
+  </mat-card-content>
+</mat-card>

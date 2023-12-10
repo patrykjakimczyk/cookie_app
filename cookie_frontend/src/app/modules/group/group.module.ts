@@ -6,9 +6,12 @@ import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { CreateGroupComponent } from './create-group/create-group.component';
 import { RouterModule } from '@angular/router';
+import { GroupDetailsComponent } from './group-details/group-details.component';
+import { MatCardModule } from '@angular/material/card';
+import { MatListModule } from '@angular/material/list';
 
 @NgModule({
-  declarations: [GroupComponent, CreateGroupComponent],
+  declarations: [GroupComponent, CreateGroupComponent, GroupDetailsComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -17,7 +20,8 @@ import { RouterModule } from '@angular/router';
     SharedModule,
 
     MatButtonModule,
+    MatCardModule,
+    MatListModule,
   ],
-  exports: [GroupComponent],
 })
 export class GroupModule {}

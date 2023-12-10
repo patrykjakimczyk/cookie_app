@@ -7,6 +7,7 @@ import { PreviewCardType } from './previev-card-type';
   styleUrls: ['./preview-card.component.scss'],
 })
 export class PreviewCardComponent {
+  @Input({ required: true }) id!: number;
   @Input({ required: true }) name!: string;
   @Input({ required: true }) creatorName!: string;
   @Input({ required: true }) nrOfUsers!: number;

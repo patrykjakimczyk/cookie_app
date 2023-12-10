@@ -8,6 +8,7 @@ import { CreatePantryComponent } from 'src/app/modules/pantry/create-pantry/crea
 import { AuthGuard } from './auth-guard';
 import { GroupComponent } from 'src/app/modules/group/group.component';
 import { CreateGroupComponent } from 'src/app/modules/group/create-group/create-group.component';
+import { GroupDetailsComponent } from 'src/app/modules/group/group-details/group-details.component';
 
 const routes: Routes = [
   {
@@ -49,6 +50,10 @@ const routes: Routes = [
       {
         path: 'create',
         component: CreateGroupComponent,
+      },
+      {
+        path: ':id',
+        component: GroupDetailsComponent,
       },
     ],
   },

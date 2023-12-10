@@ -1,7 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { CreateGroupRequest } from 'src/app/shared/model/requests/groups-requests';
+import {
+  CreateGroupRequest,
+  UpdateGroupRequest,
+} from 'src/app/shared/model/requests/groups-requests';
 import { GetUserGroupsResponse } from 'src/app/shared/model/responses/group-response';
+import { GroupDetailsDTO } from 'src/app/shared/model/types/group-types';
 
 @Injectable({ providedIn: 'root' })
 export class GroupService {
@@ -19,5 +23,18 @@ export class GroupService {
 
   getUserGroups() {
     return this.http.get<GetUserGroupsResponse>(this.url + this.group_url);
+  }
+
+  getGroup(groupId: number) {
+    return this.http.get<GroupDetailsDTO>(
+      this.url + this.group_id_url.replace('{id}', groupId.toString())
+    );
+  }
+
+  updateGroup(groupId: number, body: UpdateGroupRequest) {
+    return this.http.patch<GroupDetailsDTO>(
+      this.url + this.group_id_url.replace('{id}', groupId.toString()),
+      body
+    );
   }
 }

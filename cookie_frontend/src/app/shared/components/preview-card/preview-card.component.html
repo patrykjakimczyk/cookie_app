@@ -7,7 +7,12 @@
     <span>Users: {{ nrOfUsers }}</span>
     <div id="buttons-container">
       <button mat-button>Go to pantry</button>
-      <button mat-raised-button>Go to {{ type.toLowerCase() }}</button>
+      <button
+        mat-raised-button
+        [routerLink]="(type === 'GROUP' ? '/groups/' : '/pantry/') + id"
+      >
+        Go to {{ type.toLowerCase() }}
+      </button>
     </div>
   </mat-card-content>
 </mat-card>
