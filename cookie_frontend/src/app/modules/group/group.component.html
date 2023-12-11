@@ -1,12 +1,30 @@
 <div id="container">
   <div id="upper-container">
     <h1>Your groups</h1>
-    <button mat-raised-button color="primary" routerLink="/groups/create">
+    <button
+      mat-raised-button
+      color="primary"
+      routerLink="/groups/create"
+      *ngIf="!this.userGroups"
+    >
       Create group
     </button>
   </div>
-  <ng-container *ngFor="let group of userGroups">
+
+  <mat-card *ngIf="this.userGroups.length === 0">
+    <mat-card-content>
+      <div id="empty-groups-container">
+        <p>You are not a member of any group</p>
+        <button mat-raised-button color="primary" routerLink="/groups/create">
+          Create new group
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <ng-container *ngIf="this.userGroups">
     <app-preview-card
+      *ngFor="let group of userGroups"
       [id]="group.id"
       [name]="group.groupName"
       [creatorName]="group.creator.username"

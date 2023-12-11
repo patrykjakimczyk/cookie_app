@@ -4,8 +4,12 @@
       <span>Group name: {{ group?.groupName }}</span>
 
       <div class="action-buttons">
-        <button mat-button>Change group name</button>
-        <button mat-button color="warn">Delete group</button>
+        <button mat-button (click)="openChangeGroupNamePopup()">
+          Change group name
+        </button>
+        <button mat-button color="warn" (click)="openDeleteGroupPopup()">
+          Delete group
+        </button>
         <button mat-raised-button color="primary">Add user</button>
       </div>
     </div>

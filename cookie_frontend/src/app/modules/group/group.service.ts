@@ -37,4 +37,10 @@ export class GroupService {
       body
     );
   }
+
+  deleteGroup(groupId: number) {
+    return this.http.delete<any>(
+      this.url + this.group_id_url.replace('{id}', groupId.toString())
+    );
+  }
 }

@@ -14,12 +14,17 @@ import { MatCardModule } from '@angular/material/card';
 import { InsertNameComponent } from './components/insert-name/insert-name.component';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
+import { NewNamePopupComponentComponent } from './components/new-name-popup-component/new-name-popup-component.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { DeletePopupComponent } from './components/delete-popup/delete-popup.component';
 
 @NgModule({
   declarations: [
     SuccessBannerComponent,
     PreviewCardComponent,
     InsertNameComponent,
+    NewNamePopupComponentComponent,
+    DeletePopupComponent,
   ],
   imports: [
     BrowserModule,
@@ -35,6 +40,7 @@ import { MatInputModule } from '@angular/material/input';
     MatButtonModule,
     MatCardModule,
     MatInputModule,
+    MatDialogModule,
   ],
   exports: [
     SuccessBannerComponent,

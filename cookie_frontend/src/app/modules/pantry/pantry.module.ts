@@ -7,10 +7,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
-import { ChangePantryNameComponent } from './change-pantry-name/change-pantry-name.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DeletePantryComponent } from './delete-pantry/delete-pantry.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { CreatePantryComponent } from './create-pantry/create-pantry.component';
@@ -33,8 +31,6 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 @NgModule({
   declarations: [
     PantryComponent,
-    ChangePantryNameComponent,
-    DeletePantryComponent,
     CreatePantryComponent,
     PantryProductsListComponent,
     PantryProductListElemComponent,

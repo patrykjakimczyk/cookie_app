@@ -9,6 +9,8 @@ import { RouterModule } from '@angular/router';
 import { GroupDetailsComponent } from './group-details/group-details.component';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [GroupComponent, CreateGroupComponent, GroupDetailsComponent],
@@ -22,6 +24,8 @@ import { MatListModule } from '@angular/material/list';
     MatButtonModule,
     MatCardModule,
     MatListModule,
+    MatDialogModule,
+    MatSnackBarModule,
   ],
 })
 export class GroupModule {}
