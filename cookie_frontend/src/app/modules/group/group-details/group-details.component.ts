@@ -1,12 +1,14 @@
 import { ActivatedRoute, Router } from '@angular/router';
-import { GroupService } from './../group.service';
 import { Component, Input, OnInit } from '@angular/core';
-import { GroupDetailsDTO } from 'src/app/shared/model/types/group-types';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
+
 import { NewNamePopupComponentComponent } from 'src/app/shared/components/new-name-popup-component/new-name-popup-component.component';
 import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
 import { DeletePopupComponent } from 'src/app/shared/components/delete-popup/delete-popup.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { GroupDetailsDTO } from 'src/app/shared/model/types/group-types';
+import { GroupService } from './../group.service';
+import { UserDTO } from 'src/app/shared/model/types/user-types';
 
 @Component({
   selector: 'app-group-details',
@@ -28,15 +30,7 @@ export class GroupDetailsComponent implements OnInit {
   ngOnInit(): void {
     this.groupId = this.route.snapshot.params['id'];
 
-    this.groupService.getGroup(this.groupId).subscribe({
-      next: (response) => {
-        this.group = response;
-        console.log(this.group);
-      },
-      error: (_) => {
-        this.router.navigate(['/']);
-      },
-    });
+    this.getGroupDetails();
   }
 
   openChangeGroupNamePopup() {
@@ -60,7 +54,10 @@ export class GroupDetailsComponent implements OnInit {
 
   openDeleteGroupPopup() {
     const deleteGroupDialog = this.dialog.open(DeletePopupComponent, {
-      data: 'GROUP',
+      data: {
+        header: 'Are you sure you want to delete this group?',
+        button: 'Delete group',
+      },
     });
 
     deleteGroupDialog.afterClosed().subscribe((deleteGroup) => {
@@ -75,6 +72,40 @@ export class GroupDetailsComponent implements OnInit {
           },
         });
       }
+    });
+  }
+  openRemoveUserPopup(user: UserDTO) {
+    const removeUserDialog = this.dialog.open(DeletePopupComponent, {
+      data: {
+        header: 'Are you sure you want to remove this user from group?',
+        button: 'Remove user',
+      },
+    });
+
+    removeUserDialog.afterClosed().subscribe((removeUser) => {
+      if (removeUser) {
+        this.groupService.removeUserFromGroup(this.groupId, user.id).subscribe({
+          next: (_) => {
+            this.snackBar.open(
+              `Group: ${user.username} has been removed from group`,
+              'Okay'
+            );
+
+            this.getGroupDetails();
+          },
+        });
+      }
+    });
+  }
+
+  private getGroupDetails() {
+    this.groupService.getGroup(this.groupId).subscribe({
+      next: (response) => {
+        this.group = response;
+      },
+      error: (_) => {
+        this.router.navigate(['/']);
+      },
     });
   }
 }

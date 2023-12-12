@@ -1,6 +1,7 @@
+import { Component, OnInit } from '@angular/core';
+
 import { GroupDTO } from 'src/app/shared/model/types/group-types';
 import { GroupService } from './group.service';
-import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-group',

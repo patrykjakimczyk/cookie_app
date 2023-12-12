@@ -1,5 +1,4 @@
 import { Component, Inject } from '@angular/core';
-import { PantryService } from '../../../pantry.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   AbstractControl,
@@ -7,11 +6,13 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+
 import {
   PantryProductDTO,
   ReservePantryProductInfo,
   ReserveType,
 } from 'src/app/shared/model/types/pantry-types';
+import { PantryService } from '../../../pantry.service';
 
 @Component({
   selector: 'app-reserve-pantry-product',

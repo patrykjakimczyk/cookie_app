@@ -1,5 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+
 import {
   CreateGroupRequest,
   UpdateGroupRequest,
@@ -41,6 +42,16 @@ export class GroupService {
   deleteGroup(groupId: number) {
     return this.http.delete<any>(
       this.url + this.group_id_url.replace('{id}', groupId.toString())
+    );
+  }
+
+  removeUserFromGroup(groupId: number, userId: number) {
+    let params = new HttpParams();
+    params = params.append('userToRemoveId', userId);
+
+    return this.http.delete<any>(
+      this.url + this.group_id_users_url.replace('{id}', groupId.toString()),
+      { params: params }
     );
   }
 }

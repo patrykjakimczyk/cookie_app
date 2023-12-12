@@ -94,7 +94,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(UserPerformedForbiddenActionException.class)
     public ResponseEntity<ExceptionMessage> userPerfomedForbiddenActionException(UserPerformedForbiddenActionException exception, WebRequest webRequest) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
     }
 

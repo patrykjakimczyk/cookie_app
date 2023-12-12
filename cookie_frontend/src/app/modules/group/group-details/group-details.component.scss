@@ -23,6 +23,7 @@ mat-card {
 
   mat-list {
     @include flex-with-gap($direction: column, $gap: 10px);
+
     mat-list-item {
       height: auto;
 

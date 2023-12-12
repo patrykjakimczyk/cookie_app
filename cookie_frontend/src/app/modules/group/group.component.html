@@ -5,7 +5,7 @@
       mat-raised-button
       color="primary"
       routerLink="/groups/create"
-      *ngIf="!this.userGroups"
+      *ngIf="this.userGroups.length > 0"
     >
       Create group
     </button>
@@ -22,7 +22,7 @@
     </mat-card-content>
   </mat-card>
 
-  <ng-container *ngIf="this.userGroups">
+  <ng-container *ngIf="this.userGroups.length > 0">
     <app-preview-card
       *ngFor="let group of userGroups"
       [id]="group.id"

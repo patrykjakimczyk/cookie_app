@@ -1,13 +1,14 @@
-import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
-import { GetPantryResponse } from './../../shared/model/responses/pantry-response';
 import { Component, OnInit } from '@angular/core';
-import { PantryService } from './pantry.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { UserService } from 'src/app/shared/services/user-service';
 import { Subject } from 'rxjs';
+
 import { NewNamePopupComponentComponent } from 'src/app/shared/components/new-name-popup-component/new-name-popup-component.component';
 import { DeletePopupComponent } from 'src/app/shared/components/delete-popup/delete-popup.component';
+import { UserService } from 'src/app/shared/services/user-service';
+import { PantryService } from './pantry.service';
+import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
+import { GetPantryResponse } from './../../shared/model/responses/pantry-response';
 
 @Component({
   selector: 'app-pantry',
@@ -53,7 +54,10 @@ export class PantryComponent implements OnInit {
 
   openDeletePantryDialog() {
     const deletePantryDialog = this.dialog.open(DeletePopupComponent, {
-      data: 'PANTRY',
+      data: {
+        header: 'Are you sure you want to delete this pantry?',
+        button: 'Delete pantry',
+      },
     });
 
     deletePantryDialog.afterClosed().subscribe((deletePantry) => {

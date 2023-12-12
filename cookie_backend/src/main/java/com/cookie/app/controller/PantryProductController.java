@@ -30,7 +30,7 @@ public class PantryProductController {
     @GetMapping(GET_PANTRY_PRODUCTS_URL)
     public ResponseEntity<Page<PantryProductDTO>> getPantryProducts(
             @PathVariable(value = "id") @Valid @Min(1) long id,
-            @PathVariable(value = "page") @Valid @Min(1) int page,
+            @PathVariable(value = "page") @Valid @Min(0) int page,
             @RequestParam String filterValue,
             @RequestParam String sortColName,
             @RequestParam String sortDirection,

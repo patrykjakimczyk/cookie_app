@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 
 import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
 import { LoginFormService } from './login-form.service';
 import { UserService } from 'src/app/shared/services/user-service';
 import { User } from 'src/app/shared/model/user';
-import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-login-form',

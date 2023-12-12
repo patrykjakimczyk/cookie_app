@@ -1,9 +1,7 @@
 package com.cookie.app.model.mapper;
 
-import com.cookie.app.model.dto.AuthorityDTO;
 import com.cookie.app.model.dto.UserDTO;
 import com.cookie.app.model.entity.User;
-import com.cookie.app.model.enums.AuthorityEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

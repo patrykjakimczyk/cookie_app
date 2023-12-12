@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+
 import { Unit } from 'src/app/shared/model/enums/unit.enum';
 import { PantryProductDTO } from 'src/app/shared/model/types/pantry-types';
 

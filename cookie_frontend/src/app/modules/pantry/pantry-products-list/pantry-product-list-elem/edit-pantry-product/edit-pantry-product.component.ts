@@ -1,13 +1,14 @@
-import { PantryService } from './../../../pantry.service';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { units } from 'src/app/shared/model/enums/unit.enum';
 import {
   AbstractControl,
   FormBuilder,
   FormGroup,
   Validators,
 } from '@angular/forms';
+
+import { PantryService } from './../../../pantry.service';
+import { units } from 'src/app/shared/model/enums/unit.enum';
 import {
   EditPantryInfo,
   PantryProductDTO,

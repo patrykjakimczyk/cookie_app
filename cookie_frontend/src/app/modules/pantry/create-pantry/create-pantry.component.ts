@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
+
 import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
 import { PantryService } from '../pantry.service';
-import { NgModel } from '@angular/forms';
 import { UserService } from 'src/app/shared/services/user-service';
 
 @Component({

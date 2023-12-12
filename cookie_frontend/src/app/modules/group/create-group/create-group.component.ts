@@ -1,5 +1,6 @@
-import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
 import { Component } from '@angular/core';
+
+import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
 import { GroupService } from '../group.service';
 
 @Component({

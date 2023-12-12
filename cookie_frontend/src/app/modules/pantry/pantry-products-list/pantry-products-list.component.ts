@@ -1,17 +1,19 @@
+import { Component, Input } from '@angular/core';
+import { PageEvent } from '@angular/material/paginator';
+import { Observable, Subject, of } from 'rxjs';
+import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
+
+import { PantryService } from '../pantry.service';
+import { GetPantryResponse } from 'src/app/shared/model/responses/pantry-response';
+import { CheckboxEvent } from './pantry-product-list-elem/pantry-product-list-elem.component';
+import { Unit } from 'src/app/shared/model/enums/unit.enum';
+import { Category, categories } from 'src/app/shared/model/enums/cateory-enum';
 import { units } from './../../../shared/model/enums/unit.enum';
 import {
   sortDirecitons,
   sortColumnNames,
 } from './../../../shared/model/enums/sort-enum';
-import { Component, Input } from '@angular/core';
-import { GetPantryResponse } from 'src/app/shared/model/responses/pantry-response';
-import { PantryService } from '../pantry.service';
-import { PageEvent } from '@angular/material/paginator';
-import { Observable, Subject, of } from 'rxjs';
-import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
-import { CheckboxEvent } from './pantry-product-list-elem/pantry-product-list-elem.component';
-import { Unit } from 'src/app/shared/model/enums/unit.enum';
-import { Category, categories } from 'src/app/shared/model/enums/cateory-enum';
+
 export type ProductDTO = {
   productName: string;
   category: Category;

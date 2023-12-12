@@ -226,11 +226,6 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
                 .map(Authority::getAuthority)
                 .collect(Collectors.toSet());
 
-        if (!authorities.contains(AuthorityEnum.DELETE_FROM_GROUP)) {
-            log.info(String.format("User: %s tried to remove another user from group without permissions", userEmail));
-            throw new UserAlreadyAddedToGroupException("You have no permissions to do that");
-        }
-
         Optional<User> userToRemoveOptional = this.userRepository.findById(userToRemoveId);
 
         if (userToRemoveOptional.isEmpty()) {
@@ -239,9 +234,19 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
 
         User userToRemove = userToRemoveOptional.get();
 
+        if (!authorities.contains(AuthorityEnum.DELETE_FROM_GROUP) && userToRemove.getId() != user.getId()) {
+            log.info(String.format("User: %s tried to remove another user from group without permissions", userEmail));
+            throw new UserPerformedForbiddenActionException("You have no permissions to do that");
+        }
+
         if (!group.getUsers().contains(userToRemove)) {
             log.info(String.format("User: %s tried to remove user which is not in the group", userEmail));
             throw new UserPerformedForbiddenActionException("You tried to remove user which is not in the group");
+        }
+
+        if (group.getCreator().getId() == userToRemove.getId()) {
+            log.info(String.format("User: %s tried to remove group's creator from the group", userEmail));
+            throw new UserPerformedForbiddenActionException("You tried to remove group's creator from the group");
         }
 
         group.getUsers().remove(userToRemove);

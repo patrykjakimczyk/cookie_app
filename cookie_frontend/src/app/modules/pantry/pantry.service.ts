@@ -1,16 +1,13 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-
 import { Observable } from 'rxjs';
+
 import { UpdatePantryRequest } from 'src/app/shared/model/requests/pantry-requests';
 import {
   DeletePantryResponse,
   GetPantryResponse,
 } from 'src/app/shared/model/responses/pantry-response';
-import {
-  PantryProductDTO,
-  ProductDTO,
-} from './pantry-products-list/pantry-products-list.component';
+import { PantryProductDTO } from './pantry-products-list/pantry-products-list.component';
 
 @Injectable({ providedIn: 'root' })
 export class PantryService {
