@@ -1,6 +1,8 @@
 package com.cookie.app.controller;
 
+import com.cookie.app.model.RegexConstants;
 import com.cookie.app.model.dto.GroupDetailsDTO;
+import com.cookie.app.model.request.AddUserToGroupRequest;
 import com.cookie.app.model.request.UserWithAuthoritiesRequest;
 import com.cookie.app.model.request.CreateGroupRequest;
 import com.cookie.app.model.request.UpdateGroupRequest;
@@ -9,6 +11,7 @@ import com.cookie.app.service.GroupService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -84,10 +87,10 @@ public class GroupController {
     @PostMapping(GROUP_ID_USERS_URL)
     public ResponseEntity<Void> addUserToGroup(
             @PathVariable("id") @Valid @Min(1) long groupId,
-            @RequestParam @Valid @Min(1) long userToAddId,
+            @RequestBody @Valid AddUserToGroupRequest addUserToGroupRequest,
             Authentication authentication
     ) {
-        this.groupService.addUserToGroup(groupId, userToAddId, authentication.getName());
+        this.groupService.addUserToGroup(groupId, addUserToGroupRequest.usernameToAdd(), authentication.getName());
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 

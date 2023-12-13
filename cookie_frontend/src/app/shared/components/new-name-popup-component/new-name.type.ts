@@ -1,1 +1,1 @@
-export type NewNameType = 'PANTRY' | 'GROUP';
+export type NewNameType = 'PANTRY' | 'GROUP' | 'USER';

@@ -162,7 +162,7 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
     }
 
     @Override
-    public void addUserToGroup(Long groupId, Long userToAddId, String userEmail) {
+    public void addUserToGroup(Long groupId, String usernameToAdd, String userEmail) {
         User user = this.getUserByEmail(userEmail);
 
         Optional<Group> groupOptional = this.groupRepository.findById(groupId);
@@ -183,10 +183,10 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
 
         if (!authorities.contains(AuthorityEnum.ADD_TO_GROUP)) {
             log.info(String.format("User: %s tried to add another user to group without permissions", userEmail));
-            throw new UserAlreadyAddedToGroupException("You have no permissions to do that");
+            throw new UserPerformedForbiddenActionException("You have no permissions to do that");
         }
 
-        Optional<User> userToAddOptional = this.userRepository.findById(userToAddId);
+        Optional<User> userToAddOptional = this.userRepository.findByUsername(usernameToAdd);
 
         if (userToAddOptional.isEmpty()) {
             throw new UserPerformedForbiddenActionException("User tried to add non existing user to group");
@@ -196,7 +196,7 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
 
         if (group.getUsers().contains(userToAdd)) {
             log.info(String.format("User: %s tried to add user which is already added to group", userEmail));
-            throw new UserPerformedForbiddenActionException("You tried to add user which is already added to group");
+            throw new UserAlreadyAddedToGroupException("You tried to add user which is already added to group");
         }
 
         group.getUsers().add(userToAdd);

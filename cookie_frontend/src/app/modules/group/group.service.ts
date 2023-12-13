@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import {
+  AddUserToGroup,
   CreateGroupRequest,
   UpdateGroupRequest,
 } from 'src/app/shared/model/requests/groups-requests';
@@ -42,6 +43,13 @@ export class GroupService {
   deleteGroup(groupId: number) {
     return this.http.delete<any>(
       this.url + this.group_id_url.replace('{id}', groupId.toString())
+    );
+  }
+
+  addUserToGroup(groupId: number, addUser: AddUserToGroup) {
+    return this.http.post<any>(
+      this.url + this.group_id_users_url.replace('{id}', groupId.toString()),
+      addUser
     );
   }
 

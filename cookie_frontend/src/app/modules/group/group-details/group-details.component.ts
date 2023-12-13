@@ -9,6 +9,7 @@ import { DeletePopupComponent } from 'src/app/shared/components/delete-popup/del
 import { GroupDetailsDTO } from 'src/app/shared/model/types/group-types';
 import { GroupService } from './../group.service';
 import { UserDTO } from 'src/app/shared/model/types/user-types';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-group-details',
@@ -74,6 +75,42 @@ export class GroupDetailsComponent implements OnInit {
       }
     });
   }
+
+  openAddUserPopup() {
+    const changeGroupNamePopup = this.dialog.open(
+      NewNamePopupComponentComponent,
+      { data: { type: 'USER', regex: RegexConstants.loginRegex } }
+    );
+
+    changeGroupNamePopup.afterClosed().subscribe((username: string) => {
+      console.log(username);
+      this.groupService
+        .addUserToGroup(this.groupId, { usernameToAdd: username })
+        .subscribe({
+          next: (_: any) => {
+            this.getGroupDetails();
+            this.snackBar.open(
+              `User: ${username} has been added to the group`,
+              'Okay'
+            );
+          },
+          error: (error: HttpErrorResponse) => {
+            if (error.status === 403) {
+              this.snackBar.open(
+                `User doesn't exists or you tried to add user without permissions`,
+                'Okay'
+              );
+            } else if (error.status === 409) {
+              this.snackBar.open(
+                `User is already a member of the group`,
+                'Okay'
+              );
+            }
+          },
+        });
+    });
+  }
+
   openRemoveUserPopup(user: UserDTO) {
     const removeUserDialog = this.dialog.open(DeletePopupComponent, {
       data: {

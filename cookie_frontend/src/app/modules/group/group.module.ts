@@ -12,9 +12,10 @@ import { CreateGroupComponent } from './create-group/create-group.component';
 import { GroupDetailsComponent } from './group-details/group-details.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { GroupComponent } from './group.component';
+import { AddUserComponent } from './group-details/add-user/add-user.component';
 
 @NgModule({
-  declarations: [GroupComponent, CreateGroupComponent, GroupDetailsComponent],
+  declarations: [GroupComponent, CreateGroupComponent, GroupDetailsComponent, AddUserComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,

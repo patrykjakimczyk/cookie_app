@@ -1,9 +1,14 @@
-<h1 mat-dialog-title>Insert your new {{ data.type.toLowerCase() }} name</h1>
+<h1 mat-dialog-title *ngIf="data.type === 'USER'">Add new group member</h1>
+<h1 mat-dialog-title *ngIf="data.type === 'GROUP' || data.type === 'PANTRY'">
+  Insert your new {{ data.type.toLowerCase() }} name
+</h1>
 <div mat-dialog-content id="content">
   <mat-form-field color="accent">
     <mat-label
-      >{{ data.type.at(0) + data.type.slice(1).toLowerCase() }} name (3 to 30
-      characters)</mat-label
+      >{{ data.type.at(0) + data.type.slice(1).toLowerCase() }} name ({{
+        data.type === "USER" ? "6" : "3"
+      }}
+      to 30 characters)</mat-label
     >
     <input
       matInput
@@ -29,6 +34,6 @@
     cdkFocusInitial
     color="primary"
   >
-    Change {{ data.type.toLowerCase() }} name
+    {{ data.type === "USER" ? "Add user" : data.type.toLowerCase() + "name" }}
   </button>
 </div>
