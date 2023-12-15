@@ -1,6 +1,5 @@
 package com.cookie.app.controller;
 
-import com.cookie.app.model.RegexConstants;
 import com.cookie.app.model.dto.GroupDetailsDTO;
 import com.cookie.app.model.request.AddUserToGroupRequest;
 import com.cookie.app.model.request.UserWithAuthoritiesRequest;
@@ -11,7 +10,6 @@ import com.cookie.app.service.GroupService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -117,13 +115,13 @@ public class GroupController {
     }
 
     @SecurityRequirement(name = "bearerAuth")
-    @DeleteMapping(GROUP_ID_AUTHORITIES_URL)
-    public ResponseEntity<Void> takeAwayAuthoritiesFromUser(
+    @PatchMapping(GROUP_ID_AUTHORITIES_URL)
+    public ResponseEntity<Void> removeAuthoritiesFromUser(
             @PathVariable("id") @Valid @Min(1) long groupId,
             @RequestBody @Valid UserWithAuthoritiesRequest request,
             Authentication authentication
     ) {
-        this.groupService.takeAwayAuthoritiesFromUser(groupId, request, authentication.getName());
+        this.groupService.removeAuthoritiesFromUser(groupId, request, authentication.getName());
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }

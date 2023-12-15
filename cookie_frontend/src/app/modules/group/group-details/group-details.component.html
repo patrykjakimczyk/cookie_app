@@ -25,7 +25,6 @@
 
             <div class="action-buttons">
               <button mat-button>Add authorities</button>
-              <button mat-button color="warn">Remove authorities</button>
               <button
                 mat-raised-button
                 color="warn"
@@ -36,6 +35,41 @@
             </div>
           </div>
         </mat-list-item>
+
+        <mat-accordion>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title> Authorities </mat-panel-title>
+              <mat-panel-description>
+                Click to see authorities
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <div class="authorities-container">
+              <div
+                class="authority-container"
+                *ngFor="let authority of user.authorities"
+              >
+                <mat-checkbox
+                  color="primary"
+                  (change)="checkboxClicked($event, authority)"
+                ></mat-checkbox>
+                <span> {{ authority.authority }} </span>
+              </div>
+
+              <!-- <div class="authorities-button-container"> -->
+              <!-- </div> -->
+            </div>
+            <button
+              mat-button
+              color="warn"
+              class="remove-authorities-button"
+              (click)="removeAuthorities(user.id)"
+            >
+              Remove authorities
+            </button>
+          </mat-expansion-panel>
+        </mat-accordion>
+
         <mat-divider
           *ngIf="
             group && group.users && group.users.length

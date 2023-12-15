@@ -5,6 +5,7 @@ import {
   AddUserToGroup,
   CreateGroupRequest,
   UpdateGroupRequest,
+  UserWithAuthoritiesRequest,
 } from 'src/app/shared/model/requests/groups-requests';
 import { GetUserGroupsResponse } from 'src/app/shared/model/responses/group-response';
 import { GroupDetailsDTO } from 'src/app/shared/model/types/group-types';
@@ -60,6 +61,17 @@ export class GroupService {
     return this.http.delete<any>(
       this.url + this.group_id_users_url.replace('{id}', groupId.toString()),
       { params: params }
+    );
+  }
+
+  removeAuthoritiesFromUser(
+    groupId: number,
+    request: UserWithAuthoritiesRequest
+  ) {
+    return this.http.patch<any>(
+      this.url +
+        this.group_id_authorities_url.replace('{id}', groupId.toString()),
+      request
     );
   }
 }

@@ -41,4 +41,22 @@ mat-card {
   .action-buttons {
     @include flex-with-gap($gap: 10px);
   }
+
+  mat-accordion {
+    .authorities-container {
+      @include flex-with-gap($align: center);
+      flex-direction: row;
+      flex-wrap: wrap;
+
+      .authority-container {
+        width: 50%;
+
+        @include flex-with-gap($align: center);
+      }
+    }
+
+    .remove-authorities-button {
+      float: right;
+    }
+  }
 }

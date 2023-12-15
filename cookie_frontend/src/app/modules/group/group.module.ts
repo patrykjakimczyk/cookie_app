@@ -13,9 +13,16 @@ import { GroupDetailsComponent } from './group-details/group-details.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { GroupComponent } from './group.component';
 import { AddUserComponent } from './group-details/add-user/add-user.component';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
-  declarations: [GroupComponent, CreateGroupComponent, GroupDetailsComponent, AddUserComponent],
+  declarations: [
+    GroupComponent,
+    CreateGroupComponent,
+    GroupDetailsComponent,
+    AddUserComponent,
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -28,6 +35,8 @@ import { AddUserComponent } from './group-details/add-user/add-user.component';
     MatListModule,
     MatDialogModule,
     MatSnackBarModule,
+    MatExpansionModule,
+    MatCheckboxModule,
   ],
 })
 export class GroupModule {}

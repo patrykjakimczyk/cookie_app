@@ -307,7 +307,7 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
     }
 
     @Override
-    public void takeAwayAuthoritiesFromUser(Long groupId, UserWithAuthoritiesRequest request, String userEmail) {
+    public void removeAuthoritiesFromUser(Long groupId, UserWithAuthoritiesRequest request, String userEmail) {
         User user = this.getUserByEmail(userEmail);
 
         Optional<Group> groupOptional = this.groupRepository.findById(groupId);
@@ -369,4 +369,14 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
 
         return authorities;
     }
+
+
+
+
+
+
+
+
+
+
 }

@@ -8,8 +8,10 @@ import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
 import { DeletePopupComponent } from 'src/app/shared/components/delete-popup/delete-popup.component';
 import { GroupDetailsDTO } from 'src/app/shared/model/types/group-types';
 import { GroupService } from './../group.service';
-import { UserDTO } from 'src/app/shared/model/types/user-types';
+import { AuthorityDTO, UserDTO } from 'src/app/shared/model/types/user-types';
 import { HttpErrorResponse } from '@angular/common/http';
+import { MatCheckboxChange } from '@angular/material/checkbox';
+import { AuthorityEnum } from 'src/app/shared/model/enums/authority-enum';
 
 @Component({
   selector: 'app-group-details',
@@ -18,6 +20,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class GroupDetailsComponent implements OnInit {
   @Input({ required: true }) groupId!: number;
+  private authoritiesToRemove: AuthorityEnum[] = [];
   protected group: GroupDetailsDTO | null = null;
 
   constructor(
@@ -32,6 +35,40 @@ export class GroupDetailsComponent implements OnInit {
     this.groupId = this.route.snapshot.params['id'];
 
     this.getGroupDetails();
+  }
+
+  checkboxClicked(event: MatCheckboxChange, value: AuthorityDTO) {
+    if (event.checked) {
+      this.authoritiesToRemove.push(value.authority);
+    } else {
+      this.authoritiesToRemove.filter(
+        (authority) => authority !== value.authority
+      );
+    }
+  }
+
+  removeAuthorities(userId: number) {
+    if (this.group) {
+      this.groupService
+        .removeAuthoritiesFromUser(this.group?.id, {
+          userId: userId,
+          authorities: this.authoritiesToRemove,
+        })
+        .subscribe({
+          next: (_) => {
+            this.authoritiesToRemove = [];
+            this.getGroupDetails();
+          },
+          error: (error: HttpErrorResponse) => {
+            if (error.status === 403) {
+              this.snackBar.open(
+                `User doesn't exists or you tried to remove authorities from user without permissions`,
+                'Okay'
+              );
+            }
+          },
+        });
+    }
   }
 
   openChangeGroupNamePopup() {
@@ -83,7 +120,6 @@ export class GroupDetailsComponent implements OnInit {
     );
 
     changeGroupNamePopup.afterClosed().subscribe((username: string) => {
-      console.log(username);
       this.groupService
         .addUserToGroup(this.groupId, { usernameToAdd: username })
         .subscribe({

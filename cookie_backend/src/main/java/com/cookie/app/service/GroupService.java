@@ -23,5 +23,5 @@ public interface GroupService {
 
     void assignAuthoritiesToUser(Long groupId, UserWithAuthoritiesRequest request, String userEmail);
 
-    void takeAwayAuthoritiesFromUser(Long groupId, UserWithAuthoritiesRequest request, String userEmail);
+    void removeAuthoritiesFromUser(Long groupId, UserWithAuthoritiesRequest request, String userEmail);
 }
