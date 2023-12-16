@@ -64,6 +64,17 @@ export class GroupService {
     );
   }
 
+  assignAuthoritiesToUser(
+    groupId: number,
+    request: UserWithAuthoritiesRequest
+  ) {
+    return this.http.post<any>(
+      this.url +
+        this.group_id_authorities_url.replace('{id}', groupId.toString()),
+      request
+    );
+  }
+
   removeAuthoritiesFromUser(
     groupId: number,
     request: UserWithAuthoritiesRequest

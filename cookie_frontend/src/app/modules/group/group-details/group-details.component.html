@@ -24,7 +24,6 @@
             <span>{{ user.username }}</span>
 
             <div class="action-buttons">
-              <button mat-button>Add authorities</button>
               <button
                 mat-raised-button
                 color="warn"
@@ -44,6 +43,33 @@
                 Click to see authorities
               </mat-panel-description>
             </mat-expansion-panel-header>
+            <div class="add-authority-container">
+              <form [formGroup]="addAuthorityForm">
+                <mat-form-field color="accent">
+                  <mat-label>Add authority</mat-label>
+                  <mat-select formControlName="authority" required>
+                    <mat-option
+                      *ngFor="
+                        let authority of possibleAuthoritiesToAdd(
+                          user.authorities
+                        )
+                      "
+                      [value]="authority"
+                      >{{ authority }}</mat-option
+                    >
+                  </mat-select>
+                </mat-form-field>
+
+                <button
+                  mat-raised-button
+                  color="primary"
+                  (click)="submitAddAuthority(user.id)"
+                >
+                  Add authority
+                </button>
+              </form>
+            </div>
+
             <div class="authorities-container">
               <div
                 class="authority-container"
@@ -55,9 +81,6 @@
                 ></mat-checkbox>
                 <span> {{ authority.authority }} </span>
               </div>
-
-              <!-- <div class="authorities-button-container"> -->
-              <!-- </div> -->
             </div>
             <button
               mat-button

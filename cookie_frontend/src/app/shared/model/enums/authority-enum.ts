@@ -11,3 +11,17 @@ export enum AuthorityEnum {
   ADD_TO_GROUP = 'ADD_TO_GROUP',
   DELETE_FROM_GROUP = 'DELETE_FROM_GROUP',
 }
+
+export const authorityEnums = [
+  AuthorityEnum.READ,
+  AuthorityEnum.ADD,
+  AuthorityEnum.DELETE,
+  AuthorityEnum.RESERVE,
+  AuthorityEnum.MODIFY,
+  AuthorityEnum.MODIFY_PANTRY,
+  AuthorityEnum.DELETE_PANTRY,
+  AuthorityEnum.MODIFY_GROUP,
+  AuthorityEnum.DELETE_GROUP,
+  AuthorityEnum.ADD_TO_GROUP,
+  AuthorityEnum.DELETE_FROM_GROUP,
+];

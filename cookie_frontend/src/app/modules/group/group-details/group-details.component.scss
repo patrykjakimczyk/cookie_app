@@ -43,15 +43,24 @@ mat-card {
   }
 
   mat-accordion {
+    form {
+      @include flex-with-gap($align: center, $gap: 10px);
+
+      button {
+        position: relative;
+        bottom: 8px;
+      }
+    }
+
     .authorities-container {
       @include flex-with-gap($align: center);
       flex-direction: row;
       flex-wrap: wrap;
 
       .authority-container {
-        width: 50%;
-
         @include flex-with-gap($align: center);
+        flex-direction: row;
+        width: 50%;
       }
     }
 

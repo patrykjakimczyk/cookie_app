@@ -15,6 +15,8 @@ import { GroupComponent } from './group.component';
 import { AddUserComponent } from './group-details/add-user/add-user.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSelectModule } from '@angular/material/select';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -27,6 +29,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     BrowserModule,
     BrowserAnimationsModule,
     RouterModule,
+    ReactiveFormsModule,
 
     SharedModule,
 
@@ -37,6 +40,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatSnackBarModule,
     MatExpansionModule,
     MatCheckboxModule,
+    MatSelectModule,
   ],
 })
 export class GroupModule {}

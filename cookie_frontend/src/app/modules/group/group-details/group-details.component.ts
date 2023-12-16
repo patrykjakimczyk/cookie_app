@@ -11,7 +11,11 @@ import { GroupService } from './../group.service';
 import { AuthorityDTO, UserDTO } from 'src/app/shared/model/types/user-types';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { AuthorityEnum } from 'src/app/shared/model/enums/authority-enum';
+import {
+  AuthorityEnum,
+  authorityEnums,
+} from 'src/app/shared/model/enums/authority-enum';
+import { FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-group-details',
@@ -23,12 +27,17 @@ export class GroupDetailsComponent implements OnInit {
   private authoritiesToRemove: AuthorityEnum[] = [];
   protected group: GroupDetailsDTO | null = null;
 
+  protected addAuthorityForm = this.fb.group({
+    authority: ['', Validators.required],
+  });
+
   constructor(
     private groupService: GroupService,
     private router: Router,
     private route: ActivatedRoute,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
@@ -45,6 +54,36 @@ export class GroupDetailsComponent implements OnInit {
         (authority) => authority !== value.authority
       );
     }
+  }
+
+  possibleAuthoritiesToAdd(authorities: Set<AuthorityDTO>) {
+    const userAuthorityEnums = [...authorities].map(
+      (authority) => authority.authority
+    );
+
+    return authorityEnums.filter(
+      (authority) => !userAuthorityEnums.includes(authority)
+    );
+  }
+
+  submitAddAuthority(userId: number) {
+    if (!this.addAuthorityForm.valid) {
+      return;
+    }
+
+    this.groupService
+      .assignAuthoritiesToUser(this.groupId, {
+        userId: userId,
+        authorities: [
+          this.addAuthorityForm.value['authority'] as AuthorityEnum,
+        ],
+      })
+      .subscribe({
+        next: (_) => {
+          this.addAuthorityForm.reset();
+          this.getGroupDetails();
+        },
+      });
   }
 
   removeAuthorities(userId: number) {
