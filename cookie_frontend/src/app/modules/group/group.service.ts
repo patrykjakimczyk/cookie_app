@@ -7,7 +7,10 @@ import {
   UpdateGroupRequest,
   UserWithAuthoritiesRequest,
 } from 'src/app/shared/model/requests/groups-requests';
-import { GetUserGroupsResponse } from 'src/app/shared/model/responses/group-response';
+import {
+  AssignAuthoritiesToUserResponse,
+  GetUserGroupsResponse,
+} from 'src/app/shared/model/responses/group-response';
 import { GroupDetailsDTO } from 'src/app/shared/model/types/group-types';
 
 @Injectable({ providedIn: 'root' })
@@ -68,7 +71,7 @@ export class GroupService {
     groupId: number,
     request: UserWithAuthoritiesRequest
   ) {
-    return this.http.post<any>(
+    return this.http.post<AssignAuthoritiesToUserResponse>(
       this.url +
         this.group_id_authorities_url.replace('{id}', groupId.toString()),
       request

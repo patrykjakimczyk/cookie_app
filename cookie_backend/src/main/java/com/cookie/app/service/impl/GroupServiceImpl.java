@@ -8,11 +8,13 @@ import com.cookie.app.model.entity.Authority;
 import com.cookie.app.model.entity.Group;
 import com.cookie.app.model.entity.User;
 import com.cookie.app.model.enums.AuthorityEnum;
+import com.cookie.app.model.mapper.AuthorityMapperDTO;
 import com.cookie.app.model.mapper.GroupDetailsMapperDTO;
 import com.cookie.app.model.mapper.GroupMapperDTO;
 import com.cookie.app.model.request.UserWithAuthoritiesRequest;
 import com.cookie.app.model.request.CreateGroupRequest;
 import com.cookie.app.model.request.UpdateGroupRequest;
+import com.cookie.app.model.response.AssignAuthoritiesToUserResponse;
 import com.cookie.app.model.response.GetUserGroupsResponse;
 import com.cookie.app.repository.AuthorityRepository;
 import com.cookie.app.repository.GroupRepository;
@@ -38,23 +40,26 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
     private final AuthorityRepository authorityRepository;
     private final GroupMapperDTO groupMapperDTO;
     private final GroupDetailsMapperDTO groupDetailsMapperDTO;
+    private final AuthorityMapperDTO authorityMapperDTO;
 
     public GroupServiceImpl(
             UserRepository userRepository,
             GroupRepository groupRepository,
             AuthorityRepository authorityRepository,
             GroupMapperDTO groupMapperDTO,
-            GroupDetailsMapperDTO groupDetailsMapperDTO
+            GroupDetailsMapperDTO groupDetailsMapperDTO,
+            AuthorityMapperDTO authorityMapperDTO
     ) {
         super(userRepository);
         this.groupRepository = groupRepository;
         this.authorityRepository = authorityRepository;
         this.groupMapperDTO = groupMapperDTO;
         this.groupDetailsMapperDTO = groupDetailsMapperDTO;
+        this.authorityMapperDTO = authorityMapperDTO;
     }
 
     @Override
-    public void  createGroup(CreateGroupRequest request, String userEmail) {
+    public void createGroup(CreateGroupRequest request, String userEmail) {
         User user = this.getUserByEmail(userEmail);
 
         Group group = Group.builder()
@@ -152,7 +157,7 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
                 .map(Authority::getAuthority)
                 .collect(Collectors.toSet());
 
-        if (!authorities.contains(AuthorityEnum.DELETE_GROUP)) {
+        if (!authorities.contains(AuthorityEnum.MODIFY_GROUP)) {
             log.info(String.format("User: %s tried to delete group without permissions", userEmail));
             throw new UserPerformedForbiddenActionException("You have no permissions to do that");
         }
@@ -234,7 +239,7 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
 
         User userToRemove = userToRemoveOptional.get();
 
-        if (!authorities.contains(AuthorityEnum.DELETE_FROM_GROUP) && userToRemove.getId() != user.getId()) {
+        if (!authorities.contains(AuthorityEnum.MODIFY_GROUP) && userToRemove.getId() != user.getId()) {
             log.info(String.format("User: %s tried to remove another user from group without permissions", userEmail));
             throw new UserPerformedForbiddenActionException("You have no permissions to do that");
         }
@@ -256,7 +261,7 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
     }
 
     @Override
-    public void assignAuthoritiesToUser(Long groupId, UserWithAuthoritiesRequest request, String userEmail) {
+    public AssignAuthoritiesToUserResponse assignAuthoritiesToUser(Long groupId, UserWithAuthoritiesRequest request, String userEmail) {
         User user = this.getUserByEmail(userEmail);
 
         Optional<Group> groupOptional = this.groupRepository.findById(groupId);
@@ -304,6 +309,13 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
                 .toList();
 
         this.authorityRepository.saveAll(authoritiesToAssign);
+
+        return new AssignAuthoritiesToUserResponse(
+                authoritiesToAssign
+                        .stream()
+                        .map(this.authorityMapperDTO::apply)
+                        .collect(Collectors.toSet())
+        );
     }
 
     @Override

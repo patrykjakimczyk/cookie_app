@@ -1,3 +1,5 @@
+import { AuthorityDTO } from './types/user-types';
+
 export class User {
   email: string;
   username: string;
@@ -5,6 +7,7 @@ export class User {
   assignedPantry: boolean;
   role: string;
   auth: boolean;
+  authorities: AuthorityDTO[];
 
   constructor() {
     this.email = '';
@@ -13,5 +16,6 @@ export class User {
     this.assignedPantry = false;
     this.role = '';
     this.auth = false;
+    this.authorities = [];
   }
 }

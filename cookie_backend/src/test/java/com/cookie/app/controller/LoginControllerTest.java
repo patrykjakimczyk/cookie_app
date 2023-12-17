@@ -32,7 +32,7 @@ class LoginControllerTest {
     void test_loginWithAuthenticatedUser() {
         final Authentication authentication = new UsernamePasswordAuthenticationToken("username", "password", Collections.emptyList());
 
-        Mockito.when(loginService.getLoginInfo(Mockito.anyString())).thenReturn(new LoginResponse("username", true));
+        Mockito.when(loginService.getLoginInfo(Mockito.anyString())).thenReturn(new LoginResponse("username", true, Collections.emptySet()));
 
         ResponseEntity<LoginResponse> response = this.loginController.login(authentication);
         assertEquals("username", response.getBody().username());

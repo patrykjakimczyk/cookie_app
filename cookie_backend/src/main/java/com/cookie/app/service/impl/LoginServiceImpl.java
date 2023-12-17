@@ -1,7 +1,9 @@
 package com.cookie.app.service.impl;
 
 import com.cookie.app.exception.UserWasNotFoundAfterAuthException;
+import com.cookie.app.model.dto.AuthorityDTO;
 import com.cookie.app.model.enums.Role;
+import com.cookie.app.model.mapper.AuthorityMapperDTO;
 import com.cookie.app.model.request.RegistrationRequest;
 import com.cookie.app.model.entity.User;
 import com.cookie.app.model.response.LoginResponse;
@@ -15,19 +17,19 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class LoginServiceImpl extends AbstractCookieService implements LoginService {
     private final PasswordEncoder passwordEncoder;
+    private final AuthorityMapperDTO authorityMapperDTO;
 
-    public LoginServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public LoginServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityMapperDTO authorityMapperDTO) {
         super(userRepository);
         this.passwordEncoder = passwordEncoder;
+        this.authorityMapperDTO = authorityMapperDTO;
     }
 
     public RegistrationResponse userRegistration(RegistrationRequest request) {
@@ -68,6 +70,7 @@ public class LoginServiceImpl extends AbstractCookieService implements LoginServ
     @Override
     public LoginResponse getLoginInfo(String email) {
         User user = this.getUserByEmail(email);
+
         return new LoginResponse(user.getUsername(), user.getPantry() != null);
     }
 }

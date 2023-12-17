@@ -4,13 +4,33 @@
       <span>Group name: {{ group?.groupName }}</span>
 
       <div class="action-buttons">
-        <button mat-button (click)="openChangeGroupNamePopup()">
+        <button
+          mat-button
+          (click)="openChangeGroupNamePopup()"
+          *ngIf="
+            userService.userHasAuthority(authorityEnum.MODIFY_GROUP, groupId)
+          "
+        >
           Change group name
         </button>
-        <button mat-button color="warn" (click)="openDeleteGroupPopup()">
+        <button
+          mat-button
+          color="warn"
+          (click)="openDeleteGroupPopup()"
+          *ngIf="
+            userService.userHasAuthority(authorityEnum.MODIFY_GROUP, groupId)
+          "
+        >
           Delete group
         </button>
-        <button mat-raised-button color="primary" (click)="openAddUserPopup()">
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="openAddUserPopup()"
+          *ngIf="
+            userService.userHasAuthority(authorityEnum.ADD_TO_GROUP, groupId)
+          "
+        >
           Add user
         </button>
       </div>
@@ -28,6 +48,12 @@
                 mat-raised-button
                 color="warn"
                 (click)="openRemoveUserPopup(user)"
+                *ngIf="
+                  userService.userHasAuthority(
+                    authorityEnum.MODIFY_GROUP,
+                    groupId
+                  )
+                "
               >
                 Remove user
               </button>
@@ -35,7 +61,11 @@
           </div>
         </mat-list-item>
 
-        <mat-accordion>
+        <mat-accordion
+          *ngIf="
+            userService.userHasAuthority(authorityEnum.MODIFY_GROUP, groupId)
+          "
+        >
           <mat-expansion-panel>
             <mat-expansion-panel-header>
               <mat-panel-title> Authorities </mat-panel-title>

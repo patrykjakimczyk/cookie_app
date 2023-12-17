@@ -5,6 +5,7 @@ import com.cookie.app.model.request.AddUserToGroupRequest;
 import com.cookie.app.model.request.UserWithAuthoritiesRequest;
 import com.cookie.app.model.request.CreateGroupRequest;
 import com.cookie.app.model.request.UpdateGroupRequest;
+import com.cookie.app.model.response.AssignAuthoritiesToUserResponse;
 import com.cookie.app.model.response.GetUserGroupsResponse;
 import com.cookie.app.service.GroupService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -105,13 +106,13 @@ public class GroupController {
 
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping(GROUP_ID_AUTHORITIES_URL)
-    public ResponseEntity<Void> assignAuthoritiesToUser(
+    public ResponseEntity<AssignAuthoritiesToUserResponse> assignAuthoritiesToUser(
             @PathVariable("id") @Valid @Min(1) long groupId,
             @RequestBody @Valid UserWithAuthoritiesRequest request,
             Authentication authentication
     ) {
-        this.groupService.assignAuthoritiesToUser(groupId, request, authentication.getName());
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(this.groupService.assignAuthoritiesToUser(groupId, request, authentication.getName()));
     }
 
     @SecurityRequirement(name = "bearerAuth")

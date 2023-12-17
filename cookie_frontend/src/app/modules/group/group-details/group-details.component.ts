@@ -1,3 +1,4 @@
+import { authorityEnums } from './../../../shared/model/enums/authority-enum';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component, Input, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -11,11 +12,9 @@ import { GroupService } from './../group.service';
 import { AuthorityDTO, UserDTO } from 'src/app/shared/model/types/user-types';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import {
-  AuthorityEnum,
-  authorityEnums,
-} from 'src/app/shared/model/enums/authority-enum';
+import { AuthorityEnum } from 'src/app/shared/model/enums/authority-enum';
 import { FormBuilder, Validators } from '@angular/forms';
+import { UserService } from 'src/app/shared/services/user-service';
 
 @Component({
   selector: 'app-group-details',
@@ -26,6 +25,7 @@ export class GroupDetailsComponent implements OnInit {
   @Input({ required: true }) groupId!: number;
   private authoritiesToRemove: AuthorityEnum[] = [];
   protected group: GroupDetailsDTO | null = null;
+  protected authorityEnum = AuthorityEnum;
 
   protected addAuthorityForm = this.fb.group({
     authority: ['', Validators.required],
@@ -37,7 +37,8 @@ export class GroupDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    protected userService: UserService
   ) {}
 
   ngOnInit(): void {
@@ -56,8 +57,8 @@ export class GroupDetailsComponent implements OnInit {
     }
   }
 
-  possibleAuthoritiesToAdd(authorities: Set<AuthorityDTO>) {
-    const userAuthorityEnums = [...authorities].map(
+  possibleAuthoritiesToAdd(authorities: AuthorityDTO[]) {
+    const userAuthorityEnums = authorities.map(
       (authority) => authority.authority
     );
 
@@ -71,6 +72,7 @@ export class GroupDetailsComponent implements OnInit {
       return;
     }
 
+    console.log(this.addAuthorityForm.value['authority']);
     this.groupService
       .assignAuthoritiesToUser(this.groupId, {
         userId: userId,
@@ -79,9 +81,18 @@ export class GroupDetailsComponent implements OnInit {
         ],
       })
       .subscribe({
-        next: (_) => {
+        next: (response) => {
+          if (this.group) {
+            for (let user of this.group?.users) {
+              if (user.id === userId) {
+                for (let authorityDTO of response.assignedAuthorities) {
+                  user.authorities.push(authorityDTO);
+                }
+              }
+            }
+          }
           this.addAuthorityForm.reset();
-          this.getGroupDetails();
+          this.addAuthorityForm.setErrors([]);
         },
       });
   }
@@ -205,6 +216,14 @@ export class GroupDetailsComponent implements OnInit {
 
             this.getGroupDetails();
           },
+          error: (error: HttpErrorResponse) => {
+            if (error.status === 403) {
+              this.snackBar.open(
+                `User doesn't exists or you tried to assign authorities which are already assigned to user, or you don't have permissions to do that`,
+                'Okay'
+              );
+            }
+          },
         });
       }
     });
@@ -214,6 +233,15 @@ export class GroupDetailsComponent implements OnInit {
     this.groupService.getGroup(this.groupId).subscribe({
       next: (response) => {
         this.group = response;
+
+        const user = this.userService.user.getValue();
+        response.users.forEach((userDTO) => {
+          if (userDTO.username === user.username) {
+            this.userService.setUserAuthorities(userDTO.authorities);
+            user.authorities = userDTO.authorities;
+            this.userService.saveUser(user);
+          }
+        });
       },
       error: (_) => {
         this.router.navigate(['/']);

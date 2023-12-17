@@ -9,5 +9,5 @@ export type AuthorityDTO = {
 export type UserDTO = {
   id: number;
   username: string;
-  authorities: Set<AuthorityDTO>;
+  authorities: AuthorityDTO[];
 };

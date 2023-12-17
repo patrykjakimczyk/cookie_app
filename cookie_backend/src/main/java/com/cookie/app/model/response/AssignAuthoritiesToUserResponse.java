@@ -4,4 +4,5 @@ import com.cookie.app.model.dto.AuthorityDTO;
 
 import java.util.Set;
 
-public record LoginResponse(String username, boolean assignedPantry) {}
+public record AssignAuthoritiesToUserResponse(Set<AuthorityDTO> assignedAuthorities) {
+}
