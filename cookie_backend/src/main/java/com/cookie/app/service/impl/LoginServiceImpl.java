@@ -71,6 +71,6 @@ public class LoginServiceImpl extends AbstractCookieService implements LoginServ
     public LoginResponse getLoginInfo(String email) {
         User user = this.getUserByEmail(email);
 
-        return new LoginResponse(user.getUsername(), user.getPantry() != null);
+        return new LoginResponse(user.getUsername());
     }
 }

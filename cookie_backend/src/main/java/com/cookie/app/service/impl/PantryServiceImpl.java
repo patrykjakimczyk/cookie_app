@@ -1,65 +1,95 @@
 package com.cookie.app.service.impl;
 
 import com.cookie.app.exception.PantryNotFoundException;
-import com.cookie.app.exception.UserHasAssignedPantryException;
+import com.cookie.app.exception.UserPerformedForbiddenActionException;
+import com.cookie.app.model.entity.Authority;
+import com.cookie.app.model.entity.Group;
 import com.cookie.app.model.entity.Pantry;
 import com.cookie.app.model.entity.User;
+import com.cookie.app.model.enums.AuthorityEnum;
+import com.cookie.app.model.mapper.PantryMapperDTO;
 import com.cookie.app.model.request.CreatePantryRequest;
 import com.cookie.app.model.request.UpdatePantryRequest;
 import com.cookie.app.model.response.DeletePantryResponse;
 import com.cookie.app.model.response.GetPantryResponse;
+import com.cookie.app.model.response.GetUserPantriesResponse;
 import com.cookie.app.repository.PantryRepository;
 import com.cookie.app.repository.UserRepository;
 import com.cookie.app.service.PantryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 
 @Slf4j
 @Service
 public class PantryServiceImpl extends AbstractCookieService implements PantryService{
     private final PantryRepository pantryRepository;
+    private final PantryMapperDTO pantryMapperDTO;
 
-    public PantryServiceImpl(UserRepository userRepository, PantryRepository pantryRepository) {
+    public PantryServiceImpl(UserRepository userRepository, PantryRepository pantryRepository, PantryMapperDTO pantryMapperDTO) {
         super(userRepository);
         this.pantryRepository = pantryRepository;
+        this.pantryMapperDTO = pantryMapperDTO;
     }
 
     @Override
-    public void createPantry(CreatePantryRequest request, String userEmail) {
+    public GetPantryResponse createPantry(CreatePantryRequest request, String userEmail) {
         User user = this.getUserByEmail(userEmail);
+        Optional<Group> userGroupOptional = this.findUserGroupById(user, request.groupId());
+        Group userGroup = userGroupOptional.orElseThrow(
+                () -> new UserPerformedForbiddenActionException("You tried to create pantry for non existing group")
+        );
 
-        if (user.getPantry() != null) {
-            throw new UserHasAssignedPantryException("User already has an assigned pantry");
+        if (!this.userHasAuthority(user, userGroup.getId(), AuthorityEnum.MODIFY_PANTRY)) {
+            log.info(String.format("User: %s tried to create pantry without permission", userEmail));
+            throw new UserPerformedForbiddenActionException("You tried to create pantry without permission");
         }
 
         Pantry pantry = Pantry
                 .builder()
                 .pantryName(request.pantryName())
-                .user(user)
+                .group(userGroup)
                 .build();
 
         this.pantryRepository.save(pantry);
-    }
-
-    @Override
-    public GetPantryResponse getPantry(String userEmail) {
-        Pantry pantry = this.getPantryForUser(userEmail);
-
-        if (pantry == null) {
-            return new GetPantryResponse(null, null);
-        }
 
         return new GetPantryResponse(pantry.getId(), pantry.getPantryName());
     }
 
     @Override
-    public DeletePantryResponse deletePantry(String userEmail) {
-        Pantry pantry = this.getPantryForUser(userEmail);
+    public GetPantryResponse getPantry(long pantryId, String userEmail) {
+        User user = this.getUserByEmail(userEmail);
+        Optional<Pantry> pantryOptional = this.findPantryInUserGroups(pantryId, user);
 
-        if (pantry == null) {
-            throw new PantryNotFoundException("User cannot remove the pantry because it does not exist");
+        // przerobic na wyrzucanie pantrynotfoundexception
+        if (pantryOptional.isEmpty()) {
+            return new GetPantryResponse(null, null);
         }
+
+        Pantry pantry = pantryOptional.get();
+
+        return new GetPantryResponse(pantry.getId(), pantry.getPantryName());
+    }
+
+    @Override
+    public GetUserPantriesResponse getAllUserPantries(String userEmail) {
+        User user = this.getUserByEmail(userEmail);
+
+        return new GetUserPantriesResponse(
+                user.getGroups()
+                        .stream()
+                        .filter(group -> group.getPantry() != null)
+                        .map(group -> this.pantryMapperDTO.apply(group.getPantry()))
+                        .toList()
+        );
+    }
+
+    @Override
+    public DeletePantryResponse deletePantry(long pantryId, String userEmail) {
+        Pantry pantry = this.getPantryIfUserHasAuthority(pantryId, userEmail, null);
 
         this.pantryRepository.delete(pantry);
 
@@ -67,22 +97,12 @@ public class PantryServiceImpl extends AbstractCookieService implements PantrySe
     }
 
     @Override
-    public GetPantryResponse updatePantry(UpdatePantryRequest request, String userEmail) {
-        Pantry pantry = this.getPantryForUser(userEmail);
-
-        if (pantry == null) {
-            throw new PantryNotFoundException("User cannot update the pantry because it does not exist");
-        }
+    public GetPantryResponse updatePantry(long pantryId, UpdatePantryRequest request, String userEmail) {
+        Pantry pantry = this.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.MODIFY_PANTRY);
 
         pantry.setPantryName(request.pantryName());
         this.pantryRepository.save(pantry);
 
         return new GetPantryResponse(pantry.getId(), pantry.getPantryName());
-    }
-
-    private Pantry getPantryForUser(String userEmail) {
-        User user = this.getUserByEmail(userEmail);
-
-        return user.getPantry();
     }
 }

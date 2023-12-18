@@ -238,12 +238,10 @@ export class GroupDetailsComponent implements OnInit {
         response.users.forEach((userDTO) => {
           if (userDTO.username === user.username) {
             this.userService.setUserAuthorities(userDTO.authorities);
-            user.authorities = userDTO.authorities;
-            this.userService.saveUser(user);
           }
         });
       },
-      error: (_) => {
+      error: (error) => {
         this.router.navigate(['/']);
       },
     });

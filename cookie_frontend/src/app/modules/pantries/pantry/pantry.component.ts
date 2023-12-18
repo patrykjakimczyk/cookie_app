@@ -6,9 +6,10 @@ import { Subject } from 'rxjs';
 import { NewNamePopupComponentComponent } from 'src/app/shared/components/new-name-popup-component/new-name-popup-component.component';
 import { DeletePopupComponent } from 'src/app/shared/components/delete-popup/delete-popup.component';
 import { UserService } from 'src/app/shared/services/user-service';
-import { PantryService } from './pantry.service';
+import { PantryService } from '../pantry.service';
 import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
-import { GetPantryResponse } from './../../shared/model/responses/pantry-response';
+import { GetPantryResponse } from '../../../shared/model/responses/pantry-response';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-pantry',
@@ -23,11 +24,14 @@ export class PantryComponent implements OnInit {
     private pantryService: PantryService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private userService: UserService
+    private userService: UserService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.pantryService.getUserPantry().subscribe({
+    const pantryId = this.route.snapshot.params['id'];
+
+    this.pantryService.getUserPantry(pantryId).subscribe({
       next: (response) => {
         this.pantry = response;
         this.pantry$.next(response);
@@ -71,7 +75,6 @@ export class PantryComponent implements OnInit {
           },
         });
 
-        this.userService.setUserAssignedPantry(false);
         this.pantry = { id: 0, pantryName: '' };
         this.pantry$.next(this.pantry);
       }

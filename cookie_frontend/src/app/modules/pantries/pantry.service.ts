@@ -2,28 +2,46 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { UpdatePantryRequest } from 'src/app/shared/model/requests/pantry-requests';
+import {
+  CreatePantryRequest,
+  UpdatePantryRequest,
+} from 'src/app/shared/model/requests/pantry-requests';
 import {
   DeletePantryResponse,
   GetPantryResponse,
+  GetUserPantriesResponse,
 } from 'src/app/shared/model/responses/pantry-response';
 import { PantryProductDTO } from './pantry-products-list/pantry-products-list.component';
 
 @Injectable({ providedIn: 'root' })
 export class PantryService {
   private readonly url = 'http://localhost:8081/';
+  private readonly pantries_path = 'pantries';
   private readonly pantry_path = 'pantry';
   private readonly products_path = 'products';
   private readonly pantry_products_path = '/products';
 
   constructor(private http: HttpClient) {}
 
-  getUserPantry(): Observable<GetPantryResponse> {
-    return this.http.get<GetPantryResponse>(this.url + this.pantry_path);
+  getUserPantry(pantryId: number): Observable<GetPantryResponse> {
+    return this.http.get<GetPantryResponse>(
+      this.url + this.pantry_path + '/' + pantryId
+    );
   }
 
-  createUserPantry(request: UpdatePantryRequest): Observable<any> {
-    return this.http.post<any>(this.url + this.pantry_path, request);
+  getAllUserPantries(): Observable<GetUserPantriesResponse> {
+    return this.http.get<GetUserPantriesResponse>(
+      this.url + this.pantries_path
+    );
+  }
+
+  createUserPantry(
+    request: CreatePantryRequest
+  ): Observable<GetPantryResponse> {
+    return this.http.post<GetPantryResponse>(
+      this.url + this.pantry_path,
+      request
+    );
   }
 
   updateUserPantry(

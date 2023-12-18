@@ -26,15 +26,9 @@ export class UserService {
     this.user.next(user);
   }
 
-  setUserAssignedPantry(assigned: boolean) {
-    const user = this.user.getValue();
-    user.assignedPantry = assigned;
-    this.saveUser(user);
-  }
-
   setUserAuthorities(authorities: AuthorityDTO[]) {
     const user = this.user.getValue();
-    user.authorities.push(...authorities);
+    user.authorities = authorities;
     this.saveUser(user);
   }
 

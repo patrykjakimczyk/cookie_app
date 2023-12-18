@@ -5,6 +5,7 @@ export type GroupDTO = {
   groupName: string;
   creator: UserDTO;
   users: number;
+  pantryId: number;
 };
 
 export type GroupDetailsDTO = {
@@ -12,4 +13,6 @@ export type GroupDetailsDTO = {
   groupName: string;
   creator: UserDTO;
   users: UserDTO[];
+  pantryId: number;
+  pantryName: string;
 };

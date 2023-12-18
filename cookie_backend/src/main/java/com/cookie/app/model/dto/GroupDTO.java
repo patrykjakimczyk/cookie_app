@@ -4,5 +4,6 @@ public record GroupDTO(
         Long id,
         String groupName,
         UserDTO creator,
-        int users
+        int users,
+        long pantryId
 ) {}

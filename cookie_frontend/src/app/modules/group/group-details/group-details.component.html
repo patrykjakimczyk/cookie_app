@@ -25,6 +25,7 @@
         </button>
         <button
           mat-raised-button
+          [color]="group?.pantryId ? 'primary' : ''"
           color="primary"
           (click)="openAddUserPopup()"
           *ngIf="
@@ -36,7 +37,7 @@
       </div>
     </div>
 
-    <span id="users-header">Users:</span>
+    <span class="section-header">Users:</span>
     <mat-list role="list">
       <ng-container *ngFor="let user of group?.users; index as i">
         <mat-list-item>
@@ -132,5 +133,29 @@
         ></mat-divider>
       </ng-container>
     </mat-list>
+
+    <span class="section-header">Pantry:</span>
+    <mat-card>
+      <mat-card-content>
+        <div id="pantry-container" *ngIf="group?.pantryId">
+          <span>Pantry name: {{ group?.pantryName }}</span>
+          <button mat-button [routerLink]="'/pantries/' + group?.pantryId">
+            Go to pantry
+          </button>
+        </div>
+
+        <div id="create-pantry-container" *ngIf="!group?.pantryId">
+          <span>Group doesn't have pantry</span>
+          <button
+            mat-raised-button
+            routerLink="/pantries/create"
+            [queryParams]="{ groupId: group?.id }"
+            color="primary"
+          >
+            Create pantry
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
   </mat-card-content>
 </mat-card>

@@ -3,13 +3,20 @@
     <span id="name"
       >{{ type === "GROUP" ? "Group name: " : "Pantry name: " }}{{ name }}</span
     >
-    <span>Creator's name: {{ creatorName }}</span>
-    <span>Users: {{ nrOfUsers }}</span>
+    <span *ngIf="creatorName">Creator's name: {{ creatorName }}</span>
+    <span *ngIf="groupName">Group: {{ groupName }}</span>
+    <span>{{ type === "GROUP" ? "Users: " : "Products: " }} {{ number }}</span>
     <div id="buttons-container">
-      <button mat-button>Go to pantry</button>
+      <button
+        mat-button
+        [routerLink]="(type === 'GROUP' ? '/pantries/' : '/groups/') + secondId"
+        *ngIf="secondId > 0"
+      >
+        Go to {{ type === "GROUP" ? "pantry" : "group" }}
+      </button>
       <button
         mat-raised-button
-        [routerLink]="(type === 'GROUP' ? '/groups/' : '/pantry/') + id"
+        [routerLink]="(type === 'GROUP' ? '/groups/' : '/pantries/') + id"
       >
         Go to {{ type.toLowerCase() }}
       </button>

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { NgModel } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
-import { PantryService } from '../pantry.service';
+import { PantryService } from '../../pantry.service';
 import { GetPantryResponse } from 'src/app/shared/model/responses/pantry-response';
 
 @Component({

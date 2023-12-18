@@ -26,9 +26,10 @@
     <app-preview-card
       *ngFor="let group of userGroups"
       [id]="group.id"
+      [secondId]="group.pantryId"
       [name]="group.groupName"
       [creatorName]="group.creator.username"
-      [nrOfUsers]="group.users"
+      [number]="group.users"
       [type]="'GROUP'"
     ></app-preview-card>
   </ng-container>

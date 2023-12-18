@@ -8,8 +8,10 @@ import { PreviewCardType } from './previev-card-type';
 })
 export class PreviewCardComponent {
   @Input({ required: true }) id!: number;
+  @Input({ required: true }) secondId!: number;
   @Input({ required: true }) name!: string;
-  @Input({ required: true }) creatorName!: string;
-  @Input({ required: true }) nrOfUsers!: number;
+  @Input({ required: false }) creatorName: string | undefined;
+  @Input({ required: false }) groupName: string | undefined;
+  @Input({ required: true }) number!: number;
   @Input({ required: true }) type!: PreviewCardType;
 }

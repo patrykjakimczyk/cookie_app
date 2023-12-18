@@ -1,15 +1,13 @@
 package com.cookie.app.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Timestamp;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -43,4 +41,7 @@ public class Group {
             inverseJoinColumns = @JoinColumn(name = "group_id")
     )
     private List<User> users;
+
+    @OneToOne(mappedBy = "group", fetch = FetchType.LAZY)
+    private Pantry pantry;
 }

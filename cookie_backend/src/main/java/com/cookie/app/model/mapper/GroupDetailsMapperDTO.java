@@ -29,7 +29,10 @@ public class GroupDetailsMapperDTO implements Function<Group, GroupDetailsDTO> {
 
                             return userMapperDTO.apply(user);
                         })
-                        .toList()
+                        .toList(),
+                group.getPantry() != null ? group.getPantry().getId() : 0L,
+                group.getPantry() != null ? group.getPantry().getPantryName() : ""
+
         );
     }
 

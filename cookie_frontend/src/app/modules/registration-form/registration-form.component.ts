@@ -102,6 +102,9 @@ export class RegistrationFormComponent {
           this.form.controls.email.setErrors({ emailTaken: true });
         }
       },
+      error: (error) => {
+        console.log(error);
+      },
     });
   }
 

@@ -5,67 +5,83 @@ mat-card {
   width: 100%;
   max-width: 1000px;
 
-  #upper-container {
-    @include flex-with-gap($align: center);
-    justify-content: space-between;
-    margin-bottom: 30px;
-
-    span {
-      font-size: 20px;
-      font-weight: 500;
-    }
-  }
-
-  #users-header {
-    font-size: 16px;
-    font-weight: 500;
-  }
-
-  mat-list {
+  mat-card-content {
     @include flex-with-gap($direction: column, $gap: 10px);
 
-    mat-list-item {
-      height: auto;
-
-      .user-container {
-        @include flex-with-gap($align: center);
-        justify-content: space-between;
-      }
-
-      &:hover {
-        background-color: darken($color: white, $amount: 4);
-      }
-    }
-  }
-
-  .action-buttons {
-    @include flex-with-gap($gap: 10px);
-  }
-
-  mat-accordion {
-    form {
-      @include flex-with-gap($align: center, $gap: 10px);
-
-      button {
-        position: relative;
-        bottom: 8px;
-      }
-    }
-
-    .authorities-container {
+    #upper-container {
       @include flex-with-gap($align: center);
-      flex-direction: row;
-      flex-wrap: wrap;
+      justify-content: space-between;
+      margin-bottom: 30px;
 
-      .authority-container {
-        @include flex-with-gap($align: center);
-        flex-direction: row;
-        width: 50%;
+      span {
+        font-size: 20px;
+        font-weight: 500;
+      }
+
+      .action-buttons {
+        @include flex-with-gap($gap: 10px);
       }
     }
 
-    .remove-authorities-button {
-      float: right;
+    .section-header {
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    mat-list {
+      @include flex-with-gap($direction: column, $gap: 10px);
+      width: 95%;
+      margin: auto;
+
+      mat-list-item {
+        height: auto;
+
+        .user-container {
+          @include flex-with-gap($align: center);
+          justify-content: space-between;
+        }
+
+        &:hover {
+          background-color: darken($color: white, $amount: 4);
+        }
+      }
+
+      mat-accordion {
+        form {
+          @include flex-with-gap($align: center, $gap: 10px);
+
+          button {
+            position: relative;
+            bottom: 8px;
+          }
+        }
+
+        .authorities-container {
+          @include flex-with-gap($align: center);
+          flex-direction: row;
+          flex-wrap: wrap;
+
+          .authority-container {
+            @include flex-with-gap($align: center);
+            flex-direction: row;
+            width: 50%;
+          }
+        }
+
+        .remove-authorities-button {
+          float: right;
+        }
+      }
+    }
+
+    #pantry-container {
+      @include flex-with-gap($align: center, $gap: 10px);
+      justify-content: space-between;
+    }
+
+    #create-pantry-container {
+      @include flex-with-gap($align: center, $gap: 10px);
+      justify-content: center;
     }
   }
 }

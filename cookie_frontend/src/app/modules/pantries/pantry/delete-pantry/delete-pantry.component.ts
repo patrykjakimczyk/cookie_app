@@ -1,4 +1,4 @@
-import { PantryService } from './../pantry.service';
+import { PantryService } from '../../pantry.service';
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 

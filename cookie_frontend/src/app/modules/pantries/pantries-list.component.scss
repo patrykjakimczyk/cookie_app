@@ -1,0 +1,29 @@
+@import "../../../assets/styles/mixins";
+
+#container {
+  @include flex-with-gap($direction: column, $gap: 20px);
+  height: 100%;
+  max-width: 1920px;
+  margin: auto;
+
+  #upper-container {
+    @include flex-with-gap;
+    justify-content: space-between;
+
+    button {
+      font-weight: 600;
+    }
+  }
+
+  #empty-groups-container {
+    @include flex-with-gap($direction: row, $align: center, $gap: 10px);
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+  }
+
+  h1 {
+    margin: 0;
+    font-weight: 500;
+  }
+}
