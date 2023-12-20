@@ -11,10 +11,10 @@ import {
   GetPantryResponse,
   GetUserPantriesResponse,
 } from 'src/app/shared/model/responses/pantry-response';
-import { PantryProductDTO } from './pantry-products-list/pantry-products-list.component';
+import { PantryProductDTO } from './pantry/pantry-products-list/pantry-products-list.component';
 
 @Injectable({ providedIn: 'root' })
-export class PantryService {
+export class PantriesService {
   private readonly url = 'http://localhost:8081/';
   private readonly pantries_path = 'pantries';
   private readonly pantry_path = 'pantry';

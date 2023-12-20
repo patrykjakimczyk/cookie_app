@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { PantryService } from './pantry.service';
+import { PantriesService } from './pantries.service';
 import { PantryDTO } from 'src/app/shared/model/types/pantry-types';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-pantries-list',
@@ -10,14 +11,21 @@ import { PantryDTO } from 'src/app/shared/model/types/pantry-types';
 export class PantriesListComponent implements OnInit {
   protected pantries: PantryDTO[] = [];
 
-  constructor(private pantryService: PantryService) {}
+  constructor(private pantryService: PantriesService, private router: Router) {}
 
   ngOnInit(): void {
-    // this.pantryService.getAllUserPantries().subscribe({
-    //   next: (response) => {
-    //     console.log(response);
-    //     this.pantries = response.pantries;
-    //   },
-    // });
+    this.pantryService.getAllUserPantries().subscribe({
+      next: (response) => {
+        this.pantries = response.pantries;
+      },
+    });
+  }
+
+  goToGroup(groupId: number) {
+    this.router.navigate(['/groups/' + groupId]);
+  }
+
+  goToPantry(pantryId: number) {
+    this.router.navigate(['/pantries/' + pantryId]);
   }
 }

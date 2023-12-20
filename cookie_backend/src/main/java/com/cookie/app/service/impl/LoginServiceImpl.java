@@ -24,12 +24,10 @@ import java.util.stream.Collectors;
 @Service
 public class LoginServiceImpl extends AbstractCookieService implements LoginService {
     private final PasswordEncoder passwordEncoder;
-    private final AuthorityMapperDTO authorityMapperDTO;
 
-    public LoginServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityMapperDTO authorityMapperDTO) {
+    public LoginServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         super(userRepository);
         this.passwordEncoder = passwordEncoder;
-        this.authorityMapperDTO = authorityMapperDTO;
     }
 
     public RegistrationResponse userRegistration(RegistrationRequest request) {

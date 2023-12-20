@@ -6,6 +6,7 @@
     <mat-checkbox
       (change)="checkboxClicked($event)"
       color="primary"
+      [disabled]="!userService.userHasAuthority(authorityEnum.MODIFY)"
     ></mat-checkbox>
 
     <span>{{ pantryProduct.productName }}</span>
@@ -29,14 +30,18 @@
     <mat-menu #menu="matMenu">
       <button
         mat-menu-item
-        *ngIf="isPantryProduct"
+        *ngIf="
+          isPantryProduct && userService.userHasAuthority(authorityEnum.RESERVE)
+        "
         (click)="reserveButtonClicked()"
       >
         Reserve product
       </button>
       <button
         mat-menu-item
-        *ngIf="isPantryProduct"
+        *ngIf="
+          isPantryProduct && userService.userHasAuthority(authorityEnum.RESERVE)
+        "
         (click)="unreserveButtonClicked()"
       >
         Unreserve product
@@ -44,7 +49,11 @@
       <button mat-menu-item (click)="showDetailsButtonClicked()">
         Show details
       </button>
-      <button mat-menu-item (click)="editButtonClicked()">
+      <button
+        mat-menu-item
+        (click)="editButtonClicked()"
+        *ngIf="userService.userHasAuthority(authorityEnum.MODIFY)"
+      >
         Edit pantry product
       </button>
     </mat-menu>

@@ -1,12 +1,12 @@
 package com.cookie.app.service.impl;
 
-import com.cookie.app.exception.PantryNotFoundException;
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
-import com.cookie.app.model.entity.Authority;
+import com.cookie.app.model.dto.AuthorityDTO;
 import com.cookie.app.model.entity.Group;
 import com.cookie.app.model.entity.Pantry;
 import com.cookie.app.model.entity.User;
 import com.cookie.app.model.enums.AuthorityEnum;
+import com.cookie.app.model.mapper.AuthorityMapperDTO;
 import com.cookie.app.model.mapper.PantryMapperDTO;
 import com.cookie.app.model.request.CreatePantryRequest;
 import com.cookie.app.model.request.UpdatePantryRequest;
@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -28,11 +29,18 @@ import java.util.stream.Collectors;
 public class PantryServiceImpl extends AbstractCookieService implements PantryService{
     private final PantryRepository pantryRepository;
     private final PantryMapperDTO pantryMapperDTO;
+    private final AuthorityMapperDTO authorityMapperDTO;
 
-    public PantryServiceImpl(UserRepository userRepository, PantryRepository pantryRepository, PantryMapperDTO pantryMapperDTO) {
+    public PantryServiceImpl(
+            UserRepository userRepository,
+            PantryRepository pantryRepository,
+            PantryMapperDTO pantryMapperDTO,
+            AuthorityMapperDTO authorityMapperDTO
+    ) {
         super(userRepository);
         this.pantryRepository = pantryRepository;
         this.pantryMapperDTO = pantryMapperDTO;
+        this.authorityMapperDTO = authorityMapperDTO;
     }
 
     @Override
@@ -56,7 +64,11 @@ public class PantryServiceImpl extends AbstractCookieService implements PantrySe
 
         this.pantryRepository.save(pantry);
 
-        return new GetPantryResponse(pantry.getId(), pantry.getPantryName());
+        return new GetPantryResponse(
+                pantry.getId(),
+                pantry.getPantryName(),
+                this.getAuthorityDTOsForSpecificGroup(user, userGroup)
+        );
     }
 
     @Override
@@ -66,12 +78,16 @@ public class PantryServiceImpl extends AbstractCookieService implements PantrySe
 
         // przerobic na wyrzucanie pantrynotfoundexception
         if (pantryOptional.isEmpty()) {
-            return new GetPantryResponse(null, null);
+            return new GetPantryResponse(null, null, null);
         }
 
         Pantry pantry = pantryOptional.get();
 
-        return new GetPantryResponse(pantry.getId(), pantry.getPantryName());
+        return new GetPantryResponse(
+                pantry.getId(),
+                pantry.getPantryName(),
+                this.getAuthorityDTOsForSpecificGroup(user, pantry.getGroup())
+        );
     }
 
     @Override
@@ -98,11 +114,24 @@ public class PantryServiceImpl extends AbstractCookieService implements PantrySe
 
     @Override
     public GetPantryResponse updatePantry(long pantryId, UpdatePantryRequest request, String userEmail) {
+        User user = this.getUserByEmail(userEmail);
         Pantry pantry = this.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.MODIFY_PANTRY);
 
         pantry.setPantryName(request.pantryName());
         this.pantryRepository.save(pantry);
 
-        return new GetPantryResponse(pantry.getId(), pantry.getPantryName());
+        return new GetPantryResponse(
+                pantry.getId(),
+                pantry.getPantryName(),
+                this.getAuthorityDTOsForSpecificGroup(user, pantry.getGroup())
+        );
+    }
+
+    private Set<AuthorityDTO> getAuthorityDTOsForSpecificGroup(User user, Group userGroup) {
+        return user.getAuthorities()
+                .stream()
+                .filter(authority -> authority.getGroup().getId() == userGroup.getId())
+                .map(authorityMapperDTO::apply)
+                .collect(Collectors.toSet());
     }
 }

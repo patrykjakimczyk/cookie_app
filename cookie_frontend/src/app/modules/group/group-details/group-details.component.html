@@ -7,9 +7,7 @@
         <button
           mat-button
           (click)="openChangeGroupNamePopup()"
-          *ngIf="
-            userService.userHasAuthority(authorityEnum.MODIFY_GROUP, groupId)
-          "
+          *ngIf="userService.userHasAuthority(authorityEnum.MODIFY_GROUP)"
         >
           Change group name
         </button>
@@ -17,9 +15,7 @@
           mat-button
           color="warn"
           (click)="openDeleteGroupPopup()"
-          *ngIf="
-            userService.userHasAuthority(authorityEnum.MODIFY_GROUP, groupId)
-          "
+          *ngIf="userService.userHasAuthority(authorityEnum.MODIFY_GROUP)"
         >
           Delete group
         </button>
@@ -28,9 +24,7 @@
           [color]="group?.pantryId ? 'primary' : ''"
           color="primary"
           (click)="openAddUserPopup()"
-          *ngIf="
-            userService.userHasAuthority(authorityEnum.ADD_TO_GROUP, groupId)
-          "
+          *ngIf="userService.userHasAuthority(authorityEnum.ADD_TO_GROUP)"
         >
           Add user
         </button>
@@ -49,12 +43,7 @@
                 mat-raised-button
                 color="warn"
                 (click)="openRemoveUserPopup(user)"
-                *ngIf="
-                  userService.userHasAuthority(
-                    authorityEnum.MODIFY_GROUP,
-                    groupId
-                  )
-                "
+                *ngIf="userService.userHasAuthority(authorityEnum.MODIFY_GROUP)"
               >
                 Remove user
               </button>
@@ -63,9 +52,7 @@
         </mat-list-item>
 
         <mat-accordion
-          *ngIf="
-            userService.userHasAuthority(authorityEnum.MODIFY_GROUP, groupId)
-          "
+          *ngIf="userService.userHasAuthority(authorityEnum.MODIFY_GROUP)"
         >
           <mat-expansion-panel>
             <mat-expansion-panel-header>

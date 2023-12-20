@@ -1,18 +1,23 @@
+import {
+  AuthorityEnum,
+  authorityEnums,
+} from './../../../../shared/model/enums/authority-enum';
 import { Component, Input } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { Observable, Subject, of } from 'rxjs';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 
-import { PantryService } from '../pantry.service';
 import { GetPantryResponse } from 'src/app/shared/model/responses/pantry-response';
 import { CheckboxEvent } from './pantry-product-list-elem/pantry-product-list-elem.component';
-import { Unit } from 'src/app/shared/model/enums/unit.enum';
+import { Unit, units } from 'src/app/shared/model/enums/unit.enum';
 import { Category, categories } from 'src/app/shared/model/enums/cateory-enum';
-import { units } from './../../../shared/model/enums/unit.enum';
 import {
-  sortDirecitons,
   sortColumnNames,
-} from './../../../shared/model/enums/sort-enum';
+  sortDirecitons,
+} from 'src/app/shared/model/enums/sort-enum';
+import { PantriesService } from '../../pantries.service';
+import { UserService } from 'src/app/shared/services/user-service';
+import { Router } from '@angular/router';
 
 export type ProductDTO = {
   productName: string;
@@ -38,6 +43,7 @@ export type PantryProductDTO = {
 export class PantryProductsListComponent {
   @Input() pantry$!: Subject<GetPantryResponse>;
   protected pantry?: GetPantryResponse;
+  protected authorityEnum = AuthorityEnum;
   public readonly page_size = 20;
   public showAddProducts = false;
   public page = 0;
@@ -81,10 +87,18 @@ export class PantryProductsListComponent {
     sortDirection: [''],
   });
 
-  constructor(private pantryService: PantryService, private fb: FormBuilder) {}
+  constructor(
+    private pantriesService: PantriesService,
+    private router: Router,
+    private fb: FormBuilder,
+    protected userService: UserService
+  ) {}
 
   ngOnInit(): void {
     this.pantry$.subscribe((pantry: GetPantryResponse) => {
+      if (!pantry.id || !pantry.pantryName) {
+        this.router.navigate(['/pantries']);
+      }
       this.pantry = pantry;
       this.getPantryProducts();
     });
@@ -106,7 +120,7 @@ export class PantryProductsListComponent {
 
   searchForProducts() {
     if (this.addForm.controls.productName.value) {
-      this.pantryService
+      this.pantriesService
         .getProductsWithFilter(this.addForm.controls.productName.value)
         .subscribe({
           next: (response) => {
@@ -203,7 +217,7 @@ export class PantryProductsListComponent {
       product.id = null;
     });
 
-    this.pantryService
+    this.pantriesService
       .addProductsToPantry(this.pantry!.id, this.productsToAdd)
       .subscribe({
         next: (_) => {
@@ -240,7 +254,7 @@ export class PantryProductsListComponent {
 
   removeProductsFromPantry() {
     if (this.pantry && this.pantry.id && this.pantry.pantryName) {
-      this.pantryService
+      this.pantriesService
         .removeProductsFromPantry(this.pantry.id, this.productsIdsToRemove)
         .subscribe({
           next: (_) => {
@@ -258,7 +272,7 @@ export class PantryProductsListComponent {
     const SortDirection = this.searchForm.controls.sortDirection.value!;
 
     if (this.pantry && this.pantry.id && this.pantry.pantryName) {
-      this.pantryService
+      this.pantriesService
         .getPantryProducts(
           this.pantry.id,
           this.page,

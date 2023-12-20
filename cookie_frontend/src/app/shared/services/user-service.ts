@@ -55,14 +55,11 @@ export class UserService {
     removeCookie('XSRF-TOKEN', { path: '/' });
   }
 
-  userHasAuthority(requiredAuthority: AuthorityEnum, groupId: number): boolean {
+  userHasAuthority(requiredAuthority: AuthorityEnum): boolean {
     const user = this.user.getValue();
 
     for (let authority of user.authorities) {
-      if (
-        authority.authority === requiredAuthority &&
-        +authority.groupId === +groupId
-      ) {
+      if (authority.authority === requiredAuthority) {
         return true;
       }
     }

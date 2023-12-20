@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 @Service
 public class GroupDetailsMapperDTO implements Function<Group, GroupDetailsDTO> {
     private final UserMapperDTO userMapperDTO;
+
     @Override
     public GroupDetailsDTO apply(Group group) {
         User creator = group.getCreator();
@@ -36,7 +37,7 @@ public class GroupDetailsMapperDTO implements Function<Group, GroupDetailsDTO> {
         );
     }
 
-    private void extractAuthoritiesOnlyForGroup(User user, Group group) {
+    public void extractAuthoritiesOnlyForGroup(User user, Group group) {
         user.setAuthorities(
                 user.getAuthorities()
                         .stream()

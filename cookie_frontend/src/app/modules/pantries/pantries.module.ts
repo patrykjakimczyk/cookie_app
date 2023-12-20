@@ -22,13 +22,14 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 import { SharedModule } from 'src/app/shared/shared.module';
 import { CreatePantryComponent } from './pantry/create-pantry/create-pantry.component';
-import { PantryProductsListComponent } from './pantry-products-list/pantry-products-list.component';
-import { PantryProductListElemComponent } from './pantry-products-list/pantry-product-list-elem/pantry-product-list-elem.component';
-import { EditPantryProductComponent } from './pantry-products-list/pantry-product-list-elem/edit-pantry-product/edit-pantry-product.component';
-import { ReservePantryProductComponent } from './pantry-products-list/pantry-product-list-elem/reserve-pantry-product/reserve-pantry-product.component';
-import { PantryProductDetailsComponent } from './pantry-products-list/pantry-product-list-elem/pantry-product-details/pantry-product-details.component';
+
 import { PantryComponent } from './pantry/pantry.component';
 import { PantriesListComponent } from './pantries-list.component';
+import { PantryProductsListComponent } from './pantry/pantry-products-list/pantry-products-list.component';
+import { PantryProductListElemComponent } from './pantry/pantry-products-list/pantry-product-list-elem/pantry-product-list-elem.component';
+import { EditPantryProductComponent } from './pantry/pantry-products-list/pantry-product-list-elem/edit-pantry-product/edit-pantry-product.component';
+import { PantryProductDetailsComponent } from './pantry/pantry-products-list/pantry-product-list-elem/pantry-product-details/pantry-product-details.component';
+import { ReservePantryProductComponent } from './pantry/pantry-products-list/pantry-product-list-elem/reserve-pantry-product/reserve-pantry-product.component';
 
 @NgModule({
   declarations: [

@@ -7,12 +7,12 @@ import {
   Validators,
 } from '@angular/forms';
 
-import { PantryService } from './../../../pantry.service';
 import { units } from 'src/app/shared/model/enums/unit.enum';
 import {
   EditPantryInfo,
   PantryProductDTO,
 } from 'src/app/shared/model/types/pantry-types';
+import { PantriesService } from 'src/app/modules/pantries/pantries.service';
 
 @Component({
   selector: 'app-edit-pantry-product',
@@ -27,7 +27,7 @@ export class EditPantryProductComponent implements OnInit {
   protected editForm!: FormGroup;
 
   constructor(
-    private pantryService: PantryService,
+    private pantriesService: PantriesService,
     private fb: FormBuilder,
     public dialog: MatDialogRef<EditPantryProductComponent>,
     @Inject(MAT_DIALOG_DATA) public data: EditPantryInfo
@@ -77,7 +77,7 @@ export class EditPantryProductComponent implements OnInit {
     }
 
     if (this.isPantryProduct) {
-      this.pantryService
+      this.pantriesService
         .modifyPantryProduct(this.pantryId, this.editForm.value)
         .subscribe({
           next: (_) => {

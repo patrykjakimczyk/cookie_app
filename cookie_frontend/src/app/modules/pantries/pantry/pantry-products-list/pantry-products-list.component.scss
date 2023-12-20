@@ -1,4 +1,4 @@
-@import "../../../../assets/styles/mixins";
+@import "../../../../../assets/styles/mixins";
 
 .transform-button-position {
   position: relative;
@@ -59,13 +59,6 @@
     mat-card-content {
       width: 100%;
       padding: 0;
-
-      #create-pantry-container {
-        @include flex-with-gap($direction: row, $align: center, $gap: 10px);
-        justify-content: center;
-        align-items: center;
-        padding: 30px;
-      }
 
       #add-products-container {
         width: 100%;

@@ -1,4 +1,4 @@
-import { PantryService } from '../../pantry.service';
+import { PantriesService } from '../../pantries.service';
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 
@@ -10,7 +10,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 export class DeletePantryComponent {
   constructor(
     public dialog: MatDialogRef<DeletePantryComponent>,
-    private pantryService: PantryService
+    private pantryService: PantriesService
   ) {}
 
   close() {

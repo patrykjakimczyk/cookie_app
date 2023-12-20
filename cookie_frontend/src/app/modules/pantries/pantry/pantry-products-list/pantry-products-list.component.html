@@ -215,7 +215,7 @@
         class="action-container"
         *ngIf="pantry && pantry.id && pantry.pantryName"
       >
-        <form [formGroup]="searchForm" (ngSubmit)="submitAddForm()">
+        <form [formGroup]="searchForm" (ngSubmit)="submitSearchForm()">
           <mat-form-field color="accent">
             <mat-label>Filter</mat-label>
             <input type="text" matInput formControlName="filterValue" />
@@ -256,6 +256,7 @@
             color="primary"
             id="show-add-products-button"
             (click)="showAddProducts = true"
+            *ngIf="userService.userHasAuthority(authorityEnum.ADD)"
           >
             Add products
           </button>
@@ -266,6 +267,7 @@
             [disabled]="!productsIdsToRemove.length"
             id="remove-button"
             (click)="removeProductsFromPantry()"
+            *ngIf="userService.userHasAuthority(authorityEnum.MODIFY)"
           >
             Remove
           </button>
@@ -274,20 +276,6 @@
 
       <mat-card>
         <mat-card-content>
-          <div
-            id="create-pantry-container"
-            *ngIf="pantry && !pantry.id && !pantry.pantryName"
-          >
-            <p>You don't have a pantry yet</p>
-            <button
-              mat-raised-button
-              color="primary"
-              routerLink="/pantry/create"
-            >
-              Create new pantry
-            </button>
-          </div>
-
           <div
             id="pantry-products-container"
             *ngIf="pantry && pantry.id && pantry.pantryName"

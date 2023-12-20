@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
-import { PantryService } from '../../pantry.service';
+import { PantriesService } from '../../pantries.service';
 import { UserService } from 'src/app/shared/services/user-service';
 import { ActivatedRoute } from '@angular/router';
 
@@ -17,7 +17,7 @@ export class CreatePantryComponent implements OnInit {
   protected createdPantryId = 0;
 
   constructor(
-    private pantryService: PantryService,
+    private pantryService: PantriesService,
     private userService: UserService,
     private route: ActivatedRoute
   ) {}

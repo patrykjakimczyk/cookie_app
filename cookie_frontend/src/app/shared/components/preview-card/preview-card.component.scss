@@ -2,7 +2,8 @@
 
 mat-card-content {
   display: grid;
-  grid-template-columns: 2fr 2fr 1fr 1fr;
+  grid-template-columns: 30% 30% 20% 20%;
+
   align-items: center;
 
   #name {
