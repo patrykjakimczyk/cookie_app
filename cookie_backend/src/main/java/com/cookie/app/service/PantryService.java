@@ -7,11 +7,13 @@ import com.cookie.app.model.response.GetPantryResponse;
 import com.cookie.app.model.response.GetUserPantriesResponse;
 
 public interface PantryService {
-    void createPantry(CreatePantryRequest request, String userEmail);
+    GetPantryResponse createPantry(CreatePantryRequest request, String userEmail);
 
-    GetPantryResponse getPantry(String userEmail);
+    GetPantryResponse getPantry(long pantryId, String userEmail);
 
-    DeletePantryResponse deletePantry(String userEmail);
+    GetUserPantriesResponse getAllUserPantries(String userEmail);
 
-    GetPantryResponse updatePantry(UpdatePantryRequest request, String userEmail);
+    DeletePantryResponse deletePantry(long pantryId, String userEmail);
+
+    GetPantryResponse updatePantry(long pantryId, UpdatePantryRequest request, String userEmail);
 }

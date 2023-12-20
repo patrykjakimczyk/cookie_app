@@ -20,7 +20,8 @@ public class GroupMapperDTO implements Function<Group, GroupDTO> {
                 group.getId(),
                 group.getGroupName(),
                 userMapperDTO.apply(group.getCreator()),
-                group.getUsers().size()
+                group.getUsers().size(),
+                group.getPantry() != null ? group.getPantry().getId() : 0L
         );
     }
 }

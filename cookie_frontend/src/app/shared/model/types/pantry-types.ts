@@ -1,6 +1,14 @@
 import { Unit } from '../enums/unit.enum';
 import { Category } from '../enums/cateory-enum';
 
+export type PantryDTO = {
+  pantryId: number;
+  pantryName: string;
+  nrOfProducts: number;
+  groupId: number;
+  groupName: string;
+};
+
 export type ProductDTO = {
   productName: string;
   category: Category;

@@ -1,17 +1,17 @@
 package com.cookie.app.service.impl;
 
-import com.cookie.app.exception.PantryNotFoundException;
-import com.cookie.app.exception.InvalidPantryProductDataException;
-import com.cookie.app.exception.ModifyingProductsFromWrongPantryException;
-import com.cookie.app.exception.PantryProductNotFoundException;
+import com.cookie.app.exception.*;
 import com.cookie.app.model.entity.Pantry;
 import com.cookie.app.model.entity.PantryProduct;
 import com.cookie.app.model.entity.Product;
+import com.cookie.app.model.entity.User;
+import com.cookie.app.model.enums.AuthorityEnum;
 import com.cookie.app.model.mapper.PantryProductMapperDTO;
 import com.cookie.app.model.dto.PantryProductDTO;
 import com.cookie.app.repository.PantryProductRepository;
 import com.cookie.app.repository.PantryRepository;
 import com.cookie.app.repository.ProductRepository;
+import com.cookie.app.repository.UserRepository;
 import com.cookie.app.service.PantryProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,15 +25,28 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-@RequiredArgsConstructor
 @Slf4j
 @Service
-public class PantryProductServiceImpl implements PantryProductService {
+public class PantryProductServiceImpl extends AbstractCookieService implements PantryProductService {
     private static final int PRODUCTS_PAGE_SIZE = 20;
     private final PantryRepository pantryRepository;
     private final PantryProductRepository pantryProductRepository;
     private final ProductRepository productRepository;
     private final PantryProductMapperDTO pantryProductMapper;
+
+    public PantryProductServiceImpl(
+            UserRepository userRepository,
+            PantryRepository pantryRepository,
+            PantryProductRepository pantryProductRepository,
+            ProductRepository productRepository,
+            PantryProductMapperDTO pantryProductMapper
+    ) {
+        super(userRepository);
+        this.pantryRepository = pantryRepository;
+        this.pantryProductRepository = pantryProductRepository;
+        this.productRepository = productRepository;
+        this.pantryProductMapper = pantryProductMapper;
+    }
 
     @Override
     public Page<PantryProductDTO> getPantryProducts(
@@ -44,7 +57,7 @@ public class PantryProductServiceImpl implements PantryProductService {
             String sortDirection,
             String userEmail
     ) {
-        Pantry pantry = this.getPantryForUser(pantryId, userEmail, "download");
+        Pantry pantry = this.getPantryIfUserHasAuthority(pantryId, userEmail, null);
 
         PageRequest pageRequest = this.createPageRequest(page, sortColName, sortDirection);
         if (!StringUtils.isBlank(filterValue)) {
@@ -59,7 +72,7 @@ public class PantryProductServiceImpl implements PantryProductService {
 
     @Override
     public void addProductsToPantry(long pantryId, List<PantryProductDTO> productDTOs, String userEmail) {
-        Pantry pantry = this.getPantryForUser(pantryId, userEmail, "add");
+        Pantry pantry = this.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.ADD);
 
         productDTOs.forEach(productDTO -> {
             if (productDTO.id() != null) {
@@ -79,7 +92,7 @@ public class PantryProductServiceImpl implements PantryProductService {
     @Transactional
     @Override
     public void removeProductsFromPantry(long pantryId, List<Long> productIds, String userEmail) {
-        Pantry pantry = this.getPantryForUser(pantryId, userEmail, "remove");
+        Pantry pantry = this.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.MODIFY);
 
         if (!this.areAllProductsInPantry(pantry.getPantryProducts(), productIds)) {
             log.info("User with email={} tried to remove products from different pantry", userEmail);
@@ -92,7 +105,7 @@ public class PantryProductServiceImpl implements PantryProductService {
     @Transactional
     @Override
     public void modifyPantryProduct(long pantryId, PantryProductDTO pantryProduct, String userEmail) {
-        Pantry pantry = this.getPantryForUser(pantryId, userEmail, "modify");
+        Pantry pantry = this.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.MODIFY);
 
         if (!this.areAllProductsInPantry(pantry.getPantryProducts(), List.of(pantryProduct.id()))) {
             log.info("User with email={} tried to modify product from different pantry", userEmail);
@@ -106,7 +119,7 @@ public class PantryProductServiceImpl implements PantryProductService {
     @Override
     public PantryProductDTO reservePantryProduct(long pantryId, long pantryProductId, int reserved, String userEmail) {
         //if this method doesn't throw any exception, user can access this pantry
-        this.getPantryForUser(pantryId, userEmail, "reserve");
+        this.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.RESERVE);
 
         Optional<PantryProduct> pantryProductOptional = this.pantryProductRepository.findById(pantryProductId);
         PantryProduct pantryProduct = pantryProductOptional.orElseThrow(() -> {
@@ -128,25 +141,6 @@ public class PantryProductServiceImpl implements PantryProductService {
         this.pantryProductRepository.save(pantryProduct);
 
         return this.pantryProductMapper.apply(pantryProduct);
-    }
-
-    private Pantry getPantryForUser(long pantryId, String userEmail, String action) {
-        Optional<Pantry> pantryOptional = this.pantryRepository.findById(pantryId);
-        Pantry pantry = pantryOptional.orElseThrow(() -> {
-            String logMessage = action.equals("add") ?
-                    "User with email={} tried to {} product to pantry which does not exist" :
-                    "User with email={} tried to {} product from pantry which does not exist";
-            log.info(logMessage, userEmail, action);
-
-            return new PantryNotFoundException("Pantry was not found");
-        });
-
-        if (this.cannotUserAccessPantry(pantry, userEmail)) {
-            log.info("User with email={} tried to {} product not from his pantry", userEmail, action);
-            throw new PantryNotFoundException("Pantry was not found");
-        }
-
-        return pantry;
     }
 
     private boolean areAllProductsInPantry(List<PantryProduct> pantryProducts, List<Long> productIds) {
@@ -275,9 +269,5 @@ public class PantryProductServiceImpl implements PantryProductService {
                 pantryProduct.getPurchaseDate().equals(pantryProductDTO.purchaseDate()) &&
                 pantryProduct.getExpirationDate().equals(pantryProductDTO.expirationDate()) &&
                 pantryProduct.getPlacement().equals(pantryProductDTO.placement());
-    }
-
-    private boolean cannotUserAccessPantry(Pantry pantry, String userEmail) {
-        return !pantry.getUser().getEmail().equals(userEmail);
     }
 }

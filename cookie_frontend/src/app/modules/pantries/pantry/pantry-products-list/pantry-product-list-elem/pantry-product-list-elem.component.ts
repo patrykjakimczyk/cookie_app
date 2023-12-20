@@ -1,3 +1,7 @@
+import {
+  AuthorityEnum,
+  authorityEnums,
+} from './../../../../../shared/model/enums/authority-enum';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
@@ -11,6 +15,7 @@ import {
   PantryProductDTO,
   ReserveType,
 } from 'src/app/shared/model/types/pantry-types';
+import { UserService } from 'src/app/shared/services/user-service';
 
 export type CheckboxEvent = {
   checked: boolean;
@@ -29,8 +34,9 @@ export class PantryProductListElemComponent {
   @Output() checkboxEvent = new EventEmitter<CheckboxEvent>();
   @Output() reloadEvent = new EventEmitter<boolean>();
   protected units = units;
+  protected authorityEnum = AuthorityEnum;
 
-  constructor(private dialog: MatDialog) {}
+  constructor(private dialog: MatDialog, protected userService: UserService) {}
 
   printShortUnit(quantity: number) {
     if (this.pantryProduct.unit === Unit.GRAMS) {

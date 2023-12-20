@@ -24,12 +24,10 @@ import java.util.stream.Collectors;
 @Service
 public class LoginServiceImpl extends AbstractCookieService implements LoginService {
     private final PasswordEncoder passwordEncoder;
-    private final AuthorityMapperDTO authorityMapperDTO;
 
-    public LoginServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityMapperDTO authorityMapperDTO) {
+    public LoginServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         super(userRepository);
         this.passwordEncoder = passwordEncoder;
-        this.authorityMapperDTO = authorityMapperDTO;
     }
 
     public RegistrationResponse userRegistration(RegistrationRequest request) {
@@ -71,6 +69,6 @@ public class LoginServiceImpl extends AbstractCookieService implements LoginServ
     public LoginResponse getLoginInfo(String email) {
         User user = this.getUserByEmail(email);
 
-        return new LoginResponse(user.getUsername(), user.getPantry() != null);
+        return new LoginResponse(user.getUsername());
     }
 }

@@ -12,6 +12,6 @@
     iconName="insert_emoticon"
     mainText="You have successfully created your pantry. Now you can view your pantry"
     buttonText="Go to pantry"
-    routerLink="/pantry"
+    [routerLink]="'/pantries/' + createdPantryId"
   ></app-success-banner>
 </ng-template>

@@ -1,0 +1,29 @@
+<div id="container">
+  <div id="upper-container">
+    <h1>Your pantries</h1>
+  </div>
+
+  <mat-card *ngIf="this.pantries.length === 0">
+    <mat-card-content>
+      <div id="empty-groups-container">
+        <p>You don't have any pantries. Create a pantry in your group</p>
+        <button mat-raised-button color="primary" routerLink="/groups">
+          Go to groups
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <ng-container *ngIf="this.pantries.length > 0">
+    <app-preview-card
+      *ngFor="let pantry of pantries"
+      [firstColumn]="'Pantry name: ' + pantry.pantryName"
+      [secondColumn]="'Group: ' + pantry.groupName"
+      [thirdColumn]="'Products: ' + pantry.nrOfProducts"
+      firstButtonText="Go to group"
+      secondButtonText="Go to pantry"
+      (firstButtonClicked)="goToGroup(pantry.groupId)"
+      (secondButtonClicked)="goToPantry(pantry.pantryId)"
+    ></app-preview-card>
+  </ng-container>
+</div>

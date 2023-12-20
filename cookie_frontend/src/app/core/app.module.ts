@@ -16,8 +16,8 @@ import { DashboardModule } from '../modules/dashboard/dashboard.module';
 import { LoginFormModule } from '../modules/login-form/login-form.module';
 import { RegistrationFormModule } from '../modules/registration-form/registration-form.module';
 import { HttpRequestInterceptor } from './interceptors/http-interceptor';
-import { PantryModule } from '../modules/pantry/pantry.module';
 import { GroupModule } from '../modules/group/group.module';
+import { PantryModule } from '../modules/pantries/pantries.module';
 
 @NgModule({
   declarations: [AppComponent, NavbarComponent],

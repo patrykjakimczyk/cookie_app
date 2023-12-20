@@ -12,7 +12,7 @@ import {
   ReservePantryProductInfo,
   ReserveType,
 } from 'src/app/shared/model/types/pantry-types';
-import { PantryService } from '../../../pantry.service';
+import { PantriesService } from 'src/app/modules/pantries/pantries.service';
 
 @Component({
   selector: 'app-reserve-pantry-product',
@@ -26,7 +26,7 @@ export class ReservePantryProductComponent {
   protected reserveForm!: FormGroup;
 
   constructor(
-    private pantryService: PantryService,
+    private pantriesService: PantriesService,
     private fb: FormBuilder,
     public dialog: MatDialogRef<ReservePantryProductComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ReservePantryProductInfo
@@ -94,7 +94,7 @@ export class ReservePantryProductComponent {
 
     console.log(reservedCount);
 
-    this.pantryService
+    this.pantriesService
       .reservePantryProduct(
         this.pantryId,
         this.pantryProduct.id!,

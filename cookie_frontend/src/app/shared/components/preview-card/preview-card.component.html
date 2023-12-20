@@ -1,17 +1,14 @@
 <mat-card>
   <mat-card-content>
-    <span id="name"
-      >{{ type === "GROUP" ? "Group name: " : "Pantry name: " }}{{ name }}</span
-    >
-    <span>Creator's name: {{ creatorName }}</span>
-    <span>Users: {{ nrOfUsers }}</span>
+    <span id="name">{{ firstColumn }}</span>
+    <span>{{ secondColumn }}</span>
+    <span>{{ thirdColumn }}</span>
     <div id="buttons-container">
-      <button mat-button>Go to pantry</button>
-      <button
-        mat-raised-button
-        [routerLink]="(type === 'GROUP' ? '/groups/' : '/pantry/') + id"
-      >
-        Go to {{ type.toLowerCase() }}
+      <button mat-button *ngIf="firstButtonText" (click)="firstButtonClick()">
+        {{ firstButtonText }}
+      </button>
+      <button mat-raised-button (click)="secondButtonClick()">
+        {{ secondButtonText }}
       </button>
     </div>
   </mat-card-content>

@@ -6,9 +6,11 @@ import { Subject } from 'rxjs';
 import { NewNamePopupComponentComponent } from 'src/app/shared/components/new-name-popup-component/new-name-popup-component.component';
 import { DeletePopupComponent } from 'src/app/shared/components/delete-popup/delete-popup.component';
 import { UserService } from 'src/app/shared/services/user-service';
-import { PantryService } from './pantry.service';
+import { PantriesService } from '../pantries.service';
 import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
-import { GetPantryResponse } from './../../shared/model/responses/pantry-response';
+import { GetPantryResponse } from '../../../shared/model/responses/pantry-response';
+import { ActivatedRoute } from '@angular/router';
+import { AuthorityEnum } from 'src/app/shared/model/enums/authority-enum';
 
 @Component({
   selector: 'app-pantry',
@@ -16,19 +18,28 @@ import { GetPantryResponse } from './../../shared/model/responses/pantry-respons
   styleUrls: ['./pantry.component.scss'],
 })
 export class PantryComponent implements OnInit {
-  protected pantry: GetPantryResponse = { id: 0, pantryName: '' };
+  protected pantry: GetPantryResponse = {
+    id: 0,
+    pantryName: '',
+    authorities: [],
+  };
   protected pantry$ = new Subject<GetPantryResponse>();
+  protected authorityEnum = AuthorityEnum;
 
   constructor(
-    private pantryService: PantryService,
+    private pantryService: PantriesService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private userService: UserService
+    protected userService: UserService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.pantryService.getUserPantry().subscribe({
+    const pantryId = this.route.snapshot.params['id'];
+
+    this.pantryService.getUserPantry(pantryId).subscribe({
       next: (response) => {
+        this.userService.setUserAuthorities(response.authorities);
         this.pantry = response;
         this.pantry$.next(response);
       },
@@ -71,8 +82,7 @@ export class PantryComponent implements OnInit {
           },
         });
 
-        this.userService.setUserAssignedPantry(false);
-        this.pantry = { id: 0, pantryName: '' };
+        this.pantry = { id: 0, pantryName: '', authorities: [] };
         this.pantry$.next(this.pantry);
       }
     });

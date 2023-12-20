@@ -1,7 +1,5 @@
 export enum AuthorityEnum {
-  READ = 'READ',
   ADD = 'ADD',
-  DELETE = 'DELETE',
   RESERVE = 'RESERVE',
   MODIFY = 'MODIFY',
   MODIFY_PANTRY = 'MODIFY_PANTRY',
@@ -10,9 +8,7 @@ export enum AuthorityEnum {
 }
 
 export const authorityEnums = [
-  AuthorityEnum.READ,
   AuthorityEnum.ADD,
-  AuthorityEnum.DELETE,
   AuthorityEnum.RESERVE,
   AuthorityEnum.MODIFY,
   AuthorityEnum.MODIFY_PANTRY,

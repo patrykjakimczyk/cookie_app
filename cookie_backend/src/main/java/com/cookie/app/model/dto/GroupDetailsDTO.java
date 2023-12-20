@@ -6,5 +6,7 @@ public record GroupDetailsDTO(
     Long id,
     String groupName,
     UserDTO creator,
-    List<UserDTO> users
+    List<UserDTO> users,
+    long pantryId,
+    String pantryName
 ) {}

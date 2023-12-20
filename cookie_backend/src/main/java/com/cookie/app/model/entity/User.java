@@ -55,9 +55,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
-    private Pantry pantry;
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private Set<Authority> authorities;
 

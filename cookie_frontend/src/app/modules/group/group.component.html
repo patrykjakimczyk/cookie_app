@@ -25,11 +25,13 @@
   <ng-container *ngIf="this.userGroups.length > 0">
     <app-preview-card
       *ngFor="let group of userGroups"
-      [id]="group.id"
-      [name]="group.groupName"
-      [creatorName]="group.creator.username"
-      [nrOfUsers]="group.users"
-      [type]="'GROUP'"
+      [firstColumn]="'Group name: ' + group.groupName"
+      [secondColumn]="'Creator: ' + group.creator"
+      [thirdColumn]="'Users: ' + group.users"
+      [firstButtonText]="group.pantryId ? 'Go to pantry' : undefined"
+      secondButtonText="Go to group"
+      (firstButtonClicked)="goToPantry(group.pantryId)"
+      (secondButtonClicked)="goToGroup(group.id)"
     ></app-preview-card>
   </ng-container>
 </div>

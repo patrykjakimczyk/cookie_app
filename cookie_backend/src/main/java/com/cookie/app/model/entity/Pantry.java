@@ -1,14 +1,12 @@
 package com.cookie.app.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -27,10 +25,6 @@ public class Pantry {
 
     @Column(length = 30, nullable = false)
     private String pantryName;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
 
     @OneToMany(mappedBy = "pantry", cascade = CascadeType.REMOVE)
     private List<PantryProduct> pantryProducts;

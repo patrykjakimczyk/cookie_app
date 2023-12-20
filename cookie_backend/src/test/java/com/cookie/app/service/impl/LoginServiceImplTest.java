@@ -24,8 +24,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class LoginServiceImplTest {
     @Mock
     UserRepository userRepository;
+
     @Mock
     PasswordEncoder passwordEncoder;
+
     @InjectMocks
     LoginServiceImpl loginService;
 
@@ -66,14 +68,12 @@ class LoginServiceImplTest {
     @Test
     void test_getUsernameSuccessful() {
         String email = "email";
-        Pantry pantry = new Pantry();
-        User user = User.builder().username("username").email("email").pantry(pantry).build();
+        User user = User.builder().username("username").email("email").build();
 
         Mockito.when(this.userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.of(user));
         LoginResponse response = this.loginService.getLoginInfo(email);
 
         assertEquals("username", response.username());
-        assertEquals(true, response.assignedPantry());
     }
 
     @Test
