@@ -72,7 +72,6 @@ export class GroupDetailsComponent implements OnInit {
       return;
     }
 
-    console.log(this.addAuthorityForm.value['authority']);
     this.groupService
       .assignAuthoritiesToUser(this.groupId, {
         userId: userId,
@@ -83,16 +82,17 @@ export class GroupDetailsComponent implements OnInit {
       .subscribe({
         next: (response) => {
           if (this.group) {
-            for (let user of this.group?.users) {
-              if (user.id === userId) {
-                for (let authorityDTO of response.assignedAuthorities) {
-                  user.authorities.push(authorityDTO);
-                }
+            const user = this.group.users.find((user) => user.id === userId);
+
+            if (user) {
+              for (let authorityDTO of response.assignedAuthorities) {
+                user.authorities.push(authorityDTO);
               }
             }
           }
+
           this.addAuthorityForm.reset();
-          this.addAuthorityForm.setErrors([]);
+          this.addAuthorityForm.controls.authority.setErrors(null);
         },
       });
   }
@@ -106,8 +106,17 @@ export class GroupDetailsComponent implements OnInit {
         })
         .subscribe({
           next: (_) => {
-            this.authoritiesToRemove = [];
-            this.getGroupDetails();
+            if (this.group) {
+              const user = this.group.users.find((user) => user.id === userId);
+
+              if (user) {
+                for (let authority of this.authoritiesToRemove) {
+                  user.authorities = user.authorities.filter(
+                    (userAuthority) => userAuthority.authority !== authority
+                  );
+                }
+              }
+            }
           },
           error: (error: HttpErrorResponse) => {
             if (error.status === 403) {

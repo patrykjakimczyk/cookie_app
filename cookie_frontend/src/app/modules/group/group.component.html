@@ -26,7 +26,7 @@
     <app-preview-card
       *ngFor="let group of userGroups"
       [firstColumn]="'Group name: ' + group.groupName"
-      [secondColumn]="'Creator: ' + group.creator"
+      [secondColumn]="'Creator: ' + group.creator.username"
       [thirdColumn]="'Users: ' + group.users"
       [firstButtonText]="group.pantryId ? 'Go to pantry' : undefined"
       secondButtonText="Go to group"

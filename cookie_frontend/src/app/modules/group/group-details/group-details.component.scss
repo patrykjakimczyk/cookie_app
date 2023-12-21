@@ -33,43 +33,50 @@ mat-card {
       width: 95%;
       margin: auto;
 
-      mat-list-item {
-        height: auto;
+      .user-container {
+        @include flex-with-gap($direction: column, $gap: 10px);
+        border: 1px solid rgb(231, 231, 231);
+        border-radius: 6px;
+        padding: 12px;
 
-        .user-container {
-          @include flex-with-gap($align: center);
-          justify-content: space-between;
-        }
+        mat-list-item {
+          height: auto;
 
-        &:hover {
-          background-color: darken($color: white, $amount: 4);
-        }
-      }
+          .user-info-container {
+            @include flex-with-gap($align: center);
+            justify-content: space-between;
+          }
 
-      mat-accordion {
-        form {
-          @include flex-with-gap($align: center, $gap: 10px);
-
-          button {
-            position: relative;
-            bottom: 8px;
+          &:hover {
+            background-color: darken($color: white, $amount: 4);
           }
         }
 
-        .authorities-container {
-          @include flex-with-gap($align: center);
-          flex-direction: row;
-          flex-wrap: wrap;
+        mat-accordion {
+          form {
+            @include flex-with-gap($align: center, $gap: 10px);
 
-          .authority-container {
+            button {
+              position: relative;
+              bottom: 8px;
+            }
+          }
+
+          .authorities-container {
             @include flex-with-gap($align: center);
             flex-direction: row;
-            width: 50%;
-          }
-        }
+            flex-wrap: wrap;
 
-        .remove-authorities-button {
-          float: right;
+            .authority-container {
+              @include flex-with-gap($align: center);
+              flex-direction: row;
+              width: 50%;
+            }
+          }
+
+          .remove-authorities-button {
+            float: right;
+          }
         }
       }
     }

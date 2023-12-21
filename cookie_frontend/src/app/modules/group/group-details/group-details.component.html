@@ -33,9 +33,9 @@
 
     <span class="section-header">Users:</span>
     <mat-list role="list">
-      <ng-container *ngFor="let user of group?.users; index as i">
+      <div class="user-container" *ngFor="let user of group?.users; index as i">
         <mat-list-item>
-          <div class="user-container">
+          <div class="user-info-container">
             <span>{{ user.username }}</span>
 
             <div class="action-buttons">
@@ -54,7 +54,7 @@
         <mat-accordion
           *ngIf="userService.userHasAuthority(authorityEnum.MODIFY_GROUP)"
         >
-          <mat-expansion-panel>
+          <mat-expansion-panel class="mat-elevation-z0">
             <mat-expansion-panel-header>
               <mat-panel-title> Authorities </mat-panel-title>
               <mat-panel-description>
@@ -110,15 +110,7 @@
             </button>
           </mat-expansion-panel>
         </mat-accordion>
-
-        <mat-divider
-          *ngIf="
-            group && group.users && group.users.length
-              ? i < group.users.length - 1
-              : false
-          "
-        ></mat-divider>
-      </ng-container>
+      </div>
     </mat-list>
 
     <span class="section-header">Pantry:</span>

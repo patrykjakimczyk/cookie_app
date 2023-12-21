@@ -18,6 +18,7 @@ export class PantriesService {
   private readonly url = 'http://localhost:8081/';
   private readonly pantries_path = 'pantries';
   private readonly pantry_path = 'pantry';
+  private readonly pantry_id_path = 'pantry/{id}';
   private readonly products_path = 'products';
   private readonly pantry_products_path = '/products';
 
@@ -45,16 +46,19 @@ export class PantriesService {
   }
 
   updateUserPantry(
+    pantryId: number,
     request: UpdatePantryRequest
   ): Observable<GetPantryResponse> {
     return this.http.patch<GetPantryResponse>(
-      this.url + this.pantry_path,
+      this.url + this.pantry_id_path.replace('{id}', pantryId.toString()),
       request
     );
   }
 
-  deleteUserPantry(): Observable<DeletePantryResponse> {
-    return this.http.delete<DeletePantryResponse>(this.url + this.pantry_path);
+  deleteUserPantry(pantryId: number): Observable<DeletePantryResponse> {
+    return this.http.delete<DeletePantryResponse>(
+      this.url + this.pantry_id_path.replace('{id}', pantryId.toString())
+    );
   }
 
   getPantryProducts(

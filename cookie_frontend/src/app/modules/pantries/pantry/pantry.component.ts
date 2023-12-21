@@ -54,7 +54,7 @@ export class PantryComponent implements OnInit {
 
     changePantryNameDialog.afterClosed().subscribe((newPantryName: string) => {
       this.pantryService
-        .updateUserPantry({ pantryName: newPantryName })
+        .updateUserPantry(this.pantry.id, { pantryName: newPantryName })
         .subscribe({
           next: (response: GetPantryResponse) => {
             this.pantry.pantryName = response.pantryName;
@@ -73,7 +73,7 @@ export class PantryComponent implements OnInit {
 
     deletePantryDialog.afterClosed().subscribe((deletePantry) => {
       if (deletePantry) {
-        this.pantryService.deleteUserPantry().subscribe({
+        this.pantryService.deleteUserPantry(this.pantry.id).subscribe({
           next: (response) => {
             this.snackBar.open(
               `Pantry: ${response.deletedPantryName} has been deleted`,
