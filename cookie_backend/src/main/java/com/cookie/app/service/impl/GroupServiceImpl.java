@@ -18,6 +18,7 @@ import com.cookie.app.model.response.AssignAuthoritiesToUserResponse;
 import com.cookie.app.model.response.GetUserGroupsResponse;
 import com.cookie.app.repository.AuthorityRepository;
 import com.cookie.app.repository.GroupRepository;
+import com.cookie.app.repository.PantryRepository;
 import com.cookie.app.repository.UserRepository;
 import com.cookie.app.service.GroupService;
 import lombok.extern.slf4j.Slf4j;
@@ -26,10 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -41,6 +39,7 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
     private final GroupMapperDTO groupMapperDTO;
     private final GroupDetailsMapperDTO groupDetailsMapperDTO;
     private final AuthorityMapperDTO authorityMapperDTO;
+    private final PantryRepository pantryRepository;
 
     public GroupServiceImpl(
             UserRepository userRepository,
@@ -48,14 +47,15 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
             AuthorityRepository authorityRepository,
             GroupMapperDTO groupMapperDTO,
             GroupDetailsMapperDTO groupDetailsMapperDTO,
-            AuthorityMapperDTO authorityMapperDTO
-    ) {
+            AuthorityMapperDTO authorityMapperDTO,
+            PantryRepository pantryRepository) {
         super(userRepository);
         this.groupRepository = groupRepository;
         this.authorityRepository = authorityRepository;
         this.groupMapperDTO = groupMapperDTO;
         this.groupDetailsMapperDTO = groupDetailsMapperDTO;
         this.authorityMapperDTO = authorityMapperDTO;
+        this.pantryRepository = pantryRepository;
     }
 
     @Override

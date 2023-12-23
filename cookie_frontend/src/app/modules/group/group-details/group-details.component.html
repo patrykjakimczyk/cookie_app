@@ -130,6 +130,7 @@
             routerLink="/pantries/create"
             [queryParams]="{ groupId: group?.id }"
             color="primary"
+            *ngIf="userService.userHasAuthority(authorityEnum.MODIFY_PANTRY)"
           >
             Create pantry
           </button>

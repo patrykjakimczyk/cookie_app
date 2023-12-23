@@ -42,6 +42,6 @@ public class Group {
     )
     private List<User> users;
 
-    @OneToOne(mappedBy = "group", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "group", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private Pantry pantry;
 }
