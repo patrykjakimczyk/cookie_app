@@ -44,4 +44,7 @@ public class Group {
 
     @OneToOne(mappedBy = "group", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private Pantry pantry;
+
+    @OneToMany(mappedBy = "group", cascade = CascadeType.REMOVE)
+    private List<ShoppingList> shoppingLists;
 }

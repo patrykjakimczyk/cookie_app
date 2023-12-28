@@ -49,7 +49,7 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
             GroupDetailsMapperDTO groupDetailsMapperDTO,
             AuthorityMapperDTO authorityMapperDTO,
             PantryRepository pantryRepository) {
-        super(userRepository);
+        super(userRepository, authorityMapperDTO);
         this.groupRepository = groupRepository;
         this.authorityRepository = authorityRepository;
         this.groupMapperDTO = groupMapperDTO;

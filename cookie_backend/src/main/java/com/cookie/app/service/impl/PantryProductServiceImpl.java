@@ -4,8 +4,8 @@ import com.cookie.app.exception.*;
 import com.cookie.app.model.entity.Pantry;
 import com.cookie.app.model.entity.PantryProduct;
 import com.cookie.app.model.entity.Product;
-import com.cookie.app.model.entity.User;
 import com.cookie.app.model.enums.AuthorityEnum;
+import com.cookie.app.model.mapper.AuthorityMapperDTO;
 import com.cookie.app.model.mapper.PantryProductMapperDTO;
 import com.cookie.app.model.dto.PantryProductDTO;
 import com.cookie.app.repository.PantryProductRepository;
@@ -13,7 +13,6 @@ import com.cookie.app.repository.PantryRepository;
 import com.cookie.app.repository.ProductRepository;
 import com.cookie.app.repository.UserRepository;
 import com.cookie.app.service.PantryProductService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
@@ -36,12 +35,13 @@ public class PantryProductServiceImpl extends AbstractCookieService implements P
 
     public PantryProductServiceImpl(
             UserRepository userRepository,
+            AuthorityMapperDTO authorityMapperDTO,
             PantryRepository pantryRepository,
             PantryProductRepository pantryProductRepository,
             ProductRepository productRepository,
             PantryProductMapperDTO pantryProductMapper
     ) {
-        super(userRepository);
+        super(userRepository, authorityMapperDTO);
         this.pantryRepository = pantryRepository;
         this.pantryProductRepository = pantryProductRepository;
         this.productRepository = productRepository;

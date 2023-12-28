@@ -1,7 +1,5 @@
 package com.cookie.app.service.impl;
 
-import com.cookie.app.exception.UserWasNotFoundAfterAuthException;
-import com.cookie.app.model.dto.AuthorityDTO;
 import com.cookie.app.model.enums.Role;
 import com.cookie.app.model.mapper.AuthorityMapperDTO;
 import com.cookie.app.model.request.RegistrationRequest;
@@ -10,7 +8,6 @@ import com.cookie.app.model.response.LoginResponse;
 import com.cookie.app.model.response.RegistrationResponse;
 import com.cookie.app.repository.UserRepository;
 import com.cookie.app.service.LoginService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,15 +15,17 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class LoginServiceImpl extends AbstractCookieService implements LoginService {
     private final PasswordEncoder passwordEncoder;
 
-    public LoginServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        super(userRepository);
+    public LoginServiceImpl(
+            UserRepository userRepository,
+            AuthorityMapperDTO authorityMapperDTO,
+            PasswordEncoder passwordEncoder) {
+        super(userRepository, authorityMapperDTO);
         this.passwordEncoder = passwordEncoder;
     }
 

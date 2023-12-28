@@ -1,7 +1,6 @@
 package com.cookie.app.service.impl;
 
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
-import com.cookie.app.model.dto.AuthorityDTO;
 import com.cookie.app.model.entity.Group;
 import com.cookie.app.model.entity.Pantry;
 import com.cookie.app.model.entity.User;
@@ -20,8 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -37,7 +34,7 @@ public class PantryServiceImpl extends AbstractCookieService implements PantrySe
             PantryMapperDTO pantryMapperDTO,
             AuthorityMapperDTO authorityMapperDTO
     ) {
-        super(userRepository);
+        super(userRepository, authorityMapperDTO);
         this.pantryRepository = pantryRepository;
         this.pantryMapperDTO = pantryMapperDTO;
         this.authorityMapperDTO = authorityMapperDTO;
@@ -105,7 +102,7 @@ public class PantryServiceImpl extends AbstractCookieService implements PantrySe
 
     @Override
     public DeletePantryResponse deletePantry(long pantryId, String userEmail) {
-        Pantry pantry = this.getPantryIfUserHasAuthority(pantryId, userEmail, null);
+        Pantry pantry = this.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.MODIFY_PANTRY);
 
         this.pantryRepository.delete(pantry);
 
@@ -125,13 +122,5 @@ public class PantryServiceImpl extends AbstractCookieService implements PantrySe
                 pantry.getPantryName(),
                 this.getAuthorityDTOsForSpecificGroup(user, pantry.getGroup())
         );
-    }
-
-    private Set<AuthorityDTO> getAuthorityDTOsForSpecificGroup(User user, Group userGroup) {
-        return user.getAuthorities()
-                .stream()
-                .filter(authority -> authority.getGroup().getId() == userGroup.getId())
-                .map(authorityMapperDTO::apply)
-                .collect(Collectors.toSet());
     }
 }

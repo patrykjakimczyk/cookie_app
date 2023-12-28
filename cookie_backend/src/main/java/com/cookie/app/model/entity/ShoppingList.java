@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -37,6 +38,9 @@ public class ShoppingList {
 
     @Column(nullable = false)
     private boolean purchased;
+
+    @OneToMany(mappedBy = "shoppingList", cascade = CascadeType.REMOVE)
+    private List<ShoppingListProduct> listProducts;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id", referencedColumnName = "id", nullable = false)

@@ -7,6 +7,7 @@ public class RegexConstants {
     public static final String PANTRY_NAME_REGEX = "^([a-zA-Z\\d\\s]{3,30})$";
     public static final String GROUP_NAME_REGEX = "^([a-zA-Z\\d\\s]{3,30})$";
     public static final String PRODUCT_NAME_REGEX = "^([a-zA-Z\\d[\\s]]{3,50})$";
+    public static final String SHOPPING_LIST_NAME_REGEX = "^([a-zA-Z\\d\\s]{3,30})$";
 
     private RegexConstants() {}
 }

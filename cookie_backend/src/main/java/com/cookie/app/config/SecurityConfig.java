@@ -58,7 +58,7 @@ public class SecurityConfig {
                 }))
                 .csrf(csrfConfigurer -> csrfConfigurer
                         .csrfTokenRequestHandler(requestHandler)
-                        .ignoringRequestMatchers("/register", "/pantry", "/pantry/**", "/product", "/group", "/group/**")
+                        .ignoringRequestMatchers("/register", "/pantry", "/pantry/**", "/product", "/group", "/group/**", "/shopping-list", "/shopping-lists/**", "/shopping-lists")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 )
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)

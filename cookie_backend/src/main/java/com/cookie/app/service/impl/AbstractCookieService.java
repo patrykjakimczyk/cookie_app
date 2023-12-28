@@ -3,24 +3,30 @@ package com.cookie.app.service.impl;
 import com.cookie.app.exception.PantryNotFoundException;
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.exception.UserWasNotFoundAfterAuthException;
+import com.cookie.app.model.dto.AuthorityDTO;
 import com.cookie.app.model.entity.Authority;
 import com.cookie.app.model.entity.Group;
 import com.cookie.app.model.entity.Pantry;
 import com.cookie.app.model.entity.User;
 import com.cookie.app.model.enums.AuthorityEnum;
+import com.cookie.app.model.mapper.AuthorityMapperDTO;
 import com.cookie.app.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 public abstract class AbstractCookieService {
     protected final UserRepository userRepository;
+    protected final AuthorityMapperDTO authorityMapperDTO;
 
-    protected AbstractCookieService(UserRepository userRepository) {
+    protected AbstractCookieService(UserRepository userRepository, AuthorityMapperDTO authorityMapperDTO) {
         this.userRepository = userRepository;
+        this.authorityMapperDTO = authorityMapperDTO;
     }
 
     protected User getUserByEmail(String userEmail) {
@@ -52,7 +58,7 @@ public abstract class AbstractCookieService {
                 }
         );
 
-        if (requiredAuthority!= null &&  !this.userHasAuthority(user, pantry.getGroup().getId(), requiredAuthority)) {
+        if (requiredAuthority!= null && !this.userHasAuthority(user, pantry.getGroup().getId(), requiredAuthority)) {
             log.info("User: {} tried to perform action in pantry without required permission", userEmail);
             throw new UserPerformedForbiddenActionException("You have not permissions to do that");
         }
@@ -78,5 +84,13 @@ public abstract class AbstractCookieService {
         }
 
         return false;
+    }
+
+    protected Set<AuthorityDTO> getAuthorityDTOsForSpecificGroup(User user, Group userGroup) {
+        return user.getAuthorities()
+                .stream()
+                .filter(authority -> authority.getGroup().getId() == userGroup.getId())
+                .map(authorityMapperDTO::apply)
+                .collect(Collectors.toSet());
     }
 }
