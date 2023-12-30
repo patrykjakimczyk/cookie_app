@@ -1,5 +1,6 @@
 package com.cookie.app.model.entity;
 
+import com.cookie.app.model.enums.Unit;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,6 +34,9 @@ public class ShoppingListProduct {
 
     @Column(nullable = false)
     private int quantity;
+
+    @Column(nullable = false)
+    private Unit unit;
 
     @Column(nullable = false)
     private boolean purchased;

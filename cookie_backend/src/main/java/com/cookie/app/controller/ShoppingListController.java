@@ -1,7 +1,6 @@
 package com.cookie.app.controller;
 
 import com.cookie.app.model.request.CreateShoppingListRequest;
-import com.cookie.app.model.request.UpdatePantryRequest;
 import com.cookie.app.model.request.UpdateShoppingListRequest;
 import com.cookie.app.model.response.DeleteShoppingListResponse;
 import com.cookie.app.model.response.GetShoppingListResponse;
@@ -21,8 +20,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class ShoppingListController {
     private static final String SHOPPING_LIST_URL = "/shopping-list";
+    private static final String SHOPPING_LIST_ID_URL = "/shopping-list/{id}";
     private static final String SHOPPING_LISTS_URL = "/shopping-lists";
-    private static final String SHOPPING_LISTS_ID_URL = "/shopping-lists/{id}";
     private final ShoppingListService shoppingListService;
 
     @SecurityRequirement(name = "bearerAuth")
@@ -37,7 +36,7 @@ public class ShoppingListController {
     }
 
     @SecurityRequirement(name = "bearerAuth")
-    @GetMapping(SHOPPING_LISTS_ID_URL)
+    @GetMapping(SHOPPING_LIST_ID_URL)
     public ResponseEntity<GetShoppingListResponse> getShoppingList(
             @PathVariable("id") long listId,
             Authentication authentication
@@ -56,7 +55,7 @@ public class ShoppingListController {
     }
 
     @SecurityRequirement(name = "bearerAuth")
-    @DeleteMapping(SHOPPING_LISTS_ID_URL)
+    @DeleteMapping(SHOPPING_LIST_ID_URL)
     public ResponseEntity<DeleteShoppingListResponse> deleteShoppingList(
             @PathVariable("id") long listId,
             Authentication authentication
@@ -67,7 +66,7 @@ public class ShoppingListController {
     }
 
     @SecurityRequirement(name = "bearerAuth")
-    @PatchMapping(SHOPPING_LISTS_ID_URL)
+    @PatchMapping(SHOPPING_LIST_ID_URL)
     public ResponseEntity<GetShoppingListResponse> modifyShoppingList(
             @PathVariable("id") long listId,
             @RequestBody UpdateShoppingListRequest request,

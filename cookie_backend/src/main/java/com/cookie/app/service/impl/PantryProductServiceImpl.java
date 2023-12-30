@@ -27,8 +27,6 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class PantryProductServiceImpl extends AbstractCookieService implements PantryProductService {
-    private static final int PRODUCTS_PAGE_SIZE = 20;
-    private final PantryRepository pantryRepository;
     private final PantryProductRepository pantryProductRepository;
     private final ProductRepository productRepository;
     private final PantryProductMapperDTO pantryProductMapper;
@@ -36,13 +34,11 @@ public class PantryProductServiceImpl extends AbstractCookieService implements P
     public PantryProductServiceImpl(
             UserRepository userRepository,
             AuthorityMapperDTO authorityMapperDTO,
-            PantryRepository pantryRepository,
             PantryProductRepository pantryProductRepository,
             ProductRepository productRepository,
             PantryProductMapperDTO pantryProductMapper
     ) {
         super(userRepository, authorityMapperDTO);
-        this.pantryRepository = pantryRepository;
         this.pantryProductRepository = pantryProductRepository;
         this.productRepository = productRepository;
         this.pantryProductMapper = pantryProductMapper;
@@ -156,25 +152,6 @@ public class PantryProductServiceImpl extends AbstractCookieService implements P
         }
 
         return true;
-    }
-
-    private PageRequest createPageRequest(int page, String sortColName, String sortDirection) {
-        PageRequest pageRequest = PageRequest.of(page, PRODUCTS_PAGE_SIZE);
-        Sort idSort = Sort.by(Sort.Direction.DESC, "id");
-        Sort sort = null;
-
-        if (StringUtils.isBlank(sortColName) && StringUtils.isBlank(sortDirection)) {
-            return pageRequest.withSort(idSort);
-        }
-
-        if (sortDirection.equals("DESC")) {
-            sort = Sort.by(Sort.Direction.DESC, sortColName);
-        } else {
-            sort = Sort.by(Sort.Direction.ASC, sortColName);
-        }
-
-        sort = sort.and(idSort);
-        return pageRequest.withSort(sort);
     }
 
     private PantryProduct mapToPantryProduct(PantryProductDTO pantryProductDTO, Pantry pantry) {

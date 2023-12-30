@@ -109,7 +109,7 @@ public class ShoppingListServiceImpl extends AbstractCookieService implements Sh
     @Override
     public DeleteShoppingListResponse deleteShoppingList(long shoppingListId, String userEmail) {
         User user = this.getUserByEmail(userEmail);
-        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(shoppingListId, user);
+        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(shoppingListId, user, AuthorityEnum.MODIFY_SHOPPING_LIST);
 
         this.shoppingListRepository.delete(shoppingList);
 
@@ -119,7 +119,7 @@ public class ShoppingListServiceImpl extends AbstractCookieService implements Sh
     @Override
     public GetShoppingListResponse modifyShoppingList(long shoppingListId, UpdateShoppingListRequest request, String userEmail) {
         User user = this.getUserByEmail(userEmail);
-        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(shoppingListId, user);
+        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(shoppingListId, user, AuthorityEnum.MODIFY_SHOPPING_LIST);
 
         shoppingList.setListName(request.shoppingListName());
         this.shoppingListRepository.save(shoppingList);
@@ -129,33 +129,5 @@ public class ShoppingListServiceImpl extends AbstractCookieService implements Sh
                 shoppingList.getListName(),
                 this.getAuthorityDTOsForSpecificGroup(user, shoppingList.getGroup())
         );
-    }
-
-    private ShoppingList getShoppingListIfUserHasAuthority(long shoppingListId, User user) {
-        ShoppingList shoppingList = this.findShoppingListInUserGroups(shoppingListId, user).orElseThrow(
-                () -> {
-                    log.info("User: {} tried to access shopping list without being a member of the shopping list's group", user.getEmail());
-                    return new UserPerformedForbiddenActionException("You cannot access the shopping list because you are not member of it");
-                }
-        );
-
-        if (!this.userHasAuthority(user, shoppingList.getGroup().getId(), AuthorityEnum.MODIFY_SHOPPING_LIST)) {
-            log.info("User: {} tried to perform action in pantry without required permission", user.getEmail());
-            throw new UserPerformedForbiddenActionException("You have not permissions to do that");
-        }
-
-        return shoppingList;
-    }
-
-    private Optional<ShoppingList> findShoppingListInUserGroups(long listId, User user) {
-        for (Group group : user.getGroups()) {
-            for (ShoppingList shoppingList : group.getShoppingLists()) {
-                if (shoppingList.getId() == listId) {
-                    return Optional.of(shoppingList);
-                }
-            }
-        }
-
-        return Optional.empty();
     }
 }

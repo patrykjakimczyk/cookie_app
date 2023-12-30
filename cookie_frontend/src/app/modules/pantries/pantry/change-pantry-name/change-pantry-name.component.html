@@ -1,0 +1,28 @@
+<!-- <h1 mat-dialog-title>Insert your new pantry name</h1>
+<div mat-dialog-content id="content">
+  <mat-form-field color="accent">
+    <mat-label>Pantry name (3 to 30 characters)</mat-label>
+    <input
+      matInput
+      [(ngModel)]="newPantryName"
+      [pattern]="pantryNameRegex"
+      #name="ngModel"
+    />
+    <mat-hint *ngIf="name.valid"
+      >Pantry name can only contain lowercases, capital letters, digits and
+      whitespaces</mat-hint
+    >
+    <mat-error *ngIf="!name.valid">Pantry name is incorrect</mat-error>
+  </mat-form-field>
+</div>
+<div mat-dialog-actions id="action-buttons">
+  <button mat-button (click)="close()">Close</button>
+  <button
+    mat-raised-button
+    (click)="changePantryName(name)"
+    cdkFocusInitial
+    color="primary"
+  >
+    Change pantry name
+  </button>
+</div> -->
