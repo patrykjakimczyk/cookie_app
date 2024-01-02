@@ -103,7 +103,7 @@ public abstract class AbstractCookieService {
                 }
         );
 
-        if (!this.userHasAuthority(user, shoppingList.getGroup().getId(), requiredAuthority)) {
+        if (requiredAuthority!= null && !this.userHasAuthority(user, shoppingList.getGroup().getId(), requiredAuthority)) {
             log.info("User: {} tried to perform action in pantry without required permission", user.getEmail());
             throw new UserPerformedForbiddenActionException("You have not permissions to do that");
         }

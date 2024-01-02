@@ -5,19 +5,21 @@ import com.cookie.app.service.ShoppingListProductService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
 public class ShoppingListProductController {
+    private static final String LIST_PRODUCTS_URL = "/shopping-list/{id}/products";
+    private static final String LIST_PRODUCTS_PURCHASE_URL = "/shopping-list/{id}/products/purchase";
     private static final String LIST_PRODUCTS_PAGE_URL = "/shopping-list/{id}/products/{page}";
 
     private final ShoppingListProductService shoppingListProductService;
@@ -42,5 +44,49 @@ public class ShoppingListProductController {
                     authentication.getName()
                 )
         );
+    }
+
+    @SecurityRequirement(name = "bearerAuth")
+    @PostMapping(LIST_PRODUCTS_URL)
+    public ResponseEntity<Void> addProductsToShoppingList(
+            @PathVariable(value = "id") @Valid @Min(1) long id,
+            @Valid @NotEmpty(message = "List of products cannot be empty") @RequestBody List<@Valid ShoppingListProductDTO> products,
+            Authentication authentication
+    ) {
+        this.shoppingListProductService.addProductsToShoppingList(id, products, authentication.getName());
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    @SecurityRequirement(name = "bearerAuth")
+    @DeleteMapping(LIST_PRODUCTS_URL)
+    public ResponseEntity<Void> removeProductsFromShoppingList(
+            @PathVariable(value = "id") @Valid @Min(1) long id,
+            @Valid @NotEmpty(message = "List of ids cannot be empty") @RequestBody List<Long> productIds,
+            Authentication authentication
+    ) {
+        this.shoppingListProductService.removeProductsFromShoppingList(id, productIds, authentication.getName());
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    @SecurityRequirement(name = "bearerAuth")
+    @PatchMapping(LIST_PRODUCTS_URL)
+    public ResponseEntity<Void> modifyShoppingListProduct(
+            @PathVariable(value = "id") @Valid @Min(1) long id,
+            @Valid @RequestBody ShoppingListProductDTO shoppingListProductDTO,
+            Authentication authentication
+    ) {
+        this.shoppingListProductService.modifyShoppingListProduct(id, shoppingListProductDTO, authentication.getName());
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    @SecurityRequirement(name = "bearerAuth")
+    @PatchMapping(LIST_PRODUCTS_PURCHASE_URL)
+    public ResponseEntity<Void> changePurchaseStatusForProducts(
+            @PathVariable(value = "id") @Valid @Min(1) long id,
+            @Valid @NotEmpty(message = "List of ids cannot be empty") @RequestBody List<Long> productIds,
+            Authentication authentication
+    ) {
+        this.shoppingListProductService.changePurchaseStatusForProducts(id, productIds, authentication.getName());
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }

@@ -8,15 +8,18 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ShoppingListProductRepository extends CrudRepository<ShoppingListProduct, Long> {
+    void deleteByIdIn(List<Long> ids);
+
     @Query(value = "SELECT DISTINCT slp.* FROM shopping_list_product slp JOIN product p ON p.id = slp.product_id " +
-            "where pp.pantry_id = ?1", nativeQuery = true)
+            "where slp.shopping_list_id = ?1", nativeQuery = true)
     Page<ShoppingListProduct> findProductsInShoppingList(long id, PageRequest pageable);
 
     @Query(value = "SELECT DISTINCT slp.* FROM shopping_list_product slp JOIN product p ON p.id = slp.product_id " +
-            "WHERE slp.pantry_id = ?1 AND (LOWER(slp.placement) LIKE LOWER(CONCAT('%', ?2, '%')) OR " +
-            "LOWER(p.product_name) LIKE LOWER(CONCAT('%', ?2, '%')) OR " +
+            "WHERE slp.shopping_list_id = ?1 AND (LOWER(p.product_name) LIKE LOWER(CONCAT('%', ?2, '%')) OR " +
             "LOWER(p.category) LIKE LOWER(CONCAT('%', ?2, '%')))", nativeQuery = true)
     Page<ShoppingListProduct> findProductsInShoppingListWithFilter(long id, String filterValue, PageRequest pageable);
 }

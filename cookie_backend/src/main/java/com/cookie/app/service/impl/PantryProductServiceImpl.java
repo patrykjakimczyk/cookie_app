@@ -9,7 +9,6 @@ import com.cookie.app.model.mapper.AuthorityMapperDTO;
 import com.cookie.app.model.mapper.PantryProductMapperDTO;
 import com.cookie.app.model.dto.PantryProductDTO;
 import com.cookie.app.repository.PantryProductRepository;
-import com.cookie.app.repository.PantryRepository;
 import com.cookie.app.repository.ProductRepository;
 import com.cookie.app.repository.UserRepository;
 import com.cookie.app.service.PantryProductService;
@@ -17,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -72,10 +70,10 @@ public class PantryProductServiceImpl extends AbstractCookieService implements P
 
         productDTOs.forEach(productDTO -> {
             if (productDTO.id() != null) {
-                throw new InvalidPantryProductDataException(
+                throw new InvalidProductDataException(
                         "Pantry product id must be not set while inserting it to pantry");
             } else if (productDTO.reserved() > 0) {
-                throw new InvalidPantryProductDataException(
+                throw new InvalidProductDataException(
                         "Pantry product reserved quantity must be 0 while inserting it to pantry");
             }
 

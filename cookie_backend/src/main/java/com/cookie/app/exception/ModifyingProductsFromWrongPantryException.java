@@ -1,6 +1,6 @@
 package com.cookie.app.exception;
 
-public class ModifyingProductsFromWrongPantryException extends RuntimeException{
+public class ModifyingProductsFromWrongPantryException extends RuntimeException {
     public ModifyingProductsFromWrongPantryException() {
         super();
     }

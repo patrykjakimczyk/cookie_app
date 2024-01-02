@@ -4,7 +4,6 @@ import com.cookie.app.exception.*;
 import com.cookie.app.model.dto.PantryProductDTO;
 import com.cookie.app.model.enums.Category;
 import com.cookie.app.model.enums.Unit;
-import com.cookie.app.model.request.CreatePantryRequest;
 import com.cookie.app.model.request.ReservePantryProductRequest;
 import com.cookie.app.service.PantryProductService;
 import org.junit.jupiter.api.BeforeEach;
@@ -89,10 +88,10 @@ class PantryProductControllerTest {
         PantryProductDTO pantryProductDTO = new PantryProductDTO(0L, "name", Category.CEREAL, null, null, 1, Unit.GRAMS, 0, null);
         List<PantryProductDTO> pantryProductDTOS = Collections.singletonList(pantryProductDTO);
 
-        Mockito.doThrow(new InvalidPantryProductDataException("Invalid data"))
+        Mockito.doThrow(new InvalidProductDataException("Invalid data"))
                 .when(pantryProductService).addProductsToPantry(Mockito.anyLong(), Mockito.anyList(), Mockito.anyString());
 
-        assertThrows(InvalidPantryProductDataException.class, () -> this.pantryProductController.addProductsToPantry(1L, pantryProductDTOS, authentication));
+        assertThrows(InvalidProductDataException.class, () -> this.pantryProductController.addProductsToPantry(1L, pantryProductDTOS, authentication));
     }
 
     @Test

@@ -40,7 +40,7 @@ public class ShoppingList {
     private boolean purchased;
 
     @OneToMany(mappedBy = "shoppingList", cascade = CascadeType.REMOVE)
-    private List<ShoppingListProduct> listProducts;
+    private List<ShoppingListProduct> productsList;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id", referencedColumnName = "id", nullable = false)

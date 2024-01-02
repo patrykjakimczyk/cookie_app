@@ -13,7 +13,7 @@ public class ShoppingListMapperDTO implements Function<ShoppingList, ShoppingLis
         return new ShoppingListDTO(
                 shoppingList.getId(),
                 shoppingList.getListName(),
-                shoppingList.getListProducts().size(),
+                shoppingList.getProductsList().size(),
                 shoppingList.getGroup().getId(),
                 shoppingList.getGroup().getGroupName(),
                 shoppingList.isPurchased()
