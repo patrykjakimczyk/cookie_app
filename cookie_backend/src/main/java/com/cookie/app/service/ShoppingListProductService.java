@@ -16,10 +16,8 @@ public interface ShoppingListProductService {
     );
 
     void addProductsToShoppingList(long groupId, List<ShoppingListProductDTO> productDTOList, String userEmail);
-
     void removeProductsFromShoppingList(long groupId, List<Long> productIds, String userEmail);
-
     void modifyShoppingListProduct(long groupId, ShoppingListProductDTO productDTO, String userEmail);
-
     void changePurchaseStatusForProducts(long groupId, List<Long> productIds, String userEmail);
+    void transferProductsToPantry(long shoppingListId, String userEmail);
 }

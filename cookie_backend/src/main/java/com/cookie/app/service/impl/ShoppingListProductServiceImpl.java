@@ -1,13 +1,14 @@
 package com.cookie.app.service.impl;
 
 import com.cookie.app.exception.InvalidProductDataException;
-import com.cookie.app.exception.ModifyingProductsFromWrongPantryException;
 import com.cookie.app.exception.ModifyingProductsFromWrongShoppingListException;
+import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.model.dto.ShoppingListProductDTO;
 import com.cookie.app.model.entity.*;
 import com.cookie.app.model.enums.AuthorityEnum;
 import com.cookie.app.model.mapper.AuthorityMapperDTO;
 import com.cookie.app.model.mapper.ShoppingListProductMapperDTO;
+import com.cookie.app.repository.PantryProductRepository;
 import com.cookie.app.repository.ProductRepository;
 import com.cookie.app.repository.ShoppingListProductRepository;
 import com.cookie.app.repository.UserRepository;
@@ -19,6 +20,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +30,7 @@ import java.util.Optional;
 @Service
 public class ShoppingListProductServiceImpl extends AbstractCookieService implements ShoppingListProductService {
     private final ShoppingListProductRepository shoppingListProductRepository;
+    private final PantryProductRepository pantryProductRepository;
     private final ProductRepository productRepository;
     private final ShoppingListProductMapperDTO shoppingListProductMapper;
 
@@ -33,10 +38,11 @@ public class ShoppingListProductServiceImpl extends AbstractCookieService implem
             UserRepository userRepository,
             AuthorityMapperDTO authorityMapperDTO,
             ShoppingListProductRepository shoppingListProductRepository,
-            ProductRepository productRepository, ShoppingListProductMapperDTO shoppingListProductMapper
+            PantryProductRepository pantryProductRepository, ProductRepository productRepository, ShoppingListProductMapperDTO shoppingListProductMapper
     ) {
         super(userRepository, authorityMapperDTO);
         this.shoppingListProductRepository = shoppingListProductRepository;
+        this.pantryProductRepository = pantryProductRepository;
         this.productRepository = productRepository;
         this.shoppingListProductMapper = shoppingListProductMapper;
     }
@@ -131,6 +137,52 @@ public class ShoppingListProductServiceImpl extends AbstractCookieService implem
                 .toList();
 
         this.shoppingListProductRepository.saveAll(shoppingListProducts);
+    }
+
+    @Override
+    public void transferProductsToPantry(long shoppingListId, String userEmail) {
+        User user = this.getUserByEmail(userEmail);
+        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(shoppingListId, user, AuthorityEnum.MODIFY_SHOPPING_LIST);
+        Pantry pantry = shoppingList.getGroup().getPantry();
+
+        if (pantry == null) {
+            log.info("User with email={} tried to transfer shopping list for group with not assigned pantry", userEmail);
+            throw new UserPerformedForbiddenActionException("User cannot transfer products because his group does not have assigned pantry");
+        }
+
+        List<ShoppingListProduct> purchasedProducts = shoppingList.getProductsList()
+                .stream()
+                .filter(ShoppingListProduct::isPurchased)
+                .toList();
+
+        if (purchasedProducts.isEmpty()) {
+            log.info("User with email={} tried to transfer shopping list containing unpurchased products to a pantry", userEmail);
+            throw new UserPerformedForbiddenActionException("Cannot transfer unpurchased shopping list products");
+        }
+
+        List<PantryProduct> newPantryProducts = this.mapListProductsToPantryProducts(purchasedProducts, pantry);
+
+        this.shoppingListProductRepository.deleteAll(purchasedProducts);
+        this.pantryProductRepository.saveAll(newPantryProducts);
+    }
+
+    private List<PantryProduct> mapListProductsToPantryProducts(List<ShoppingListProduct> purchasedProducts, Pantry pantry) {
+        List<PantryProduct> newPantryProducts = new ArrayList<>();
+
+        for (ShoppingListProduct purchasedProduct : purchasedProducts) {
+            PantryProduct pantryProduct = PantryProduct.builder()
+                    .pantry(pantry)
+                    .product(purchasedProduct.getProduct())
+                    .purchaseDate(Timestamp.from(Instant.now()))
+                    .quantity(purchasedProduct.getQuantity())
+                    .unit(purchasedProduct.getUnit())
+                    .reserved(0)
+                    .build();
+
+            newPantryProducts.add(pantryProduct);
+        }
+
+        return newPantryProducts;
     }
 
     private boolean areAllProductsInShoppingList(List<ShoppingListProduct> shoppingListProducts, List<Long> productIds) {

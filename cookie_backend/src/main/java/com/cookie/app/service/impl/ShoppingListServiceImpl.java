@@ -1,6 +1,5 @@
 package com.cookie.app.service.impl;
 
-import com.cookie.app.exception.PantryNotFoundException;
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.model.entity.Group;
 import com.cookie.app.model.entity.ShoppingList;
@@ -66,7 +65,8 @@ public class ShoppingListServiceImpl extends AbstractCookieService implements Sh
         return new GetShoppingListResponse(
                 shoppingList.getId(),
                 shoppingList.getListName(),
-                this.getAuthorityDTOsForSpecificGroup(user, userGroup)
+                this.getAuthorityDTOsForSpecificGroup(user, userGroup),
+                shoppingList.getGroup().getPantry() != null
         );
     }
 
@@ -76,7 +76,7 @@ public class ShoppingListServiceImpl extends AbstractCookieService implements Sh
         Optional<ShoppingList> listOptional = this.findShoppingListInUserGroups(shoppingListId, user);
 
         if (listOptional.isEmpty()) {
-            return new GetShoppingListResponse(null, null, null);
+            return new GetShoppingListResponse(null, null, null, false);
         }
 
         ShoppingList shoppingList = listOptional.get();
@@ -84,7 +84,8 @@ public class ShoppingListServiceImpl extends AbstractCookieService implements Sh
         return new GetShoppingListResponse(
                 shoppingList.getId(),
                 shoppingList.getListName(),
-                this.getAuthorityDTOsForSpecificGroup(user, shoppingList.getGroup())
+                this.getAuthorityDTOsForSpecificGroup(user, shoppingList.getGroup()),
+                shoppingList.getGroup().getPantry() != null
         );
     }
 
@@ -127,7 +128,8 @@ public class ShoppingListServiceImpl extends AbstractCookieService implements Sh
         return new GetShoppingListResponse(
                 shoppingList.getId(),
                 shoppingList.getListName(),
-                this.getAuthorityDTOsForSpecificGroup(user, shoppingList.getGroup())
+                this.getAuthorityDTOsForSpecificGroup(user, shoppingList.getGroup()),
+                shoppingList.getGroup().getPantry() != null
         );
     }
 }

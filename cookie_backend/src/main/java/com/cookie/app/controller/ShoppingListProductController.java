@@ -1,12 +1,14 @@
 package com.cookie.app.controller;
 
 import com.cookie.app.model.dto.ShoppingListProductDTO;
+import com.cookie.app.model.response.GetShoppingListResponse;
 import com.cookie.app.service.ShoppingListProductService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +18,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequiredArgsConstructor
+@Slf4j
 @RestController
 public class ShoppingListProductController {
     private static final String LIST_PRODUCTS_URL = "/shopping-list/{id}/products";
+    private static final String LIST_PRODUCTS_TRANSFER_URL = "/shopping-list/{id}/products/transfer";
     private static final String LIST_PRODUCTS_PURCHASE_URL = "/shopping-list/{id}/products/purchase";
     private static final String LIST_PRODUCTS_PAGE_URL = "/shopping-list/{id}/products/{page}";
 
@@ -87,6 +91,18 @@ public class ShoppingListProductController {
             Authentication authentication
     ) {
         this.shoppingListProductService.changePurchaseStatusForProducts(id, productIds, authentication.getName());
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    @SecurityRequirement(name = "bearerAuth")
+    @PostMapping(LIST_PRODUCTS_TRANSFER_URL)
+    public ResponseEntity<Void> transferProductsToPantry(
+            @PathVariable("id") long listId,
+            Authentication authentication
+    ) {
+        log.info("User with email={} is transfering products from shopping list with id={} to pantry", authentication.getName(), listId);
+        this.shoppingListProductService.transferProductsToPantry(listId, authentication.getName());
+
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }
