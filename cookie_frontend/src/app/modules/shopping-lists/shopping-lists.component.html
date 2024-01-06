@@ -1,0 +1,44 @@
+<div id="container">
+  <div id="upper-container">
+    <h1>Your shopping lists</h1>
+  </div>
+
+  <mat-card *ngIf="!userLists.size">
+    <mat-card-content>
+      <div id="empty-list-container">
+        <p>
+          You don't have any shopping lists. Create a shopping list in your
+          group
+        </p>
+        <button mat-raised-button color="primary" routerLink="/groups">
+          Go to groups
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <div
+    class="group-shopping-lists-container"
+    *ngFor="let groupName of userLists.keys()"
+  >
+    <h2>Group: {{ groupName }}</h2>
+
+    <div class="list-of-shopping-lists">
+      <app-preview-card
+        *ngFor="let shoppingList of userLists.get(groupName)"
+        [firstColumn]="'List name: ' + shoppingList.listName"
+        [secondColumn]="'Purchased: ' + (shoppingList.purchased ? 'Yes' : 'No')"
+        [thirdColumn]="
+          'Products on list: ' +
+          shoppingList.nrOfPurchasedProducts +
+          '/' +
+          shoppingList.nrOfProducts
+        "
+        [firstButtonText]="'Go to group'"
+        secondButtonText="Go to list"
+        (firstButtonClicked)="goToGroup(shoppingList.groupId)"
+        (secondButtonClicked)="goToShoppingList(shoppingList.listId)"
+      ></app-preview-card>
+    </div>
+  </div>
+</div>

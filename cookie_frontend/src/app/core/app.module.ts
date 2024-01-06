@@ -18,6 +18,7 @@ import { RegistrationFormModule } from '../modules/registration-form/registratio
 import { HttpRequestInterceptor } from './interceptors/http-interceptor';
 import { GroupModule } from '../modules/group/group.module';
 import { PantryModule } from '../modules/pantries/pantries.module';
+import { ShoppingListsModule } from '../modules/shopping-lists/shopping-lists.module';
 
 @NgModule({
   declarations: [AppComponent, NavbarComponent],
@@ -38,6 +39,7 @@ import { PantryModule } from '../modules/pantries/pantries.module';
     RegistrationFormModule,
     PantryModule,
     GroupModule,
+    ShoppingListsModule,
   ],
   providers: [
     {

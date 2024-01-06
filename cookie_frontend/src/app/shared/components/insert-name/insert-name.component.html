@@ -1,5 +1,8 @@
 <div id="insert-name-container">
-  <p id="header">Create {{ type.toLowerCase() }} <mat-icon>create</mat-icon></p>
+  <p id="header">
+    Create {{ (type | enumPrintFormatter).toLowerCase() }}
+    <mat-icon>create</mat-icon>
+  </p>
 
   <mat-form-field color="accent">
     <mat-label

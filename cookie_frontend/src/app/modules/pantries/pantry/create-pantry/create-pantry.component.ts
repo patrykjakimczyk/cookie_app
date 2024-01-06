@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 
 import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
 import { PantriesService } from '../../pantries.service';
-import { UserService } from 'src/app/shared/services/user-service';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -18,13 +17,11 @@ export class CreatePantryComponent implements OnInit {
 
   constructor(
     private pantryService: PantriesService,
-    private userService: UserService,
     private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     this.groupId = +this.route.snapshot.queryParamMap.get('groupId')!;
-    console.log(this.groupId);
   }
 
   createPantry(name: string) {

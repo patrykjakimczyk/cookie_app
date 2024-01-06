@@ -123,7 +123,7 @@
           </button>
         </div>
 
-        <div id="create-pantry-container" *ngIf="!group?.pantryId">
+        <div id="create-container" *ngIf="!group?.pantryId">
           <span>Group doesn't have pantry</span>
           <button
             mat-raised-button
@@ -133,6 +133,44 @@
             *ngIf="userService.userHasAuthority(authorityEnum.MODIFY_PANTRY)"
           >
             Create pantry
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <div id="shopping-lists-header-container">
+      <span class="section-header">Shopping lists:</span>
+      <button
+        mat-raised-button
+        routerLink="/shopping-lists/create"
+        [queryParams]="{ groupId: group?.id }"
+        color="primary"
+        *ngIf="userService.userHasAuthority(authorityEnum.MODIFY_SHOPPING_LIST)"
+      >
+        Create shopping list
+      </button>
+    </div>
+    <mat-card>
+      <mat-card-content>
+        <div id="pantry-container" *ngFor="let list of group?.shoppingLists">
+          <span>{{ list?.listName }}</span>
+          <button mat-button [routerLink]="'/shopping-lists/' + list?.listId">
+            Go to list
+          </button>
+        </div>
+
+        <div id="create-container" *ngIf="!group?.shoppingLists">
+          <span>Group doesn't have shopping lists</span>
+          <button
+            mat-raised-button
+            routerLink="/shopping-lists/create"
+            [queryParams]="{ groupId: group?.id }"
+            color="primary"
+            *ngIf="
+              userService.userHasAuthority(authorityEnum.MODIFY_SHOPPING_LIST)
+            "
+          >
+            Create shopping list
           </button>
         </div>
       </mat-card-content>

@@ -1,0 +1,17 @@
+<ng-container *ngIf="!createShoppingListSucceded; else successView">
+  <app-insert-name
+    [regex]="shoppingListRegex"
+    type="SHOPPING_LIST"
+    (insertedNameEmitter)="createShoppingList($event)"
+  ></app-insert-name>
+</ng-container>
+
+<ng-template #successView>
+  <app-success-banner
+    headerText="Congrats! "
+    iconName="insert_emoticon"
+    mainText="You have successfully created your shopping list. Now you can view it"
+    buttonText="Go to list"
+    [routerLink]="'/shopping-lists/' + createdShoppingListId"
+  ></app-success-banner>
+</ng-template>

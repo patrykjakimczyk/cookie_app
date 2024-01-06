@@ -8,6 +8,11 @@ export type GroupDTO = {
   pantryId: number;
 };
 
+export type GroupDetailsShoppingListDTO = {
+  listId: number;
+  listName: string;
+};
+
 export type GroupDetailsDTO = {
   id: number;
   groupName: string;
@@ -15,4 +20,5 @@ export type GroupDetailsDTO = {
   users: UserDTO[];
   pantryId: number;
   pantryName: string;
+  shoppingLists: GroupDetailsShoppingListDTO[];
 };

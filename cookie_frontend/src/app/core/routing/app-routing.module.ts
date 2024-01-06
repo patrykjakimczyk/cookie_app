@@ -10,6 +10,9 @@ import { GroupDetailsComponent } from 'src/app/modules/group/group-details/group
 import { PantriesListComponent } from 'src/app/modules/pantries/pantries-list.component';
 import { CreatePantryComponent } from 'src/app/modules/pantries/pantry/create-pantry/create-pantry.component';
 import { PantryComponent } from 'src/app/modules/pantries/pantry/pantry.component';
+import { ShoppingListsComponent } from 'src/app/modules/shopping-lists/shopping-lists.component';
+import { ShoppingListComponent } from 'src/app/modules/shopping-lists/shopping-list/shopping-list.component';
+import { CreateShoppingListComponent } from 'src/app/modules/shopping-lists/shopping-list/create-shopping-list/create-shopping-list.component';
 
 const routes: Routes = [
   {
@@ -59,6 +62,25 @@ const routes: Routes = [
       {
         path: ':id',
         component: GroupDetailsComponent,
+      },
+    ],
+  },
+  {
+    path: 'shopping-lists',
+    canActivate: [AuthGuard],
+    component: ShoppingListsComponent,
+  },
+  {
+    path: 'shopping-lists',
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: 'create',
+        component: CreateShoppingListComponent,
+      },
+      {
+        path: ':id',
+        component: ShoppingListComponent,
       },
     ],
   },

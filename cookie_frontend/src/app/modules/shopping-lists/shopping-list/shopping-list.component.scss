@@ -1,0 +1,17 @@
+@import "../../../../assets/styles/mixins";
+
+#container {
+  @include flex-with-gap($direction: column, $gap: 20px);
+  height: 100%;
+  max-width: 1920px;
+  margin: auto;
+
+  mat-panel-title {
+    font-size: 32px;
+  }
+
+  .mat-expansion-panel-header-description {
+    display: flex;
+    justify-content: flex-end;
+  }
+}

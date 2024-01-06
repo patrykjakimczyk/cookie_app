@@ -6,7 +6,7 @@ mat-card {
   max-width: 1000px;
 
   mat-card-content {
-    @include flex-with-gap($direction: column, $gap: 10px);
+    @include flex-with-gap($direction: column, $gap: 20px);
 
     #upper-container {
       @include flex-with-gap($align: center);
@@ -86,7 +86,11 @@ mat-card {
       justify-content: space-between;
     }
 
-    #create-pantry-container {
+    #shopping-lists-header-container {
+      @extend #pantry-container;
+    }
+
+    #create-container {
       @include flex-with-gap($align: center, $gap: 10px);
       justify-content: center;
     }
