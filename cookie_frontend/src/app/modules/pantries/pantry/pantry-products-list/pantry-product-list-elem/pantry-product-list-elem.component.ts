@@ -17,7 +17,7 @@ import {
 } from 'src/app/shared/model/types/pantry-types';
 import { UserService } from 'src/app/shared/services/user-service';
 
-export type CheckboxEvent = {
+export type PantryProductCheckboxEvent = {
   checked: boolean;
   pantryProductId: number;
 };
@@ -31,7 +31,7 @@ export class PantryProductListElemComponent {
   @Input() pantry!: GetPantryResponse;
   @Input() pantryProduct!: PantryProductDTO;
   @Input() isPantryProduct!: boolean;
-  @Output() checkboxEvent = new EventEmitter<CheckboxEvent>();
+  @Output() checkboxEvent = new EventEmitter<PantryProductCheckboxEvent>();
   @Output() reloadEvent = new EventEmitter<boolean>();
   protected units = units;
   protected authorityEnum = AuthorityEnum;

@@ -1,0 +1,37 @@
+<mat-list-item [ngClass]="{ purchased: listProduct.purchased }">
+  <div
+    class="product-container"
+    [ngClass]="{ 'product-to-add-container': !isShoppingListProduct }"
+  >
+    <mat-checkbox
+      (change)="checkboxClicked($event)"
+      color="primary"
+      [disabled]="
+        !userService.userHasAuthority(authorityEnum.MODIFY_SHOPPING_LIST)
+      "
+    ></mat-checkbox>
+
+    <span>{{ listProduct.productName }}</span>
+    <span>{{ listProduct.category | enumPrintFormatter }}</span>
+    <span
+      >{{ listProduct.quantity }}
+      {{ printShortUnit(listProduct.quantity) }}</span
+    >
+    <span>{{ listProduct.purchased ? "Yes" : "No" }}</span>
+
+    <button mat-button [matMenuTriggerFor]="menu">
+      <mat-icon>more_horiz</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button
+        mat-menu-item
+        (click)="editButtonClicked()"
+        *ngIf="userService.userHasAuthority(authorityEnum.MODIFY_SHOPPING_LIST)"
+      >
+        Edit list product
+      </button>
+    </mat-menu>
+  </div>
+</mat-list-item>
+
+<mat-divider></mat-divider>

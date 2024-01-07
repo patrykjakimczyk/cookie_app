@@ -4,10 +4,14 @@ export enum SortColumnName {
   EXPIRATION_DATE = 'expiration_date',
 }
 
-export const sortColumnNames = [
+export const pantrySortColumnNames = [
   { name: 'Quantity', value: SortColumnName.QUANTITY },
   { name: 'Placement', value: SortColumnName.PLACEMENT },
   { name: 'Expiration date', value: SortColumnName.EXPIRATION_DATE },
+];
+
+export const shoppingListSortColumnNames = [
+  { name: 'Quantity', value: SortColumnName.QUANTITY },
 ];
 
 export enum SortDirection {

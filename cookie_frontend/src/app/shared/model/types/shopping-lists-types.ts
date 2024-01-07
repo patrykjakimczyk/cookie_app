@@ -1,3 +1,5 @@
+import { Category } from '../enums/cateory-enum';
+import { Unit } from '../enums/unit.enum';
 import { AuthorityDTO } from './user-types';
 
 export type ShoppingListDTO = {
@@ -32,4 +34,19 @@ export type CreateShoppingListRequest = {
 
 export type UpdateShoppingListRequest = {
   shoppingListName: string;
+};
+
+export type ShoppingListProductDTO = {
+  id: number;
+  productName: string;
+  category: Category;
+  quantity: number;
+  unit: Unit;
+  purchased: boolean;
+};
+
+export type EditShoppingListProductInfo = {
+  listId: number;
+  listProduct: ShoppingListProductDTO;
+  isShoppingListProduct: boolean;
 };

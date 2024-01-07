@@ -1,0 +1,35 @@
+@import "../../../../../../assets/styles/colors";
+
+mat-list-item {
+  min-height: 56px;
+
+  &:hover {
+    background-color: darken($color: white, $amount: 4);
+  }
+
+  .product-container {
+    display: grid;
+    grid-template-columns:
+      5% 20% repeat(3, minmax(calc((100% - 30%) / 3), 1fr))
+      5%;
+    align-items: center;
+
+    * {
+      padding: 5px;
+      text-wrap: wrap;
+      word-wrap: break-word;
+    }
+  }
+
+  .product-to-add-container {
+    grid-template-columns: 5% 20% repeat(4, minmax(calc((100% - 30%) / 4), 1fr)) 5%;
+  }
+
+  #save-button {
+    background-color: rgb(50, 165, 50);
+  }
+}
+
+.purchased {
+  background-color: lighten($color: $main-color, $amount: 30);
+}

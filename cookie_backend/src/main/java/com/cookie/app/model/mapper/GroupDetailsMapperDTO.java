@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 @Service
 public class GroupDetailsMapperDTO implements Function<Group, GroupDetailsDTO> {
     private final UserMapperDTO userMapperDTO;
+    private final GroupDetailsShoppingListMapperDTO groupDetailsShoppingListMapperDTO;
 
     @Override
     public GroupDetailsDTO apply(Group group) {
@@ -32,8 +33,11 @@ public class GroupDetailsMapperDTO implements Function<Group, GroupDetailsDTO> {
                         })
                         .toList(),
                 group.getPantry() != null ? group.getPantry().getId() : 0L,
-                group.getPantry() != null ? group.getPantry().getPantryName() : ""
-
+                group.getPantry() != null ? group.getPantry().getPantryName() : "",
+                group.getShoppingLists()
+                        .stream()
+                        .map(this.groupDetailsShoppingListMapperDTO::apply)
+                        .toList()
         );
     }
 

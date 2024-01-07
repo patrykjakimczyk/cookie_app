@@ -8,11 +8,11 @@ import { Observable, Subject, of } from 'rxjs';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 
 import { GetPantryResponse } from 'src/app/shared/model/responses/pantry-response';
-import { CheckboxEvent } from './pantry-product-list-elem/pantry-product-list-elem.component';
+import { PantryProductCheckboxEvent } from './pantry-product-list-elem/pantry-product-list-elem.component';
 import { Unit, units } from 'src/app/shared/model/enums/unit.enum';
 import { Category, categories } from 'src/app/shared/model/enums/cateory-enum';
 import {
-  sortColumnNames,
+  pantrySortColumnNames,
   sortDirecitons,
 } from 'src/app/shared/model/enums/sort-enum';
 import { PantriesService } from '../../pantries.service';
@@ -54,7 +54,7 @@ export class PantryProductsListComponent {
   public productsToAdd: PantryProductDTO[] = [];
   public productsToAddCurrPage: PantryProductDTO[] = [];
   public productsToAddIdsToRemove: number[] = [];
-  public sortColumnNames = sortColumnNames;
+  public sortColumnNames = pantrySortColumnNames;
   public sortDirecitons = sortDirecitons;
   public productsIdsToRemove: number[] = [];
   public units = units;
@@ -157,7 +157,7 @@ export class PantryProductsListComponent {
     this.getPantryProducts();
   }
 
-  productToAddCheckboxEvent(event: CheckboxEvent) {
+  productToAddCheckboxEvent(event: PantryProductCheckboxEvent) {
     if (event.checked) {
       this.productsToAddIdsToRemove.push(event.pantryProductId);
     } else {
@@ -167,7 +167,7 @@ export class PantryProductsListComponent {
     }
   }
 
-  checkboxClicked(event: CheckboxEvent) {
+  checkboxClicked(event: PantryProductCheckboxEvent) {
     if (event.checked) {
       this.productsIdsToRemove.push(event.pantryProductId);
     } else {

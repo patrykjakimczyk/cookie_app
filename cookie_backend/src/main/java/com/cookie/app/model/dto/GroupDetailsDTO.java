@@ -8,5 +8,6 @@ public record GroupDetailsDTO(
     UserDTO creator,
     List<UserDTO> users,
     long pantryId,
-    String pantryName
+    String pantryName,
+    List<GroupDetailsShoppingListDTO> shoppingLists
 ) {}

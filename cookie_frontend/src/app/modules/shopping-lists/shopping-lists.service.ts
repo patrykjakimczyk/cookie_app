@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
@@ -15,6 +15,7 @@ export class ShoppingListsService {
   private readonly shopping_lists_path = 'shopping-lists';
   private readonly shopping_list_path = 'shopping-list';
   private readonly shopping_list_id_path = 'shopping-list/{id}';
+  private readonly list_products_page_path = '/products/{page}';
 
   constructor(private http: HttpClient) {}
 
@@ -52,6 +53,29 @@ export class ShoppingListsService {
     return this.http.patch<GetShoppingListResponse>(
       this.url + this.shopping_list_id_path.replace('{id}', listId.toString()),
       updateListBody
+    );
+  }
+
+  getShoppingListsProducts(
+    listId: number,
+    page: number,
+    filterValue: string,
+    sortColName: string,
+    sortDirection: string
+  ): Observable<any> {
+    let params = new HttpParams();
+
+    params = params
+      .append('filterValue', filterValue)
+      .append('sortColName', sortColName)
+      .append('sortDirection', sortDirection);
+
+    return this.http.get<any>(
+      `${this.url}${this.shopping_list_id_path.replace(
+        '{id}',
+        listId.toString()
+      )}${this.list_products_page_path.replace('{page}', page.toString())}`,
+      { params: params }
     );
   }
 }

@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,7 +77,7 @@ public class ShoppingListServiceImpl extends AbstractCookieService implements Sh
         Optional<ShoppingList> listOptional = this.findShoppingListInUserGroups(shoppingListId, user);
 
         if (listOptional.isEmpty()) {
-            return new GetShoppingListResponse(null, null, null, false);
+            return new GetShoppingListResponse(0L, "", Collections.emptySet(), false);
         }
 
         ShoppingList shoppingList = listOptional.get();

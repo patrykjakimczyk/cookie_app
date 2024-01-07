@@ -1,0 +1,333 @@
+<div id="container">
+  <!-- displaying with block because rendering with ngif triggers bug with mat date pickers styling -->
+  <mat-accordion
+    [ngStyle]="{
+      display:
+        shoppingList &&
+        shoppingList.id &&
+        shoppingList.listName &&
+        showAddProducts
+          ? 'block'
+          : 'none'
+    }"
+  >
+    <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title> Products to add </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <!-- <div
+        class="action-container first-action-container"
+        *ngIf="shoppingList && shoppingList.id && shoppingList.listName"
+      >
+        <form [formGroup]="addForm" (ngSubmit)="submitAddForm()">
+          <mat-form-field color="accent">
+            <mat-label>Product name (3 to 50 characters) </mat-label>
+            <input
+              type="text"
+              matInput
+              formControlName="productName"
+              [matAutocomplete]="auto"
+              required
+              (input)="searchForProducts()"
+            />
+            <mat-autocomplete #auto="matAutocomplete">
+              <mat-option
+                *ngFor="let product of filteredProducts | async"
+                [value]="product.productName"
+                (onSelectionChange)="selectCategoryForProduct(product.category)"
+                >{{
+                  product.productName +
+                    " (" +
+                    (product.category | enumPrintFormatter) +
+                    ")"
+                }}</mat-option
+              >
+            </mat-autocomplete>
+            <mat-hint
+              >Product name can only contains letters, digits, dots, commas and
+              whitespaces</mat-hint
+            >
+            <mat-error *ngIf="!addForm.controls.productName.valid">
+              {{ getErrorMessage(addForm.controls.productName) }}</mat-error
+            >
+          </mat-form-field>
+          <mat-form-field color="accent">
+            <mat-label>Category</mat-label>
+            <mat-select formControlName="category" required>
+              <mat-option
+                *ngFor="let category of categories"
+                [value]="category"
+                >{{ category | enumPrintFormatter }}</mat-option
+              >
+            </mat-select>
+            <mat-hint>Pick category of your product</mat-hint>
+            <mat-error *ngIf="!addForm.controls.category.valid">
+              {{ getErrorMessage(addForm.controls.category) }}
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field color="accent">
+            <mat-label>Quantity</mat-label>
+            <input type="text" matInput formControlName="quantity" required />
+            <mat-hint>Quantity must be at least 1</mat-hint>
+            <mat-error *ngIf="!addForm.controls.quantity.valid">{{
+              getErrorMessage(addForm.controls.quantity)
+            }}</mat-error>
+          </mat-form-field>
+          <mat-form-field color="accent">
+            <mat-label>Unit</mat-label>
+            <mat-select formControlName="unit" required>
+              <mat-option *ngFor="let unit of units" [value]="unit">{{
+                unit | enumPrintFormatter
+              }}</mat-option>
+            </mat-select>
+            <mat-hint>Pick unit for your product</mat-hint>
+            <mat-error *ngIf="!addForm.controls.unit.valid">
+              {{ getErrorMessage(addForm.controls.unit) }}
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field color="accent">
+            <mat-label>Purchase date</mat-label>
+            <input
+              matInput
+              [matDatepicker]="purchaseDatePicker"
+              formControlName="purchaseDate"
+            />
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-error *ngIf="!addForm.controls.purchaseDate.valid">
+              {{ getErrorMessage(addForm.controls.purchaseDate) }}
+            </mat-error>
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="purchaseDatePicker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #purchaseDatePicker></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field color="accent">
+            <mat-label>Expiration date</mat-label>
+            <input
+              matInput
+              [matDatepicker]="expirationDatePicker"
+              formControlName="expirationDate"
+            />
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-error *ngIf="!addForm.controls.expirationDate.valid">
+              {{ getErrorMessage(addForm.controls.expirationDate) }}
+            </mat-error>
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="expirationDatePicker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #expirationDatePicker></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field color="accent">
+            <mat-label>Placement</mat-label>
+            <input type="text" matInput formControlName="placement" />
+            <mat-hint
+              >Placement can only contains letters and whitespaces</mat-hint
+            >
+            <mat-error *ngIf="!addForm.controls.placement.valid">
+              {{ getErrorMessage(addForm.controls.placement) }}
+            </mat-error>
+          </mat-form-field>
+          <button mat-raised-button color="primary" (click)="submitAddForm()">
+            Add
+          </button>
+        </form>
+      </div>
+
+      <mat-card *ngIf="pantry && pantry.id && pantry.pantryName">
+        <mat-card-content>
+          <div id="add-products-container">
+            <div
+              class="empty-product-list-container"
+              *ngIf="!productsToAdd.length"
+            >
+              <p>You didn't insert any products yet</p>
+            </div>
+
+            <ng-container *ngIf="productsToAdd.length">
+              <mat-list role="list">
+                <mat-list-item>
+                  <div class="product-container">
+                    <span>Select</span>
+                    <span>Product</span>
+                    <span>Category</span>
+                    <span>Quantity</span>
+                    <span>Placement</span>
+                    <span>Expiration date</span>
+                    <span>Options</span>
+                  </div>
+                </mat-list-item>
+
+                <mat-divider></mat-divider>
+
+                <ng-container *ngFor="let product of productsToAddCurrPage">
+                  <app-pantry-product-list-elem
+                    [pantry]="pantry"
+                    [pantryProduct]="product"
+                    (checkboxEvent)="productToAddCheckboxEvent($event)"
+                    (reloadEvent)="reloadPage()"
+                  ></app-pantry-product-list-elem>
+                </ng-container>
+              </mat-list>
+              <mat-paginator
+                [length]="productsToAdd.length"
+                [pageSize]="page_size"
+                aria-label="Select page"
+                (page)="productsToAddPageChange($event)"
+                [pageIndex]="productsToAddPage"
+                color="accent"
+              >
+              </mat-paginator>
+            </ng-container>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <div id="add-products-action-buttons">
+        <button mat-raised-button (click)="closeAddProducts()">Close</button>
+        <div id="close-send-buttons-container" *ngIf="productsToAdd.length">
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="sendProductsToAdd()"
+          >
+            Add all
+          </button>
+          <button
+            mat-raised-button
+            color="warn"
+            (click)="removeProductsFromAdding()"
+            [disabled]="!productsToAddIdsToRemove.length"
+          >
+            Remove
+          </button>
+        </div>
+      </div> -->
+    </mat-expansion-panel>
+  </mat-accordion>
+
+  <mat-accordion>
+    <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title> Shopping list Products </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <div
+        class="action-container"
+        *ngIf="shoppingList && shoppingList.id && shoppingList.listName"
+      >
+        <form [formGroup]="searchForm" (ngSubmit)="submitSearchForm()">
+          <mat-form-field color="accent">
+            <mat-label>Filter</mat-label>
+            <input type="text" matInput formControlName="filterValue" />
+          </mat-form-field>
+          <mat-form-field color="accent">
+            <mat-label>Choose column to sort</mat-label>
+            <mat-select formControlName="sortColName">
+              <mat-option
+                *ngFor="let columnName of sortColumnNames"
+                [value]="columnName.value"
+                >{{ columnName.name }}</mat-option
+              >
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field color="accent">
+            <mat-label>Choose sort direction</mat-label>
+            <mat-select formControlName="sortDirection">
+              <mat-option
+                *ngFor="let sortDireciton of sortDirecitons"
+                [value]="sortDireciton.value"
+                >{{ sortDireciton.name }}</mat-option
+              >
+            </mat-select>
+          </mat-form-field>
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="submitSearchForm()"
+            [disabled]="!totalElements"
+          >
+            Search
+          </button>
+        </form>
+
+        <div id="add-remove-buttons-container">
+          <button
+            mat-raised-button
+            color="primary"
+            id="show-add-products-button"
+            (click)="showAddProducts = true"
+            *ngIf="
+              userService.userHasAuthority(authorityEnum.ADD_TO_SHOPPING_LIST)
+            "
+          >
+            Add products
+          </button>
+
+          <button
+            mat-raised-button
+            color="warn"
+            [disabled]="!productsIdsForAction.length"
+            id="remove-button"
+            *ngIf="
+              userService.userHasAuthority(authorityEnum.MODIFY_SHOPPING_LIST)
+            "
+          >
+            Remove
+          </button>
+        </div>
+      </div>
+
+      <mat-card>
+        <mat-card-content>
+          <div
+            id="pantry-products-container"
+            *ngIf="shoppingList && shoppingList.id && shoppingList.listName"
+          >
+            <div class="empty-product-list-container" *ngIf="!totalElements">
+              <p>This shopping list is currently empty</p>
+            </div>
+
+            <ng-container *ngIf="totalElements">
+              <mat-list role="list">
+                <mat-list-item>
+                  <div class="product-container">
+                    <span>Select</span>
+                    <span>Product</span>
+                    <span>Category</span>
+                    <span>Quantity</span>
+                    <span>Purchased?</span>
+                    <span>Options</span>
+                  </div>
+                </mat-list-item>
+
+                <mat-divider></mat-divider>
+
+                <ng-container *ngFor="let product of products">
+                  <app-shopping-list-products-elem
+                    [shoppingList]="shoppingList"
+                    [listProduct]="product"
+                    [isShoppingListProduct]="true"
+                    (checkboxEvent)="checkboxClicked($event)"
+                    (reloadEvent)="reloadPage()"
+                  ></app-shopping-list-products-elem>
+                </ng-container>
+              </mat-list>
+              <mat-paginator
+                [length]="totalElements"
+                [pageSize]="page_size"
+                aria-label="Select page"
+                (page)="pageChange($event)"
+                [pageIndex]="page"
+                color="accent"
+              >
+              </mat-paginator>
+            </ng-container>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
