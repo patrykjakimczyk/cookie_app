@@ -19,7 +19,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -154,18 +156,11 @@ public class PantryProductServiceImpl extends AbstractCookieService implements P
 
     private PantryProduct mapToPantryProduct(PantryProductDTO pantryProductDTO, Pantry pantry) {
         Product product;
-        Optional<Product> productOptional = this.productRepository.findByProductName(pantryProductDTO.productName());
+        Optional<Product> productOptional = this.productRepository
+                .findByProductNameAndCategory(pantryProductDTO.productName(), pantryProductDTO.category().name());
 
         if (productOptional.isPresent()) {
-            Product foundProduct = productOptional.get();
-            if (foundProduct.getCategory() == pantryProductDTO.category()) {
-                product = foundProduct;
-            } else {
-                product = new Product();
-                product.setProductName(pantryProductDTO.productName());
-                product.setCategory(pantryProductDTO.category());
-                this.productRepository.save(product);
-            }
+            product = productOptional.get();
         } else {
             product = new Product();
             product.setProductName(pantryProductDTO.productName());
@@ -241,8 +236,8 @@ public class PantryProductServiceImpl extends AbstractCookieService implements P
     private boolean arePantryProductsEqual(PantryProduct pantryProduct, PantryProductDTO pantryProductDTO, Product product) {
         return pantryProduct.getProduct().equals(product) &&
                 pantryProduct.getUnit() == pantryProductDTO.unit() &&
-                pantryProduct.getPurchaseDate().equals(pantryProductDTO.purchaseDate()) &&
-                pantryProduct.getExpirationDate().equals(pantryProductDTO.expirationDate()) &&
+                Objects.equals(pantryProduct.getPurchaseDate(), pantryProductDTO.purchaseDate()) &&
+                Objects.equals(pantryProduct.getExpirationDate(), pantryProductDTO.expirationDate()) &&
                 pantryProduct.getPlacement().equals(pantryProductDTO.placement());
     }
 }

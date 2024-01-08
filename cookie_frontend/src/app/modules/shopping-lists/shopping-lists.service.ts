@@ -6,6 +6,7 @@ import {
   DeleteShoppingListResponse,
   GetShoppingListResponse,
   GetUserShoppingListsResponse,
+  ShoppingListProductDTO,
   UpdateShoppingListRequest,
 } from 'src/app/shared/model/types/shopping-lists-types';
 
@@ -15,7 +16,11 @@ export class ShoppingListsService {
   private readonly shopping_lists_path = 'shopping-lists';
   private readonly shopping_list_path = 'shopping-list';
   private readonly shopping_list_id_path = 'shopping-list/{id}';
+  private readonly list_products_path = '/products';
   private readonly list_products_page_path = '/products/{page}';
+  private readonly products_path = 'products';
+  private readonly products_purchase_path = '/products/purchase';
+  private readonly products_transfer_path = '/products/transfer';
 
   constructor(private http: HttpClient) {}
 
@@ -77,5 +82,72 @@ export class ShoppingListsService {
       )}${this.list_products_page_path.replace('{page}', page.toString())}`,
       { params: params }
     );
+  }
+
+  addProductsToShoppingList(
+    listId: number,
+    productsToAdd: ShoppingListProductDTO[]
+  ): Observable<void> {
+    return this.http.post<void>(
+      this.url +
+        this.shopping_list_id_path.replace('{id}', listId.toString()) +
+        this.list_products_path,
+      productsToAdd
+    );
+  }
+
+  removeShoppingListProducts(
+    listId: number,
+    productsIds: number[]
+  ): Observable<void> {
+    return this.http.delete<void>(
+      this.url +
+        this.shopping_list_id_path.replace('{id}', listId.toString()) +
+        this.list_products_path,
+      { body: productsIds }
+    );
+  }
+
+  updateShoppingListProduct(
+    listId: number,
+    listProduct: ShoppingListProductDTO
+  ): Observable<void> {
+    return this.http.patch<void>(
+      this.url +
+        this.shopping_list_id_path.replace('{id}', listId.toString()) +
+        this.list_products_path,
+      listProduct
+    );
+  }
+
+  changePurchaseStatusForProducts(
+    listId: number,
+    productsIds: number[]
+  ): Observable<void> {
+    return this.http.patch<void>(
+      this.url +
+        this.shopping_list_id_path.replace('{id}', listId.toString()) +
+        this.products_purchase_path,
+      productsIds
+    );
+  }
+
+  transferProductsToPantry(listId: number): Observable<void> {
+    return this.http.post<void>(
+      this.url +
+        this.shopping_list_id_path.replace('{id}', listId.toString()) +
+        this.products_transfer_path,
+      null
+    );
+  }
+
+  getProductsWithFilter(filterValue: string): Observable<any> {
+    let params = new HttpParams();
+
+    params = params.append('filterValue', filterValue);
+
+    return this.http.get<any>(`${this.url}${this.products_path}`, {
+      params: params,
+    });
   }
 }

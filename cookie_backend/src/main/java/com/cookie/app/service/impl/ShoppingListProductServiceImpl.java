@@ -168,12 +168,13 @@ public class ShoppingListProductServiceImpl extends AbstractCookieService implem
 
     private List<PantryProduct> mapListProductsToPantryProducts(List<ShoppingListProduct> purchasedProducts, Pantry pantry) {
         List<PantryProduct> newPantryProducts = new ArrayList<>();
+        Timestamp currentTimestamp = Timestamp.from(Instant.now());
 
         for (ShoppingListProduct purchasedProduct : purchasedProducts) {
             PantryProduct pantryProduct = PantryProduct.builder()
                     .pantry(pantry)
                     .product(purchasedProduct.getProduct())
-                    .purchaseDate(Timestamp.from(Instant.now()))
+                    .purchaseDate(currentTimestamp)
                     .quantity(purchasedProduct.getQuantity())
                     .unit(purchasedProduct.getUnit())
                     .reserved(0)
@@ -202,18 +203,11 @@ public class ShoppingListProductServiceImpl extends AbstractCookieService implem
 
     private ShoppingListProduct mapToShoppingListProduct(ShoppingListProductDTO productDTO, ShoppingList shoppingList) {
         Product product;
-        Optional<Product> productOptional = this.productRepository.findByProductName(productDTO.productName());
+        Optional<Product> productOptional = this.productRepository
+                .findByProductNameAndCategory(productDTO.productName(), productDTO.category().name());
 
         if (productOptional.isPresent()) {
-            Product foundProduct = productOptional.get();
-            if (foundProduct.getCategory() == productDTO.category()) {
-                product = foundProduct;
-            } else {
-                product = new Product();
-                product.setProductName(productDTO.productName());
-                product.setCategory(productDTO.category());
-                this.productRepository.save(product);
-            }
+            product = productOptional.get();
         } else {
             product = new Product();
             product.setProductName(productDTO.productName());

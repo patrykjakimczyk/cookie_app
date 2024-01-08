@@ -37,9 +37,9 @@ export type UpdateShoppingListRequest = {
 };
 
 export type ShoppingListProductDTO = {
-  id: number;
+  id: number | null;
   productName: string;
-  category: Category;
+  category: string;
   quantity: number;
   unit: Unit;
   purchased: boolean;

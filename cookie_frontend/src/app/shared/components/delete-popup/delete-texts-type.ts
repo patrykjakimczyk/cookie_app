@@ -1,4 +1,4 @@
-export type Texts = {
+export type DeleteTexts = {
   header: string;
   button: string;
 };

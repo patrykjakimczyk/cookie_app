@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Texts } from './delete-texts-type';
+import { DeleteTexts } from './delete-texts-type';
 
 @Component({
   selector: 'app-delete-popup',
@@ -10,7 +10,7 @@ import { Texts } from './delete-texts-type';
 export class DeletePopupComponent {
   constructor(
     public dialog: MatDialogRef<DeletePopupComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Texts
+    @Inject(MAT_DIALOG_DATA) public data: DeleteTexts
   ) {}
 
   close() {

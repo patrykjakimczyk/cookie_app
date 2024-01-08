@@ -1,7 +1,6 @@
 package com.cookie.app.controller;
 
 import com.cookie.app.model.dto.ShoppingListProductDTO;
-import com.cookie.app.model.response.GetShoppingListResponse;
 import com.cookie.app.service.ShoppingListProductService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;

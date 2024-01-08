@@ -1,35 +1,31 @@
 <div id="container">
-  <ng-container *ngIf="pantry.id && pantry.pantryName">
-    <mat-accordion>
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            {{ pantry.pantryName }}
-          </mat-panel-title>
-          <mat-panel-description
-            *ngIf="userService.userHasAuthority(authorityEnum.MODIFY_PANTRY)"
-          >
-            Click to see pantry options
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <button
-          mat-button
-          (click)="openChangePantryNameDialog()"
+  <h1>Pantry</h1>
+  <mat-accordion>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title> Name: {{ pantry.pantryName }} </mat-panel-title>
+        <mat-panel-description
           *ngIf="userService.userHasAuthority(authorityEnum.MODIFY_PANTRY)"
         >
-          Change pantry name
-        </button>
-        <button
-          mat-button
-          color="warn"
-          (click)="openDeletePantryDialog()"
-          *ngIf="userService.userHasAuthority(authorityEnum.MODIFY_PANTRY)"
-        >
-          Delete pantry
-        </button>
-      </mat-expansion-panel>
-    </mat-accordion>
-  </ng-container>
-
+          Click to see pantry options
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <button
+        mat-button
+        (click)="openChangePantryNameDialog()"
+        *ngIf="userService.userHasAuthority(authorityEnum.MODIFY_PANTRY)"
+      >
+        Change pantry name
+      </button>
+      <button
+        mat-button
+        color="warn"
+        (click)="openDeletePantryDialog()"
+        *ngIf="userService.userHasAuthority(authorityEnum.MODIFY_PANTRY)"
+      >
+        Delete pantry
+      </button>
+    </mat-expansion-panel>
+  </mat-accordion>
   <app-pantry-products-list [pantry$]="pantry$"></app-pantry-products-list>
 </div>

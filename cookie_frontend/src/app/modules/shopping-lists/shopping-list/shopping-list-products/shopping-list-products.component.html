@@ -16,7 +16,7 @@
         <mat-panel-title> Products to add </mat-panel-title>
       </mat-expansion-panel-header>
 
-      <!-- <div
+      <div
         class="action-container first-action-container"
         *ngIf="shoppingList && shoppingList.id && shoppingList.listName"
       >
@@ -86,57 +86,15 @@
               {{ getErrorMessage(addForm.controls.unit) }}
             </mat-error>
           </mat-form-field>
-          <mat-form-field color="accent">
-            <mat-label>Purchase date</mat-label>
-            <input
-              matInput
-              [matDatepicker]="purchaseDatePicker"
-              formControlName="purchaseDate"
-            />
-            <mat-hint>MM/DD/YYYY</mat-hint>
-            <mat-error *ngIf="!addForm.controls.purchaseDate.valid">
-              {{ getErrorMessage(addForm.controls.purchaseDate) }}
-            </mat-error>
-            <mat-datepicker-toggle
-              matIconSuffix
-              [for]="purchaseDatePicker"
-            ></mat-datepicker-toggle>
-            <mat-datepicker #purchaseDatePicker></mat-datepicker>
-          </mat-form-field>
-          <mat-form-field color="accent">
-            <mat-label>Expiration date</mat-label>
-            <input
-              matInput
-              [matDatepicker]="expirationDatePicker"
-              formControlName="expirationDate"
-            />
-            <mat-hint>MM/DD/YYYY</mat-hint>
-            <mat-error *ngIf="!addForm.controls.expirationDate.valid">
-              {{ getErrorMessage(addForm.controls.expirationDate) }}
-            </mat-error>
-            <mat-datepicker-toggle
-              matIconSuffix
-              [for]="expirationDatePicker"
-            ></mat-datepicker-toggle>
-            <mat-datepicker #expirationDatePicker></mat-datepicker>
-          </mat-form-field>
-          <mat-form-field color="accent">
-            <mat-label>Placement</mat-label>
-            <input type="text" matInput formControlName="placement" />
-            <mat-hint
-              >Placement can only contains letters and whitespaces</mat-hint
-            >
-            <mat-error *ngIf="!addForm.controls.placement.valid">
-              {{ getErrorMessage(addForm.controls.placement) }}
-            </mat-error>
-          </mat-form-field>
           <button mat-raised-button color="primary" (click)="submitAddForm()">
             Add
           </button>
         </form>
       </div>
 
-      <mat-card *ngIf="pantry && pantry.id && pantry.pantryName">
+      <mat-card
+        *ngIf="shoppingList && shoppingList.id && shoppingList.listName"
+      >
         <mat-card-content>
           <div id="add-products-container">
             <div
@@ -154,8 +112,6 @@
                     <span>Product</span>
                     <span>Category</span>
                     <span>Quantity</span>
-                    <span>Placement</span>
-                    <span>Expiration date</span>
                     <span>Options</span>
                   </div>
                 </mat-list-item>
@@ -163,12 +119,13 @@
                 <mat-divider></mat-divider>
 
                 <ng-container *ngFor="let product of productsToAddCurrPage">
-                  <app-pantry-product-list-elem
-                    [pantry]="pantry"
-                    [pantryProduct]="product"
+                  <app-shopping-list-products-elem
+                    [shoppingList]="shoppingList"
+                    [listProduct]="product"
+                    [isShoppingListProduct]="false"
                     (checkboxEvent)="productToAddCheckboxEvent($event)"
                     (reloadEvent)="reloadPage()"
-                  ></app-pantry-product-list-elem>
+                  ></app-shopping-list-products-elem>
                 </ng-container>
               </mat-list>
               <mat-paginator
@@ -204,14 +161,14 @@
             Remove
           </button>
         </div>
-      </div> -->
+      </div>
     </mat-expansion-panel>
   </mat-accordion>
 
   <mat-accordion>
     <mat-expansion-panel [expanded]="true">
       <mat-expansion-panel-header>
-        <mat-panel-title> Shopping list Products </mat-panel-title>
+        <mat-panel-title> Shopping list products </mat-panel-title>
       </mat-expansion-panel-header>
 
       <div
@@ -265,7 +222,28 @@
           >
             Add products
           </button>
-
+          <button
+            mat-raised-button
+            [disabled]="!productsIdsForAction.length"
+            id="remove-button"
+            *ngIf="
+              userService.userHasAuthority(authorityEnum.MODIFY_SHOPPING_LIST)
+            "
+            (click)="changePurchaseStatusForProducts()"
+          >
+            Change purchase status
+          </button>
+          <button
+            mat-raised-button
+            [disabled]="transferAvailable()"
+            id="remove-button"
+            *ngIf="
+              userService.userHasAuthority(authorityEnum.MODIFY_SHOPPING_LIST)
+            "
+            (click)="transferProductsToPantry()"
+          >
+            Transfer products
+          </button>
           <button
             mat-raised-button
             color="warn"
@@ -274,6 +252,7 @@
             *ngIf="
               userService.userHasAuthority(authorityEnum.MODIFY_SHOPPING_LIST)
             "
+            (click)="removeProductsFromList()"
           >
             Remove
           </button>

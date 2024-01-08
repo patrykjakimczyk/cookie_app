@@ -1,41 +1,37 @@
 <div id="container">
-  <ng-container>
-    <mat-accordion>
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            {{ shoppingList.listName }}
-          </mat-panel-title>
-          <mat-panel-description
-            *ngIf="
-              userService.userHasAuthority(authorityEnum.MODIFY_SHOPPING_LIST)
-            "
-          >
-            Click to see shopping list options
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <button
-          mat-button
+  <h1>Shopping list</h1>
+
+  <mat-accordion>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          List name: {{ shoppingList.listName }}
+        </mat-panel-title>
+        <mat-panel-description
           *ngIf="
             userService.userHasAuthority(authorityEnum.MODIFY_SHOPPING_LIST)
           "
-          (click)="openChangeListNameDialog()"
         >
-          Change shopping list name
-        </button>
-        <button
-          mat-button
-          color="warn"
-          *ngIf="
-            userService.userHasAuthority(authorityEnum.MODIFY_SHOPPING_LIST)
-          "
-          (click)="openDeletePantryDialog()"
-        >
-          Delete shopping list
-        </button>
-      </mat-expansion-panel>
-    </mat-accordion>
-  </ng-container>
+          Click to see shopping list options
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <button
+        mat-button
+        *ngIf="userService.userHasAuthority(authorityEnum.MODIFY_SHOPPING_LIST)"
+        (click)="openChangeListNameDialog()"
+      >
+        Change shopping list name
+      </button>
+      <button
+        mat-button
+        color="warn"
+        *ngIf="userService.userHasAuthority(authorityEnum.MODIFY_SHOPPING_LIST)"
+        (click)="openDeletePantryDialog()"
+      >
+        Delete shopping list
+      </button>
+    </mat-expansion-panel>
+  </mat-accordion>
 
   <app-shopping-list-products
     [shoppingList$]="shoppingList$"

@@ -70,6 +70,7 @@ export class LoginFormComponent {
       },
       error: (error: HttpErrorResponse) => {
         if (error.status === 401) {
+          this.userService.logoutUser();
           this.authenticationFailed = true;
         }
       },

@@ -17,6 +17,7 @@ import { MatInputModule } from '@angular/material/input';
 import { NewNamePopupComponentComponent } from './components/new-name-popup-component/new-name-popup-component.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DeletePopupComponent } from './components/delete-popup/delete-popup.component';
+import { ConfirmationPopupComponent } from './components/confirmation-popup/confirmation-popup.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { DeletePopupComponent } from './components/delete-popup/delete-popup.com
     InsertNameComponent,
     NewNamePopupComponentComponent,
     DeletePopupComponent,
+    ConfirmationPopupComponent,
   ],
   imports: [
     BrowserModule,
@@ -46,6 +48,7 @@ import { DeletePopupComponent } from './components/delete-popup/delete-popup.com
     SuccessBannerComponent,
     PreviewCardComponent,
     InsertNameComponent,
+    ConfirmationPopupComponent,
     DateFromStringPipe,
     EnumPrintFormatterPipe,
     ValueOrDashPipe,

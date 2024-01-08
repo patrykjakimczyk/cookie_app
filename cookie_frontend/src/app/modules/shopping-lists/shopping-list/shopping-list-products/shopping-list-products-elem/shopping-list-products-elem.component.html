@@ -17,7 +17,9 @@
       >{{ listProduct.quantity }}
       {{ printShortUnit(listProduct.quantity) }}</span
     >
-    <span>{{ listProduct.purchased ? "Yes" : "No" }}</span>
+    <span *ngIf="isShoppingListProduct">{{
+      listProduct.purchased ? "Yes" : "No"
+    }}</span>
 
     <button mat-button [matMenuTriggerFor]="menu">
       <mat-icon>more_horiz</mat-icon>

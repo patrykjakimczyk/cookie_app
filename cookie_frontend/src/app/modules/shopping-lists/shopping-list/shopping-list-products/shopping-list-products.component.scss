@@ -65,9 +65,7 @@
 
         .product-container {
           display: grid;
-          grid-template-columns:
-            5% 20% repeat(2, minmax(calc((100% - 30%) / 2), 1fr))
-            5%;
+          grid-template-columns: 5% repeat(3, 1fr) 5%;
           grid-template-rows: 1fr;
           align-items: center;
         }

@@ -70,15 +70,16 @@ export class EditShoppingListProductsElemComponent {
       return;
     }
 
+    console.log(this.editForm.value);
+
     if (this.isShoppingListProduct) {
-      // this.pantriesService
-      //   .modifyPantryProduct(this.pantryId, this.editForm.value)
-      //   .subscribe({
-      //     next: (_) => {
-      //       this.dialog.close();
-      //     },
-      //   });
-      this.dialog.close(this.editForm.value);
+      this.shoppingListService
+        .updateShoppingListProduct(this.listId, this.editForm.value)
+        .subscribe({
+          next: (_) => {
+            this.dialog.close(this.editForm.value);
+          },
+        });
     } else {
       this.dialog.close(this.editForm.value);
     }

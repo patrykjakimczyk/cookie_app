@@ -1,13 +1,13 @@
 import { ShoppingListProductCheckboxEvent } from './shopping-list-products-elem/shopping-list-products-elem.component';
 import { Component, Input, OnInit } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Observable, Subject, of } from 'rxjs';
 import {
   GetShoppingListResponse,
   ShoppingListProductDTO,
 } from 'src/app/shared/model/types/shopping-lists-types';
 import { ShoppingListsService } from '../../shopping-lists.service';
 import { Router } from '@angular/router';
-import { FormBuilder } from '@angular/forms';
+import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import {
   shoppingListSortColumnNames,
   sortDirecitons,
@@ -15,6 +15,11 @@ import {
 import { UserService } from 'src/app/shared/services/user-service';
 import { AuthorityEnum } from 'src/app/shared/model/enums/authority-enum';
 import { PageEvent } from '@angular/material/paginator';
+import { Unit, units } from 'src/app/shared/model/enums/unit.enum';
+import { ProductDTO } from 'src/app/shared/model/types/pantry-types';
+import { categories } from 'src/app/shared/model/enums/cateory-enum';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationPopupComponent } from 'src/app/shared/components/confirmation-popup/confirmation-popup.component';
 
 @Component({
   selector: 'app-shopping-list-products',
@@ -35,6 +40,13 @@ export class ShoppingListProductsComponent implements OnInit {
   public sortColumnNames = shoppingListSortColumnNames;
   public sortDirecitons = sortDirecitons;
   public productsIdsForAction: number[] = [];
+  public addProduct = false;
+  public productsToAdd: ShoppingListProductDTO[] = [];
+  public productsToAddIdsToRemove: number[] = [];
+  public productsToAddCurrPage: ShoppingListProductDTO[] = [];
+  public filteredProducts = new Observable<ProductDTO[]>();
+  public categories = categories;
+  public units = units;
 
   protected searchForm = this.fb.group({
     filterValue: [''],
@@ -42,11 +54,27 @@ export class ShoppingListProductsComponent implements OnInit {
     sortDirection: [''],
   });
 
+  protected addForm = this.fb.group({
+    id: [0],
+    productName: [
+      '',
+      [Validators.required, Validators.pattern('[a-zA-Z0-9., ]{3,50}')],
+    ],
+    category: ['', [Validators.required]],
+    quantity: [
+      '',
+      [Validators.required, Validators.min(1), Validators.pattern('[0-9]+')],
+    ],
+    unit: ['', [Validators.required]],
+    purchased: [false],
+  });
+
   constructor(
     private shoppingListsService: ShoppingListsService,
     protected userService: UserService,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -83,6 +111,196 @@ export class ShoppingListProductsComponent implements OnInit {
   reloadPage() {
     this.page = 0;
     this.getShoppinglistProducts();
+  }
+
+  getErrorMessage(control: AbstractControl): string {
+    if (control.hasError('required')) {
+      return 'Field is required';
+    } else if (control.hasError('min')) {
+      return 'Quantity must be greater than 0';
+    } else if (control.hasError('pattern')) {
+      return 'Field does not match required pattern';
+    }
+
+    return '';
+  }
+
+  productToAddCheckboxEvent(event: ShoppingListProductCheckboxEvent) {
+    if (event.checked) {
+      this.productsToAddIdsToRemove.push(event.listProductId);
+    } else {
+      this.productsToAddIdsToRemove = this.productsToAddIdsToRemove.filter(
+        (currentProduct) => currentProduct !== event.listProductId
+      );
+    }
+  }
+
+  closeAddProducts() {
+    this.productsToAdd = [];
+    this.showAddProducts = false;
+  }
+
+  removeProductsFromAdding() {
+    if (
+      this.shoppingList &&
+      this.shoppingList.id &&
+      this.shoppingList.listName
+    ) {
+      this.productsToAddIdsToRemove.forEach((id) => {
+        this.productsToAdd = this.productsToAdd.filter(
+          (listProductDTO) => listProductDTO.id !== id
+        );
+      });
+
+      this.productsToAddIdsToRemove = [];
+      this.displayProductsToAddPage(0);
+    }
+  }
+
+  removeProductsFromList() {
+    if (
+      this.shoppingList &&
+      this.shoppingList.id &&
+      this.shoppingList.listName &&
+      this.productsIdsForAction
+    ) {
+      this.shoppingListsService
+        .removeShoppingListProducts(
+          this.shoppingList.id,
+          this.productsIdsForAction
+        )
+        .subscribe({
+          next: (_) => {
+            this.productsIdsForAction = [];
+            this.reloadPage();
+          },
+        });
+    }
+  }
+
+  changePurchaseStatusForProducts() {
+    if (
+      this.shoppingList &&
+      this.shoppingList.id &&
+      this.shoppingList.listName &&
+      this.productsIdsForAction
+    ) {
+      this.shoppingListsService
+        .changePurchaseStatusForProducts(
+          this.shoppingList.id,
+          this.productsIdsForAction
+        )
+        .subscribe({
+          next: (_) => {
+            this.productsIdsForAction = [];
+            this.reloadPage();
+          },
+        });
+    }
+  }
+
+  sendProductsToAdd() {
+    this.productsToAdd.forEach((product) => {
+      product.id = null;
+    });
+
+    this.shoppingListsService
+      .addProductsToShoppingList(this.shoppingList!.id, this.productsToAdd)
+      .subscribe({
+        next: (_) => {
+          this.productsToAdd = [];
+          this.productsToAddIdsToRemove = [];
+          this.page = 0;
+          this.getShoppinglistProducts();
+        },
+      });
+  }
+
+  selectCategoryForProduct(category: string) {
+    this.addForm.controls.category.setValue(category);
+  }
+
+  productsToAddPageChange(event: PageEvent) {
+    this.displayProductsToAddPage(event.pageIndex);
+  }
+
+  displayProductsToAddPage(pageNr: number) {
+    this.productsToAddPage = pageNr;
+    console.log((pageNr + 1) * this.page_size - 1);
+    this.productsToAddCurrPage = this.productsToAdd.slice(
+      pageNr * this.page_size,
+      (pageNr + 1) * this.page_size
+    );
+  }
+
+  transferAvailable() {
+    return this.products.find((product) => !product.purchased);
+  }
+
+  transferProductsToPantry() {
+    const confirmDialog = this.dialog.open(ConfirmationPopupComponent, {
+      data: {
+        header: 'Transfer products',
+        body: "Are you sure you want to transfer purchased products to group's pantry? It will result in purchased shopping list products removal.",
+        button: 'Confirm',
+      },
+    });
+
+    confirmDialog.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.shoppingListsService
+          .transferProductsToPantry(this.shoppingList!.id)
+          .subscribe({
+            next: (_) => {
+              this.reloadPage();
+            },
+          });
+      }
+    });
+  }
+
+  searchForProducts() {
+    if (this.addForm.controls.productName.value) {
+      this.shoppingListsService
+        .getProductsWithFilter(this.addForm.controls.productName.value)
+        .subscribe({
+          next: (response) => {
+            this.filteredProducts = of(response.content);
+          },
+        });
+    }
+  }
+
+  submitAddForm() {
+    if (!this.addForm.valid) {
+      return;
+    }
+
+    setTimeout(() => {
+      if (!this.addProduct) {
+        this.addProduct = true;
+        this.productsToAdd.push({
+          id: this.productsToAdd.length,
+          productName: this.addForm.controls.productName.value!,
+          category: this.addForm.controls.category.value!,
+          quantity: +this.addForm.controls.quantity.value!,
+          unit:
+            this.addForm.controls.unit.value === Unit.GRAMS
+              ? Unit.GRAMS
+              : this.addForm.controls.unit.value === Unit.MILLILITERS
+              ? Unit.MILLILITERS
+              : Unit.PIECES,
+          purchased: this.addForm.controls.purchased.value!,
+        });
+        this.addForm.reset();
+        Object.entries(this.addForm.controls).forEach((control) => {
+          control[1].setErrors(null);
+        });
+        this.displayProductsToAddPage(0);
+      } else {
+        this.addProduct = false;
+      }
+    }, 10);
   }
 
   private getShoppinglistProducts() {

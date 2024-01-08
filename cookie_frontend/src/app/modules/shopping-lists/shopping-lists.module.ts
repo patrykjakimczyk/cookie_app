@@ -22,6 +22,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { EditShoppingListProductsElemComponent } from './shopping-list/shopping-list-products/shopping-list-products-elem/edit-shopping-list-products-elem/edit-shopping-list-products-elem.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { EditShoppingListProductsElemComponent } from './shopping-list/shopping-
     MatExpansionModule,
     MatSnackBarModule,
     MatInputModule,
+    MatDialogModule,
     MatAutocompleteModule,
     MatListModule,
     MatCheckboxModule,
