@@ -4,9 +4,11 @@ import com.cookie.app.exception.PantryNotFoundException;
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.exception.UserWasNotFoundAfterAuthException;
 import com.cookie.app.model.dto.AuthorityDTO;
+import com.cookie.app.model.dto.ProductDTO;
 import com.cookie.app.model.entity.*;
 import com.cookie.app.model.enums.AuthorityEnum;
 import com.cookie.app.model.mapper.AuthorityMapperDTO;
+import com.cookie.app.repository.ProductRepository;
 import com.cookie.app.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -23,10 +25,14 @@ import java.util.stream.Collectors;
 public abstract class AbstractCookieService {
     private static final int PRODUCTS_PAGE_SIZE = 20;
     protected final UserRepository userRepository;
+    protected final ProductRepository productRepository;
     protected final AuthorityMapperDTO authorityMapperDTO;
 
-    protected AbstractCookieService(UserRepository userRepository, AuthorityMapperDTO authorityMapperDTO) {
+    protected AbstractCookieService(UserRepository userRepository,
+                                    ProductRepository productRepository,
+                                    AuthorityMapperDTO authorityMapperDTO) {
         this.userRepository = userRepository;
+        this.productRepository = productRepository;
         this.authorityMapperDTO = authorityMapperDTO;
     }
 
@@ -140,5 +146,22 @@ public abstract class AbstractCookieService {
 
         sort = sort.and(idSort);
         return pageRequest.withSort(sort);
+    }
+
+    protected Product checkIfProductExists(ProductDTO productDTO) {
+        Product product;
+        Optional<Product> productOptional = this.productRepository
+                .findByProductNameAndCategory(productDTO.getProductName(), productDTO.getCategory().name());
+
+        if (productOptional.isPresent()) {
+            product = productOptional.get();
+        } else {
+            product = new Product();
+            product.setProductName(productDTO.getProductName());
+            product.setCategory(productDTO.getCategory());
+            this.productRepository.save(product);
+        }
+
+        return product;
     }
 }

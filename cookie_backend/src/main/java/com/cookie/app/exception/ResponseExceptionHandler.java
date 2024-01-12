@@ -30,7 +30,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity constraintViolationException(ConstraintViolationException exception) {
+    public ResponseEntity<String> constraintViolationException(ConstraintViolationException exception) {
         Set<ConstraintViolation<?>> violations = exception.getConstraintViolations();
         String message = "";
 
@@ -45,67 +45,49 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(NotUniqueValueException.class)
-    public ResponseEntity<ExceptionMessage> notUniqueSqlException(NotUniqueValueException exception, WebRequest webRequest) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
-    }
-
-    @ExceptionHandler(UserHasAssignedPantryException.class)
-    public ResponseEntity<ExceptionMessage> userHasAssignedPantryException(UserHasAssignedPantryException exception, WebRequest webRequest) {
+    public ResponseEntity<ExceptionMessage> notUniqueSqlException(NotUniqueValueException exception) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
     }
 
     @ExceptionHandler(UserWasNotFoundAfterAuthException.class)
-    public ResponseEntity<ExceptionMessage> userWasNotFoundAfterAuthException(UserWasNotFoundAfterAuthException exception, WebRequest webRequest) {
+    public ResponseEntity<ExceptionMessage> userWasNotFoundAfterAuthException(UserWasNotFoundAfterAuthException exception) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
     }
 
     @ExceptionHandler(PantryNotFoundException.class)
-    public ResponseEntity<ExceptionMessage> pantryNotFoundException(PantryNotFoundException exception, WebRequest webRequest) {
+    public ResponseEntity<ExceptionMessage> pantryNotFoundException(PantryNotFoundException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
     }
 
-    @ExceptionHandler(InvalidProductDataException.class)
-    public ResponseEntity<ExceptionMessage> pantryProductIdSetException(InvalidProductDataException exception, WebRequest webRequest) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
-    }
-
     @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<ExceptionMessage> validationException(ValidationException exception, WebRequest webRequest) {
+    public ResponseEntity<ExceptionMessage> validationException(ValidationException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
     }
 
     @ExceptionHandler(ModifyingProductsFromWrongPantryException.class)
-    public ResponseEntity<ExceptionMessage> removingFromWrongPantryException(ModifyingProductsFromWrongPantryException exception, WebRequest webRequest) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
-    }
-
-    @ExceptionHandler(ModifyingProductsFromWrongShoppingListException.class)
-    public ResponseEntity<ExceptionMessage> removingFromWrongShoppingListException(ModifyingProductsFromWrongShoppingListException exception, WebRequest webRequest) {
+    public ResponseEntity<ExceptionMessage> modifyingFromWrongPantryException(ModifyingProductsFromWrongPantryException exception) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
     }
 
     @ExceptionHandler(PantryProductNotFoundException.class)
-    public ResponseEntity<ExceptionMessage> pantryProductNotFoundException(PantryProductNotFoundException exception, WebRequest webRequest) {
+    public ResponseEntity<ExceptionMessage> pantryProductNotFoundException(PantryProductNotFoundException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
     }
 
     @ExceptionHandler(UserPerformedForbiddenActionException.class)
-    public ResponseEntity<ExceptionMessage> userPerfomedForbiddenActionException(UserPerformedForbiddenActionException exception, WebRequest webRequest) {
+    public ResponseEntity<ExceptionMessage> userPerformedForbiddenActionException(UserPerformedForbiddenActionException exception) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
     }
 
     @ExceptionHandler(UserAlreadyAddedToGroupException.class)
-    public ResponseEntity<ExceptionMessage> userAlreadyAddedToGroupException(UserAlreadyAddedToGroupException exception, WebRequest webRequest) {
+    public ResponseEntity<ExceptionMessage> userAlreadyAddedToGroupException(UserAlreadyAddedToGroupException exception) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
     }

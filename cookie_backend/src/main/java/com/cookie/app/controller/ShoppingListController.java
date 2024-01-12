@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 public class ShoppingListController {
     private static final String SHOPPING_LIST_URL = "/shopping-list";
     private static final String SHOPPING_LIST_ID_URL = "/shopping-list/{id}";
-    private static final String SHOPPING_LISTS_URL = "/shopping-lists";
     private final ShoppingListService shoppingListService;
 
     @SecurityRequirement(name = "bearerAuth")
@@ -46,7 +45,7 @@ public class ShoppingListController {
     }
 
     @SecurityRequirement(name = "bearerAuth")
-    @GetMapping(SHOPPING_LISTS_URL)
+    @GetMapping(SHOPPING_LIST_URL)
     public ResponseEntity<GetUserShoppingListsResponse> getAllUserShoppingLists(
             Authentication authentication
     ) {

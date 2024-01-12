@@ -13,6 +13,7 @@ import com.cookie.app.model.response.DeletePantryResponse;
 import com.cookie.app.model.response.GetPantryResponse;
 import com.cookie.app.model.response.GetUserPantriesResponse;
 import com.cookie.app.repository.PantryRepository;
+import com.cookie.app.repository.ProductRepository;
 import com.cookie.app.repository.UserRepository;
 import com.cookie.app.service.PantryService;
 import lombok.extern.slf4j.Slf4j;
@@ -20,24 +21,20 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-
 @Slf4j
 @Service
 public class PantryServiceImpl extends AbstractCookieService implements PantryService{
     private final PantryRepository pantryRepository;
     private final PantryMapperDTO pantryMapperDTO;
-    private final AuthorityMapperDTO authorityMapperDTO;
 
-    public PantryServiceImpl(
-            UserRepository userRepository,
-            PantryRepository pantryRepository,
-            PantryMapperDTO pantryMapperDTO,
-            AuthorityMapperDTO authorityMapperDTO
-    ) {
-        super(userRepository, authorityMapperDTO);
+    public PantryServiceImpl(UserRepository userRepository,
+                             ProductRepository productRepository,
+                             AuthorityMapperDTO authorityMapperDTO,
+                             PantryRepository pantryRepository,
+                             PantryMapperDTO pantryMapperDTO) {
+        super(userRepository, productRepository, authorityMapperDTO);
         this.pantryRepository = pantryRepository;
         this.pantryMapperDTO = pantryMapperDTO;
-        this.authorityMapperDTO = authorityMapperDTO;
     }
 
     @Override

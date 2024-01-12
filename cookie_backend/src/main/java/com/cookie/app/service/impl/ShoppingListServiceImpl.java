@@ -12,6 +12,7 @@ import com.cookie.app.model.request.UpdateShoppingListRequest;
 import com.cookie.app.model.response.DeleteShoppingListResponse;
 import com.cookie.app.model.response.GetShoppingListResponse;
 import com.cookie.app.model.response.GetUserShoppingListsResponse;
+import com.cookie.app.repository.ProductRepository;
 import com.cookie.app.repository.ShoppingListRepository;
 import com.cookie.app.repository.UserRepository;
 import com.cookie.app.service.ShoppingListService;
@@ -30,12 +31,12 @@ public class ShoppingListServiceImpl extends AbstractCookieService implements Sh
     private final ShoppingListRepository shoppingListRepository;
     private final ShoppingListMapperDTO shoppingListMapperDTO;
 
-    protected ShoppingListServiceImpl(
-            UserRepository userRepository,
-            AuthorityMapperDTO authorityMapperDTO,
-            ShoppingListRepository shoppingListRepository,
-            ShoppingListMapperDTO shoppingListMapperDTO) {
-        super(userRepository, authorityMapperDTO);
+    protected ShoppingListServiceImpl(UserRepository userRepository,
+                                      ProductRepository productRepository,
+                                      AuthorityMapperDTO authorityMapperDTO,
+                                      ShoppingListRepository shoppingListRepository,
+                                      ShoppingListMapperDTO shoppingListMapperDTO) {
+        super(userRepository, productRepository, authorityMapperDTO);
         this.shoppingListRepository = shoppingListRepository;
         this.shoppingListMapperDTO = shoppingListMapperDTO;
     }
@@ -63,6 +64,11 @@ public class ShoppingListServiceImpl extends AbstractCookieService implements Sh
 
         this.shoppingListRepository.save(shoppingList);
 
+
+        log.info("User with email {} created shopping list with id {} in group with id {}",
+                userEmail,
+                shoppingList.getId(),
+                request.groupId());
         return new GetShoppingListResponse(
                 shoppingList.getId(),
                 shoppingList.getListName(),
@@ -115,6 +121,9 @@ public class ShoppingListServiceImpl extends AbstractCookieService implements Sh
 
         this.shoppingListRepository.delete(shoppingList);
 
+        log.info("User with email {} deleted shopping list with id {}",
+                userEmail,
+                shoppingList.getId());
         return new DeleteShoppingListResponse(shoppingList.getListName());
     }
 
@@ -126,6 +135,9 @@ public class ShoppingListServiceImpl extends AbstractCookieService implements Sh
         shoppingList.setListName(request.shoppingListName());
         this.shoppingListRepository.save(shoppingList);
 
+        log.info("User with email {} modified shopping list with id {}",
+                userEmail,
+                shoppingList.getId());
         return new GetShoppingListResponse(
                 shoppingList.getId(),
                 shoppingList.getListName(),

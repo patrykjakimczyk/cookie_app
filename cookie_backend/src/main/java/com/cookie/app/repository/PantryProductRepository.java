@@ -12,6 +12,7 @@ import java.util.List;
 @Repository
 public interface PantryProductRepository extends CrudRepository<PantryProduct, Long> {
     void deleteByIdIn(List<Long> ids);
+
     @Query(value = "SELECT DISTINCT pp.* FROM pantry_product pp JOIN product p ON p.id = pp.product_id " +
             "where pp.pantry_id = ?1", nativeQuery = true)
     Page<PantryProduct> findProductsInPantry(long id, PageRequest pageable);

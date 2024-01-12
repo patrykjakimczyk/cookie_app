@@ -34,7 +34,7 @@ public class GroupController {
             @RequestBody @Valid CreateGroupRequest createGroupRequest,
             Authentication authentication
     ) {
-        log.info("Performing group creation for email {}", authentication.getName());
+        log.info("Performing group creation by user with email {}", authentication.getName());
         this.groupService.createGroup(createGroupRequest, authentication.getName());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(null);
@@ -42,12 +42,12 @@ public class GroupController {
 
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping(GROUP_ID_URL)
-    public ResponseEntity<GroupDetailsDTO> getGroup(
+    public ResponseEntity<GroupDetailsDTO> getGroupDetails(
             @PathVariable("id") @Valid @Min(1) long groupId,
             Authentication authentication
     ) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(this.groupService.getGroup(groupId, authentication.getName()));
+                .body(this.groupService.getGroupDetails(groupId, authentication.getName()));
     }
 
     @SecurityRequirement(name = "bearerAuth")
@@ -64,7 +64,7 @@ public class GroupController {
             @RequestBody @Valid UpdateGroupRequest updateGroupRequest,
             Authentication authentication
     ) {
-        log.info("Performing group update for email {}", authentication.getName());
+        log.info("Performing group update by user with email {}", authentication.getName());
         this.groupService.updateGroup(groupId, updateGroupRequest, authentication.getName());
 
         return ResponseEntity.status(HttpStatus.OK).body(null);
@@ -76,7 +76,7 @@ public class GroupController {
             @PathVariable("id") @Valid @Min(1) long groupId,
             Authentication authentication
     ) {
-        log.info("Performing group deletion for email {}", authentication.getName());
+        log.info("Performing group deletion by user for email {}", authentication.getName());
         this.groupService.deleteGroup(groupId, authentication.getName());
 
         return ResponseEntity.status(HttpStatus.OK).body(null);
@@ -89,7 +89,14 @@ public class GroupController {
             @RequestBody @Valid AddUserToGroupRequest addUserToGroupRequest,
             Authentication authentication
     ) {
+        log.info(
+                "Performing user addition with username {} to group with id {} by user with email {}",
+                addUserToGroupRequest.usernameToAdd(),
+                groupId,
+                authentication.getName()
+        );
         this.groupService.addUserToGroup(groupId, addUserToGroupRequest.usernameToAdd(), authentication.getName());
+
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
@@ -100,7 +107,14 @@ public class GroupController {
             @RequestParam @Valid @Min(1) long userToRemoveId,
             Authentication authentication
     ) {
+        log.info(
+                "Performing user removal with id {} from group with id {} by user with email {}",
+                userToRemoveId,
+                groupId,
+                authentication.getName()
+        );
         this.groupService.removeUserFromGroup(groupId, userToRemoveId, authentication.getName());
+
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
@@ -111,6 +125,12 @@ public class GroupController {
             @RequestBody @Valid UserWithAuthoritiesRequest request,
             Authentication authentication
     ) {
+        log.info(
+                "Performing authorities assignment for user with id {} from group with id {} by user with email {}",
+                request.userId(),
+                groupId,
+                authentication.getName()
+        );
         return ResponseEntity.status(HttpStatus.OK)
                 .body(this.groupService.assignAuthoritiesToUser(groupId, request, authentication.getName()));
     }
@@ -122,7 +142,14 @@ public class GroupController {
             @RequestBody @Valid UserWithAuthoritiesRequest request,
             Authentication authentication
     ) {
+        log.info(
+                "Performing authorities removal from user with id {} from group with id {} by user with email {}",
+                request.userId(),
+                groupId,
+                authentication.getName()
+        );
         this.groupService.removeAuthoritiesFromUser(groupId, request, authentication.getName());
+
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }

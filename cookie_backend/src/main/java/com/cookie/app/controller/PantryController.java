@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 public class PantryController {
-    private static final String PANTRIES_URL = "/pantries";
     private static final String PANTRY_URL = "/pantry";
     private static final String PANTRY_ID_URL = "/pantry/{id}";
     private final PantryService pantryService;
@@ -42,7 +41,7 @@ public class PantryController {
     }
 
     @SecurityRequirement(name = "bearerAuth")
-    @GetMapping(PANTRIES_URL)
+    @GetMapping(PANTRY_URL)
     public ResponseEntity<GetUserPantriesResponse> getAllUserPantries(Authentication authentication) {
         return ResponseEntity.status(HttpStatus.OK).body(this.pantryService.getAllUserPantries(authentication.getName()));
     }

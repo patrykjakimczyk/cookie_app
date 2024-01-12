@@ -14,7 +14,6 @@ public interface ShoppingListProductService {
             String sortDirection,
             String userEmail
     );
-
     void addProductsToShoppingList(long groupId, List<ShoppingListProductDTO> productDTOList, String userEmail);
     void removeProductsFromShoppingList(long groupId, List<Long> productIds, String userEmail);
     void modifyShoppingListProduct(long groupId, ShoppingListProductDTO productDTO, String userEmail);

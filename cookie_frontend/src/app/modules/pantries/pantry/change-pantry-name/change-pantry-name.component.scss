@@ -1,0 +1,21 @@
+@import "../../../../assets/styles/mixins";
+
+#content {
+  mat-form-field {
+    padding-bottom: 10px;
+    min-width: 300px;
+
+    mat-hint {
+      font-size: 12px;
+    }
+
+    mat-error {
+      font-size: 12px;
+    }
+  }
+}
+
+#action-buttons {
+  @include flex-with-gap;
+  justify-content: space-between;
+}

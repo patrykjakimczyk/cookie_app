@@ -6,6 +6,7 @@ import com.cookie.app.model.request.RegistrationRequest;
 import com.cookie.app.model.entity.User;
 import com.cookie.app.model.response.LoginResponse;
 import com.cookie.app.model.response.RegistrationResponse;
+import com.cookie.app.repository.ProductRepository;
 import com.cookie.app.repository.UserRepository;
 import com.cookie.app.service.LoginService;
 import lombok.extern.slf4j.Slf4j;
@@ -21,12 +22,19 @@ import java.util.*;
 public class LoginServiceImpl extends AbstractCookieService implements LoginService {
     private final PasswordEncoder passwordEncoder;
 
-    public LoginServiceImpl(
-            UserRepository userRepository,
-            AuthorityMapperDTO authorityMapperDTO,
-            PasswordEncoder passwordEncoder) {
-        super(userRepository, authorityMapperDTO);
+    public LoginServiceImpl(UserRepository userRepository,
+                            ProductRepository productRepository,
+                            AuthorityMapperDTO authorityMapperDTO,
+                            PasswordEncoder passwordEncoder) {
+        super(userRepository, productRepository, authorityMapperDTO);
         this.passwordEncoder = passwordEncoder;
+    }
+
+    @Override
+    public LoginResponse getLoginInfo(String email) {
+        User user = this.getUserByEmail(email);
+
+        return new LoginResponse(user.getUsername());
     }
 
     public RegistrationResponse userRegistration(RegistrationRequest request) {
@@ -59,15 +67,8 @@ public class LoginServiceImpl extends AbstractCookieService implements LoginServ
                 .build();
 
         this.userRepository.save(user);
-        log.info("User has been successfully registered!");
+        log.info("User for email:{} has been successfully registered!", user.getEmail());
 
         return new RegistrationResponse(duplicatedFields);
-    }
-
-    @Override
-    public LoginResponse getLoginInfo(String email) {
-        User user = this.getUserByEmail(email);
-
-        return new LoginResponse(user.getUsername());
     }
 }
