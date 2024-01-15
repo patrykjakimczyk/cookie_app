@@ -1,9 +1,11 @@
 package com.cookie.app.model.dto;
 
+import com.cookie.app.model.RegexConstants;
 import com.cookie.app.model.enums.Category;
 import com.cookie.app.model.enums.Unit;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 
 import java.sql.Timestamp;
@@ -19,6 +21,10 @@ public final class PantryProductDTO extends ProductDTO {
         @NotNull(message = "Reserved count must be present")
         @Min(value = 0, message = "Reserved count must be equal or greater than 0")
         private final int reserved;
+        @Pattern(
+                regexp = RegexConstants.PLACEMENT_REGEX,
+                message = "Placement can only contains letters, digits, whitespaces and its length cannnot be greater than 30"
+        )
         private final String placement;
 
         public PantryProductDTO(Long id,

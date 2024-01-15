@@ -44,7 +44,7 @@ public class PantryProductController {
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping(PANTRY_PRODUCTS_URL)
     public ResponseEntity<Void> addProductsToPantry(
-            @PathVariable(value = "id") @Valid @Min(1) long id,
+            @PathVariable(value = "id") @Valid @Min(value = 1, message = "Id must be greater than 0") long id,
             @Valid @NotEmpty(message = "List of products cannot be empty") @RequestBody List<@Valid PantryProductDTO> products,
             Authentication authentication
     ) {
@@ -79,7 +79,7 @@ public class PantryProductController {
     public ResponseEntity<PantryProductDTO> reservePantryProduct(
             @PathVariable(value = "id") @Valid @Min(1) long id,
             @PathVariable(value = "productId") @Valid @Min(1) long pantryProductId,
-            @Valid @RequestBody ReservePantryProductRequest reserveBody,
+            @RequestBody @Valid ReservePantryProductRequest reserveBody,
             Authentication authentication
     ) {
         PantryProductDTO response = this.pantryProductService

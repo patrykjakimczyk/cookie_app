@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,4 +37,14 @@ public class Authority {
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "group_id", referencedColumnName = "id")
     private Group group;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Authority authority1 = (Authority) o;
+        return this.authority == authority1.authority &&
+                this.user.getId() == authority1.user.getId() &&
+                this.group.getId() == authority1.group.getId();
+    }
 }

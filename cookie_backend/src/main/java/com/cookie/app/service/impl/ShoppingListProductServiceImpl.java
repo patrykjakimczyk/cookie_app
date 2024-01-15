@@ -27,7 +27,7 @@ import java.util.List;
 @Slf4j
 @Transactional
 @Service
-public class ShoppingListProductServiceImpl extends AbstractCookieService implements ShoppingListProductService {
+public class ShoppingListProductServiceImpl extends AbstractShoppingListService implements ShoppingListProductService {
     private final ShoppingListProductRepository shoppingListProductRepository;
     private final PantryProductRepository pantryProductRepository;
     private final ShoppingListProductMapperDTO shoppingListProductMapper;

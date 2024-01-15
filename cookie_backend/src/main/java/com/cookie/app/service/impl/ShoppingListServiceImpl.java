@@ -27,7 +27,7 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-public class ShoppingListServiceImpl extends AbstractCookieService implements ShoppingListService {
+public class ShoppingListServiceImpl extends AbstractShoppingListService implements ShoppingListService {
     private final ShoppingListRepository shoppingListRepository;
     private final ShoppingListMapperDTO shoppingListMapperDTO;
 

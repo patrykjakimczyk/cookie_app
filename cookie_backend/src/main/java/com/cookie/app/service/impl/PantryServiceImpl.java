@@ -23,7 +23,7 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-public class PantryServiceImpl extends AbstractCookieService implements PantryService{
+public class PantryServiceImpl extends AbstractPantryService implements PantryService{
     private final PantryRepository pantryRepository;
     private final PantryMapperDTO pantryMapperDTO;
 
@@ -70,7 +70,6 @@ public class PantryServiceImpl extends AbstractCookieService implements PantrySe
         User user = this.getUserByEmail(userEmail);
         Optional<Pantry> pantryOptional = this.findPantryInUserGroups(pantryId, user);
 
-        // przerobic na wyrzucanie pantrynotfoundexception
         if (pantryOptional.isEmpty()) {
             return new GetPantryResponse(null, null, null);
         }

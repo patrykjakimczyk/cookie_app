@@ -8,6 +8,7 @@ import com.cookie.app.model.response.GetUserShoppingListsResponse;
 import com.cookie.app.service.ShoppingListService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -37,7 +38,7 @@ public class ShoppingListController {
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping(SHOPPING_LIST_ID_URL)
     public ResponseEntity<GetShoppingListResponse> getShoppingList(
-            @PathVariable("id") long listId,
+            @PathVariable("id") @Valid @Min(value = 1, message = "Id must be greater than 0") long listId,
             Authentication authentication
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -56,7 +57,7 @@ public class ShoppingListController {
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping(SHOPPING_LIST_ID_URL)
     public ResponseEntity<DeleteShoppingListResponse> deleteShoppingList(
-            @PathVariable("id") long listId,
+            @PathVariable("id") @Valid @Min(value = 1, message = "Id must be greater than 0") long listId,
             Authentication authentication
     ) {
         log.info("User with email={} is deleting shopping list with id={}", authentication.getName(), listId);
@@ -67,8 +68,8 @@ public class ShoppingListController {
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(SHOPPING_LIST_ID_URL)
     public ResponseEntity<GetShoppingListResponse> modifyShoppingList(
-            @PathVariable("id") long listId,
-            @RequestBody UpdateShoppingListRequest request,
+            @PathVariable("id") @Valid @Min(value = 1, message = "Id must be greater than 0") long listId,
+            @RequestBody @Valid UpdateShoppingListRequest request,
             Authentication authentication
     ) {
         log.info("User with email={} is updating shopping list with id={}", authentication.getName(), listId);

@@ -26,9 +26,8 @@ import java.util.Optional;
 @Slf4j
 @Transactional
 @Service
-public class PantryProductServiceImpl extends AbstractCookieService implements PantryProductService {
+public class PantryProductServiceImpl extends AbstractPantryService implements PantryProductService {
     private final PantryProductRepository pantryProductRepository;
-    private final ProductRepository productRepository;
     private final PantryProductMapperDTO pantryProductMapper;
 
     public PantryProductServiceImpl(
@@ -40,7 +39,6 @@ public class PantryProductServiceImpl extends AbstractCookieService implements P
     ) {
         super(userRepository, productRepository, authorityMapperDTO);
         this.pantryProductRepository = pantryProductRepository;
-        this.productRepository = productRepository;
         this.pantryProductMapper = pantryProductMapper;
     }
 
@@ -91,7 +89,7 @@ public class PantryProductServiceImpl extends AbstractCookieService implements P
 
         if (!this.areAllProductsInPantry(pantry.getPantryProducts(), productIds)) {
             log.info("User with email={} tried to remove products from different pantry", userEmail);
-            throw new ModifyingProductsFromWrongPantryException("Cannot remove products from different pantry");
+            throw new UserPerformedForbiddenActionException("Cannot remove products from different pantry");
         }
 
         this.pantryProductRepository.deleteByIdIn(productIds);
@@ -103,7 +101,7 @@ public class PantryProductServiceImpl extends AbstractCookieService implements P
 
         if (!this.areAllProductsInPantry(pantry.getPantryProducts(), List.of(pantryProduct.getId()))) {
             log.info("User with email={} tried to modify product from different pantry", userEmail);
-            throw new ModifyingProductsFromWrongPantryException("Cannot remove products from different pantry");
+            throw new UserPerformedForbiddenActionException("Cannot remove products from different pantry");
         }
 
         this.pantryProductRepository.save(mapToPantryProduct(pantryProduct, pantry));
@@ -117,12 +115,12 @@ public class PantryProductServiceImpl extends AbstractCookieService implements P
         Optional<PantryProduct> pantryProductOptional = this.pantryProductRepository.findById(pantryProductId);
         PantryProduct pantryProduct = pantryProductOptional.orElseThrow(() -> {
             log.info("User with email={} tried to reserve product which does not exists", userEmail);
-            throw new PantryProductNotFoundException("Pantry product was not found");
+            throw new UserPerformedForbiddenActionException("Pantry product was not found");
         });
 
         if (pantryProduct.getPantry().getId() != pantryId) {
             log.info("User with email={} tried to reserve product from different pantry", userEmail);
-            throw new ModifyingProductsFromWrongPantryException("Cannot reserve products from different pantry");
+            throw new UserPerformedForbiddenActionException("Cannot reserve products from different pantry");
         }
 
         if (reserved > pantryProduct.getQuantity() || (reserved * -1) > pantryProduct.getReserved()) {

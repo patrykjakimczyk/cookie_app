@@ -32,7 +32,7 @@ public class ShoppingListProductController {
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping(LIST_PRODUCTS_PAGE_URL)
     public ResponseEntity<Page<ShoppingListProductDTO>> getShoppingListProducts(
-            @PathVariable(value = "id") @Valid @Min(value = 1, message = "Id  must be greater than 0") long id,
+            @PathVariable(value = "id") @Valid @Min(value = 1, message = "Id must be greater than 0") long id,
             @PathVariable(value = "page") @Valid @Min(value = 0, message = "Page nr must be at least 0") int page,
             @RequestParam String filterValue,
             @RequestParam String sortColName,
@@ -54,7 +54,7 @@ public class ShoppingListProductController {
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping(LIST_PRODUCTS_URL)
     public ResponseEntity<Void> addProductsToShoppingList(
-            @PathVariable(value = "id") @Valid @Min(value = 1, message = "Id  must be greater than 0") long id,
+            @PathVariable(value = "id") @Valid @Min(value = 1, message = "Id must be greater than 0") long id,
             @Valid @NotEmpty(message = "List of products cannot be empty") @RequestBody List<ShoppingListProductDTO> products,
             Authentication authentication
     ) {
@@ -65,7 +65,7 @@ public class ShoppingListProductController {
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping(LIST_PRODUCTS_URL)
     public ResponseEntity<Void> removeProductsFromShoppingList(
-            @PathVariable(value = "id") @Valid @Min(value = 1, message = "Id  must be greater than 0") long id,
+            @PathVariable(value = "id") @Valid @Min(value = 1, message = "Id must be greater than 0") long id,
             @Valid @NotEmpty(message = "List of ids cannot be empty") @RequestBody List<Long> productIds,
             Authentication authentication
     ) {
@@ -76,7 +76,7 @@ public class ShoppingListProductController {
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(LIST_PRODUCTS_URL)
     public ResponseEntity<Void> modifyShoppingListProduct(
-            @PathVariable(value = "id") @Valid @Min(value = 1, message = "Id  must be greater than 0") long id,
+            @PathVariable(value = "id") @Valid @Min(value = 1, message = "Id must be greater than 0") long id,
             @Valid @RequestBody ShoppingListProductDTO shoppingListProductDTO,
             Authentication authentication
     ) {
@@ -87,7 +87,7 @@ public class ShoppingListProductController {
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(LIST_PRODUCTS_PURCHASE_URL)
     public ResponseEntity<Void> changePurchaseStatusForProducts(
-            @PathVariable(value = "id") @Valid @Min(value = 1, message = "Id  must be greater than 0") long id,
+            @PathVariable(value = "id") @Valid @Min(value = 1, message = "Id must be greater than 0") long id,
             @Valid @NotEmpty(message = "List of ids cannot be empty") @RequestBody List<Long> productIds,
             Authentication authentication
     ) {
@@ -98,7 +98,7 @@ public class ShoppingListProductController {
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping(LIST_PRODUCTS_TRANSFER_URL)
     public ResponseEntity<Void> transferProductsToPantry(
-            @PathVariable("id") @Valid @Min(value = 1, message = "Id  must be greater than 0") long id,
+            @PathVariable("id") @Valid @Min(value = 1, message = "Id must be greater than 0") long id,
             Authentication authentication
     ) {
         log.info("User with email={} is transfering products from shopping list with id={} to pantry", authentication.getName(), id);

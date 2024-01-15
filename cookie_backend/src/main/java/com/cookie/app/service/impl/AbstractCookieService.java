@@ -1,7 +1,5 @@
 package com.cookie.app.service.impl;
 
-import com.cookie.app.exception.PantryNotFoundException;
-import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.exception.UserWasNotFoundAfterAuthException;
 import com.cookie.app.model.dto.AuthorityDTO;
 import com.cookie.app.model.dto.ProductDTO;
@@ -56,33 +54,6 @@ public abstract class AbstractCookieService {
         return Optional.empty();
     }
 
-    protected Pantry getPantryIfUserHasAuthority(long pantryId, String userEmail, AuthorityEnum requiredAuthority) {
-        User user = this.getUserByEmail(userEmail);
-        Pantry pantry = this.findPantryInUserGroups(pantryId, user).orElseThrow(
-                () -> {
-                    log.info("User: {} tried to access pantry without being a member of the pantry's group", userEmail);
-                    return new PantryNotFoundException("You cannot access the pantry because you are not member of it");
-                }
-        );
-
-        if (requiredAuthority!= null && !this.userHasAuthority(user, pantry.getGroup().getId(), requiredAuthority)) {
-            log.info("User: {} tried to perform action in pantry without required permission", userEmail);
-            throw new UserPerformedForbiddenActionException("You have not permissions to do that");
-        }
-
-        return pantry;
-    }
-
-    protected Optional<Pantry> findPantryInUserGroups(long pantryId, User user) {
-        for (Group group : user.getGroups()) {
-            if (group.getPantry() != null && group.getPantry().getId() == pantryId) {
-                return Optional.of(group.getPantry());
-            }
-        }
-
-        return Optional.empty();
-    }
-
     protected boolean userHasAuthority(User user, long groupId, AuthorityEnum authorityEnum) {
         for (Authority authority : user.getAuthorities()) {
             if (authority.getGroup().getId() == groupId && authority.getAuthority() == authorityEnum) {
@@ -99,34 +70,6 @@ public abstract class AbstractCookieService {
                 .filter(authority -> authority.getGroup().getId() == userGroup.getId())
                 .map(authorityMapperDTO::apply)
                 .collect(Collectors.toSet());
-    }
-
-    protected ShoppingList getShoppingListIfUserHasAuthority(long shoppingListId, User user, AuthorityEnum requiredAuthority) {
-        ShoppingList shoppingList = this.findShoppingListInUserGroups(shoppingListId, user).orElseThrow(
-                () -> {
-                    log.info("User: {} tried to access shopping list without being a member of the shopping list's group", user.getEmail());
-                    return new UserPerformedForbiddenActionException("You cannot access the shopping list because you are not member of it");
-                }
-        );
-
-        if (requiredAuthority!= null && !this.userHasAuthority(user, shoppingList.getGroup().getId(), requiredAuthority)) {
-            log.info("User: {} tried to perform action in pantry without required permission", user.getEmail());
-            throw new UserPerformedForbiddenActionException("You have not permissions to do that");
-        }
-
-        return shoppingList;
-    }
-
-    protected Optional<ShoppingList> findShoppingListInUserGroups(long listId, User user) {
-        for (Group group : user.getGroups()) {
-            for (ShoppingList shoppingList : group.getShoppingLists()) {
-                if (shoppingList.getId() == listId) {
-                    return Optional.of(shoppingList);
-                }
-            }
-        }
-
-        return Optional.empty();
     }
 
     protected PageRequest createPageRequest(int page, String sortColName, String sortDirection) {
