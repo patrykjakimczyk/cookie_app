@@ -8,7 +8,8 @@ import { InsertNameType } from './insert-name.type';
   styleUrls: ['./insert-name.component.scss'],
 })
 export class InsertNameComponent {
-  @Input({ required: true }) regex!: string;
+  @Input({ required: true }) regex!: RegExp;
+  @Input() nameTaken?: boolean;
   @Input({ required: true }) type!: InsertNameType;
   @Output() insertedNameEmitter = new EventEmitter<string>();
   protected insertedName = '';

@@ -6,7 +6,7 @@
       <div class="action-buttons">
         <button
           mat-button
-          (click)="openChangeGroupNamePopup()"
+          (click)="changeGroupNameClicked()"
           *ngIf="userService.userHasAuthority(authorityEnum.MODIFY_GROUP)"
         >
           Change group name
@@ -117,7 +117,7 @@
     <mat-card>
       <mat-card-content>
         <div id="pantry-container" *ngIf="group?.pantryId">
-          <span>Pantry name: {{ group?.pantryName }}</span>
+          <span>Name: {{ group?.pantryName }}</span>
           <button mat-button [routerLink]="'/pantries/' + group?.pantryId">
             Go to pantry
           </button>
@@ -153,7 +153,7 @@
     <mat-card>
       <mat-card-content>
         <div id="pantry-container" *ngFor="let list of group?.shoppingLists">
-          <span>{{ list?.listName }}</span>
+          <span>Name: {{ list?.listName }}</span>
           <button mat-button [routerLink]="'/shopping-lists/' + list?.listId">
             Go to list
           </button>

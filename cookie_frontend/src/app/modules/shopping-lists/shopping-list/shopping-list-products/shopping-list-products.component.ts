@@ -20,6 +20,7 @@ import { ProductDTO } from 'src/app/shared/model/types/pantry-types';
 import { categories } from 'src/app/shared/model/enums/cateory-enum';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationPopupComponent } from 'src/app/shared/components/confirmation-popup/confirmation-popup.component';
+import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
 
 @Component({
   selector: 'app-shopping-list-products',
@@ -58,7 +59,10 @@ export class ShoppingListProductsComponent implements OnInit {
     id: [0],
     productName: [
       '',
-      [Validators.required, Validators.pattern('[a-zA-Z0-9., ]{3,50}')],
+      [
+        Validators.required,
+        Validators.pattern(RegexConstants.productNameRegex),
+      ],
     ],
     category: ['', [Validators.required]],
     quantity: [

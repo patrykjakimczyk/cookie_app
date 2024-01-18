@@ -6,6 +6,7 @@ import { NewNameType } from './new-name.type';
 export type NewNameData = {
   type: NewNameType;
   regex: string;
+  nameTaken: boolean;
 };
 
 @Component({

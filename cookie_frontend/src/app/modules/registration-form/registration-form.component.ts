@@ -27,7 +27,7 @@ export class RegistrationFormComponent {
   protected form = this.fb.group({
     username: [
       '',
-      [Validators.required, Validators.pattern(this.regexes.loginRegex)],
+      [Validators.required, Validators.pattern(this.regexes.usernameRegex)],
     ],
     email: ['', [Validators.required, Validators.email]],
     password: [

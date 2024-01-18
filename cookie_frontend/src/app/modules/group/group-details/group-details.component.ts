@@ -15,6 +15,7 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 import { AuthorityEnum } from 'src/app/shared/model/enums/authority-enum';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UserService } from 'src/app/shared/services/user-service';
+import { GroupNameTakenResponse } from 'src/app/shared/model/responses/group-response';
 
 @Component({
   selector: 'app-group-details',
@@ -26,6 +27,7 @@ export class GroupDetailsComponent implements OnInit {
   private authoritiesToRemove: AuthorityEnum[] = [];
   protected group: GroupDetailsDTO | null = null;
   protected authorityEnum = AuthorityEnum;
+  protected groupNameTaken = false;
 
   protected addAuthorityForm = this.fb.group({
     authority: ['', Validators.required],
@@ -108,14 +110,19 @@ export class GroupDetailsComponent implements OnInit {
           next: (_) => {
             if (this.group) {
               const user = this.group.users.find((user) => user.id === userId);
+              const loggedUser = this.userService.user.getValue();
 
-              if (user) {
+              if (loggedUser.username === user?.username) {
+                this.getGroupDetails();
+              } else if (user) {
                 for (let authority of this.authoritiesToRemove) {
                   user.authorities = user.authorities.filter(
                     (userAuthority) => userAuthority.authority !== authority
                   );
+                  console.log(user.authorities);
                 }
               }
+              this.authoritiesToRemove = [];
             }
           },
           error: (error: HttpErrorResponse) => {
@@ -130,18 +137,33 @@ export class GroupDetailsComponent implements OnInit {
     }
   }
 
+  changeGroupNameClicked() {
+    this.groupNameTaken = false;
+    this.openChangeGroupNamePopup();
+  }
+
   openChangeGroupNamePopup() {
     const changeGroupNamePopup = this.dialog.open(
       NewNamePopupComponentComponent,
-      { data: { type: 'GROUP', regex: RegexConstants.groupNameRegex } }
+      {
+        data: {
+          type: 'GROUP',
+          regex: RegexConstants.groupNameRegex,
+          nameTaken: this.groupNameTaken,
+        },
+      }
     );
 
     changeGroupNamePopup.afterClosed().subscribe((newGroupName: string) => {
       this.groupService
         .updateGroup(this.groupId, { newGroupName: newGroupName })
         .subscribe({
-          next: (_: any) => {
-            if (this.group) {
+          next: (response: GroupNameTakenResponse) => {
+            if (response.groupNameTaken) {
+              this.groupNameTaken = true;
+              this.openChangeGroupNamePopup();
+            } else if (this.group) {
+              this.groupNameTaken = false;
               this.group.groupName = newGroupName;
             }
           },
@@ -173,12 +195,14 @@ export class GroupDetailsComponent implements OnInit {
   }
 
   openAddUserPopup() {
-    const changeGroupNamePopup = this.dialog.open(
-      NewNamePopupComponentComponent,
-      { data: { type: 'USER', regex: RegexConstants.loginRegex } }
-    );
+    const addUserPopup = this.dialog.open(NewNamePopupComponentComponent, {
+      data: { type: 'USER', regex: RegexConstants.usernameRegex },
+    });
 
-    changeGroupNamePopup.afterClosed().subscribe((username: string) => {
+    addUserPopup.afterClosed().subscribe((username: string) => {
+      if (!username) {
+        return;
+      }
       this.groupService
         .addUserToGroup(this.groupId, { usernameToAdd: username })
         .subscribe({

@@ -17,4 +17,7 @@ export const authorityEnums = [
   AuthorityEnum.MODIFY_PANTRY,
   AuthorityEnum.MODIFY_GROUP,
   AuthorityEnum.ADD_TO_GROUP,
+  AuthorityEnum.CREATE_SHOPPING_LIST,
+  AuthorityEnum.MODIFY_SHOPPING_LIST,
+  AuthorityEnum.ADD_TO_SHOPPING_LIST,
 ];

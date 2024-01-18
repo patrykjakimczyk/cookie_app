@@ -18,6 +18,7 @@ import {
 import { PantriesService } from '../../pantries.service';
 import { UserService } from 'src/app/shared/services/user-service';
 import { Router } from '@angular/router';
+import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
 
 export type ProductDTO = {
   productName: string;
@@ -67,7 +68,10 @@ export class PantryProductsListComponent {
     id: [0],
     productName: [
       '',
-      [Validators.required, Validators.pattern('[a-zA-Z0-9., ]{3,50}')],
+      [
+        Validators.required,
+        Validators.pattern(RegexConstants.productNameRegex),
+      ],
     ],
     category: ['', [Validators.required]],
     quantity: [
@@ -78,7 +82,7 @@ export class PantryProductsListComponent {
     reserved: [0],
     purchaseDate: [''],
     expirationDate: [''],
-    placement: ['', [Validators.pattern('[a-zA-Z ]*')]],
+    placement: ['', [Validators.pattern(RegexConstants.placementRegex)]],
   });
 
   protected searchForm = this.fb.group({

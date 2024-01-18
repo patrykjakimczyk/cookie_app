@@ -1,6 +1,7 @@
 <ng-container *ngIf="!createGroupSucceded; else successView">
   <app-insert-name
     [regex]="groupNameRegex"
+    [nameTaken]="groupNameTaken"
     type="GROUP"
     (insertedNameEmitter)="createGroup($event)"
   ></app-insert-name>

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { User } from '../model/user';
-import { getCookie, removeCookie } from 'typescript-cookie';
+import { removeCookie } from 'typescript-cookie';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { BehaviorSubject } from 'rxjs';
 import { LoginResponse } from '../model/responses/registration-responses';
@@ -40,8 +40,6 @@ export class UserService {
     user.assignedPantry = loginResponse.assignedPantry;
     this.extractUserDataFromJwt(user, jwt);
 
-    let xsrf = getCookie('XSRF-TOKEN')!;
-    window.sessionStorage.setItem('XSRF-TOKEN', xsrf);
     window.sessionStorage.setItem('JwtToken', jwt);
     window.sessionStorage.setItem('user', JSON.stringify(user));
     this.user.next(user);
