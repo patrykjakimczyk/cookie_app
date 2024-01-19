@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -106,5 +107,9 @@ public abstract class AbstractCookieService {
         }
 
         return product;
+    }
+
+    protected <T> boolean isAnyProductNotOnList(List<T> shoppingListProducts, List<T> productsToPerformAction) {
+        return !shoppingListProducts.containsAll(productsToPerformAction);
     }
 }

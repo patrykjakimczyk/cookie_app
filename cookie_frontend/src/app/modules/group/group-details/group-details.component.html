@@ -73,7 +73,7 @@
                         )
                       "
                       [value]="authority"
-                      >{{ authority }}</mat-option
+                      >{{ authority | enumPrintFormatter }}</mat-option
                     >
                   </mat-select>
                 </mat-form-field>
@@ -97,7 +97,7 @@
                   color="primary"
                   (change)="checkboxClicked($event, authority)"
                 ></mat-checkbox>
-                <span> {{ authority.authority }} </span>
+                <span> {{ authority.authority | enumPrintFormatter }} </span>
               </div>
             </div>
             <button

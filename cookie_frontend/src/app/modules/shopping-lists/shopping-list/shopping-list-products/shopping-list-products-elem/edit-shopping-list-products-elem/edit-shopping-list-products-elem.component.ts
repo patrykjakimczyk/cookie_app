@@ -70,8 +70,6 @@ export class EditShoppingListProductsElemComponent {
       return;
     }
 
-    console.log(this.editForm.value);
-
     if (this.isShoppingListProduct) {
       this.shoppingListService
         .updateShoppingListProduct(this.listId, this.editForm.value)

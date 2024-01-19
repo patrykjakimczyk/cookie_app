@@ -92,8 +92,6 @@ export class ReservePantryProductComponent {
       reservedCount = this.reserveForm.controls['reserved'].value * -1;
     }
 
-    console.log(reservedCount);
-
     this.pantriesService
       .reservePantryProduct(
         this.pantryId,

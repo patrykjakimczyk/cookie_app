@@ -20,7 +20,11 @@
         class="action-container first-action-container"
         *ngIf="shoppingList && shoppingList.id && shoppingList.listName"
       >
-        <form [formGroup]="addForm" (ngSubmit)="submitAddForm()">
+        <form
+          [formGroup]="addForm"
+          (ngSubmit)="submitAddForm(form)"
+          #form="ngForm"
+        >
           <mat-form-field color="accent">
             <mat-label>Product name (3 to 50 characters) </mat-label>
             <input
@@ -86,9 +90,7 @@
               {{ getErrorMessage(addForm.controls.unit) }}
             </mat-error>
           </mat-form-field>
-          <button mat-raised-button color="primary" (click)="submitAddForm()">
-            Add
-          </button>
+          <button mat-raised-button color="primary" type="submit">Add</button>
         </form>
       </div>
 

@@ -5,7 +5,14 @@ import {
 import { Component, Input } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { Observable, Subject, of } from 'rxjs';
-import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  FormGroupDirective,
+  NgForm,
+  Validators,
+} from '@angular/forms';
 
 import { GetPantryResponse } from 'src/app/shared/model/responses/pantry-response';
 import { PantryProductCheckboxEvent } from './pantry-product-list-elem/pantry-product-list-elem.component';
@@ -60,7 +67,6 @@ export class PantryProductsListComponent {
   public productsIdsToRemove: number[] = [];
   public units = units;
   public categories = categories;
-  public addProduct = false;
   public sendProducts = false;
   public filteredProducts = new Observable<ProductDTO[]>();
 
@@ -144,7 +150,6 @@ export class PantryProductsListComponent {
 
   displayProductsToAddPage(pageNr: number) {
     this.productsToAddPage = pageNr;
-    console.log((pageNr + 1) * this.page_size - 1);
     this.productsToAddCurrPage = this.productsToAdd.slice(
       pageNr * this.page_size,
       (pageNr + 1) * this.page_size
@@ -181,51 +186,38 @@ export class PantryProductsListComponent {
     }
   }
 
-  submitAddForm() {
+  submitAddForm(form: FormGroupDirective) {
     if (!this.addForm.valid) {
       return;
     }
 
-    setTimeout(() => {
-      if (!this.addProduct) {
-        this.addProduct = true;
-        this.productsToAdd.push({
-          id: this.productsToAdd.length,
-          productName: this.addForm.controls.productName.value!,
-          category: this.addForm.controls.category.value!,
-          quantity: +this.addForm.controls.quantity.value!,
-          unit:
-            this.addForm.controls.unit.value === Unit.GRAMS
-              ? Unit.GRAMS
-              : this.addForm.controls.unit.value === Unit.MILLILITERS
-              ? Unit.MILLILITERS
-              : Unit.PIECES,
-          reserved: this.addForm.controls.reserved.value!,
-          purchaseDate: this.addForm.controls.purchaseDate.value!,
-          expirationDate: this.addForm.controls.expirationDate.value!,
-          placement: this.addForm.controls.placement.value!,
-        });
-        this.addForm.reset();
-        Object.entries(this.addForm.controls).forEach((control) => {
-          control[1].setErrors(null);
-        });
-        this.displayProductsToAddPage(0);
-      } else {
-        this.addProduct = false;
-      }
-    }, 10);
+    this.productsToAdd.push({
+      id: this.productsToAdd.length,
+      productName: this.addForm.controls.productName.value!,
+      category: this.addForm.controls.category.value!,
+      quantity: +this.addForm.controls.quantity.value!,
+      unit:
+        this.addForm.controls.unit.value === Unit.GRAMS
+          ? Unit.GRAMS
+          : this.addForm.controls.unit.value === Unit.MILLILITERS
+          ? Unit.MILLILITERS
+          : Unit.PIECES,
+      reserved: this.addForm.controls.reserved.value!,
+      purchaseDate: this.addForm.controls.purchaseDate.value!,
+      expirationDate: this.addForm.controls.expirationDate.value!,
+      placement: this.addForm.controls.placement.value!,
+    });
+    form.resetForm(); // this combination of two resets allows to reset form without displaying form fields as invalid
+    this.addForm.reset();
+    this.displayProductsToAddPage(0);
   }
 
   sendProductsToAdd() {
-    this.productsToAdd.forEach((product) => {
-      product.id = null;
-    });
-
     this.pantriesService
       .addProductsToPantry(this.pantry!.id, this.productsToAdd)
       .subscribe({
         next: (_) => {
-          this.productsToAdd = [];
+          this.closeAddProducts();
           this.productsToAddIdsToRemove = [];
           this.page = 0;
           this.getPantryProducts();

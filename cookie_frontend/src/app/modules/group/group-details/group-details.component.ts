@@ -119,7 +119,6 @@ export class GroupDetailsComponent implements OnInit {
                   user.authorities = user.authorities.filter(
                     (userAuthority) => userAuthority.authority !== authority
                   );
-                  console.log(user.authorities);
                 }
               }
               this.authoritiesToRemove = [];

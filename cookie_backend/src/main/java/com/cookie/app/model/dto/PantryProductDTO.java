@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 public final class PantryProductDTO extends ProductDTO {
         private final Timestamp purchaseDate;
         private final Timestamp expirationDate;
-        @NotNull(message = "Quantity must be a positive number")
+        @NotNull(message = "Quantity must be present and positive number")
         @Min(value = 0, message = "Quantity must be equal or greater than 1")
         private final int quantity;
         private final Unit unit;
@@ -43,29 +43,5 @@ public final class PantryProductDTO extends ProductDTO {
                 this.unit = unit;
                 this.reserved = reserved;
                 this.placement = placement;
-        }
-
-        public Timestamp getPurchaseDate() {
-                return purchaseDate;
-        }
-
-        public Timestamp getExpirationDate() {
-                return expirationDate;
-        }
-
-        public int getQuantity() {
-                return quantity;
-        }
-
-        public Unit getUnit() {
-                return unit;
-        }
-
-        public int getReserved() {
-                return reserved;
-        }
-
-        public String getPlacement() {
-                return placement;
         }
 }
