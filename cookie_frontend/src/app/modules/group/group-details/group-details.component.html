@@ -114,7 +114,7 @@
     </mat-list>
 
     <span class="section-header">Pantry:</span>
-    <mat-card>
+    <mat-card id="card">
       <mat-card-content>
         <div id="pantry-container" *ngIf="group?.pantryId">
           <span>Name: {{ group?.pantryName }}</span>
@@ -150,7 +150,7 @@
         Create shopping list
       </button>
     </div>
-    <mat-card>
+    <mat-card id="card">
       <mat-card-content>
         <div id="pantry-container" *ngFor="let list of group?.shoppingLists">
           <span>Name: {{ list?.listName }}</span>

@@ -1,6 +1,6 @@
 <div id="container">
   <div id="upper-container">
-    <h1>Your shopping lists</h1>
+    <h1><mat-icon>shopping_cart</mat-icon> Your shopping lists</h1>
   </div>
 
   <mat-card *ngIf="!userLists.size">
@@ -21,7 +21,7 @@
     class="group-shopping-lists-container"
     *ngFor="let groupName of userLists.keys()"
   >
-    <h2>Group: {{ groupName }}</h2>
+    <h2><span class="group-name">Group:</span> {{ groupName }}</h2>
 
     <div class="list-of-shopping-lists">
       <app-preview-card

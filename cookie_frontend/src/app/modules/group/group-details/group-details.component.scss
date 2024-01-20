@@ -81,18 +81,23 @@ mat-card {
       }
     }
 
-    #pantry-container {
-      @include flex-with-gap($align: center, $gap: 10px);
-      justify-content: space-between;
+    #card {
+      width: 95%;
+
+      #pantry-container {
+        @include flex-with-gap($align: center, $gap: 10px);
+        justify-content: space-between;
+      }
+
+      #create-container {
+        @include flex-with-gap($align: center, $gap: 10px);
+        justify-content: space-between;
+      }
     }
 
     #shopping-lists-header-container {
-      @extend #pantry-container;
-    }
-
-    #create-container {
       @include flex-with-gap($align: center, $gap: 10px);
-      justify-content: center;
+      justify-content: space-between;
     }
   }
 }

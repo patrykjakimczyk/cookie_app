@@ -16,6 +16,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [GroupComponent, CreateGroupComponent, GroupDetailsComponent],
@@ -35,6 +36,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatExpansionModule,
     MatCheckboxModule,
     MatSelectModule,
+    MatIconModule,
   ],
 })
 export class GroupModule {}
