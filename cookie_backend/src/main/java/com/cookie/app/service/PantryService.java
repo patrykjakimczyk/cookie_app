@@ -8,12 +8,8 @@ import com.cookie.app.model.response.GetUserPantriesResponse;
 
 public interface PantryService {
     GetPantryResponse createPantry(CreatePantryRequest request, String userEmail);
-
     GetPantryResponse getPantry(long pantryId, String userEmail);
-
     GetUserPantriesResponse getAllUserPantries(String userEmail);
-
     DeletePantryResponse deletePantry(long pantryId, String userEmail);
-
     GetPantryResponse updatePantry(long pantryId, UpdatePantryRequest request, String userEmail);
 }

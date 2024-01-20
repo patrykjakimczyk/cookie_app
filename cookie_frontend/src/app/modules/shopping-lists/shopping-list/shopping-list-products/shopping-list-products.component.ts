@@ -7,7 +7,12 @@ import {
 } from 'src/app/shared/model/types/shopping-lists-types';
 import { ShoppingListsService } from '../../shopping-lists.service';
 import { Router } from '@angular/router';
-import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroupDirective,
+  Validators,
+} from '@angular/forms';
 import {
   shoppingListSortColumnNames,
   sortDirecitons,
@@ -20,6 +25,7 @@ import { ProductDTO } from 'src/app/shared/model/types/pantry-types';
 import { categories } from 'src/app/shared/model/enums/cateory-enum';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationPopupComponent } from 'src/app/shared/components/confirmation-popup/confirmation-popup.component';
+import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
 
 @Component({
   selector: 'app-shopping-list-products',
@@ -40,7 +46,6 @@ export class ShoppingListProductsComponent implements OnInit {
   public sortColumnNames = shoppingListSortColumnNames;
   public sortDirecitons = sortDirecitons;
   public productsIdsForAction: number[] = [];
-  public addProduct = false;
   public productsToAdd: ShoppingListProductDTO[] = [];
   public productsToAddIdsToRemove: number[] = [];
   public productsToAddCurrPage: ShoppingListProductDTO[] = [];
@@ -58,7 +63,10 @@ export class ShoppingListProductsComponent implements OnInit {
     id: [0],
     productName: [
       '',
-      [Validators.required, Validators.pattern('[a-zA-Z0-9., ]{3,50}')],
+      [
+        Validators.required,
+        Validators.pattern(RegexConstants.productNameRegex),
+      ],
     ],
     category: ['', [Validators.required]],
     quantity: [
@@ -200,15 +208,11 @@ export class ShoppingListProductsComponent implements OnInit {
   }
 
   sendProductsToAdd() {
-    this.productsToAdd.forEach((product) => {
-      product.id = null;
-    });
-
     this.shoppingListsService
       .addProductsToShoppingList(this.shoppingList!.id, this.productsToAdd)
       .subscribe({
         next: (_) => {
-          this.productsToAdd = [];
+          this.closeAddProducts();
           this.productsToAddIdsToRemove = [];
           this.page = 0;
           this.getShoppinglistProducts();
@@ -226,7 +230,6 @@ export class ShoppingListProductsComponent implements OnInit {
 
   displayProductsToAddPage(pageNr: number) {
     this.productsToAddPage = pageNr;
-    console.log((pageNr + 1) * this.page_size - 1);
     this.productsToAddCurrPage = this.productsToAdd.slice(
       pageNr * this.page_size,
       (pageNr + 1) * this.page_size
@@ -271,36 +274,27 @@ export class ShoppingListProductsComponent implements OnInit {
     }
   }
 
-  submitAddForm() {
+  submitAddForm(form: FormGroupDirective) {
     if (!this.addForm.valid) {
       return;
     }
 
-    setTimeout(() => {
-      if (!this.addProduct) {
-        this.addProduct = true;
-        this.productsToAdd.push({
-          id: this.productsToAdd.length,
-          productName: this.addForm.controls.productName.value!,
-          category: this.addForm.controls.category.value!,
-          quantity: +this.addForm.controls.quantity.value!,
-          unit:
-            this.addForm.controls.unit.value === Unit.GRAMS
-              ? Unit.GRAMS
-              : this.addForm.controls.unit.value === Unit.MILLILITERS
-              ? Unit.MILLILITERS
-              : Unit.PIECES,
-          purchased: this.addForm.controls.purchased.value!,
-        });
-        this.addForm.reset();
-        Object.entries(this.addForm.controls).forEach((control) => {
-          control[1].setErrors(null);
-        });
-        this.displayProductsToAddPage(0);
-      } else {
-        this.addProduct = false;
-      }
-    }, 10);
+    this.productsToAdd.push({
+      id: this.productsToAdd.length,
+      productName: this.addForm.controls.productName.value!,
+      category: this.addForm.controls.category.value!,
+      quantity: +this.addForm.controls.quantity.value!,
+      unit:
+        this.addForm.controls.unit.value === Unit.GRAMS
+          ? Unit.GRAMS
+          : this.addForm.controls.unit.value === Unit.MILLILITERS
+          ? Unit.MILLILITERS
+          : Unit.PIECES,
+      purchased: this.addForm.controls.purchased.value!,
+    });
+    form.resetForm();
+    this.addForm.reset();
+    this.displayProductsToAddPage(0);
   }
 
   private getShoppinglistProducts() {
@@ -324,7 +318,6 @@ export class ShoppingListProductsComponent implements OnInit {
         .subscribe({
           next: (response) => {
             this.products = response.content;
-            console.log(this.products);
             this.totalElements = response.totalElements;
             this.currentElementsLength = response.content.length;
           },

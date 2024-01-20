@@ -40,4 +40,15 @@ public class ShoppingListProduct {
 
     @Column(nullable = false)
     private boolean purchased;
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof ShoppingListProduct)) {
+            return false;
+        }
+
+        ShoppingListProduct shoppingListProduct = (ShoppingListProduct) o;
+
+        return this.getId() == shoppingListProduct.getId() && this.getProduct().equals(shoppingListProduct.getProduct());
+    }
 }

@@ -18,13 +18,16 @@
     />
     <mat-hint *ngIf="name.valid"
       >{{ data.type.at(0) + data.type.slice(1).toLowerCase() }} name can only
-      contain lowercases, capital letters, digits and whitespaces</mat-hint
+      contain letters, digits and whitespaces</mat-hint
     >
     <mat-error *ngIf="!name.valid"
       >{{ data.type.at(0) + data.type.slice(1).toLowerCase() }} name is
       incorrect</mat-error
     >
   </mat-form-field>
+  <p *ngIf="data.nameTaken" id="name-taken-error">
+    Group name is already taken
+  </p>
 </div>
 <div mat-dialog-actions id="action-buttons">
   <button mat-button (click)="close()">Close</button>

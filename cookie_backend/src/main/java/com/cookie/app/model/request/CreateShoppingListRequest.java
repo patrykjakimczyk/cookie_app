@@ -11,6 +11,6 @@ public record CreateShoppingListRequest(
         )
         String shoppingListName,
 
-        @Min(1)
+        @Min(value = 1, message = "Group id must be greater than 0")
         long groupId
 ) {}

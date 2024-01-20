@@ -3,10 +3,12 @@ import {
   HttpHandler,
   HttpHeaders,
   HttpInterceptor,
+  HttpParams,
   HttpRequest,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { getCookie, removeCookie } from 'typescript-cookie';
 
 import { User } from 'src/app/shared/model/user';
 
@@ -42,13 +44,14 @@ export class HttpRequestInterceptor implements HttpInterceptor {
       }
     }
 
-    if ((xsrf = sessionStorage.getItem('XSRF-TOKEN'))) {
+    if ((xsrf = getCookie('XSRF-TOKEN')!)) {
       httpHeaders = httpHeaders.append('X-XSRF-TOKEN', xsrf);
     }
 
     httpHeaders = httpHeaders.append('X-Requested-With', 'XMLHttpRequest');
     const request = req.clone({
       headers: httpHeaders,
+      withCredentials: true,
     });
 
     return next.handle(request);

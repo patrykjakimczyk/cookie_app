@@ -1,7 +1,5 @@
 package com.cookie.app.controller;
 
-import com.cookie.app.exception.PantryNotFoundException;
-import com.cookie.app.exception.UserHasAssignedPantryException;
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.exception.UserWasNotFoundAfterAuthException;
 import com.cookie.app.model.dto.PantryDTO;
@@ -161,10 +159,10 @@ class PantryControllerTest {
     @Test
     void test_deleteUserPantryPantryNotFound() {
 
-        Mockito.doThrow(new PantryNotFoundException("Pantry not found"))
+        Mockito.doThrow(new UserPerformedForbiddenActionException("Pantry not found"))
                 .when(pantryService).deletePantry(Mockito.anyLong() ,Mockito.anyString());
 
-        assertThrows(PantryNotFoundException.class, () -> this.pantryController.deletePantry(1L, this.authentication));
+        assertThrows(UserPerformedForbiddenActionException.class, () -> this.pantryController.deletePantry(1L, this.authentication));
     }
 
     @Test
@@ -193,10 +191,10 @@ class PantryControllerTest {
     void test_updateUserPantryPantryNotFound() {
         UpdatePantryRequest updatePantryRequest = new UpdatePantryRequest("newName");
 
-        Mockito.doThrow(new PantryNotFoundException("Pantry not found"))
+        Mockito.doThrow(new UserPerformedForbiddenActionException("Pantry not found"))
                 .when(pantryService).updatePantry(Mockito.anyLong(), Mockito.any(UpdatePantryRequest.class), Mockito.anyString());
 
-        assertThrows(PantryNotFoundException.class, () -> this.pantryController.updatePantry(1L, updatePantryRequest, this.authentication));
+        assertThrows(UserPerformedForbiddenActionException.class, () -> this.pantryController.updatePantry(1L, updatePantryRequest, this.authentication));
     }
 
     @Test

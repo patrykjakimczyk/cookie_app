@@ -12,7 +12,6 @@ export class LoginFormService {
   login(): Observable<any> {
     return this.http.get<any>(this.url + this.register_path, {
       observe: 'response',
-      withCredentials: true,
     });
   }
 }

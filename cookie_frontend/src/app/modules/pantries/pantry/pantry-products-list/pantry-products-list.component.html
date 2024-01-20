@@ -17,7 +17,11 @@
         class="action-container first-action-container"
         *ngIf="pantry && pantry.id && pantry.pantryName"
       >
-        <form [formGroup]="addForm" (ngSubmit)="submitAddForm()">
+        <form
+          [formGroup]="addForm"
+          (ngSubmit)="submitAddForm(form)"
+          #form="ngForm"
+        >
           <mat-form-field color="accent">
             <mat-label>Product name (3 to 50 characters) </mat-label>
             <input
@@ -42,7 +46,7 @@
               >
             </mat-autocomplete>
             <mat-hint
-              >Product name can only contains letters, digits, dots, commas and
+              >Product name can only contains letters, digits, and
               whitespaces</mat-hint
             >
             <mat-error *ngIf="!addForm.controls.productName.valid">
@@ -127,9 +131,7 @@
               {{ getErrorMessage(addForm.controls.placement) }}
             </mat-error>
           </mat-form-field>
-          <button mat-raised-button color="primary" (click)="submitAddForm()">
-            Add
-          </button>
+          <button mat-raised-button color="primary" type="submit">Add</button>
         </form>
       </div>
 

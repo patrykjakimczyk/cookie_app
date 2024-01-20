@@ -12,19 +12,14 @@ import { CreateGroupComponent } from './create-group/create-group.component';
 import { GroupDetailsComponent } from './group-details/group-details.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { GroupComponent } from './group.component';
-import { AddUserComponent } from './group-details/add-user/add-user.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
-  declarations: [
-    GroupComponent,
-    CreateGroupComponent,
-    GroupDetailsComponent,
-    AddUserComponent,
-  ],
+  declarations: [GroupComponent, CreateGroupComponent, GroupDetailsComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -41,6 +36,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatExpansionModule,
     MatCheckboxModule,
     MatSelectModule,
+    MatIconModule,
   ],
 })
 export class GroupModule {}

@@ -4,6 +4,7 @@ import com.cookie.app.exception.*;
 import com.cookie.app.model.entity.Pantry;
 import com.cookie.app.model.entity.PantryProduct;
 import com.cookie.app.model.entity.Product;
+import com.cookie.app.model.entity.ShoppingListProduct;
 import com.cookie.app.model.enums.AuthorityEnum;
 import com.cookie.app.model.mapper.AuthorityMapperDTO;
 import com.cookie.app.model.mapper.PantryProductMapperDTO;
@@ -19,16 +20,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
+@Transactional
 @Service
-public class PantryProductServiceImpl extends AbstractCookieService implements PantryProductService {
+public class PantryProductServiceImpl extends AbstractPantryService implements PantryProductService {
     private final PantryProductRepository pantryProductRepository;
-    private final ProductRepository productRepository;
     private final PantryProductMapperDTO pantryProductMapper;
 
     public PantryProductServiceImpl(
@@ -38,9 +38,8 @@ public class PantryProductServiceImpl extends AbstractCookieService implements P
             ProductRepository productRepository,
             PantryProductMapperDTO pantryProductMapper
     ) {
-        super(userRepository, authorityMapperDTO);
+        super(userRepository, productRepository, authorityMapperDTO);
         this.pantryProductRepository = pantryProductRepository;
-        this.productRepository = productRepository;
         this.pantryProductMapper = pantryProductMapper;
     }
 
@@ -71,47 +70,61 @@ public class PantryProductServiceImpl extends AbstractCookieService implements P
         Pantry pantry = this.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.ADD);
 
         productDTOs.forEach(productDTO -> {
-            if (productDTO.id() != null) {
-                throw new InvalidProductDataException(
-                        "Pantry product id must be not set while inserting it to pantry");
-            } else if (productDTO.reserved() > 0) {
-                throw new InvalidProductDataException(
+            if (productDTO.getId() > 0) {
+                throw new ValidationException(
+                        "Pantry product id must be 0 while inserting it to pantry");
+            } else if (productDTO.getReserved() > 0) {
+                throw new ValidationException(
                         "Pantry product reserved quantity must be 0 while inserting it to pantry");
             }
 
-            PantryProduct pantryProduct = mapToPantryProduct(productDTO, pantry);
+            PantryProduct pantryProduct = mapToPantryProduct(productDTO, pantry, null);
             pantry.getPantryProducts().add(pantryProduct);
             this.pantryProductRepository.save(pantryProduct);
         });
     }
 
-    @Transactional
     @Override
     public void removeProductsFromPantry(long pantryId, List<Long> productIds, String userEmail) {
         Pantry pantry = this.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.MODIFY);
 
-        if (!this.areAllProductsInPantry(pantry.getPantryProducts(), productIds)) {
+        if (!this.isAnyProductNotOnList(pantry, productIds)) {
             log.info("User with email={} tried to remove products from different pantry", userEmail);
-            throw new ModifyingProductsFromWrongPantryException("Cannot remove products from different pantry");
+            throw new UserPerformedForbiddenActionException("Cannot remove products from different pantry");
         }
 
         this.pantryProductRepository.deleteByIdIn(productIds);
     }
 
-    @Transactional
     @Override
     public void modifyPantryProduct(long pantryId, PantryProductDTO pantryProduct, String userEmail) {
-        Pantry pantry = this.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.MODIFY);
-
-        if (!this.areAllProductsInPantry(pantry.getPantryProducts(), List.of(pantryProduct.id()))) {
-            log.info("User with email={} tried to modify product from different pantry", userEmail);
-            throw new ModifyingProductsFromWrongPantryException("Cannot remove products from different pantry");
+        if (pantryProduct.getId() == 0) {
+            log.info("User with email={} tried to modify product which is not saved in database", userEmail);
+            throw new ValidationException("Cannot modify product because it doesn't exist");
         }
 
-        this.pantryProductRepository.save(mapToPantryProduct(pantryProduct, pantry));
+        Pantry pantry = this.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.MODIFY);
+
+        PantryProduct productToModify = PantryProduct
+                .builder()
+                .id(pantryProduct.getId())
+                .product(
+                        Product
+                                .builder()
+                                .productName(pantryProduct.getProductName())
+                                .category(pantryProduct.getCategory())
+                                .build()
+                )
+                .build();
+
+        if (!this.isAnyProductNotOnList(pantry.getPantryProducts(), List.of(productToModify))) {
+            log.info("User with email={} tried to modify product from different pantry", userEmail);
+            throw new UserPerformedForbiddenActionException("Cannot remove products from different pantry");
+        }
+
+        this.pantryProductRepository.save(mapToPantryProduct(pantryProduct, pantry, productToModify.getProduct()));
     }
 
-    @Transactional
     @Override
     public PantryProductDTO reservePantryProduct(long pantryId, long pantryProductId, int reserved, String userEmail) {
         //if this method doesn't throw any exception, user can access this pantry
@@ -120,12 +133,12 @@ public class PantryProductServiceImpl extends AbstractCookieService implements P
         Optional<PantryProduct> pantryProductOptional = this.pantryProductRepository.findById(pantryProductId);
         PantryProduct pantryProduct = pantryProductOptional.orElseThrow(() -> {
             log.info("User with email={} tried to reserve product which does not exists", userEmail);
-            throw new PantryProductNotFoundException("Pantry product was not found");
+            throw new UserPerformedForbiddenActionException("Pantry product was not found");
         });
 
         if (pantryProduct.getPantry().getId() != pantryId) {
             log.info("User with email={} tried to reserve product from different pantry", userEmail);
-            throw new ModifyingProductsFromWrongPantryException("Cannot reserve products from different pantry");
+            throw new UserPerformedForbiddenActionException("Cannot reserve products from different pantry");
         }
 
         if (reserved > pantryProduct.getQuantity() || (reserved * -1) > pantryProduct.getReserved()) {
@@ -139,35 +152,18 @@ public class PantryProductServiceImpl extends AbstractCookieService implements P
         return this.pantryProductMapper.apply(pantryProduct);
     }
 
-    private boolean areAllProductsInPantry(List<PantryProduct> pantryProducts, List<Long> productIds) {
-        List<Long> pantryProductsIds = pantryProducts
+    private boolean isAnyProductNotOnList(Pantry pantry, List<Long> productIds) {
+        List<Long> pantryProductsIds = pantry
+                .getPantryProducts()
                 .stream()
                 .map(PantryProduct::getId)
                 .toList();
 
-        for (Long productIdToRemove : productIds) {
-            if (!pantryProductsIds.contains(productIdToRemove)) {
-                return false;
-            }
-        }
-
-        return true;
+        return this.isAnyProductNotOnList(pantryProductsIds, productIds);
     }
 
-    private PantryProduct mapToPantryProduct(PantryProductDTO pantryProductDTO, Pantry pantry) {
-        Product product;
-        Optional<Product> productOptional = this.productRepository
-                .findByProductNameAndCategory(pantryProductDTO.productName(), pantryProductDTO.category().name());
-
-        if (productOptional.isPresent()) {
-            product = productOptional.get();
-        } else {
-            product = new Product();
-            product.setProductName(pantryProductDTO.productName());
-            product.setCategory(pantryProductDTO.category());
-            this.productRepository.save(product);
-        }
-
+    private PantryProduct mapToPantryProduct(PantryProductDTO pantryProductDTO, Pantry pantry, Product existingProduct) {
+        Product product = existingProduct != null ? existingProduct : this.checkIfProductExists(pantryProductDTO);
         PantryProduct foundPantryProduct = null;
         // if product id > 0 then there is a chance that we have that product in our pantry, because product is in database
         if (product.getId() > 0) {
@@ -182,12 +178,12 @@ public class PantryProductServiceImpl extends AbstractCookieService implements P
                 .builder()
                 .pantry(pantry)
                 .product(product)
-                .purchaseDate(pantryProductDTO.purchaseDate())
-                .expirationDate(pantryProductDTO.expirationDate())
-                .quantity(pantryProductDTO.quantity())
-                .unit(pantryProductDTO.unit())
+                .purchaseDate(pantryProductDTO.getPurchaseDate())
+                .expirationDate(pantryProductDTO.getExpirationDate())
+                .quantity(pantryProductDTO.getQuantity())
+                .unit(pantryProductDTO.getUnit())
                 .reserved(0)
-                .placement(pantryProductDTO.placement())
+                .placement(pantryProductDTO.getPlacement())
                 .build();
     }
 
@@ -198,23 +194,23 @@ public class PantryProductServiceImpl extends AbstractCookieService implements P
                 return null;
             }
 
-            if (pantryProductDTO.id() != null) {
+            if (pantryProductDTO.getId() != null) {
                 for (PantryProduct pantryProduct : pantryProducts) {
-                    if (pantryProduct.getId() == pantryProductDTO.id()) {
+                    if (pantryProduct.getId() == pantryProductDTO.getId()) {
                         // if pantry products ids are equal, we are modifying pantry product
-                        pantryProduct.setQuantity(pantryProductDTO.quantity());
-                        pantryProduct.setUnit(pantryProductDTO.unit());
-                        pantryProduct.setReserved(pantryProductDTO.reserved());
-                        pantryProduct.setPlacement(pantryProductDTO.placement());
-                        pantryProduct.setPurchaseDate(pantryProductDTO.purchaseDate());
-                        pantryProduct.setExpirationDate(pantryProductDTO.expirationDate());
+                        pantryProduct.setQuantity(pantryProductDTO.getQuantity());
+                        pantryProduct.setUnit(pantryProductDTO.getUnit());
+                        pantryProduct.setReserved(pantryProductDTO.getReserved());
+                        pantryProduct.setPlacement(pantryProductDTO.getPlacement());
+                        pantryProduct.setPurchaseDate(pantryProductDTO.getPurchaseDate());
+                        pantryProduct.setExpirationDate(pantryProductDTO.getExpirationDate());
 
                         return pantryProduct;
                     } else if (this.arePantryProductsEqual(pantryProduct, pantryProductDTO, product)) {
-                        this.pantryProductRepository.deleteById(pantryProductDTO.id());
+                        this.pantryProductRepository.deleteById(pantryProductDTO.getId());
                         // if pantry products ids are not equal, we are adding exact same pantry product, so we need to sum quantities
-                        pantryProduct.setQuantity(pantryProduct.getQuantity() + pantryProductDTO.quantity());
-                        pantryProduct.setReserved(pantryProduct.getReserved() + pantryProductDTO.reserved());
+                        pantryProduct.setQuantity(pantryProduct.getQuantity() + pantryProductDTO.getQuantity());
+                        pantryProduct.setReserved(pantryProduct.getReserved() + pantryProductDTO.getReserved());
 
                         return pantryProduct;
                     }
@@ -223,7 +219,7 @@ public class PantryProductServiceImpl extends AbstractCookieService implements P
                 for (PantryProduct pantryProduct : pantryProducts) {
                     if (this.arePantryProductsEqual(pantryProduct, pantryProductDTO, product)) {
                         // if pantry products are equal, we are adding exact same pantry product, so we need to sum quantities
-                        pantryProduct.setQuantity(pantryProduct.getQuantity() + pantryProductDTO.quantity());
+                        pantryProduct.setQuantity(pantryProduct.getQuantity() + pantryProductDTO.getQuantity());
 
                         return pantryProduct;
                     }
@@ -235,9 +231,9 @@ public class PantryProductServiceImpl extends AbstractCookieService implements P
 
     private boolean arePantryProductsEqual(PantryProduct pantryProduct, PantryProductDTO pantryProductDTO, Product product) {
         return pantryProduct.getProduct().equals(product) &&
-                pantryProduct.getUnit() == pantryProductDTO.unit() &&
-                Objects.equals(pantryProduct.getPurchaseDate(), pantryProductDTO.purchaseDate()) &&
-                Objects.equals(pantryProduct.getExpirationDate(), pantryProductDTO.expirationDate()) &&
-                pantryProduct.getPlacement().equals(pantryProductDTO.placement());
+                pantryProduct.getUnit() == pantryProductDTO.getUnit() &&
+                Objects.equals(pantryProduct.getPurchaseDate(), pantryProductDTO.getPurchaseDate()) &&
+                Objects.equals(pantryProduct.getExpirationDate(), pantryProductDTO.getExpirationDate()) &&
+                pantryProduct.getPlacement().equals(pantryProductDTO.getPlacement());
     }
 }

@@ -10,6 +10,10 @@
     @include flex-with-gap;
     justify-content: space-between;
 
+    img {
+      height: 26px;
+    }
+
     button {
       font-weight: 600;
     }

@@ -21,15 +21,15 @@
       listProduct.purchased ? "Yes" : "No"
     }}</span>
 
-    <button mat-button [matMenuTriggerFor]="menu">
+    <button
+      mat-button
+      [matMenuTriggerFor]="menu"
+      *ngIf="userService.userHasAuthority(authorityEnum.MODIFY_SHOPPING_LIST)"
+    >
       <mat-icon>more_horiz</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
-      <button
-        mat-menu-item
-        (click)="editButtonClicked()"
-        *ngIf="userService.userHasAuthority(authorityEnum.MODIFY_SHOPPING_LIST)"
-      >
+      <button mat-menu-item (click)="editButtonClicked()">
         Edit list product
       </button>
     </mat-menu>

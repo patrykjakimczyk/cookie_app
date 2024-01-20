@@ -58,7 +58,6 @@ export class ShoppingListComponent implements OnInit {
     );
 
     changePantryNameDialog.afterClosed().subscribe((newListName: string) => {
-      console.log(newListName);
       this.shoppingListsService
         .updateShoppingList(this.shoppingList.id, {
           shoppingListName: newListName,

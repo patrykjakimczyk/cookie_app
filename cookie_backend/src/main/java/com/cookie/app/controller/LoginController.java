@@ -40,6 +40,7 @@ public class LoginController {
         if (response.duplicates().isEmpty()) {
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         }
+
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

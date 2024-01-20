@@ -16,7 +16,6 @@ import { PantryProductDTO } from './pantry/pantry-products-list/pantry-products-
 @Injectable({ providedIn: 'root' })
 export class PantriesService {
   private readonly url = 'http://localhost:8081/';
-  private readonly pantries_path = 'pantries';
   private readonly pantry_path = 'pantry';
   private readonly pantry_id_path = 'pantry/{id}';
   private readonly products_path = 'products';
@@ -31,9 +30,7 @@ export class PantriesService {
   }
 
   getAllUserPantries(): Observable<GetUserPantriesResponse> {
-    return this.http.get<GetUserPantriesResponse>(
-      this.url + this.pantries_path
-    );
+    return this.http.get<GetUserPantriesResponse>(this.url + this.pantry_path);
   }
 
   createUserPantry(

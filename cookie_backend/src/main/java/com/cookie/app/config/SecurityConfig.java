@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,25 +27,23 @@ import java.util.*;
 
 @RequiredArgsConstructor
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
     private static final String ROLE_PREFIX = "ROLE_";
     private final UserRepository userRepository;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
-        requestHandler.setCsrfRequestAttributeName("_csrf");
-
-//        CookieCsrfTokenRepository tokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
-//        XorCsrfTokenRequestAttributeHandler delegate = new XorCsrfTokenRequestAttributeHandler();
-//        // set the name of the attribute the CsrfToken will be populated on
-//        delegate.setCsrfRequestAttributeName("_csrf");
-//        // Use only the handle() method of XorCsrfTokenRequestAttributeHandler and the
-//        // default implementation of resolveCsrfTokenValue() from CsrfTokenRequestHandler
-//        CsrfTokenRequestHandler requestHandler = delegate::handle;
+//        CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
+//        requestHandler.setCsrfRequestAttributeName(null);
+        // https://docs.spring.io/spring-security/reference/5.8/migration/servlet/exploits.html#_i_am_using_angularjs_or_another_javascript_framework
+        XorCsrfTokenRequestAttributeHandler delegate = new XorCsrfTokenRequestAttributeHandler();
+        delegate.setCsrfRequestAttributeName(null);
+        // Use only the handle() method of XorCsrfTokenRequestAttributeHandler and the
+        // default implementation of resolveCsrfTokenValue() from CsrfTokenRequestHandler
+        CsrfTokenRequestHandler requestHandler = delegate::handle;
 
         http
-//                .securityContext(context -> context.requireExplicitSave(false))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors(corsConfigurer -> corsConfigurer.configurationSource(request -> {
                     CorsConfiguration configuration = new CorsConfiguration();
@@ -57,9 +56,11 @@ public class SecurityConfig {
                     return configuration;
                 }))
                 .csrf(csrfConfigurer -> csrfConfigurer
-                        .csrfTokenRequestHandler(requestHandler)
-                        .ignoringRequestMatchers("/register", "/pantry", "/pantry/**", "/product", "/group", "/group/**", "/shopping-list", "/shopping-list/**", "/shopping-lists/**", "/shopping-lists")
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        // used as a workaround for testing endpoints in swagger
+//                        .ignoringRequestMatchers("/register", "/pantry", "/pantry/**", "/product", "/group", "/group/**", "/shopping-list", "/shopping-list/**", "/shopping-lists/**", "/shopping-lists")
+                                .ignoringRequestMatchers("/register")
+                                .csrfTokenRequestHandler(requestHandler)
                 )
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 .addFilterAfter(new JwtValidatorFilter(), BasicAuthenticationFilter.class)
@@ -79,12 +80,6 @@ public class SecurityConfig {
 
         return http.build();
     }
-//
-//    private CsrfTokenRepository csrfTokenRepository() {
-//        HttpSessionCsrfTokenRepository repository = new HttpSessionCsrfTokenRepository();
-//        repository.setHeaderName("XSRF-TOKEN");
-//        return repository;
-//    }
 
     @Bean
     public UserDetailsService userDetailsService() {

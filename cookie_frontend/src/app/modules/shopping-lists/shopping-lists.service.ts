@@ -13,7 +13,6 @@ import {
 @Injectable({ providedIn: 'root' })
 export class ShoppingListsService {
   private readonly url = 'http://localhost:8081/';
-  private readonly shopping_lists_path = 'shopping-lists';
   private readonly shopping_list_path = 'shopping-list';
   private readonly shopping_list_id_path = 'shopping-list/{id}';
   private readonly list_products_path = '/products';
@@ -35,7 +34,7 @@ export class ShoppingListsService {
 
   getAllUserShoppingLists(): Observable<GetUserShoppingListsResponse> {
     return this.http.get<GetUserShoppingListsResponse>(
-      this.url + this.shopping_lists_path
+      this.url + this.shopping_list_path
     );
   }
 

@@ -33,7 +33,6 @@ import { ShoppingListsModule } from '../modules/shopping-lists/shopping-lists.mo
       cookieName: 'XSRF-TOKEN',
       headerName: 'X-XSRF-TOKEN',
     }),
-
     DashboardModule,
     LoginFormModule,
     RegistrationFormModule,

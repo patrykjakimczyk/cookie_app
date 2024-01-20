@@ -1,4 +1,5 @@
 @import "../../../../assets/styles/mixins";
+@import "../../../../assets/styles/colors";
 
 #content {
   mat-form-field {
@@ -12,6 +13,11 @@
     mat-error {
       font-size: 12px;
     }
+  }
+
+  #name-taken-error {
+    color: $error-color;
+    text-align: center;
   }
 }
 
