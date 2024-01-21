@@ -21,17 +21,17 @@ public class Group {
             allocationSize = 1
     )
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "group_sequence")
-    @Column(name = "id", insertable = false, updatable = false, unique = true, nullable = false)
+    @Column(insertable = false, updatable = false, unique = true, nullable = false)
     private long id;
 
-    @Column(name = "group_name", unique = true, nullable = false)
+    @Column(unique = true, nullable = false)
     private String groupName;
 
     @ManyToOne
     @JoinColumn(name = "creator_id", referencedColumnName = "id", nullable = false)
     private User creator;
 
-    @Column(name = "creation_date", nullable = false)
+    @Column(nullable = false)
     private Timestamp creationDate;
 
     @ManyToMany

@@ -10,7 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "pantry")
+@Table
 @Entity
 public class Pantry {
     @Id
@@ -20,7 +20,7 @@ public class Pantry {
             allocationSize = 1
     )
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pantry_sequence")
-    @Column(name = "id", insertable = false, updatable = false, unique = true, nullable = false)
+    @Column(insertable = false, updatable = false, unique = true, nullable = false)
     private long id;
 
     @Column(length = 30, nullable = false)

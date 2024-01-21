@@ -13,7 +13,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "authority")
+@Table
 @Entity
 public class Authority {
     @Id

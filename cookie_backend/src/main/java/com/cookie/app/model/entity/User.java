@@ -26,7 +26,7 @@ public class User {
             allocationSize = 1
     )
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
-    @Column(name = "id", insertable = false, updatable = false, unique = true, nullable = false)
+    @Column(insertable = false, updatable = false, unique = true, nullable = false)
     private long id;
 
     @Column(updatable = false, nullable = false)
@@ -45,10 +45,10 @@ public class User {
     @Column(nullable = false)
     private Boolean activated;
 
-    @Column(name = "creation_date", nullable = false)
+    @Column(nullable = false)
     private Timestamp creationDate;
 
-    @Column(name = "birth_date", nullable = false)
+    @Column(nullable = false)
     private Timestamp birthDate;
 
     @Column(length = 6, updatable = false)

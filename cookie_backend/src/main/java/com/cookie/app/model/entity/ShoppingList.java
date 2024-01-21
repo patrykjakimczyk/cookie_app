@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "shopping_list")
+@Table
 @Entity
 public class ShoppingList {
     @Id
@@ -23,10 +23,10 @@ public class ShoppingList {
             allocationSize = 1
     )
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "shopping_list_sequence")
-    @Column(name = "id", insertable = false, updatable = false, unique = true, nullable = false)
+    @Column(insertable = false, updatable = false, unique = true, nullable = false)
     private long id;
 
-    @Column(name = "list_name", length = 30, nullable = false)
+    @Column(length = 30, nullable = false)
     private String listName;
 
     @ManyToOne(fetch = FetchType.LAZY)

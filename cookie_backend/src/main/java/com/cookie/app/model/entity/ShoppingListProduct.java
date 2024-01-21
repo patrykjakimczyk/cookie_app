@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "shopping_list_product")
+@Table
 @Entity
 public class ShoppingListProduct {
     @Id

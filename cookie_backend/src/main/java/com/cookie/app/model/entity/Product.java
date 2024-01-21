@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "product")
+@Table
 @Entity
 public class Product {
     @Id
@@ -21,13 +21,13 @@ public class Product {
             allocationSize = 1
     )
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_sequence")
-    @Column(name = "id", insertable = false, updatable = false, unique = true, nullable = false)
+    @Column(insertable = false, updatable = false, unique = true, nullable = false)
     private long id;
 
-    @Column(name = "product_name", length = 50, nullable = false)
+    @Column(length = 50, nullable = false)
     private String productName;
 
-    @Column(name = "category", nullable = false)
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Category category;
 

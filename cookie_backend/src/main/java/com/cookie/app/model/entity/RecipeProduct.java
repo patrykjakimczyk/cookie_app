@@ -7,38 +7,26 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Table
 @Entity
-public class PantryProduct {
+public class RecipeProduct {
     @Id
     @SequenceGenerator(
-            name = "pantry_product_sequence",
-            sequenceName = "pantry_product_sequence",
+            name = "recipe_product_sequence",
+            sequenceName = "recipe_product_sequence",
             allocationSize = 1
     )
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pantry_product_sequence")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "recipe_product_sequence")
     @Column(insertable = false, updatable = false, unique = true, nullable = false)
     private long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pantry_id", referencedColumnName = "id")
-    private Pantry pantry;
 
     @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
-
-    @Column
-    private Timestamp purchaseDate;
-
-    @Column
-    private Timestamp expirationDate;
 
     @Column(nullable = false)
     private int quantity;
@@ -46,9 +34,7 @@ public class PantryProduct {
     @Column(nullable = false)
     private Unit unit;
 
-    @Column(nullable = false)
-    private int reserved;
-
-    @Column(length = 60)
-    private String placement;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recipe_id", referencedColumnName = "id")
+    private Recipe recipe;
 }
