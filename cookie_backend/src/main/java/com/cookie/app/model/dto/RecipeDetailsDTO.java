@@ -1,11 +1,14 @@
 package com.cookie.app.model.dto;
 
-public record RecipeDTO(
+import java.util.List;
+
+public record RecipeDetailsDTO(
         long id,
         String recipeName,
+        String preparation,
         int preparationTime,
         String cuisine,
         int portions,
-        String creatorUserName,
-        int nrOfProducts
+        String creatorName,
+        List<RecipeProductDTO> products
 ) {}
