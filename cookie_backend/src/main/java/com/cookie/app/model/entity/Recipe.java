@@ -41,10 +41,14 @@ public class Recipe {
     @Column(nullable = false)
     private int portions;
 
+    @Lob
+    @Column(length = 1000)
+    private byte[] recipeImage;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id", referencedColumnName = "id")
     private User creator;
 
-    @OneToMany(mappedBy = "recipe", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
     private List<RecipeProduct> recipeProducts;
 }

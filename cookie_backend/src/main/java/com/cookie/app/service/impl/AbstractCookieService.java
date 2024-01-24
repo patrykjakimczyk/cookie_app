@@ -109,7 +109,7 @@ public abstract class AbstractCookieService {
         return product;
     }
 
-    protected <T> boolean isAnyProductNotOnList(List<T> shoppingListProducts, List<T> productsToPerformAction) {
-        return !shoppingListProducts.containsAll(productsToPerformAction);
+    protected <T> boolean isAnyProductNotOnList(List<T> products, List<T> productsToPerformAction) {
+        return !products.containsAll(productsToPerformAction);
     }
 }

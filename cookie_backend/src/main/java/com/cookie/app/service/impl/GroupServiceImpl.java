@@ -118,7 +118,7 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
         Optional<Group> groupOptional = this.groupRepository.findById(groupId);
 
         if (groupOptional.isEmpty()) {
-            log.info(String.format("User: %s tried to modify group with does not exists", userEmail));
+            log.info(String.format("User: %s tried to modify group which does not exists", userEmail));
             throw new UserPerformedForbiddenActionException("Group does not exists");
         }
 
@@ -145,7 +145,7 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
         Optional<Group> groupOptional = this.groupRepository.findById(groupId);
 
         if (groupOptional.isEmpty()) {
-            log.info(String.format("User: %s tried to delete group with does not exists", userEmail));
+            log.info(String.format("User: %s tried to delete group which does not exists", userEmail));
             throw new UserPerformedForbiddenActionException("Group does not exists");
         }
 

@@ -6,6 +6,7 @@ public record RecipeDTO(
         int preparationTime,
         String cuisine,
         int portions,
+        byte[] recipeImage,
         String creatorUserName,
         int nrOfProducts
 ) {}

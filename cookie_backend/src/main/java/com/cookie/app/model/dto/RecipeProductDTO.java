@@ -4,7 +4,9 @@ import com.cookie.app.model.enums.Category;
 import com.cookie.app.model.enums.Unit;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
 
+@Getter
 public final class RecipeProductDTO extends ProductDTO {
     @NotNull(message = "Quantity must be present")
     @Min(value = 0, message = "Quantity must be equal or greater than 1")

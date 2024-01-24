@@ -58,8 +58,8 @@ public class SecurityConfig {
                 .csrf(csrfConfigurer -> csrfConfigurer
                                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                         // used as a workaround for testing endpoints in swagger
-//                        .ignoringRequestMatchers("/register", "/pantry", "/pantry/**", "/product", "/group", "/group/**", "/shopping-list", "/shopping-list/**", "/shopping-lists/**", "/shopping-lists")
-                                .ignoringRequestMatchers("/register")
+                        .ignoringRequestMatchers("/register", "/pantry", "/pantry/**", "/product", "/group", "/group/**", "/shopping-list", "/shopping-list/**", "/shopping-lists/**", "/shopping-lists", "/recipes", "/recipes/**")
+//                                .ignoringRequestMatchers("/register")
                                 .csrfTokenRequestHandler(requestHandler)
                 )
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
