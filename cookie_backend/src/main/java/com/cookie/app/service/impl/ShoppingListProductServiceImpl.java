@@ -23,6 +23,10 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional
@@ -46,7 +50,7 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
 
     @Override
     public Page<ShoppingListProductDTO> getShoppingListProducts(
-            long groupId,
+            long listId,
             int page,
             String filterValue,
             String sortColName,
@@ -54,7 +58,7 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
             String userEmail
     ) {
         User user = this.getUserByEmail(userEmail);
-        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(groupId, user, null);
+        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(listId, user, null);
 
         PageRequest pageRequest = this.createPageRequest(page, sortColName, sortDirection);
 
@@ -70,9 +74,9 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
     }
 
     @Override
-    public void addProductsToShoppingList(long groupId, List<ShoppingListProductDTO> productDTOList, String userEmail) {
+    public void addProductsToShoppingList(long listId, List<ShoppingListProductDTO> productDTOList, String userEmail) {
         User user = this.getUserByEmail(userEmail);
-        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(groupId, user, AuthorityEnum.ADD_TO_SHOPPING_LIST);
+        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(listId, user, AuthorityEnum.ADD_TO_SHOPPING_LIST);
 
         List<ShoppingListProduct> newShoppingListProducts = new ArrayList<>();
 
@@ -98,7 +102,7 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
     }
 
     @Override
-    public void removeProductsFromShoppingList(long groupId, List<Long> productIds, String userEmail) {
+    public void removeProductsFromShoppingList(long listId, List<Long> productIds, String userEmail) {
         productIds.stream()
                 .filter(id -> id == null || id == 0)
                 .findAny()
@@ -107,7 +111,7 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
                 });
 
         User user = this.getUserByEmail(userEmail);
-        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(groupId, user, AuthorityEnum.MODIFY_SHOPPING_LIST);
+        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(listId, user, AuthorityEnum.MODIFY_SHOPPING_LIST);
 
         if (this.isAnyProductNotOnList(shoppingList, productIds)) {
             log.info("User with email={} tried to remove products from different shopping list", userEmail);
@@ -122,14 +126,14 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
     }
 
     @Override
-    public void modifyShoppingListProduct(long groupId, ShoppingListProductDTO productDTO, String userEmail) {
+    public void modifyShoppingListProduct(long listId, ShoppingListProductDTO productDTO, String userEmail) {
         if (productDTO.getId() == 0) {
             log.info("User with email={} tried to modify product which is not saved in database", userEmail);
             throw new ValidationException("Cannot modify product because it doesn't exist");
         }
 
         User user = this.getUserByEmail(userEmail);
-        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(groupId, user, AuthorityEnum.MODIFY_SHOPPING_LIST);
+        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(listId, user, AuthorityEnum.MODIFY_SHOPPING_LIST);
 
         ShoppingListProduct productToModify = ShoppingListProduct
                 .builder()
@@ -153,7 +157,7 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
     }
 
     @Override
-    public void changePurchaseStatusForProducts(long groupId, List<Long> productIds, String userEmail) {
+    public void changePurchaseStatusForProducts(long listId, List<Long> productIds, String userEmail) {
         productIds.stream()
                 .filter(id -> id == null || id == 0)
                 .findAny()
@@ -162,7 +166,7 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
                 });
 
         User user = this.getUserByEmail(userEmail);
-        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(groupId, user, AuthorityEnum.MODIFY_SHOPPING_LIST);
+        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(listId, user, AuthorityEnum.MODIFY_SHOPPING_LIST);
 
         if (this.isAnyProductNotOnList(shoppingList, productIds)) {
             log.info("User with email={} tried to modify products from different shopping list", userEmail);
@@ -179,9 +183,9 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
     }
 
     @Override
-    public void transferProductsToPantry(long shoppingListId, String userEmail) {
+    public void transferProductsToPantry(long listId, String userEmail) {
         User user = this.getUserByEmail(userEmail);
-        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(shoppingListId, user, AuthorityEnum.MODIFY_SHOPPING_LIST);
+        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(listId, user, AuthorityEnum.MODIFY_SHOPPING_LIST);
         Pantry pantry = shoppingList.getGroup().getPantry();
 
         if (pantry == null) {
@@ -207,6 +211,49 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
                 shoppingList.getId());
         this.shoppingListProductRepository.deleteAll(purchasedProducts);
         this.pantryProductRepository.saveAll(newPantryProducts);
+    }
+
+    @Override
+    public List<ShoppingListProductDTO> addRecipeProductsToShoppingList(long listId, User user, List<RecipeProduct> recipeProducts) {
+        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(listId, user, AuthorityEnum.RESERVE);
+        List<ShoppingListProduct> addedProducts = new ArrayList<>();
+        Map<Long, RecipeProduct> recipeProductMap = recipeProducts
+                .stream()
+                .collect(Collectors.toMap(RecipeProduct::getId, Function.identity()));
+
+        for (ShoppingListProduct shoppingListProduct : shoppingList.getProductsList()) {
+            for (Map.Entry<Long, RecipeProduct> mapEntry : recipeProductMap.entrySet()) {
+                if (this.areRecipeAndListProductEquals(mapEntry.getValue(), shoppingListProduct)) {
+                    shoppingListProduct.setQuantity(shoppingListProduct.getQuantity() + mapEntry.getValue().getQuantity());
+                    recipeProductMap.remove(mapEntry.getKey());
+                    addedProducts.add(shoppingListProduct);
+                    break;
+                }
+            }
+        }
+
+        List<ShoppingListProduct> newListProducts = recipeProductMap.values().stream()
+                .map(recipeProduct -> ShoppingListProduct.builder()
+                        .shoppingList(shoppingList)
+                        .product(recipeProduct.getProduct())
+                        .quantity(recipeProduct.getQuantity())
+                        .unit(recipeProduct.getUnit())
+                        .purchased(false)
+                        .build())
+                .toList();
+
+        addedProducts.addAll(newListProducts);
+        this.shoppingListProductRepository.saveAll(addedProducts);
+
+        return addedProducts
+                .stream()
+                .map(this.shoppingListProductMapper::apply)
+                .toList();
+    }
+
+    private boolean areRecipeAndListProductEquals(RecipeProduct recipeProduct, ShoppingListProduct shoppingListProduct) {
+        return recipeProduct.getProduct().equals(shoppingListProduct.getProduct()) &&
+                recipeProduct.getUnit() == shoppingListProduct.getUnit();
     }
 
     private List<PantryProduct> mapListProductsToPantryProducts(List<ShoppingListProduct> purchasedProducts, Pantry pantry) {

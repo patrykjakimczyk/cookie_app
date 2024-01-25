@@ -12,4 +12,5 @@ public interface ShoppingListService {
     GetUserShoppingListsResponse getUserShoppingLists(String userEmail);
     DeleteShoppingListResponse deleteShoppingList(long shoppingListId, String userEmail);
     GetShoppingListResponse modifyShoppingList(long shoppingListId, UpdateShoppingListRequest request, String userEmail);
+
 }

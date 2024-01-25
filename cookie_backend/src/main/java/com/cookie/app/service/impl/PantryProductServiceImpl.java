@@ -1,10 +1,7 @@
 package com.cookie.app.service.impl;
 
 import com.cookie.app.exception.*;
-import com.cookie.app.model.entity.Pantry;
-import com.cookie.app.model.entity.PantryProduct;
-import com.cookie.app.model.entity.Product;
-import com.cookie.app.model.entity.ShoppingListProduct;
+import com.cookie.app.model.entity.*;
 import com.cookie.app.model.enums.AuthorityEnum;
 import com.cookie.app.model.mapper.AuthorityMapperDTO;
 import com.cookie.app.model.mapper.PantryProductMapperDTO;
@@ -20,9 +17,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional
@@ -150,6 +147,40 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
         this.pantryProductRepository.save(pantryProduct);
 
         return this.pantryProductMapper.apply(pantryProduct);
+    }
+
+    @Override
+    public List<PantryProductDTO> reservePantryProductsFromRecipe(long pantryId, User user, List<RecipeProduct> recipeProducts) {
+        Pantry pantry = this.getPantryIfUserHasAuthority(pantryId, user, AuthorityEnum.RESERVE);
+        List<PantryProduct> reservedProducts = new ArrayList<>();
+        Map<Long, RecipeProduct> recipeProductMap = recipeProducts
+                .stream()
+                .collect(Collectors.toMap(RecipeProduct::getId, Function.identity()));
+
+        for (PantryProduct pantryProduct : pantry.getPantryProducts()) {
+            for (Map.Entry<Long, RecipeProduct> mapEntry : recipeProductMap.entrySet()) {
+                if (this.canReserveRecipeProductInPantry(mapEntry.getValue(), pantryProduct)) {
+                    pantryProduct.setReserved(pantryProduct.getReserved() + mapEntry.getValue().getQuantity());
+                    pantryProduct.setQuantity(pantryProduct.getQuantity() - mapEntry.getValue().getQuantity());
+                    reservedProducts.add(pantryProduct);
+                    recipeProductMap.remove(mapEntry.getKey());
+                    break;
+                }
+            }
+        }
+
+        this.pantryProductRepository.saveAll(reservedProducts);
+
+        return reservedProducts
+                .stream()
+                .map(this.pantryProductMapper::apply)
+                .toList();
+    }
+
+    private boolean canReserveRecipeProductInPantry(RecipeProduct recipeProduct, PantryProduct pantryProduct) {
+        return recipeProduct.getProduct().equals(pantryProduct.getProduct()) &&
+                recipeProduct.getUnit() == pantryProduct.getUnit() &&
+                recipeProduct.getQuantity() <= pantryProduct.getQuantity();
     }
 
     private boolean isAnyProductNotOnList(Pantry pantry, List<Long> productIds) {

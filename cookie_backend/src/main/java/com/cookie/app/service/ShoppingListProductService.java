@@ -1,22 +1,25 @@
 package com.cookie.app.service;
 
 import com.cookie.app.model.dto.ShoppingListProductDTO;
+import com.cookie.app.model.entity.RecipeProduct;
+import com.cookie.app.model.entity.User;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface ShoppingListProductService {
     Page<ShoppingListProductDTO> getShoppingListProducts(
-            long groupId,
+            long listId,
             int page,
             String filterValue,
             String sortColName,
             String sortDirection,
             String userEmail
     );
-    void addProductsToShoppingList(long groupId, List<ShoppingListProductDTO> productDTOList, String userEmail);
-    void removeProductsFromShoppingList(long groupId, List<Long> productIds, String userEmail);
-    void modifyShoppingListProduct(long groupId, ShoppingListProductDTO productDTO, String userEmail);
-    void changePurchaseStatusForProducts(long groupId, List<Long> productIds, String userEmail);
-    void transferProductsToPantry(long shoppingListId, String userEmail);
+    void addProductsToShoppingList(long listId, List<ShoppingListProductDTO> productDTOList, String userEmail);
+    void removeProductsFromShoppingList(long listId, List<Long> productIds, String userEmail);
+    void modifyShoppingListProduct(long listId, ShoppingListProductDTO productDTO, String userEmail);
+    void changePurchaseStatusForProducts(long listId, List<Long> productIds, String userEmail);
+    void transferProductsToPantry(long listId, String userEmail);
+    List<ShoppingListProductDTO> addRecipeProductsToShoppingList(long listId, User user, List<RecipeProduct> recipeProducts);
 }

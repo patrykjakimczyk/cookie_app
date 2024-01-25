@@ -1,6 +1,8 @@
 package com.cookie.app.service;
 
 import com.cookie.app.model.dto.PantryProductDTO;
+import com.cookie.app.model.entity.RecipeProduct;
+import com.cookie.app.model.entity.User;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -18,4 +20,5 @@ public interface PantryProductService {
     void removeProductsFromPantry(long pantryId, List<Long> productIds, String userEmail);
     void modifyPantryProduct(long pantryId, PantryProductDTO pantryProduct, String userEmail);
     PantryProductDTO reservePantryProduct(long pantryId, long pantryProductId, int reserved, String userEmail);
+    List<PantryProductDTO> reservePantryProductsFromRecipe(long pantryId, User user, List<RecipeProduct> recipeProducts);
 }
