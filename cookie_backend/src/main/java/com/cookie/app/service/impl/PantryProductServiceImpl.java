@@ -159,7 +159,7 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
 
         for (PantryProduct pantryProduct : pantry.getPantryProducts()) {
             for (Map.Entry<Long, RecipeProduct> mapEntry : recipeProductMap.entrySet()) {
-                if (this.canReserveRecipeProductInPantry(mapEntry.getValue(), pantryProduct)) {
+                if (this.areRecipeAndPantryProductsEqual(mapEntry.getValue(), pantryProduct)) {
                     pantryProduct.setReserved(pantryProduct.getReserved() + mapEntry.getValue().getQuantity());
                     pantryProduct.setQuantity(pantryProduct.getQuantity() - mapEntry.getValue().getQuantity());
                     reservedProducts.add(pantryProduct);
@@ -177,7 +177,25 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
                 .toList();
     }
 
-    private boolean canReserveRecipeProductInPantry(RecipeProduct recipeProduct, PantryProduct pantryProduct) {
+    @Override
+    public List<RecipeProduct> getRecipeProductsNotInPantry(Pantry pantry, List<RecipeProduct> recipeProducts) {
+        Map<Long, RecipeProduct> recipeProductMap = recipeProducts
+                .stream()
+                .collect(Collectors.toMap(RecipeProduct::getId, Function.identity()));
+
+        for (PantryProduct pantryProduct : pantry.getPantryProducts()) {
+            for (Map.Entry<Long, RecipeProduct> mapEntry : recipeProductMap.entrySet()) {
+                if (this.areRecipeAndPantryProductsEqual(mapEntry.getValue(), pantryProduct)) {
+                    recipeProductMap.remove(mapEntry.getKey());
+                    break;
+                }
+            }
+        }
+
+        return (List<RecipeProduct>) recipeProductMap.values();
+    }
+
+    private boolean areRecipeAndPantryProductsEqual(RecipeProduct recipeProduct, PantryProduct pantryProduct) {
         return recipeProduct.getProduct().equals(pantryProduct.getProduct()) &&
                 recipeProduct.getUnit() == pantryProduct.getUnit() &&
                 recipeProduct.getQuantity() <= pantryProduct.getQuantity();

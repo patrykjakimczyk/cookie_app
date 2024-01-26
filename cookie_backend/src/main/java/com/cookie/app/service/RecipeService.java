@@ -14,6 +14,8 @@ public interface RecipeService {
     RecipeDetailsDTO getRecipeDetails(long recipeId);
     RecipeDetailsDTO createRecipe(String userEmail, RecipeDetailsDTO recipeDetailsDTO);
     void deleteRecipe(String userEmail, long recipeId);
+    RecipeDetailsDTO modifyRecipe(String userEmail, RecipeDetailsDTO recipeDetailsDTO);
     List<PantryProductDTO> reserveRecipeProductsInPantry(String userEmail, long recipeId, long pantryId);
-    List<ShoppingListProductDTO> addRecipeProductsToShoppingList(String userEmail, long recipeId, long listId);
+    List<ShoppingListProductDTO> addRecipeProductsToShoppingList(String userEmail, long recipeId, long listId, long groupId);
+
 }
