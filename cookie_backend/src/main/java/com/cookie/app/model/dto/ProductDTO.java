@@ -10,8 +10,8 @@ import lombok.Data;
 
 @Data
 public class ProductDTO {
-    @NotNull(message = "Shopping list product id must be present")
-    @Min(value = 0, message = "Shopping list product id must be equal or greater than 0")
+    @NotNull(message = "Product id must be present")
+    @Min(value = 0, message = "Product id must be equal or greater than 0")
     private final Long id;
 
     @Pattern(

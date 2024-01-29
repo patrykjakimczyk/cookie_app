@@ -91,4 +91,15 @@ public class RecipeController {
 
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
+
+    @SecurityRequirement(name = "bearerAuth")
+    @PatchMapping(RECIPES_URL)
+    public ResponseEntity<RecipeDetailsDTO> updateRecipe(
+            @RequestBody @Valid RecipeDetailsDTO recipe,
+            Authentication authentication
+    ) {
+        log.info("Performing recipe update by user with email {}", authentication.getName());
+
+        return ResponseEntity.status(HttpStatus.OK).body(this.recipeService.modifyRecipe(authentication.getName(), recipe));
+    }
 }

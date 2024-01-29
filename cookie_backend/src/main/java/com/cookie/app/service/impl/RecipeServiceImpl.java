@@ -20,9 +20,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -141,7 +141,6 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
             throw new UserPerformedForbiddenActionException("You did not create this recipe so you cannot delete it");
         }
 
-        // dodac modyfikowanie produktow
         modifyRecipe(recipe, recipeDetailsDTO);
         this.recipeRepository.save(recipe);
 
@@ -193,19 +192,65 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
         if (!recipe.getPreparation().equals(recipeDetailsDTO.preparation())) {
             recipe.setPreparation(recipeDetailsDTO.preparation());
         }
-        if (recipe.getPreparationTime() == recipeDetailsDTO.preparationTime()) {
+        if (recipe.getPreparationTime() != recipeDetailsDTO.preparationTime()) {
             recipe.setPreparationTime(recipeDetailsDTO.preparationTime());
         }
         if (!recipe.getCuisine().equals(recipeDetailsDTO.cuisine())) {
             recipe.setCuisine(recipeDetailsDTO.cuisine());
         }
-        if (recipe.getPortions() == recipeDetailsDTO.portions()) {
+        if (recipe.getPortions() != recipeDetailsDTO.portions()) {
             recipe.setPortions(recipeDetailsDTO.portions());
         }
         byte[] decompressedImage = ImageUtil.decompressImage(recipe.getRecipeImage());
         if (Arrays.equals(decompressedImage, recipeDetailsDTO.recipeImage())) {
             recipe.setRecipeImage(ImageUtil.compressImage(recipeDetailsDTO.recipeImage()));
         }
+
+        Map<Long, RecipeProductDTO> recipeProductDTOMap = recipeDetailsDTO.products()
+                .stream()
+                .filter(recipeProductDTO -> recipeProductDTO.getId() > 0)
+                .collect(Collectors.toMap(RecipeProductDTO::getId, Function.identity()));
+
+        for (RecipeProduct recipeProduct : recipe.getRecipeProducts()) {
+            if (!recipeProductDTOMap.containsKey(recipeProduct.getId())) {
+                recipe.getRecipeProducts().remove(recipeProduct);
+                continue;
+            }
+
+            RecipeProductDTO modifiedProduct = recipeProductDTOMap.get(recipeProduct.getId());
+            Optional<Product> productOptional = this.productRepository.findById(modifiedProduct.getId());
+            Product product = productOptional.orElse(
+                    Product.builder()
+                            .productName(modifiedProduct.getProductName())
+                            .category(modifiedProduct.getCategory())
+                            .build()
+            );
+
+            if (!recipeProduct.getProduct().equals(product)) {
+                recipeProduct.setProduct(product);
+            }
+            if (recipeProduct.getQuantity() != modifiedProduct.getQuantity()) {
+                recipeProduct.setQuantity(modifiedProduct.getQuantity());
+            }
+            if (recipeProduct.getUnit() !=  modifiedProduct.getUnit()) {
+                recipeProduct.setUnit(recipeProduct.getUnit());
+            }
+
+            recipeProductDTOMap.remove(recipeProduct.getId());
+        }
+
+        if (!recipeProductDTOMap.values().isEmpty()) {
+            log.info("User tried to modify recipe product from different recipe");
+            throw new UserPerformedForbiddenActionException("You tried to modify recipe product from different recipe");
+        }
+
+        List<RecipeProduct> addedProducts = recipeDetailsDTO.products()
+                .stream()
+                .filter(recipeProductDTO -> recipeProductDTO.getId() == 0)
+                .map(this::mapToRecipeProduct)
+                .toList();
+
+        recipe.getRecipeProducts().addAll(addedProducts);
     }
 
     private Recipe getRecipeById(long recipeId, String userEmail) {
