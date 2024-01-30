@@ -17,7 +17,7 @@ import {
 import { GetPantryResponse } from 'src/app/shared/model/responses/pantry-response';
 import { PantryProductCheckboxEvent } from './pantry-product-list-elem/pantry-product-list-elem.component';
 import { Unit, units } from 'src/app/shared/model/enums/unit.enum';
-import { Category, categories } from 'src/app/shared/model/enums/cateory-enum';
+import { Category, categories } from 'src/app/shared/model/enums/category-enum';
 import {
   pantrySortColumnNames,
   sortDirecitons,

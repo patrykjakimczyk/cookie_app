@@ -7,6 +7,7 @@
   <div id="header-buttons">
     <ng-container *ngIf="!isLogged">
       <button mat-button routerLink="">Home</button>
+      <button mat-button routerLink="/recipes">Recipes</button>
       <button mat-button routerLink="/login">Log in</button>
       <button mat-raised-button color="primary" routerLink="/registration">
         Sign in
@@ -20,6 +21,9 @@
         [routerLinkActiveOptions]="{ exact: true }"
       >
         Home
+      </button>
+      <button mat-button routerLink="/recipes" routerLinkActive="active-route">
+        Recipes
       </button>
       <button mat-button routerLink="/pantries" routerLinkActive="active-route">
         Pantry

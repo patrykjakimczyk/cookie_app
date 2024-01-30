@@ -1,0 +1,34 @@
+@import "../../../../assets/styles/mixins";
+@import "../../../../assets/styles/colors";
+
+mat-card {
+  padding: 10px 24px;
+
+  #header {
+    text-align: center;
+    font-size: 26px;
+
+    mat-icon {
+      position: relative;
+      top: 3px;
+      color: $main-color;
+    }
+  }
+
+  form {
+    @include flex-with-gap($direction: column, $gap: 10px);
+    margin-bottom: 20px;
+
+    mat-accordion {
+      margin-bottom: 6px;
+
+      mat-radio-group {
+        @include flex-with-gap($direction: column);
+      }
+    }
+
+    button {
+      margin-top: 10px;
+    }
+  }
+}

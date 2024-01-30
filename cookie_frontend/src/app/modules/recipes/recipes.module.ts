@@ -1,0 +1,44 @@
+import { BrowserModule } from '@angular/platform-browser';
+import { RecipesComponent } from './recipes.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatCardModule } from '@angular/material/card';
+import { NgModule } from '@angular/core';
+import { RecipesSidePanelComponent } from './recipes-side-panel/recipes-side-panel.component';
+import { MatSelectModule } from '@angular/material/select';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatExpansionModule } from '@angular/material/expansion';
+
+@NgModule({
+  declarations: [RecipesComponent, RecipesSidePanelComponent],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    FormsModule,
+    RouterModule,
+    ReactiveFormsModule,
+
+    SharedModule,
+
+    MatButtonModule,
+    MatDividerModule,
+    MatCardModule,
+    MatInputModule,
+    MatIconModule,
+    MatCheckboxModule,
+    MatPaginatorModule,
+    MatSelectModule,
+    MatRadioModule,
+    MatExpansionModule,
+  ],
+  exports: [RecipesComponent],
+})
+export class RecipesModule {}

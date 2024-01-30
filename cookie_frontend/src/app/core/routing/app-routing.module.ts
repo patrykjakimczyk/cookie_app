@@ -13,6 +13,7 @@ import { PantryComponent } from 'src/app/modules/pantries/pantry/pantry.componen
 import { ShoppingListsComponent } from 'src/app/modules/shopping-lists/shopping-lists.component';
 import { ShoppingListComponent } from 'src/app/modules/shopping-lists/shopping-list/shopping-list.component';
 import { CreateShoppingListComponent } from 'src/app/modules/shopping-lists/shopping-list/create-shopping-list/create-shopping-list.component';
+import { RecipesComponent } from 'src/app/modules/recipes/recipes.component';
 
 const routes: Routes = [
   {
@@ -83,6 +84,10 @@ const routes: Routes = [
         component: ShoppingListComponent,
       },
     ],
+  },
+  {
+    path: 'recipes',
+    component: RecipesComponent,
   },
 ];
 

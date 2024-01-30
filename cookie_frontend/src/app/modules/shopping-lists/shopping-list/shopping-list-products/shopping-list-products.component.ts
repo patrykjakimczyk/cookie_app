@@ -22,7 +22,7 @@ import { AuthorityEnum } from 'src/app/shared/model/enums/authority-enum';
 import { PageEvent } from '@angular/material/paginator';
 import { Unit, units } from 'src/app/shared/model/enums/unit.enum';
 import { ProductDTO } from 'src/app/shared/model/types/pantry-types';
-import { categories } from 'src/app/shared/model/enums/cateory-enum';
+import { categories } from 'src/app/shared/model/enums/category-enum';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationPopupComponent } from 'src/app/shared/components/confirmation-popup/confirmation-popup.component';
 import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
