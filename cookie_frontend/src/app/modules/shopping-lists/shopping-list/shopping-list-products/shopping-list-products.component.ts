@@ -15,7 +15,7 @@ import {
 } from '@angular/forms';
 import {
   shoppingListSortColumnNames,
-  sortDirecitons,
+  sortDirections,
 } from 'src/app/shared/model/enums/sort-enum';
 import { UserService } from 'src/app/shared/services/user-service';
 import { AuthorityEnum } from 'src/app/shared/model/enums/authority-enum';
@@ -44,7 +44,7 @@ export class ShoppingListProductsComponent implements OnInit {
   public products: ShoppingListProductDTO[] = [];
   public showAddProducts = false;
   public sortColumnNames = shoppingListSortColumnNames;
-  public sortDirecitons = sortDirecitons;
+  public sortDirecitons = sortDirections;
   public productsIdsForAction: number[] = [];
   public productsToAdd: ShoppingListProductDTO[] = [];
   public productsToAddIdsToRemove: number[] = [];

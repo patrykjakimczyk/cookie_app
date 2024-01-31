@@ -20,7 +20,7 @@ import { Unit, units } from 'src/app/shared/model/enums/unit.enum';
 import { Category, categories } from 'src/app/shared/model/enums/category-enum';
 import {
   pantrySortColumnNames,
-  sortDirecitons,
+  sortDirections,
 } from 'src/app/shared/model/enums/sort-enum';
 import { PantriesService } from '../../pantries.service';
 import { UserService } from 'src/app/shared/services/user-service';
@@ -63,7 +63,7 @@ export class PantryProductsListComponent {
   public productsToAddCurrPage: PantryProductDTO[] = [];
   public productsToAddIdsToRemove: number[] = [];
   public sortColumnNames = pantrySortColumnNames;
-  public sortDirecitons = sortDirecitons;
+  public sortDirecitons = sortDirections;
   public productsIdsToRemove: number[] = [];
   public units = units;
   public categories = categories;

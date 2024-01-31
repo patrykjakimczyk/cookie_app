@@ -6,7 +6,5 @@
   @if $direction == column {
     flex-direction: column;
   }
-  @if $gap > 0px {
-    gap: $gap;
-  }
+  gap: $gap;
 }

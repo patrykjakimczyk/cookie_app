@@ -5,6 +5,7 @@ import com.cookie.app.model.dto.RecipeDetailsDTO;
 import com.cookie.app.service.RecipeService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class RecipeController {
     private static final String RECIPES_URL = "/recipes";
     private static final String RECIPES_ID_URL = "/recipes/{id}";
-    private static final String GET_RECIPES_URL = "/recipes/{page}";
+    private static final String GET_RECIPES_URL = "/recipes/page/{page}";
     private static final String GET_USER_RECIPES_URL = "/recipes/user-recipes/{page}";
     private final RecipeService recipeService;
 
@@ -31,8 +32,8 @@ public class RecipeController {
     public ResponseEntity<Page<RecipeDTO>> getRecipes(
             @PathVariable(value = "page") @Valid @Min(value = 0, message = "Page nr must be at least 0") int page,
             @RequestParam String filterValue,
-            @RequestParam @Valid @Size(max = 2880, message = "Preparation time must be between 0 and 2880 minutes") int prepTime,
-            @RequestParam @Valid @Size(max = 12, message = "Nr of portions must be between 0 and 12") int portions,
+            @RequestParam @Valid @Max(value = 2880, message = "Preparation time must be between 0 and 2880 minutes") int prepTime,
+            @RequestParam @Valid @Max(value = 12, message = "Nr of portions must be between 0 and 12") int portions,
             @RequestParam String sortColName,
             @RequestParam String sortDirection
     ) {

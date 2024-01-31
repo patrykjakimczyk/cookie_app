@@ -30,7 +30,7 @@ export enum SortDirection {
   ASCENDING = 'ASC',
 }
 
-export const sortDirecitons = [
+export const sortDirections = [
   { name: 'Descending', value: SortDirection.DESCENDING },
   { name: 'Ascending', value: SortDirection.ASCENDING },
 ];

@@ -44,7 +44,6 @@ public class ImageUtil {
         try {
             Objects.requireNonNull(data);
         } catch (NullPointerException e) {
-            log.info("Decompressing  image failed because image data is null. Returning empty byte array", e);
             return new byte[0];
         }
 

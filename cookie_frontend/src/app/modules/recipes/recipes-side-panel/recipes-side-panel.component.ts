@@ -4,10 +4,11 @@ import {
 } from 'src/app/shared/model/constants/recipes.constants';
 import {
   recipeSortColumnNames,
-  sortDirecitons,
+  sortDirections,
 } from './../../../shared/model/enums/sort-enum';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { GetRecipesParams } from 'src/app/shared/model/types/recipes-types';
 
 @Component({
   selector: 'app-recipes-side-panel',
@@ -15,9 +16,9 @@ import { FormBuilder, FormGroup } from '@angular/forms';
   styleUrls: ['./recipes-side-panel.component.scss'],
 })
 export class RecipesSidePanelComponent implements OnInit {
-  @Output() filterRequest = new EventEmitter<any>();
+  @Output() filterRequest = new EventEmitter<GetRecipesParams>();
   protected sortColumnNames = recipeSortColumnNames;
-  protected sortDirecitons = sortDirecitons;
+  protected sortDirections = sortDirections;
   protected prepTimes = maxPrepTimes;
   protected portions = portions;
   protected filterForm: FormGroup;
@@ -29,7 +30,19 @@ export class RecipesSidePanelComponent implements OnInit {
   ngOnInit(): void {}
 
   formSubmitted() {
-    console.log(this.filterForm.value);
+    const params: GetRecipesParams = {
+      filterValue: this.filterForm.controls['filterValue'].value!,
+      prepTime: this.filterForm.controls['prepTime'].value!,
+      portions: this.filterForm.controls['portions'].value!,
+      sortColName: this.filterForm.controls['sortColName'].value!,
+      sortDirection: this.filterForm.controls['SortDirection'].value!,
+    };
+
+    this.filterRequest.emit(params);
+  }
+
+  resetFilters() {
+    this.filterForm = this.createFilterForm();
   }
 
   private createFilterForm() {

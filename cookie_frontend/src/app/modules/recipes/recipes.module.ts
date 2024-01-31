@@ -16,9 +16,12 @@ import { RecipesSidePanelComponent } from './recipes-side-panel/recipes-side-pan
 import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTabsModule } from '@angular/material/tabs';
+import { RecipesListComponent } from './recipes-list/recipes-list.component';
+import { RecipeTileComponent } from './recipes-list/recipe-tile/recipe-tile.component';
 
 @NgModule({
-  declarations: [RecipesComponent, RecipesSidePanelComponent],
+  declarations: [RecipesComponent, RecipesSidePanelComponent, RecipesListComponent, RecipeTileComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -38,6 +41,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
     MatSelectModule,
     MatRadioModule,
     MatExpansionModule,
+    MatTabsModule,
   ],
   exports: [RecipesComponent],
 })

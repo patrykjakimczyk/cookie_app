@@ -1,0 +1,16 @@
+@import "../../../../assets/styles/mixins";
+
+#list-container {
+  width: 100%;
+
+  #tiles-container {
+    @include flex-with-gap($gap: 2%);
+    margin-bottom: 20px;
+    row-gap: 20px;
+    flex-wrap: wrap;
+
+    & > * {
+      flex: 0 0 32%;
+    }
+  }
+}

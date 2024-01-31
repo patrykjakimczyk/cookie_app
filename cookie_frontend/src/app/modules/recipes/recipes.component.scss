@@ -3,11 +3,25 @@
 #main-container {
   @include flex-with-gap($direction: column);
 
+  #upper-container {
+    @include flex-with-gap;
+    justify-content: space-between;
+
+    h1 {
+      margin: 0px;
+    }
+  }
+
   #recipes-container {
     @include flex-with-gap($gap: 40px);
+    margin-top: 40px;
 
     *:first-child {
       width: 20%;
+    }
+
+    *:nth-child(2) {
+      width: 80%;
     }
   }
 }

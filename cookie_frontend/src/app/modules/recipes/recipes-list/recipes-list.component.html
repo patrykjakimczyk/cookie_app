@@ -1,0 +1,19 @@
+<div id="list-container">
+  <div *ngIf="getRecipesClient.recipes.length > 0">
+    <div id="tiles-container">
+      <ng-container *ngFor="let recipe of getRecipesClient.recipes">
+        <app-recipe-tile [recipe]="recipe"></app-recipe-tile>
+      </ng-container>
+    </div>
+
+    <mat-paginator
+      [length]="getRecipesClient.totalElements"
+      [pageSize]="getRecipesClient.page_size"
+      aria-label="Select page"
+      (page)="pageChange($event)"
+      [pageIndex]="getRecipesClient.page"
+      color="accent"
+    >
+    </mat-paginator>
+  </div>
+</div>

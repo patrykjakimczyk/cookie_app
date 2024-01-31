@@ -1,8 +1,29 @@
 <div id="main-container">
   <div id="upper-container">
     <h1>Recipes</h1>
+    <button mat-raised-button>Create recipe</button>
   </div>
-  <div id="recipes-container">
-    <app-recipes-side-panel></app-recipes-side-panel>
-  </div>
+
+  <mat-tab-group>
+    <mat-tab label="All recipes">
+      <div id="recipes-container">
+        <app-recipes-side-panel
+          (filterRequest)="allRecipes.getRecipes($event)"
+        ></app-recipes-side-panel>
+        <app-recipes-list
+          #allRecipes
+          [getRecipesClient]="getAllRecipesClient"
+        ></app-recipes-list>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Your recipes">
+      <div id="recipes-container">
+        <!-- <app-recipes-side-panel
+          (filterRequest)="yourRecipes.getRecipes($event)"
+        ></app-recipes-side-panel>
+        <app-recipes-list #yourRecipes></app-recipes-list> -->
+      </div>
+    </mat-tab>
+  </mat-tab-group>
 </div>

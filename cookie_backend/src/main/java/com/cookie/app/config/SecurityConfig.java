@@ -66,7 +66,7 @@ public class SecurityConfig {
                 .addFilterAfter(new JwtValidatorFilter(), BasicAuthenticationFilter.class)
                 .addFilterAfter(new JwtGeneratorFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/register").permitAll()
+                        .requestMatchers("/register", "/recipes/page/**").permitAll()
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/configuration/ui",

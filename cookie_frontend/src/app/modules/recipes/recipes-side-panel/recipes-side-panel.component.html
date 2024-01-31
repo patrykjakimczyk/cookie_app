@@ -35,7 +35,7 @@
       </mat-expansion-panel>
     </mat-accordion>
     <mat-form-field color="accent">
-      <mat-label>Choose column to sort</mat-label>
+      <mat-label>Sort by</mat-label>
       <mat-select formControlName="sortColName">
         <mat-option
           *ngFor="let columnName of sortColumnNames"
@@ -45,16 +45,19 @@
       </mat-select>
     </mat-form-field>
     <mat-form-field color="accent">
-      <mat-label>Choose sort direction</mat-label>
-      <mat-select formControlName="sortDirection">
+      <mat-label>Sort direction</mat-label>
+      <mat-select formControlName="SortDirection">
         <mat-option
-          *ngFor="let sortDireciton of sortDirecitons"
+          *ngFor="let sortDireciton of sortDirections"
           [value]="sortDireciton.value"
           >{{ sortDireciton.name }}</mat-option
         >
       </mat-select>
     </mat-form-field>
 
+    <button mat-button id="reset-button" (click)="resetFilters()">
+      Reset filters
+    </button>
     <button mat-raised-button color="primary">Search</button>
   </form>
 </mat-card>
