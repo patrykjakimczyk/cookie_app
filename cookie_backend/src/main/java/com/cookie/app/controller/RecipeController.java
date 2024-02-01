@@ -32,8 +32,10 @@ public class RecipeController {
     public ResponseEntity<Page<RecipeDTO>> getRecipes(
             @PathVariable(value = "page") @Valid @Min(value = 0, message = "Page nr must be at least 0") int page,
             @RequestParam String filterValue,
-            @RequestParam @Valid @Max(value = 2880, message = "Preparation time must be between 0 and 2880 minutes") int prepTime,
-            @RequestParam @Valid @Max(value = 12, message = "Nr of portions must be between 0 and 12") int portions,
+            @RequestParam @Valid @Min(value = 0, message = "Preparation be at least 0")
+            @Max(value = 2880, message = "Preparation time must be lower or equals 2880 minutes") int prepTime,
+            @RequestParam @Valid @Min(value = 0, message = "Nr of portions must be at least 0")
+            @Max(value = 12, message = "Nr of portions must be lower or equals 12") int portions,
             @RequestParam String sortColName,
             @RequestParam String sortDirection
     ) {
@@ -47,8 +49,10 @@ public class RecipeController {
     public ResponseEntity<Page<RecipeDTO>> getUserRecipes(
             @PathVariable(value = "page") @Valid @Min(value = 0, message = "Page nr must be at least 0") int page,
             @RequestParam String filterValue,
-            @RequestParam @Valid @Size(min = 5, max = 2880, message = "Preparation time must be between 5 and 2880 minutes") int prepTime,
-            @RequestParam @Valid @Size(min = 1, max = 12, message = "Nr of portions must be between 1 and 12") int portions,
+            @RequestParam @Valid @Min(value = 0, message = "Preparation be at least 0")
+            @Max(value = 2880, message = "Preparation time must be lower or equals 2880 minutes") int prepTime,
+            @RequestParam @Valid @Min(value = 0, message = "Nr of portions must be at least 0")
+            @Max(value = 12, message = "Nr of portions must be lower or equals 12") int portions,
             @RequestParam String sortColName,
             @RequestParam String sortDirection,
             Authentication authentication

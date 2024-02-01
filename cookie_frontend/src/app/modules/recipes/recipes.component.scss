@@ -1,7 +1,8 @@
 @import "../../../assets/styles/mixins";
+@import "../../../assets/styles/colors";
 
 #main-container {
-  @include flex-with-gap($direction: column);
+  @include flex-with-gap($direction: column, $gap: 20px);
 
   #upper-container {
     @include flex-with-gap;
@@ -24,4 +25,14 @@
       width: 80%;
     }
   }
+}
+
+::ng-deep .mdc-tab.mdc-tab {
+  background-color: white !important;
+  color: black;
+  font-weight: 500;
+}
+
+::ng-deep .mdc-tab.mdc-tab:hover {
+  background-color: darken($color: white, $amount: 3) !important;
 }

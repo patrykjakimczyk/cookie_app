@@ -1,0 +1,52 @@
+@import "../../../../../assets/styles/mixins";
+
+mat-card {
+  width: 100%;
+  padding: 15px 20px;
+
+  #image-container {
+    padding: 20px 0px;
+    margin: auto;
+
+    img {
+      width: 150px;
+      height: auto;
+    }
+  }
+
+  #info-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+
+    mat-divider {
+      grid-column: span 2;
+    }
+
+    .header-and-value-container {
+      @include flex-with-gap($direction: column, $gap: 5px);
+
+      & > p {
+        margin: 0px;
+        word-break: break-all;
+      }
+
+      & > *:first-child {
+        font-size: 12px;
+      }
+
+      & > *:nth-child(2) {
+        font-weight: 500;
+      }
+    }
+
+    .spanned-columns {
+      grid-column: span 2;
+
+      & > *:nth-child(2) {
+        font-weight: 500;
+        font-size: 20px;
+      }
+    }
+  }
+}

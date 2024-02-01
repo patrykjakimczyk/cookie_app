@@ -4,26 +4,43 @@
     <button mat-raised-button>Create recipe</button>
   </div>
 
-  <mat-tab-group>
-    <mat-tab label="All recipes">
-      <div id="recipes-container">
-        <app-recipes-side-panel
-          (filterRequest)="allRecipes.getRecipes($event)"
-        ></app-recipes-side-panel>
-        <app-recipes-list
-          #allRecipes
-          [getRecipesClient]="getAllRecipesClient"
-        ></app-recipes-list>
-      </div>
-    </mat-tab>
+  <div id="tabs-container">
+    <div id="recipes-container" *ngIf="!shouldDisplayAllTabs()">
+      <app-recipes-side-panel
+        (filterRequest)="allRecipes.getRecipes($event)"
+      ></app-recipes-side-panel>
+      <app-recipes-list
+        #allRecipes
+        [getRecipesClient]="getAllRecipesClient"
+      ></app-recipes-list>
+    </div>
 
-    <mat-tab label="Your recipes">
-      <div id="recipes-container">
-        <!-- <app-recipes-side-panel
-          (filterRequest)="yourRecipes.getRecipes($event)"
-        ></app-recipes-side-panel>
-        <app-recipes-list #yourRecipes></app-recipes-list> -->
-      </div>
-    </mat-tab>
-  </mat-tab-group>
+    <mat-tab-group *ngIf="shouldDisplayAllTabs()">
+      <mat-tab label="All recipes">
+        <div id="recipes-container">
+          <app-recipes-side-panel
+            (filterRequest)="allRecipes.getRecipes($event)"
+          ></app-recipes-side-panel>
+
+          <app-recipes-list
+            #allRecipes
+            [getRecipesClient]="getAllRecipesClient"
+          ></app-recipes-list>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Your recipes">
+        <div id="recipes-container">
+          <app-recipes-side-panel
+            (filterRequest)="yourRecipes.getRecipes($event)"
+          ></app-recipes-side-panel>
+
+          <app-recipes-list
+            #yourRecipes
+            [getRecipesClient]="getUserRecipesClient"
+          ></app-recipes-list>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
 </div>

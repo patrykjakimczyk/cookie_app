@@ -21,6 +21,12 @@ export class UserService {
     }
   }
 
+  isUserLogged(): boolean {
+    return (
+      this.user.getValue().email !== undefined && this.user.getValue().auth
+    );
+  }
+
   saveUser(user: User) {
     window.sessionStorage.setItem('user', JSON.stringify(user));
     this.user.next(user);

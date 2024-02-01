@@ -1,13 +1,44 @@
 <mat-card>
-  <p>{{ recipe.recipeName }}</p>
-  <mat-divider></mat-divider>
-  <p>Cuisine: {{ recipe.cuisine }}</p>
-  <mat-divider></mat-divider>
-  <p>Preparation Time: {{ recipe.preparationTime }}</p>
-  <mat-divider></mat-divider>
-  <p>Portions: {{ recipe.portions }}</p>
-  <mat-divider></mat-divider>
-  <p>Nr of products: {{ recipe.nrOfProducts }}</p>
-  <mat-divider></mat-divider>
-  <p>Creator: {{ recipe.creatorUserName }}</p>
+  <div id="image-container">
+    <img
+      src="../../../../../assets/img/no-image-icon-23500.jpg"
+      alt="no image"
+    />
+  </div>
+
+  <div id="info-container">
+    <div class="header-and-value-container spanned-columns">
+      <p>Recipe name:&nbsp;</p>
+      <p>{{ recipe.recipeName }}</p>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="header-and-value-container spanned-columns">
+      <p>Cuisine:&nbsp;</p>
+      <p>{{ recipe.cuisine }}</p>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="header-and-value-container">
+      <p>Preparation Time:&nbsp;</p>
+      <p>{{ recipe.preparationTime }}</p>
+    </div>
+    <div class="header-and-value-container">
+      <p>Portions:&nbsp;</p>
+      <p>{{ recipe.portions }}</p>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="header-and-value-container">
+      <p>Nr of products:&nbsp;</p>
+      <p>{{ recipe.nrOfProducts }}</p>
+    </div>
+    <div class="header-and-value-container">
+      <p>Creator:&nbsp;</p>
+      <p>{{ recipe.creatorUserName }}</p>
+    </div>
+  </div>
 </mat-card>

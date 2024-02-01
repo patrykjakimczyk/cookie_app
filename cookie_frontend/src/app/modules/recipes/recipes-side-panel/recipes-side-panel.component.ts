@@ -6,7 +6,13 @@ import {
   recipeSortColumnNames,
   sortDirections,
 } from './../../../shared/model/enums/sort-enum';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { GetRecipesParams } from 'src/app/shared/model/types/recipes-types';
 
@@ -15,7 +21,7 @@ import { GetRecipesParams } from 'src/app/shared/model/types/recipes-types';
   templateUrl: './recipes-side-panel.component.html',
   styleUrls: ['./recipes-side-panel.component.scss'],
 })
-export class RecipesSidePanelComponent implements OnInit {
+export class RecipesSidePanelComponent implements AfterViewInit {
   @Output() filterRequest = new EventEmitter<GetRecipesParams>();
   protected sortColumnNames = recipeSortColumnNames;
   protected sortDirections = sortDirections;
@@ -27,7 +33,9 @@ export class RecipesSidePanelComponent implements OnInit {
     this.filterForm = this.createFilterForm();
   }
 
-  ngOnInit(): void {}
+  ngAfterViewInit(): void {
+    this.formSubmitted();
+  }
 
   formSubmitted() {
     const params: GetRecipesParams = {

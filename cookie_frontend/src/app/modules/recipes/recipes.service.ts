@@ -10,12 +10,36 @@ import {
 export class RecipesService {
   private readonly url = 'http://localhost:8081/';
   private readonly recipes_page_path = 'recipes/page/{page}';
+  private readonly user_recipes_page_path = 'recipes/user-recipes/{page}';
 
   constructor(private http: HttpClient) {}
 
-  getRecipes(
+  getAllRecipes(
     page: number,
     filterValues: GetRecipesParams
+  ): Observable<RecipeDTO[]> {
+    return this.getRecipes(
+      page,
+      filterValues,
+      this.url + this.recipes_page_path.replace('{page}', page.toString())
+    );
+  }
+
+  getUserRecipes(
+    page: number,
+    filterValues: GetRecipesParams
+  ): Observable<RecipeDTO[]> {
+    return this.getRecipes(
+      page,
+      filterValues,
+      this.url + this.user_recipes_page_path.replace('{page}', page.toString())
+    );
+  }
+
+  private getRecipes(
+    page: number,
+    filterValues: GetRecipesParams,
+    path: string
   ): Observable<RecipeDTO[]> {
     let params = new HttpParams();
 
@@ -27,9 +51,6 @@ export class RecipesService {
       .append('sortDirection', filterValues.sortDirection);
     console.log(page);
 
-    return this.http.get<RecipeDTO[]>(
-      this.url + this.recipes_page_path.replace('{page}', page.toString()),
-      { params: params }
-    );
+    return this.http.get<RecipeDTO[]>(path, { params: params });
   }
 }

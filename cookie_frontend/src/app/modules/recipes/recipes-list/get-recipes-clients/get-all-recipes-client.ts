@@ -1,10 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 import { GetRecipesClient } from './abstract-get-recipes-client';
-import {
-  GetRecipesParams,
-  RecipeDTO,
-} from 'src/app/shared/model/types/recipes-types';
-import { Observable } from 'rxjs';
+import { GetRecipesParams } from 'src/app/shared/model/types/recipes-types';
 
 @Injectable({ providedIn: 'root' })
 export class GetAllRecipesClient extends GetRecipesClient {
@@ -13,7 +9,7 @@ export class GetAllRecipesClient extends GetRecipesClient {
   }
 
   override getRecipes(params: GetRecipesParams): void {
-    this.recipesService.getRecipes(this.page, params).subscribe({
+    this.recipesService.getAllRecipes(this.page, params).subscribe({
       next: (recipes: any) => {
         this.saveResponseData(recipes);
       },
