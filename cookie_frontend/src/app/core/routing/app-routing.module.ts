@@ -14,6 +14,7 @@ import { ShoppingListsComponent } from 'src/app/modules/shopping-lists/shopping-
 import { ShoppingListComponent } from 'src/app/modules/shopping-lists/shopping-list/shopping-list.component';
 import { CreateShoppingListComponent } from 'src/app/modules/shopping-lists/shopping-list/create-shopping-list/create-shopping-list.component';
 import { RecipesComponent } from 'src/app/modules/recipes/recipes.component';
+import { RecipeDetailsComponent } from 'src/app/modules/recipes/recipe-details/recipe-details.component';
 
 const routes: Routes = [
   {
@@ -88,6 +89,15 @@ const routes: Routes = [
   {
     path: 'recipes',
     component: RecipesComponent,
+  },
+  {
+    path: 'recipes',
+    children: [
+      {
+        path: ':id',
+        component: RecipeDetailsComponent,
+      },
+    ],
   },
 ];
 

@@ -1,6 +1,7 @@
 @import "../../../../assets/styles/mixins";
 
 #list-container {
+  height: 100%;
   width: 100%;
 
   #tiles-container {
@@ -12,5 +13,28 @@
     & > * {
       flex: 0 0 32%;
     }
+  }
+}
+
+#no-recipes-card {
+  @include flex-with-gap($align: center);
+  justify-content: center;
+  height: 100%;
+  font-size: 20px;
+
+  mat-icon {
+    width: 100px;
+    height: auto;
+    font-size: 100px;
+    margin-bottom: 15px;
+  }
+
+  p {
+    margin: 5px;
+    font-size: 20px;
+  }
+
+  #header {
+    font-size: 26px;
   }
 }

@@ -1,5 +1,5 @@
 <div id="list-container">
-  <div *ngIf="getRecipesClient.recipes.length > 0">
+  <div *ngIf="getRecipesClient.recipes.length > 0; else noRecipes">
     <div id="tiles-container">
       <ng-container *ngFor="let recipe of getRecipesClient.recipes">
         <app-recipe-tile [recipe]="recipe"></app-recipe-tile>
@@ -17,3 +17,11 @@
     </mat-paginator>
   </div>
 </div>
+
+<ng-template #noRecipes>
+  <mat-card id="no-recipes-card">
+    <mat-icon>sentiment_very_dissatisfied</mat-icon>
+    <p id="header">No recipes were found</p>
+    <p>Try changing your filter settings</p>
+  </mat-card>
+</ng-template>

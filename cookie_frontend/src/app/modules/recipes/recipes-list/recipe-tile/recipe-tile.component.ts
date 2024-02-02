@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
 import { RecipeDTO } from 'src/app/shared/model/types/recipes-types';
 
 @Component({
@@ -8,4 +9,10 @@ import { RecipeDTO } from 'src/app/shared/model/types/recipes-types';
 })
 export class RecipeTileComponent {
   @Input() recipe!: RecipeDTO;
+
+  constructor(private router: Router) {}
+
+  goToRecipeDetails() {
+    this.router.navigate(['/recipes/' + this.recipe.id]);
+  }
 }

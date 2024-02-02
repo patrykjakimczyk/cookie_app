@@ -26,10 +26,10 @@ export class AuthGuard {
 
         return false;
       } else {
-        if (state.url === '/pantry/create' && user.assignedPantry) {
-          this.router.navigate(['/']);
-          return false;
-        }
+        // if (state.url) {
+        //   this.router.navigate(['/']);
+        //   return false;
+        // }
         return true;
       }
     } else {

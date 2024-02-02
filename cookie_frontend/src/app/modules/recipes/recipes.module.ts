@@ -19,9 +19,16 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTabsModule } from '@angular/material/tabs';
 import { RecipesListComponent } from './recipes-list/recipes-list.component';
 import { RecipeTileComponent } from './recipes-list/recipe-tile/recipe-tile.component';
+import { RecipeDetailsComponent } from './recipe-details/recipe-details.component';
 
 @NgModule({
-  declarations: [RecipesComponent, RecipesSidePanelComponent, RecipesListComponent, RecipeTileComponent],
+  declarations: [
+    RecipesComponent,
+    RecipesSidePanelComponent,
+    RecipesListComponent,
+    RecipeTileComponent,
+    RecipeDetailsComponent,
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,

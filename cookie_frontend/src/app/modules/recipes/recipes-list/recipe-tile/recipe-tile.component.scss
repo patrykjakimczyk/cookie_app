@@ -3,6 +3,7 @@
 mat-card {
   width: 100%;
   padding: 15px 20px;
+  cursor: pointer;
 
   #image-container {
     padding: 20px 0px;
@@ -48,5 +49,13 @@ mat-card {
         font-size: 20px;
       }
     }
+  }
+
+  &:hover {
+    background-color: darken($color: white, $amount: 3);
+  }
+
+  &:active {
+    top: 2px;
   }
 }
