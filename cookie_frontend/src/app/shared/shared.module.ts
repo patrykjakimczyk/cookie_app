@@ -18,6 +18,7 @@ import { NewNamePopupComponentComponent } from './components/new-name-popup-comp
 import { MatDialogModule } from '@angular/material/dialog';
 import { DeletePopupComponent } from './components/delete-popup/delete-popup.component';
 import { ConfirmationPopupComponent } from './components/confirmation-popup/confirmation-popup.component';
+import { MinutesToHoursPipe } from './pipes/minutes-to-hours.pipe';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { ConfirmationPopupComponent } from './components/confirmation-popup/conf
     DateFromStringPipe,
     EnumPrintFormatterPipe,
     ValueOrDashPipe,
+    MinutesToHoursPipe,
 
     MatIconModule,
     MatButtonModule,
@@ -52,6 +54,7 @@ import { ConfirmationPopupComponent } from './components/confirmation-popup/conf
     DateFromStringPipe,
     EnumPrintFormatterPipe,
     ValueOrDashPipe,
+    MinutesToHoursPipe,
   ],
 })
 export class SharedModule {}

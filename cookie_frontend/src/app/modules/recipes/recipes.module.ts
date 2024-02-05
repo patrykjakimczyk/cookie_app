@@ -20,6 +20,9 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { RecipesListComponent } from './recipes-list/recipes-list.component';
 import { RecipeTileComponent } from './recipes-list/recipe-tile/recipe-tile.component';
 import { RecipeDetailsComponent } from './recipe-details/recipe-details.component';
+import { MatListModule } from '@angular/material/list';
+import { MatDialogModule } from '@angular/material/dialog';
+import { CreateRecipeComponent } from './create-recipe/create-recipe.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +31,7 @@ import { RecipeDetailsComponent } from './recipe-details/recipe-details.componen
     RecipesListComponent,
     RecipeTileComponent,
     RecipeDetailsComponent,
+    CreateRecipeComponent,
   ],
   imports: [
     BrowserModule,
@@ -49,6 +53,8 @@ import { RecipeDetailsComponent } from './recipe-details/recipe-details.componen
     MatRadioModule,
     MatExpansionModule,
     MatTabsModule,
+    MatListModule,
+    MatDialogModule,
   ],
   exports: [RecipesComponent],
 })

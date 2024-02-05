@@ -1,11 +1,11 @@
 <div id="main-container">
   <div id="upper-container">
     <h1>Recipes</h1>
-    <button mat-raised-button>Create recipe</button>
+    <button mat-raised-button *ngIf="isUserLogged()" (click)="goToCreateRecipe()">Create recipe</button>
   </div>
 
   <div id="tabs-container">
-    <div id="recipes-container" *ngIf="!shouldDisplayAllTabs()">
+    <div id="recipes-container" *ngIf="!isUserLogged()">
       <app-recipes-side-panel
         (filterRequest)="allRecipes.getRecipes($event)"
       ></app-recipes-side-panel>
@@ -15,7 +15,7 @@
       ></app-recipes-list>
     </div>
 
-    <mat-tab-group *ngIf="shouldDisplayAllTabs()">
+    <mat-tab-group *ngIf="isUserLogged()">
       <mat-tab label="All recipes">
         <div id="recipes-container">
           <app-recipes-side-panel

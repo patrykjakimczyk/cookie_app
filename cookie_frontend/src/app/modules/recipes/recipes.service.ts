@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import {
   GetRecipesParams,
   RecipeDTO,
+  RecipeDetailsDTO,
 } from 'src/app/shared/model/types/recipes-types';
 
 @Injectable({ providedIn: 'root' })
@@ -11,6 +12,7 @@ export class RecipesService {
   private readonly url = 'http://localhost:8081/';
   private readonly recipes_page_path = 'recipes/page/{page}';
   private readonly user_recipes_page_path = 'recipes/user-recipes/{page}';
+  private readonly recipes_details_path = 'recipes/{id}';
 
   constructor(private http: HttpClient) {}
 
@@ -52,5 +54,17 @@ export class RecipesService {
     console.log(page);
 
     return this.http.get<RecipeDTO[]>(path, { params: params });
+  }
+
+  getRecipeDetails(recipeId: number) {
+    return this.http.get<RecipeDetailsDTO>(
+      this.url + this.recipes_details_path.replace('{id}', recipeId.toString())
+    );
+  }
+
+  deleteRecipe(recipeId: number) {
+    return this.http.delete<void>(
+      this.url + this.recipes_details_path.replace('{id}', recipeId.toString())
+    );
   }
 }

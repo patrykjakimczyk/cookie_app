@@ -1,4 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { Unit } from '../model/enums/unit.enum';
 
 @Pipe({
   standalone: true,
@@ -11,7 +12,7 @@ export class PrintShortUnitPipe implements PipeTransform {
     } else if (value === Unit.MILLILITERS) {
       return 'ml';
     } else {
-      return this.pantryProduct.quantity > 1 ? 'pcs' : 'pc';
+      return 'pcs';
     }
   }
 }

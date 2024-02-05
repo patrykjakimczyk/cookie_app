@@ -15,6 +15,7 @@ import { ShoppingListComponent } from 'src/app/modules/shopping-lists/shopping-l
 import { CreateShoppingListComponent } from 'src/app/modules/shopping-lists/shopping-list/create-shopping-list/create-shopping-list.component';
 import { RecipesComponent } from 'src/app/modules/recipes/recipes.component';
 import { RecipeDetailsComponent } from 'src/app/modules/recipes/recipe-details/recipe-details.component';
+import { CreateRecipeComponent } from 'src/app/modules/recipes/create-recipe/create-recipe.component';
 
 const routes: Routes = [
   {
@@ -93,6 +94,11 @@ const routes: Routes = [
   {
     path: 'recipes',
     children: [
+      {
+        path: 'create',
+        component: CreateRecipeComponent,
+        canActivate: [AuthGuard],
+      },
       {
         path: ':id',
         component: RecipeDetailsComponent,

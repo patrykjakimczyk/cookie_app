@@ -247,7 +247,7 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
         List<RecipeProduct> addedProducts = recipeDetailsDTO.products()
                 .stream()
                 .filter(recipeProductDTO -> recipeProductDTO.getId() == 0)
-                .map(this::mapToRecipeProduct)
+                .map(recipeProductDTO -> this.mapToRecipeProduct(recipeProductDTO, recipe))
                 .toList();
 
         recipe.getRecipeProducts().addAll(addedProducts);
@@ -271,13 +271,7 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
 
 
     private Recipe mapRecipeDetailsToRecipe(User creator, RecipeDetailsDTO recipeDetailsDTO) {
-        List<RecipeProduct> recipeProducts = recipeDetailsDTO
-                .products()
-                .stream()
-                .map(this::mapToRecipeProduct)
-                .toList();
-
-        return Recipe.builder()
+        Recipe recipe =  Recipe.builder()
                 .recipeName(recipeDetailsDTO.recipeName())
                 .preparation(recipeDetailsDTO.preparation())
                 .preparationTime(recipeDetailsDTO.preparationTime())
@@ -285,15 +279,25 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
                 .portions(recipeDetailsDTO.portions())
                 .recipeImage(ImageUtil.compressImage(recipeDetailsDTO.recipeImage()))
                 .creator(creator)
-                .recipeProducts(recipeProducts)
                 .build();
+
+        List<RecipeProduct> recipeProducts = recipeDetailsDTO
+                .products()
+                .stream()
+                .map(recipeProduct -> this.mapToRecipeProduct(recipeProduct, recipe))
+                .toList();
+
+        recipe.setRecipeProducts(recipeProducts);
+
+        return recipe;
     }
 
-    private RecipeProduct mapToRecipeProduct(RecipeProductDTO recipeProductDTO) {
+    private RecipeProduct mapToRecipeProduct(RecipeProductDTO recipeProductDTO, Recipe recipe) {
         return RecipeProduct.builder()
                 .product(super.checkIfProductExists(recipeProductDTO))
                 .quantity(recipeProductDTO.getQuantity())
                 .unit(recipeProductDTO.getUnit())
+                .recipe(recipe)
                 .build();
     }
 }

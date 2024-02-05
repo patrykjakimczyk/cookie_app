@@ -1,1 +1,65 @@
-<p>recipe-details works!</p>
+<mat-card>
+  <div id="upper-container">
+    <img src="../../../../assets/img/no-image-icon-23500.jpg" alt="no image" />
+
+    <div id="recipe-data-container">
+      <div class="header-and-value-container main-info">
+        <p>Recipe name:&nbsp;</p>
+        <p>{{ recipeDetails?.recipeName }}</p>
+      </div>
+
+      <div class="header-and-value-container main-info">
+        <p>Cuisine:&nbsp;</p>
+        <p>{{ recipeDetails?.cuisine }}</p>
+      </div>
+
+      <div class="header-and-value-container">
+        <p>Author :&nbsp;</p>
+        <p>{{ recipeDetails?.creatorName }}</p>
+      </div>
+
+      <div class="header-and-value-container">
+        <p>Preparation time :&nbsp;</p>
+        <p>{{ recipeDetails?.preparationTime | minutesToHours }}</p>
+      </div>
+
+      <div class="header-and-value-container">
+        <p>Portions :&nbsp;</p>
+        <p>{{ recipeDetails?.portions }}</p>
+      </div>
+    </div>
+
+    <div id="action-buttons" *ngIf="canUserModifyRecipe()">
+      <button mat-button><mat-icon>create</mat-icon></button>
+      <button mat-raised-button color="warn" (click)="deleteRecipe()">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div id="lower-container">
+    <div id="products-list-container">
+      <p id="lower-container-header">Ingredients:</p>
+      <div
+        *ngFor="let product of recipeDetails?.products"
+        class="product-container bolded-text"
+      >
+        <span
+          >{{ product.quantity }} {{ printShortUnit(product) }} of
+          {{
+            product.productName +
+              " (" +
+              (product.category | enumPrintFormatter) +
+              ")"
+          }}</span
+        >
+        <mat-divider></mat-divider>
+      </div>
+    </div>
+
+    <div id="preparation-container">
+      <p id="lower-container-header">Preparation:</p>
+      <span class="bolded-text">{{ recipeDetails?.preparation }}</span>
+    </div>
+  </div>
+</mat-card>
