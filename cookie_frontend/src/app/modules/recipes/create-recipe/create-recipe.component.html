@@ -1,1 +1,207 @@
-<p>create-recipe works!</p>
+<mat-card>
+  <form [formGroup]="recipeForm">
+    <div id="upper-container">
+      <img
+        src="../../../../assets/img/no-image-icon-23500.jpg"
+        alt="no image"
+      />
+
+      <div id="recipe-data-container">
+        <div class="header-and-value-container main-info">
+          <p>Recipe name:&nbsp;</p>
+          <mat-form-field color="accent">
+            <mat-label>Insert recipe name</mat-label>
+            <input
+              matInput
+              required
+              formControlName="recipeName"
+              name="recipeName"
+            />
+
+            <!-- <mat-error *ngIf="!form.controls.email.valid"
+              >{{ getErrorMessage(form.controls.email) }}
+            </mat-error> -->
+          </mat-form-field>
+        </div>
+
+        <div class="header-and-value-container main-info">
+          <p>Cuisine:&nbsp;</p>
+          <mat-form-field color="accent">
+            <mat-label>Insert cuisine</mat-label>
+            <input matInput required formControlName="cuisine" name="cuisine" />
+
+            <!-- <mat-error *ngIf="!form.controls.email.valid"
+              >{{ getErrorMessage(form.controls.email) }}
+            </mat-error> -->
+          </mat-form-field>
+        </div>
+
+        <div class="header-and-value-container">
+          <p>Author :&nbsp;</p>
+          <p>{{ printUserName() }}</p>
+        </div>
+
+        <div class="header-and-value-container">
+          <p>Preparation time :&nbsp;</p>
+          <mat-form-field color="accent">
+            <mat-label>In minutes</mat-label>
+            <input
+              matInput
+              required
+              formControlName="preparationTime"
+              name="preparationTime"
+            />
+
+            <!-- <mat-error *ngIf="!form.controls.email.valid"
+              >{{ getErrorMessage(form.controls.email) }}
+            </mat-error> -->
+          </mat-form-field>
+        </div>
+
+        <div class="header-and-value-container">
+          <p>Portions :&nbsp;</p>
+          <mat-form-field color="accent">
+            <mat-label>Insert portions</mat-label>
+            <input
+              matInput
+              required
+              formControlName="portions"
+              name="portions"
+            />
+
+            <!-- <mat-error *ngIf="!form.controls.email.valid"
+              >{{ getErrorMessage(form.controls.email) }}
+            </mat-error> -->
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- <div id="action-buttons" *ngIf="canUserModifyRecipe()">
+        <button mat-button><mat-icon>create</mat-icon></button>
+        <button mat-raised-button color="warn" (click)="deleteRecipe()">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div> -->
+    </div>
+
+    <div id="lower-container">
+      <form
+        [formGroup]="ingredientForm"
+        (submit)="submitIngredientForm(form)"
+        #form="ngForm"
+      >
+        <mat-form-field color="accent">
+          <mat-label>Insert product name</mat-label>
+          <input
+            matInput
+            [matAutocomplete]="auto"
+            (input)="searchForProducts()"
+            formControlName="productName"
+          />
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option
+              *ngFor="let product of filteredProducts | async"
+              [value]="product.productName"
+              (onSelectionChange)="setCategoryForProduct(product.category)"
+              >{{
+                product.productName +
+                  " (" +
+                  (product.category | enumPrintFormatter) +
+                  ")"
+              }}</mat-option
+            >
+          </mat-autocomplete>
+          <mat-hint>Letters, digits, and whitespaces only</mat-hint>
+          <mat-error *ngIf="!ingredientForm.controls.productName.valid"
+            >{{
+              getIngredientErrorMessage(ingredientForm.controls.productName)
+            }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field color="accent">
+          <mat-label>Category</mat-label>
+          <mat-select formControlName="category" required>
+            <mat-option
+              *ngFor="let category of categories"
+              [value]="category"
+              >{{ category | enumPrintFormatter }}</mat-option
+            >
+          </mat-select>
+          <mat-hint>Pick category of your product</mat-hint>
+          <mat-error *ngIf="!ingredientForm.controls.category.valid">
+            {{ getIngredientErrorMessage(ingredientForm.controls.category) }}
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field color="accent">
+          <mat-label>Quantity</mat-label>
+          <input type="number" matInput formControlName="quantity" required />
+          <mat-hint>Quantity must be at least 1</mat-hint>
+          <mat-error *ngIf="!ingredientForm.controls.quantity.valid">{{
+            getIngredientErrorMessage(ingredientForm.controls.quantity)
+          }}</mat-error>
+        </mat-form-field>
+        <mat-form-field color="accent">
+          <mat-label>Unit</mat-label>
+          <mat-select formControlName="unit" required>
+            <mat-option *ngFor="let unit of units" [value]="unit">{{
+              unit | enumPrintFormatter
+            }}</mat-option>
+          </mat-select>
+          <mat-hint>Pick unit for your product</mat-hint>
+          <mat-error *ngIf="!ingredientForm.controls.unit.valid">
+            {{ getIngredientErrorMessage(ingredientForm.controls.unit) }}
+          </mat-error>
+        </mat-form-field>
+
+        <button mat-raised-button type="submit">Add ingredient</button>
+      </form>
+
+      <div id="products-and-preparation-container">
+        <div id="products-list-container">
+          <p id="lower-container-header">Ingredients:</p>
+          <ng-container *ngIf="ingredientsToAdd.length === 0">
+            <div class="product-container bolded-text">
+              <span>No ingredients added</span>
+              <mat-divider></mat-divider></div
+          ></ng-container>
+
+          <ng-container *ngIf="ingredientsToAdd.length > 0">
+            <div
+              *ngFor="let product of ingredientsToAdd"
+              class="product-container bolded-text"
+            >
+              <span
+                >{{ product.quantity }} {{ printShortUnit(product) }} of
+                {{
+                  product.productName +
+                    " (" +
+                    (product.category | enumPrintFormatter) +
+                    ")"
+                }}</span
+              >
+              <mat-divider></mat-divider></div
+          ></ng-container>
+        </div>
+
+        <div id="preparation-container">
+          <p id="lower-container-header">Preparation:</p>
+          <mat-form-field color="accent">
+            <!-- <mat-label>E-mail</mat-label> -->
+            <textarea
+              matInput
+              placeholder="Insert recipe preparation here..."
+              formControlName="preparation"
+              cdkTextareaAutosize
+              rows="10"
+            ></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+
+    <button mat-raised-button type="submit" color="primary">
+      Create recipe
+    </button>
+  </form>
+</mat-card>

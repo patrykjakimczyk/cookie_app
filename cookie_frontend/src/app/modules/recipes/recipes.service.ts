@@ -13,6 +13,7 @@ export class RecipesService {
   private readonly recipes_page_path = 'recipes/page/{page}';
   private readonly user_recipes_page_path = 'recipes/user-recipes/{page}';
   private readonly recipes_details_path = 'recipes/{id}';
+  private readonly products_path = 'products';
 
   constructor(private http: HttpClient) {}
 
@@ -66,5 +67,15 @@ export class RecipesService {
     return this.http.delete<void>(
       this.url + this.recipes_details_path.replace('{id}', recipeId.toString())
     );
+  }
+
+  getProductsWithFilter(filterValue: string): Observable<any> {
+    let params = new HttpParams();
+
+    params = params.append('filterValue', filterValue);
+
+    return this.http.get<any>(`${this.url}${this.products_path}`, {
+      params: params,
+    });
   }
 }

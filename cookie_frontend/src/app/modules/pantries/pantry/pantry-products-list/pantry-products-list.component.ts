@@ -196,12 +196,7 @@ export class PantryProductsListComponent {
       productName: this.addForm.controls.productName.value!,
       category: this.addForm.controls.category.value!,
       quantity: +this.addForm.controls.quantity.value!,
-      unit:
-        this.addForm.controls.unit.value === Unit.GRAMS
-          ? Unit.GRAMS
-          : this.addForm.controls.unit.value === Unit.MILLILITERS
-          ? Unit.MILLILITERS
-          : Unit.PIECES,
+      unit: this.addForm.controls.unit.value as Unit,
       reserved: this.addForm.controls.reserved.value!,
       purchaseDate: this.addForm.controls.purchaseDate.value!,
       expirationDate: this.addForm.controls.expirationDate.value!,

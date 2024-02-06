@@ -45,10 +45,7 @@
                 }}</mat-option
               >
             </mat-autocomplete>
-            <mat-hint
-              >Product name can only contains letters, digits, and
-              whitespaces</mat-hint
-            >
+            <mat-hint>Letters, digits, and whitespaces only</mat-hint>
             <mat-error *ngIf="!addForm.controls.productName.valid">
               {{ getErrorMessage(addForm.controls.productName) }}</mat-error
             >

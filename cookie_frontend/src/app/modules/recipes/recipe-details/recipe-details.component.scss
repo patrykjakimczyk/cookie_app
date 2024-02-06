@@ -74,12 +74,16 @@ mat-card {
     }
 
     #products-list-container {
-      width: 40%;
+      width: 25%;
 
       .product-container {
         @include flex-with-gap($direction: column, $gap: 10px);
         padding-bottom: 10px;
       }
+    }
+
+    #preparation-container {
+      width: 75%;
     }
   }
 }
