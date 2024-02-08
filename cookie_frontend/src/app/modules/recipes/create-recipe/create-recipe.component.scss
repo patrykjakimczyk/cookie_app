@@ -1,5 +1,23 @@
 @import "../../../../assets/styles/mixins";
 
+.header-and-value-container {
+  @include flex-with-gap($direction: column, $gap: 5px);
+
+  & > p {
+    margin: 0px;
+    word-break: break-all;
+  }
+
+  & > *:nth-child(2) {
+    font-weight: 500;
+  }
+}
+
+.bolded-text {
+  font-size: 18px;
+  font-weight: 500;
+}
+
 mat-card {
   margin: auto;
   width: 70%;
@@ -8,9 +26,17 @@ mat-card {
   #upper-container {
     @include flex-with-gap($gap: 15px);
 
-    img {
-      width: 350px;
-      height: auto;
+    #image-upload-container {
+      @include flex-with-gap($direction: column, $gap: 10px, $align: center);
+
+      img {
+        width: 350px;
+        height: auto;
+      }
+
+      #image-buttons {
+        @include flex-with-gap($gap: 10px);
+      }
     }
 
     #recipe-data-container {
@@ -25,19 +51,11 @@ mat-card {
         & > *:first-child {
           font-size: 14px;
         }
-
-        & > *:nth-child(2) {
-          font-size: 18px;
-        }
       }
 
       .main-info {
         & > *:first-child {
           font-size: 18px;
-        }
-
-        & > *:nth-child(2) {
-          font-size: 22px;
         }
       }
     }
@@ -63,6 +81,11 @@ mat-card {
   #lower-container {
     @include flex-with-gap($direction: column, $gap: 30px);
     padding: 20px 30px;
+
+    #add-ingredients-header {
+      @extend .bolded-text;
+      margin-bottom: 10px;
+    }
 
     form {
       @include flex-with-gap($align: center, $gap: 10px);
@@ -91,6 +114,23 @@ mat-card {
         .product-container {
           @include flex-with-gap($direction: column, $gap: 10px);
           padding-bottom: 10px;
+
+          span {
+            @include flex-with-gap($align: center);
+            justify-content: space-between;
+
+            button {
+              width: 40px !important;
+              min-width: unset !important;
+
+              mat-icon {
+                height: auto;
+                width: auto;
+                margin-right: 0;
+                font-size: 25px;
+              }
+            }
+          }
         }
       }
 
@@ -107,22 +147,4 @@ mat-card {
   button {
     float: right;
   }
-}
-
-.header-and-value-container {
-  @include flex-with-gap($direction: column, $gap: 5px);
-
-  & > p {
-    margin: 0px;
-    word-break: break-all;
-  }
-
-  & > *:nth-child(2) {
-    font-weight: 500;
-  }
-}
-
-.bolded-text {
-  font-size: 18px;
-  font-weight: 500;
 }

@@ -10,6 +10,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class RecipesService {
   private readonly url = 'http://localhost:8081/';
+  private readonly recipes_path = 'recipes';
   private readonly recipes_page_path = 'recipes/page/{page}';
   private readonly user_recipes_page_path = 'recipes/user-recipes/{page}';
   private readonly recipes_details_path = 'recipes/{id}';
@@ -22,7 +23,6 @@ export class RecipesService {
     filterValues: GetRecipesParams
   ): Observable<RecipeDTO[]> {
     return this.getRecipes(
-      page,
       filterValues,
       this.url + this.recipes_page_path.replace('{page}', page.toString())
     );
@@ -33,14 +33,12 @@ export class RecipesService {
     filterValues: GetRecipesParams
   ): Observable<RecipeDTO[]> {
     return this.getRecipes(
-      page,
       filterValues,
       this.url + this.user_recipes_page_path.replace('{page}', page.toString())
     );
   }
 
   private getRecipes(
-    page: number,
     filterValues: GetRecipesParams,
     path: string
   ): Observable<RecipeDTO[]> {
@@ -52,7 +50,6 @@ export class RecipesService {
       .append('portions', filterValues.portions)
       .append('sortColName', filterValues.sortColName)
       .append('sortDirection', filterValues.sortDirection);
-    console.log(page);
 
     return this.http.get<RecipeDTO[]>(path, { params: params });
   }
@@ -60,6 +57,14 @@ export class RecipesService {
   getRecipeDetails(recipeId: number) {
     return this.http.get<RecipeDetailsDTO>(
       this.url + this.recipes_details_path.replace('{id}', recipeId.toString())
+    );
+  }
+
+  createRecipe(recipe: RecipeDetailsDTO) {
+    console.log(recipe);
+    return this.http.post<RecipeDetailsDTO>(
+      this.url + this.recipes_path,
+      recipe
     );
   }
 

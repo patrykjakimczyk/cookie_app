@@ -26,7 +26,7 @@ export type RecipeDetailsDTO = {
   preparationTime: number;
   cuisine: string;
   portions: number;
-  recipeImage: Uint8Array;
+  recipeImage: FormData | null;
   creatorName: string;
   products: RecipeProductDTO[];
 };

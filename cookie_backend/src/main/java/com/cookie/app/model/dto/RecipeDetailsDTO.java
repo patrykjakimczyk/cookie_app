@@ -27,10 +27,10 @@ public record RecipeDetailsDTO(
         @Max(value = 2880 ,message = "Preparation time must be less than 12")
         int preparationTime,
 
-        @Pattern(
-                regexp = RegexConstants.CUISINE_REGEX,
-                message = "Cuisine name can only contains letters, digits, whitespaces and its length has to be between 4 and 30"
-        )
+//        @Pattern(
+//                regexp = RegexConstants.CUISINE_REGEX,
+//                message = "Cuisine name can only contains letters, digits, whitespaces and its length has to be between 4 and 30"
+//        )
         String cuisine,
 
         @NotNull(message = "Nr of portions must be present")

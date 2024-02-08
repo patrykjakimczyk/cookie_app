@@ -35,7 +35,7 @@ public class Recipe {
     @Column(nullable = false)
     private int preparationTime;
 
-    @Column(length = 30, nullable = false)
+    @Column(length = 30)
     private String cuisine;
 
     @Column(nullable = false)

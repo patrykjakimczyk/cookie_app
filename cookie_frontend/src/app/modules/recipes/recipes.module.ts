@@ -25,6 +25,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { CreateRecipeComponent } from './create-recipe/create-recipe.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -59,6 +60,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     MatDialogModule,
     MatFormFieldModule,
     MatAutocompleteModule,
+    MatTooltipModule,
   ],
   exports: [RecipesComponent],
 })

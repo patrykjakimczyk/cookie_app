@@ -15,6 +15,10 @@ public class ImageUtil {
     private ImageUtil() {}
 
     public static byte[] compressImage(byte[] data) {
+        if (data == null || data.length == 0) {
+            return new byte[0];
+        }
+
         Deflater compressor = new Deflater(Deflater.BEST_COMPRESSION);
         compressor.setInput(data);
         compressor.finish();
@@ -41,9 +45,7 @@ public class ImageUtil {
     }
 
     public static byte[] decompressImage(byte[] data) {
-        try {
-            Objects.requireNonNull(data);
-        } catch (NullPointerException e) {
+        if (data == null || data.length == 0) {
             return new byte[0];
         }
 

@@ -59,10 +59,16 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
         PageRequest pageRequest = super.createPageRequest(page, sortColName, sortDirection);
 
         if (StringUtils.isBlank(filterValue)) {
+            Page<Recipe> recipes = this.recipeRepository
+                    .findRecipes(prepTime, portions, pageRequest);
+
             return this.recipeRepository
                     .findRecipes(prepTime, portions, pageRequest)
                     .map(recipeMapperDTO::apply);
         }
+
+        Page<Recipe> recipes = this.recipeRepository
+                .findRecipesByFilter(filterValue, prepTime, portions, pageRequest);
 
         return this.recipeRepository
                 .findRecipesByFilter(filterValue, prepTime, portions, pageRequest)

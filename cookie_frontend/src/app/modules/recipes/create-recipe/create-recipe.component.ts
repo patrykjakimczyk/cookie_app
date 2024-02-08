@@ -12,7 +12,12 @@ import { ProductDTO } from 'src/app/shared/model/types/pantry-types';
 import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
 import { Category, categories } from 'src/app/shared/model/enums/category-enum';
 import { Unit, units } from 'src/app/shared/model/enums/unit.enum';
-import { RecipeProductDTO } from 'src/app/shared/model/types/recipes-types';
+import {
+  RecipeDetailsDTO,
+  RecipeProductDTO,
+} from 'src/app/shared/model/types/recipes-types';
+import { portions } from 'src/app/shared/model/constants/recipes.constants';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-create-recipe',
@@ -25,14 +30,28 @@ export class CreateRecipeComponent {
   protected ingredientsToAdd: RecipeProductDTO[] = [];
   protected categories = categories;
   protected units = units;
+  protected portions = portions;
+  imageUrl: string | ArrayBuffer | null = '';
 
   protected recipeForm = this.fb.group({
     id: [0],
-    recipeName: ['', Validators.required],
-    cuisine: ['', Validators.required],
-    preparation: ['', Validators.required],
-    preparationTime: [0, Validators.required],
-    portions: [0, Validators.required],
+    recipeName: [
+      '',
+      [Validators.required, Validators.pattern(RegexConstants.recipeNameRegex)],
+    ],
+    cuisine: [''],
+    preparation: [
+      '',
+      [
+        Validators.required,
+        Validators.pattern(RegexConstants.preparationRegex),
+      ],
+    ],
+    preparationTime: [
+      '',
+      [Validators.required, Validators.min(1), Validators.pattern('[-0-9]+')],
+    ],
+    portions: ['', [Validators.required]],
     products: [],
   });
 
@@ -48,7 +67,7 @@ export class CreateRecipeComponent {
     category: ['', [Validators.required]],
     quantity: [
       '',
-      [Validators.required, Validators.min(1), Validators.pattern('[0-9]+')],
+      [Validators.required, Validators.min(1), Validators.pattern('[-0-9]+')],
     ],
     unit: ['', [Validators.required]],
   });
@@ -56,11 +75,24 @@ export class CreateRecipeComponent {
   constructor(
     private recipesService: RecipesService,
     private userService: UserService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private router: Router
   ) {}
 
-  printUserName() {
+  getUserName() {
     return this.userService.user.getValue().username;
+  }
+
+  getErrorMessage(control: AbstractControl): string {
+    if (control.hasError('required')) {
+      return 'Field is required';
+    } else if (control.hasError('min')) {
+      return 'Value must be greater than 0';
+    } else if (control.hasError('pattern')) {
+      return 'Field value is too short, too long or contains forbidden characters';
+    }
+
+    return '';
   }
 
   getIngredientErrorMessage(control: AbstractControl): string {
@@ -69,29 +101,25 @@ export class CreateRecipeComponent {
     } else if (control.hasError('min')) {
       return 'Quantity must be greater than 0';
     } else if (control.hasError('pattern')) {
-      return 'Field does not match required pattern';
+      return 'Field value does not match required pattern';
     }
 
     return '';
   }
 
-  searchForProducts() {
-    console.log(this.ingredientForm.controls.productName.value);
-    if (this.ingredientForm.controls.productName.value) {
-      this.recipesService
-        .getProductsWithFilter(this.ingredientForm.controls.productName.value)
-        .subscribe({
-          next: (response) => {
-            console.log(response);
+  onFileSelected(event: any) {
+    console.log(event.target.files);
+    const file: File = event.target.files[0];
 
-            this.filteredProducts = of(response.content);
-          },
-        });
-    }
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (_event) => {
+      this.imageUrl = reader.result;
+    };
   }
 
-  setCategoryForProduct(category: Category) {
-    this.ingredientForm.controls.category.setValue(category);
+  removeImage() {
+    this.imageUrl = '';
   }
 
   submitIngredientForm(form: FormGroupDirective) {
@@ -109,6 +137,74 @@ export class CreateRecipeComponent {
 
     form.resetForm(); // this combination of two resets allows to reset form without displaying form fields as invalid
     this.ingredientForm.reset();
+  }
+
+  submitRecipeForm() {
+    if (!this.recipeForm.valid) {
+      return;
+    }
+
+    if (this.ingredientsToAdd.length === 0) {
+      return;
+    }
+
+    var enc = new TextEncoder();
+
+    const recipeToAdd: RecipeDetailsDTO = {
+      id: +this.recipeForm.controls.id.value!,
+      recipeName: this.recipeForm.controls.recipeName.value!,
+      preparation: this.recipeForm.controls.preparation.value!,
+      preparationTime: +this.recipeForm.controls.preparationTime.value!,
+      cuisine: this.recipeForm.controls.cuisine.value!,
+      portions: +this.recipeForm.controls.portions.value!,
+      recipeImage: null,
+      creatorName: this.getUserName(),
+      products: this.ingredientsToAdd,
+    };
+
+    this.recipesService.createRecipe(recipeToAdd).subscribe({
+      next: (addedRecipe: RecipeDetailsDTO) => {
+        console.log(addedRecipe);
+        this.router.navigate(['/recipes']);
+      },
+    });
+
+    // this.ingredientsToAdd.push({
+    //   id: 0,
+    //   productName: this.ingredientForm.controls.productName.value!,
+    //   category: this.ingredientForm.controls.category.value!,
+    //   quantity: +this.ingredientForm.controls.quantity.value!,
+    //   unit: this.ingredientForm.controls.unit.value! as Unit,
+    // });
+
+    // this.ingredientForm.reset();
+  }
+
+  searchForProducts() {
+    if (this.ingredientForm.controls.productName.value) {
+      this.recipesService
+        .getProductsWithFilter(this.ingredientForm.controls.productName.value)
+        .subscribe({
+          next: (response) => {
+            this.filteredProducts = of(response.content);
+          },
+        });
+    }
+  }
+
+  setCategoryForProduct(category: Category) {
+    this.ingredientForm.controls.category.setValue(category);
+  }
+
+  removeIngredientFromAdding(product: RecipeProductDTO) {
+    this.ingredientsToAdd = this.ingredientsToAdd.filter((ingredientToAdd) => {
+      return !(
+        ingredientToAdd.productName === product.productName &&
+        ingredientToAdd.category === product.category &&
+        ingredientToAdd.quantity === product.quantity &&
+        ingredientToAdd.unit === product.unit
+      );
+    });
   }
 
   printShortUnit(recipeProduct: RecipeProductDTO) {

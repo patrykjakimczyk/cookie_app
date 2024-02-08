@@ -1,15 +1,56 @@
 <mat-card>
-  <form [formGroup]="recipeForm">
+  <form [formGroup]="recipeForm" (submit)="submitRecipeForm()">
     <div id="upper-container">
-      <img
-        src="../../../../assets/img/no-image-icon-23500.jpg"
-        alt="no image"
-      />
+      <div id="image-upload-container">
+        <img
+          [src]="
+            imageUrl
+              ? imageUrl
+              : '../../../../assets/img/no-image-icon-23500.jpg'
+          "
+          alt="no image"
+        />
+
+        <input
+          type="file"
+          accept="image/png, image/jpeg"
+          style="display: none"
+          (change)="onFileSelected($event)"
+          #fileUpload
+        />
+
+        <div id="image-buttons">
+          <button
+            mat-raised-button
+            class="remove-image-button"
+            (click)="fileUpload.value = ''; removeImage()"
+            type="button"
+            color="warn"
+            *ngIf="imageUrl"
+          >
+            Remove image
+          </button>
+
+          <button
+            mat-raised-button
+            class="upload-button"
+            (click)="fileUpload.click()"
+            type="button"
+          >
+            Upload image
+          </button>
+        </div>
+      </div>
 
       <div id="recipe-data-container">
         <div class="header-and-value-container main-info">
           <p>Recipe name:&nbsp;</p>
-          <mat-form-field color="accent">
+          <mat-form-field
+            color="accent"
+            matTooltip="
+              Recipe name can only contains letters, digits, whitespaces, single and double quotes and those symbols [:-_@,.]. It length has to be between 5 to 60 characters
+            "
+          >
             <mat-label>Insert recipe name</mat-label>
             <input
               matInput
@@ -18,9 +59,9 @@
               name="recipeName"
             />
 
-            <!-- <mat-error *ngIf="!form.controls.email.valid"
-              >{{ getErrorMessage(form.controls.email) }}
-            </mat-error> -->
+            <mat-error *ngIf="!recipeForm.controls.recipeName.valid"
+              >{{ getErrorMessage(recipeForm.controls.recipeName) }}
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -28,23 +69,22 @@
           <p>Cuisine:&nbsp;</p>
           <mat-form-field color="accent">
             <mat-label>Insert cuisine</mat-label>
-            <input matInput required formControlName="cuisine" name="cuisine" />
-
-            <!-- <mat-error *ngIf="!form.controls.email.valid"
-              >{{ getErrorMessage(form.controls.email) }}
-            </mat-error> -->
+            <input matInput formControlName="cuisine" name="cuisine" />
           </mat-form-field>
         </div>
 
         <div class="header-and-value-container">
           <p>Author :&nbsp;</p>
-          <p>{{ printUserName() }}</p>
+          <p>{{ getUserName() }}</p>
         </div>
 
         <div class="header-and-value-container">
           <p>Preparation time :&nbsp;</p>
-          <mat-form-field color="accent">
-            <mat-label>In minutes</mat-label>
+          <mat-form-field
+            color="accent"
+            matTooltip="Preparation time must be between 5 to 2880 minutes"
+          >
+            <mat-label>Insert time in minutes</mat-label>
             <input
               matInput
               required
@@ -52,110 +92,106 @@
               name="preparationTime"
             />
 
-            <!-- <mat-error *ngIf="!form.controls.email.valid"
-              >{{ getErrorMessage(form.controls.email) }}
-            </mat-error> -->
+            <mat-error *ngIf="!recipeForm.controls.preparationTime.valid"
+              >{{ getErrorMessage(recipeForm.controls.preparationTime) }}
+            </mat-error>
           </mat-form-field>
         </div>
 
         <div class="header-and-value-container">
           <p>Portions :&nbsp;</p>
           <mat-form-field color="accent">
-            <mat-label>Insert portions</mat-label>
-            <input
-              matInput
-              required
-              formControlName="portions"
-              name="portions"
-            />
-
-            <!-- <mat-error *ngIf="!form.controls.email.valid"
-              >{{ getErrorMessage(form.controls.email) }}
-            </mat-error> -->
+            <mat-label>Choose nr of portions</mat-label>
+            <mat-select formControlName="portions" name="portions" required>
+              <mat-option *ngFor="let portion of portions" [value]="portion">{{
+                portion
+              }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="!recipeForm.controls.portions.valid">
+              {{ getErrorMessage(recipeForm.controls.portions) }}
+            </mat-error>
           </mat-form-field>
         </div>
       </div>
-
-      <!-- <div id="action-buttons" *ngIf="canUserModifyRecipe()">
-        <button mat-button><mat-icon>create</mat-icon></button>
-        <button mat-raised-button color="warn" (click)="deleteRecipe()">
-          <mat-icon>delete</mat-icon>
-        </button>
-      </div> -->
     </div>
 
     <div id="lower-container">
-      <form
-        [formGroup]="ingredientForm"
-        (submit)="submitIngredientForm(form)"
-        #form="ngForm"
-      >
-        <mat-form-field color="accent">
-          <mat-label>Insert product name</mat-label>
-          <input
-            matInput
-            [matAutocomplete]="auto"
-            (input)="searchForProducts()"
-            formControlName="productName"
-          />
-          <mat-autocomplete #auto="matAutocomplete">
-            <mat-option
-              *ngFor="let product of filteredProducts | async"
-              [value]="product.productName"
-              (onSelectionChange)="setCategoryForProduct(product.category)"
+      <div>
+        <p id="add-ingredients-header">Add ingredients</p>
+        <form
+          [formGroup]="ingredientForm"
+          (submit)="submitIngredientForm(form)"
+          #form="ngForm"
+        >
+          <mat-form-field
+            color="accent"
+            matTooltip="Product name can contains letters, digits, and whitespaces only. It length has to be between 3 to 50 characters"
+          >
+            <mat-label>Insert product name</mat-label>
+            <input
+              matInput
+              [matAutocomplete]="auto"
+              (input)="searchForProducts()"
+              formControlName="productName"
+            />
+            <mat-autocomplete #auto="matAutocomplete">
+              <mat-option
+                *ngFor="let product of filteredProducts | async"
+                [value]="product.productName"
+                (onSelectionChange)="setCategoryForProduct(product.category)"
+                >{{
+                  product.productName +
+                    " (" +
+                    (product.category | enumPrintFormatter) +
+                    ")"
+                }}</mat-option
+              >
+            </mat-autocomplete>
+            <mat-error *ngIf="!ingredientForm.controls.productName.valid"
               >{{
-                product.productName +
-                  " (" +
-                  (product.category | enumPrintFormatter) +
-                  ")"
-              }}</mat-option
-            >
-          </mat-autocomplete>
-          <mat-hint>Letters, digits, and whitespaces only</mat-hint>
-          <mat-error *ngIf="!ingredientForm.controls.productName.valid"
-            >{{
-              getIngredientErrorMessage(ingredientForm.controls.productName)
-            }}
-          </mat-error>
-        </mat-form-field>
+                getIngredientErrorMessage(ingredientForm.controls.productName)
+              }}
+            </mat-error>
+          </mat-form-field>
 
-        <mat-form-field color="accent">
-          <mat-label>Category</mat-label>
-          <mat-select formControlName="category" required>
-            <mat-option
-              *ngFor="let category of categories"
-              [value]="category"
-              >{{ category | enumPrintFormatter }}</mat-option
-            >
-          </mat-select>
-          <mat-hint>Pick category of your product</mat-hint>
-          <mat-error *ngIf="!ingredientForm.controls.category.valid">
-            {{ getIngredientErrorMessage(ingredientForm.controls.category) }}
-          </mat-error>
-        </mat-form-field>
-        <mat-form-field color="accent">
-          <mat-label>Quantity</mat-label>
-          <input type="number" matInput formControlName="quantity" required />
-          <mat-hint>Quantity must be at least 1</mat-hint>
-          <mat-error *ngIf="!ingredientForm.controls.quantity.valid">{{
-            getIngredientErrorMessage(ingredientForm.controls.quantity)
-          }}</mat-error>
-        </mat-form-field>
-        <mat-form-field color="accent">
-          <mat-label>Unit</mat-label>
-          <mat-select formControlName="unit" required>
-            <mat-option *ngFor="let unit of units" [value]="unit">{{
-              unit | enumPrintFormatter
-            }}</mat-option>
-          </mat-select>
-          <mat-hint>Pick unit for your product</mat-hint>
-          <mat-error *ngIf="!ingredientForm.controls.unit.valid">
-            {{ getIngredientErrorMessage(ingredientForm.controls.unit) }}
-          </mat-error>
-        </mat-form-field>
+          <mat-form-field color="accent">
+            <mat-label>Choose category</mat-label>
+            <mat-select formControlName="category" required>
+              <mat-option
+                *ngFor="let category of categories"
+                [value]="category"
+                >{{ category | enumPrintFormatter }}</mat-option
+              >
+            </mat-select>
+            <mat-error *ngIf="!ingredientForm.controls.category.valid">
+              {{ getIngredientErrorMessage(ingredientForm.controls.category) }}
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field
+            color="accent"
+            matTooltip="Quantity must be at least 1"
+          >
+            <mat-label>Insert quantity</mat-label>
+            <input type="text" matInput formControlName="quantity" required />
+            <mat-error *ngIf="!ingredientForm.controls.quantity.valid">{{
+              getIngredientErrorMessage(ingredientForm.controls.quantity)
+            }}</mat-error>
+          </mat-form-field>
+          <mat-form-field color="accent">
+            <mat-label>Choose unit</mat-label>
+            <mat-select formControlName="unit" required>
+              <mat-option *ngFor="let unit of units" [value]="unit">{{
+                unit | enumPrintFormatter
+              }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="!ingredientForm.controls.unit.valid">
+              {{ getIngredientErrorMessage(ingredientForm.controls.unit) }}
+            </mat-error>
+          </mat-form-field>
 
-        <button mat-raised-button type="submit">Add ingredient</button>
-      </form>
+          <button mat-raised-button type="submit">Add ingredient</button>
+        </form>
+      </div>
 
       <div id="products-and-preparation-container">
         <div id="products-list-container">
@@ -178,23 +214,36 @@
                     " (" +
                     (product.category | enumPrintFormatter) +
                     ")"
-                }}</span
-              >
+                }}
+                <button
+                  mat-button
+                  type="button"
+                  (click)="removeIngredientFromAdding(product)"
+                >
+                  <mat-icon>clear</mat-icon>
+                </button>
+              </span>
               <mat-divider></mat-divider></div
           ></ng-container>
         </div>
 
         <div id="preparation-container">
           <p id="lower-container-header">Preparation:</p>
-          <mat-form-field color="accent">
-            <!-- <mat-label>E-mail</mat-label> -->
+          <mat-form-field
+            color="accent"
+            matTooltip="Preparation can only contains letters, digits, whitespaces, single and double quotes and those symbols [:-_@,.]. It length has to be between 30 to 512 characters"
+          >
             <textarea
               matInput
               placeholder="Insert recipe preparation here..."
               formControlName="preparation"
+              name="preparation"
               cdkTextareaAutosize
               rows="10"
             ></textarea>
+            <mat-error *ngIf="!recipeForm.controls.preparation.valid"
+              >{{ getErrorMessage(recipeForm.controls.preparation) }}
+            </mat-error>
           </mat-form-field>
         </div>
       </div>
