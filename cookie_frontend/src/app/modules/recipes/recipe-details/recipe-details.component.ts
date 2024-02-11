@@ -18,6 +18,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class RecipeDetailsComponent implements OnInit {
   protected recipeDetails: RecipeDetailsDTO | null = null;
+  protected recipeImage: string = '';
 
   constructor(
     private recipesService: RecipesService,
@@ -34,6 +35,11 @@ export class RecipeDetailsComponent implements OnInit {
     this.recipesService.getRecipeDetails(recipeId).subscribe({
       next: (recipeDetails: RecipeDetailsDTO) => {
         this.recipeDetails = recipeDetails;
+
+        if (recipeDetails.recipeImage) {
+          this.recipeImage =
+            'data:image/JPEG;png;base64,' + recipeDetails.recipeImage;
+        }
       },
       error: (_) => {
         this.router.navigate(['/']);
@@ -56,6 +62,10 @@ export class RecipeDetailsComponent implements OnInit {
       this.userService.user.getValue().username ===
       this.recipeDetails?.creatorName
     );
+  }
+
+  editRecipe() {
+    this.router.navigate([`/recipes/${this.recipeDetails?.id}/edit`]);
   }
 
   deleteRecipe() {

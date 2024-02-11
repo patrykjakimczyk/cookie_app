@@ -5,7 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'valueOrDash',
 })
 export class ValueOrDashPipe implements PipeTransform {
-  transform(value: string): string {
+  transform(value: string | undefined): string {
     return value ? value : '-';
   }
 }

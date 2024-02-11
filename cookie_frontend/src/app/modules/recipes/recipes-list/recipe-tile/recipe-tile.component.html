@@ -1,7 +1,11 @@
 <mat-card (click)="goToRecipeDetails()">
   <div id="image-container">
     <img
-      src="../../../../../assets/img/no-image-icon-23500.jpg"
+      [src]="
+        recipeImage
+          ? recipeImage
+          : '../../../../assets/img/no-image-icon-23500.jpg'
+      "
       alt="no image"
     />
   </div>
@@ -33,7 +37,7 @@
     <mat-divider></mat-divider>
 
     <div class="header-and-value-container">
-      <p>Nr of products:&nbsp;</p>
+      <p>Nr of ingredients:&nbsp;</p>
       <p>{{ recipe.nrOfProducts }}</p>
     </div>
     <div class="header-and-value-container">

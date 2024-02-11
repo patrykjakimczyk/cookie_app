@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -17,21 +17,27 @@ import {
   RecipeProductDTO,
 } from 'src/app/shared/model/types/recipes-types';
 import { portions } from 'src/app/shared/model/constants/recipes.constants';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { CreateRecipeRequest } from 'src/app/shared/model/requests/recipe-requests';
+import { CreateRecipeResponse } from 'src/app/shared/model/responses/recipes-response';
 
 @Component({
   selector: 'app-create-recipe',
   templateUrl: './create-recipe.component.html',
   styleUrls: ['./create-recipe.component.scss'],
 })
-export class CreateRecipeComponent {
+export class CreateRecipeComponent implements OnInit {
+  protected edit = false;
+  protected updateImage = false;
+  protected wrongImageFormat = false;
   protected productFilterValue = '';
   protected filteredProducts = new Observable<ProductDTO[]>();
   protected ingredientsToAdd: RecipeProductDTO[] = [];
   protected categories = categories;
   protected units = units;
   protected portions = portions;
-  imageUrl: string | ArrayBuffer | null = '';
+  protected imageUrl: string | ArrayBuffer | null = '';
+  protected image: Blob | null = null;
 
   protected recipeForm = this.fb.group({
     id: [0],
@@ -76,8 +82,50 @@ export class CreateRecipeComponent {
     private recipesService: RecipesService,
     private userService: UserService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
+
+  ngOnInit(): void {
+    if (this.router.url.includes('edit')) {
+      this.setRecipeDataForEdit();
+    }
+  }
+
+  private setRecipeDataForEdit() {
+    const id = this.route.snapshot.paramMap.get('id');
+
+    if (id) {
+      this.recipesService.getRecipeDetails(+id).subscribe({
+        next: (recipeDetails: RecipeDetailsDTO) => {
+          if (recipeDetails.creatorName !== this.getUserName()) {
+            this.router.navigate(['/']);
+          }
+          this.edit = true;
+
+          this.recipeForm.controls.id.setValue(recipeDetails.id);
+          this.recipeForm.controls.recipeName.setValue(
+            recipeDetails.recipeName
+          );
+          this.recipeForm.controls.cuisine.setValue(recipeDetails.cuisine);
+          this.recipeForm.controls.preparation.setValue(
+            recipeDetails.preparation
+          );
+          this.recipeForm.controls.preparationTime.setValue(
+            recipeDetails.preparationTime.toString()
+          );
+          this.recipeForm.controls.portions.setValue(
+            recipeDetails.portions.toString()
+          );
+          this.ingredientsToAdd = recipeDetails.products;
+          if (recipeDetails.recipeImage) {
+            this.imageUrl =
+              'data:image/JPEG;png;base64,' + recipeDetails.recipeImage;
+          }
+        },
+      });
+    }
+  }
 
   getUserName() {
     return this.userService.user.getValue().username;
@@ -108,18 +156,34 @@ export class CreateRecipeComponent {
   }
 
   onFileSelected(event: any) {
-    console.log(event.target.files);
-    const file: File = event.target.files[0];
+    const file: Blob = event.target.files[0];
 
+    if (file.type !== 'image/jpeg' && file.type !== 'image/png') {
+      this.wrongImageFormat = true;
+      return;
+    }
+    this.wrongImageFormat = false;
+
+    this.image = file;
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = (_event) => {
       this.imageUrl = reader.result;
     };
+
+    if (this.edit && !this.updateImage) {
+      this.updateImage = true;
+    }
   }
 
   removeImage() {
+    this.image = null;
     this.imageUrl = '';
+    this.wrongImageFormat = false;
+
+    if (this.edit && !this.updateImage) {
+      this.updateImage = true;
+    }
   }
 
   submitIngredientForm(form: FormGroupDirective) {
@@ -148,36 +212,39 @@ export class CreateRecipeComponent {
       return;
     }
 
-    var enc = new TextEncoder();
+    const formData = new FormData();
+    if (this.image && this.updateImage) {
+      formData.append('image', this.image!);
+    } else {
+      formData.append('image', new Blob([]));
+    }
 
-    const recipeToAdd: RecipeDetailsDTO = {
+    const recipe: CreateRecipeRequest = {
       id: +this.recipeForm.controls.id.value!,
       recipeName: this.recipeForm.controls.recipeName.value!,
       preparation: this.recipeForm.controls.preparation.value!,
       preparationTime: +this.recipeForm.controls.preparationTime.value!,
       cuisine: this.recipeForm.controls.cuisine.value!,
       portions: +this.recipeForm.controls.portions.value!,
-      recipeImage: null,
       creatorName: this.getUserName(),
+      updateImage: this.updateImage,
       products: this.ingredientsToAdd,
     };
 
-    this.recipesService.createRecipe(recipeToAdd).subscribe({
-      next: (addedRecipe: RecipeDetailsDTO) => {
-        console.log(addedRecipe);
-        this.router.navigate(['/recipes']);
+    formData.append('jsonString', JSON.stringify(recipe));
+
+    let recipeRequest = null;
+    if (this.edit) {
+      recipeRequest = this.recipesService.editRecipe(formData);
+    } else {
+      recipeRequest = this.recipesService.createRecipe(formData);
+    }
+
+    recipeRequest.subscribe({
+      next: (response: CreateRecipeResponse) => {
+        this.router.navigate(['/recipes/', response.recipeId]);
       },
     });
-
-    // this.ingredientsToAdd.push({
-    //   id: 0,
-    //   productName: this.ingredientForm.controls.productName.value!,
-    //   category: this.ingredientForm.controls.category.value!,
-    //   quantity: +this.ingredientForm.controls.quantity.value!,
-    //   unit: this.ingredientForm.controls.unit.value! as Unit,
-    // });
-
-    // this.ingredientForm.reset();
   }
 
   searchForProducts() {

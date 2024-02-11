@@ -6,7 +6,7 @@ export type RecipeDTO = {
   preparationTime: number;
   cuisine: string;
   portions: number;
-  recipeImage: Uint8Array;
+  recipeImage: Blob;
   creatorUserName: string;
   nrOfProducts: number;
 };
@@ -26,7 +26,7 @@ export type RecipeDetailsDTO = {
   preparationTime: number;
   cuisine: string;
   portions: number;
-  recipeImage: FormData | null;
+  recipeImage: Blob;
   creatorName: string;
   products: RecipeProductDTO[];
 };

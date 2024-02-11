@@ -1,6 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { CreateRecipeRequest } from 'src/app/shared/model/requests/recipe-requests';
+import { CreateRecipeResponse } from 'src/app/shared/model/responses/recipes-response';
 import {
   GetRecipesParams,
   RecipeDTO,
@@ -60,17 +62,23 @@ export class RecipesService {
     );
   }
 
-  createRecipe(recipe: RecipeDetailsDTO) {
-    console.log(recipe);
-    return this.http.post<RecipeDetailsDTO>(
+  createRecipe(formData: FormData) {
+    return this.http.post<CreateRecipeResponse>(
       this.url + this.recipes_path,
-      recipe
+      formData
     );
   }
 
   deleteRecipe(recipeId: number) {
     return this.http.delete<void>(
       this.url + this.recipes_details_path.replace('{id}', recipeId.toString())
+    );
+  }
+
+  editRecipe(formData: FormData) {
+    return this.http.patch<CreateRecipeResponse>(
+      this.url + this.recipes_path,
+      formData
     );
   }
 

@@ -19,6 +19,10 @@
           #fileUpload
         />
 
+        <p id="image-error" *ngIf="wrongImageFormat">
+          Selected file format is not JPEG or PNG
+        </p>
+
         <div id="image-buttons">
           <button
             mat-raised-button
@@ -250,7 +254,7 @@
     </div>
 
     <button mat-raised-button type="submit" color="primary">
-      Create recipe
+      {{ edit ? "Edit" : "Create" }} recipe
     </button>
   </form>
 </mat-card>

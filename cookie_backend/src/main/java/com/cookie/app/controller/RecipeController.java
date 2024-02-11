@@ -2,20 +2,28 @@ package com.cookie.app.controller;
 
 import com.cookie.app.model.dto.RecipeDTO;
 import com.cookie.app.model.dto.RecipeDetailsDTO;
+import com.cookie.app.model.dto.RecipeProductDTO;
+import com.cookie.app.model.request.CreateRecipeRequest;
+import com.cookie.app.model.response.CreateRecipeResponse;
 import com.cookie.app.service.RecipeService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -75,14 +83,18 @@ public class RecipeController {
     }
 
     @SecurityRequirement(name = "bearerAuth")
-    @PostMapping(RECIPES_URL)
-    public ResponseEntity<RecipeDetailsDTO> createRecipe(
-            @RequestBody @Valid RecipeDetailsDTO recipe,
+    @PostMapping(value = RECIPES_URL, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<CreateRecipeResponse> createRecipe(
+            @RequestPart("image") MultipartFile recipeImage,
+            @RequestPart("jsonString") String jsonString,
             Authentication authentication
-    ) {
+    ) throws IOException {
         log.info("Performing recipe creation by user with email {}", authentication.getName());
+        ObjectMapper objMapper = new ObjectMapper();
+        CreateRecipeRequest recipe = objMapper.readValue(jsonString, CreateRecipeRequest.class);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.recipeService.createRecipe(authentication.getName(), recipe));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(this.recipeService.createRecipe(authentication.getName(), recipe, recipeImage));
     }
 
     @SecurityRequirement(name = "bearerAuth")
@@ -98,13 +110,17 @@ public class RecipeController {
     }
 
     @SecurityRequirement(name = "bearerAuth")
-    @PatchMapping(RECIPES_URL)
-    public ResponseEntity<RecipeDetailsDTO> updateRecipe(
-            @RequestBody @Valid RecipeDetailsDTO recipe,
+    @PatchMapping(value = RECIPES_URL, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<CreateRecipeResponse> updateRecipe(
+            @RequestPart("image") MultipartFile recipeImage,
+            @RequestPart("jsonString") String jsonString,
             Authentication authentication
-    ) {
+    ) throws JsonProcessingException {
         log.info("Performing recipe update by user with email {}", authentication.getName());
+        ObjectMapper objMapper = new ObjectMapper();
+        CreateRecipeRequest recipe = objMapper.readValue(jsonString, CreateRecipeRequest.class);
 
-        return ResponseEntity.status(HttpStatus.OK).body(this.recipeService.modifyRecipe(authentication.getName(), recipe));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(this.recipeService.modifyRecipe(authentication.getName(), recipe, recipeImage));
     }
 }
