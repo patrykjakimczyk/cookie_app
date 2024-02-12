@@ -3,6 +3,7 @@ package com.cookie.app.controller;
 import com.cookie.app.model.dto.RecipeDTO;
 import com.cookie.app.model.dto.RecipeDetailsDTO;
 import com.cookie.app.model.dto.RecipeProductDTO;
+import com.cookie.app.model.enums.MealType;
 import com.cookie.app.model.request.CreateRecipeRequest;
 import com.cookie.app.model.response.CreateRecipeResponse;
 import com.cookie.app.service.RecipeService;
@@ -24,6 +25,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -44,11 +47,12 @@ public class RecipeController {
             @Max(value = 2880, message = "Preparation time must be lower or equals 2880 minutes") int prepTime,
             @RequestParam @Valid @Min(value = 0, message = "Nr of portions must be at least 0")
             @Max(value = 12, message = "Nr of portions must be lower or equals 12") int portions,
+            @RequestParam List<MealType> mealTypes,
             @RequestParam String sortColName,
             @RequestParam String sortDirection
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(
-                this.recipeService.getRecipes(page, filterValue, prepTime, portions, sortColName, sortDirection)
+                this.recipeService.getRecipes(page, filterValue, prepTime, portions, mealTypes, sortColName, sortDirection)
         );
     }
 
@@ -61,6 +65,7 @@ public class RecipeController {
             @Max(value = 2880, message = "Preparation time must be lower or equals 2880 minutes") int prepTime,
             @RequestParam @Valid @Min(value = 0, message = "Nr of portions must be at least 0")
             @Max(value = 12, message = "Nr of portions must be lower or equals 12") int portions,
+            @RequestParam List<MealType> mealTypes,
             @RequestParam String sortColName,
             @RequestParam String sortDirection,
             Authentication authentication
@@ -69,7 +74,7 @@ public class RecipeController {
                 this.recipeService.getUserRecipes(
                         authentication.getName(),
                         page, filterValue, prepTime, portions,
-                        sortColName, sortDirection
+                        mealTypes, sortColName, sortDirection
                 )
         );
     }

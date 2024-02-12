@@ -22,6 +22,10 @@ mat-card {
     mat-accordion {
       margin-bottom: 6px;
 
+      #meal-types-container {
+        @include flex-with-gap($direction: column);
+      }
+
       mat-radio-group {
         @include flex-with-gap($direction: column);
       }

@@ -5,7 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'enumPrintFormatter',
 })
 export class EnumPrintFormatterPipe implements PipeTransform {
-  transform(value: string): string {
+  transform(value: string | undefined): string {
     if (!value) {
       return '';
     }

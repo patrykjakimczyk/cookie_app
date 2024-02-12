@@ -53,6 +53,14 @@ export class RecipesService {
       .append('sortColName', filterValues.sortColName)
       .append('sortDirection', filterValues.sortDirection);
 
+    if (filterValues.mealTypes.length === 0) {
+      params = params.append('mealTypes', '');
+    } else {
+      for (let mealType of filterValues.mealTypes) {
+        params = params.append('mealTypes', mealType);
+      }
+    }
+
     return this.http.get<RecipeDTO[]>(path, { params: params });
   }
 

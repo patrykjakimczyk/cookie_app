@@ -77,9 +77,26 @@
           </mat-form-field>
         </div>
 
-        <div class="header-and-value-container">
-          <p>Author :&nbsp;</p>
-          <p>{{ getUserName() }}</p>
+        <div class="header-and-value-container main-info">
+          <p>Meal type :&nbsp;</p>
+          <mat-form-field color="accent">
+            <mat-label>Choose meal type</mat-label>
+            <mat-select
+              formControlName="mealType"
+              name="mealType"
+              required
+              [compareWith]="compareOptions"
+            >
+              <mat-option
+                *ngFor="let mealType of mealTypes"
+                [value]="mealType"
+                >{{ mealType | enumPrintFormatter }}</mat-option
+              >
+            </mat-select>
+            <mat-error *ngIf="!recipeForm.controls.mealType.valid">
+              {{ getErrorMessage(recipeForm.controls.mealType) }}
+            </mat-error>
+          </mat-form-field>
         </div>
 
         <div class="header-and-value-container">
@@ -95,7 +112,6 @@
               formControlName="preparationTime"
               name="preparationTime"
             />
-
             <mat-error *ngIf="!recipeForm.controls.preparationTime.valid"
               >{{ getErrorMessage(recipeForm.controls.preparationTime) }}
             </mat-error>
@@ -106,7 +122,12 @@
           <p>Portions :&nbsp;</p>
           <mat-form-field color="accent">
             <mat-label>Choose nr of portions</mat-label>
-            <mat-select formControlName="portions" name="portions" required>
+            <mat-select
+              formControlName="portions"
+              name="portions"
+              required
+              [compareWith]="compareOptions"
+            >
               <mat-option *ngFor="let portion of portions" [value]="portion">{{
                 portion
               }}</mat-option>
@@ -115,6 +136,11 @@
               {{ getErrorMessage(recipeForm.controls.portions) }}
             </mat-error>
           </mat-form-field>
+        </div>
+
+        <div class="header-and-value-container">
+          <p>Author :&nbsp;</p>
+          <p>{{ getUserName() }}</p>
         </div>
       </div>
     </div>

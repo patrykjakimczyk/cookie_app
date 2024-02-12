@@ -1,7 +1,7 @@
 import {
   AuthorityEnum,
   authorityEnums,
-} from './../../../../shared/model/enums/authority-enum';
+} from '../../../../shared/model/enums/authority.enum';
 import { Component, Input } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { Observable, Subject, of } from 'rxjs';
@@ -17,11 +17,11 @@ import {
 import { GetPantryResponse } from 'src/app/shared/model/responses/pantry-response';
 import { PantryProductCheckboxEvent } from './pantry-product-list-elem/pantry-product-list-elem.component';
 import { Unit, units } from 'src/app/shared/model/enums/unit.enum';
-import { Category, categories } from 'src/app/shared/model/enums/category-enum';
+import { Category, categories } from 'src/app/shared/model/enums/category.enum';
 import {
   pantrySortColumnNames,
   sortDirections,
-} from 'src/app/shared/model/enums/sort-enum';
+} from 'src/app/shared/model/enums/sort.enum';
 import { PantriesService } from '../../pantries.service';
 import { UserService } from 'src/app/shared/services/user-service';
 import { Router } from '@angular/router';

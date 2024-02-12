@@ -10,7 +10,7 @@ public class RegexConstants {
     public static final String PRODUCT_NAME_REGEX = "^([\\p{L}\\d[\\s]]{3,50})$";
     public static final String SHOPPING_LIST_NAME_REGEX = "^([\\p{L}\\d\\s]{3,30})$";
     public static final String RECIPE_NAME_REGEX = "^([\\p{L}\\d\\s['\":-_@,.]]{5,60})$";
-    public static final String CUISINE_REGEX = "^([\\p{L}\\s]{0,30})$";
+    public static final String CUISINE_REGEX = "^([\\p{L}\\s]+$";
     public static final String PREPARATION_REGEX = "^([\\p{L}\\d\\s['\":-_@,.]]{30,512})$";
 
     private RegexConstants() {}

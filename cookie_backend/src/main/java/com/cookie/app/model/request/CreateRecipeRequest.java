@@ -2,6 +2,7 @@ package com.cookie.app.model.request;
 
 import com.cookie.app.model.RegexConstants;
 import com.cookie.app.model.dto.RecipeProductDTO;
+import com.cookie.app.model.enums.MealType;
 import jakarta.validation.constraints.*;
 
 import java.util.List;
@@ -28,10 +29,12 @@ public record CreateRecipeRequest(
         @Max(value = 2880 ,message = "Preparation time must be less than 12")
         int preparationTime,
 
-//        @Pattern(
-//                regexp = RegexConstants.CUISINE_REGEX,
-//                message = "Cuisine name can only contains letters, digits, whitespaces and its length has to be between 4 and 30"
-//        )
+        MealType mealType,
+
+        @Pattern(
+                regexp = RegexConstants.CUISINE_REGEX,
+                message = "Cuisine name can only contains letters, digits, whitespaces and its length has to be between 4 and 30"
+        )
         String cuisine,
 
         @NotNull(message = "Nr of portions must be present")

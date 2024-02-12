@@ -19,6 +19,13 @@
     <mat-divider></mat-divider>
 
     <div class="header-and-value-container spanned-columns">
+      <p>Meal type:&nbsp;</p>
+      <p>{{ recipe.mealType | enumPrintFormatter }}</p>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="header-and-value-container spanned-columns">
       <p>Cuisine:&nbsp;</p>
       <p>{{ recipe.cuisine | valueOrDash }}</p>
     </div>

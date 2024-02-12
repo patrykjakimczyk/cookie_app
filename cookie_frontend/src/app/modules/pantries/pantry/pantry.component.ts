@@ -10,7 +10,7 @@ import { PantriesService } from '../pantries.service';
 import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
 import { GetPantryResponse } from '../../../shared/model/responses/pantry-response';
 import { ActivatedRoute } from '@angular/router';
-import { AuthorityEnum } from 'src/app/shared/model/enums/authority-enum';
+import { AuthorityEnum } from 'src/app/shared/model/enums/authority.enum';
 
 @Component({
   selector: 'app-pantry',

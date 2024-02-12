@@ -1,3 +1,4 @@
+import { MealType } from '../enums/meal-type.enum';
 import { RecipeProductDTO } from '../types/recipes-types';
 
 export type CreateRecipeRequest = {
@@ -5,6 +6,7 @@ export type CreateRecipeRequest = {
   recipeName: string;
   preparation: string;
   preparationTime: number;
+  mealType: MealType;
   cuisine: string;
   portions: number;
   creatorName: string;

@@ -1,3 +1,7 @@
+import {
+  MealType,
+  mealTypes,
+} from './../../../shared/model/enums/meal-type.enum';
 import { Component, OnInit } from '@angular/core';
 import {
   AbstractControl,
@@ -10,7 +14,7 @@ import { RecipesService } from '../recipes.service';
 import { Observable, of } from 'rxjs';
 import { ProductDTO } from 'src/app/shared/model/types/pantry-types';
 import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
-import { Category, categories } from 'src/app/shared/model/enums/category-enum';
+import { Category, categories } from 'src/app/shared/model/enums/category.enum';
 import { Unit, units } from 'src/app/shared/model/enums/unit.enum';
 import {
   RecipeDetailsDTO,
@@ -36,6 +40,7 @@ export class CreateRecipeComponent implements OnInit {
   protected categories = categories;
   protected units = units;
   protected portions = portions;
+  protected mealTypes = mealTypes;
   protected imageUrl: string | ArrayBuffer | null = '';
   protected image: Blob | null = null;
 
@@ -45,6 +50,7 @@ export class CreateRecipeComponent implements OnInit {
       '',
       [Validators.required, Validators.pattern(RegexConstants.recipeNameRegex)],
     ],
+    mealType: ['', [Validators.required]],
     cuisine: [''],
     preparation: [
       '',
@@ -107,6 +113,7 @@ export class CreateRecipeComponent implements OnInit {
           this.recipeForm.controls.recipeName.setValue(
             recipeDetails.recipeName
           );
+          this.recipeForm.controls.mealType.setValue(recipeDetails.mealType);
           this.recipeForm.controls.cuisine.setValue(recipeDetails.cuisine);
           this.recipeForm.controls.preparation.setValue(
             recipeDetails.preparation
@@ -213,7 +220,7 @@ export class CreateRecipeComponent implements OnInit {
     }
 
     const formData = new FormData();
-    if (this.image && this.updateImage) {
+    if (this.image && (this.updateImage || !this.edit)) {
       formData.append('image', this.image!);
     } else {
       formData.append('image', new Blob([]));
@@ -224,6 +231,7 @@ export class CreateRecipeComponent implements OnInit {
       recipeName: this.recipeForm.controls.recipeName.value!,
       preparation: this.recipeForm.controls.preparation.value!,
       preparationTime: +this.recipeForm.controls.preparationTime.value!,
+      mealType: this.recipeForm.controls.mealType.value as MealType,
       cuisine: this.recipeForm.controls.cuisine.value!,
       portions: +this.recipeForm.controls.portions.value!,
       creatorName: this.getUserName(),
@@ -257,6 +265,10 @@ export class CreateRecipeComponent implements OnInit {
           },
         });
     }
+  }
+
+  compareOptions(obj1: any, obj2: any) {
+    return obj1 === obj1;
   }
 
   setCategoryForProduct(category: Category) {

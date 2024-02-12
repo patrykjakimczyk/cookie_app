@@ -1,5 +1,7 @@
 package com.cookie.app.model.entity;
 
+import com.cookie.app.model.enums.AuthorityEnum;
+import com.cookie.app.model.enums.MealType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -34,6 +36,10 @@ public class Recipe {
 
     @Column(nullable = false)
     private int preparationTime;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private MealType mealType;
 
     @Column(length = 30)
     private String cuisine;

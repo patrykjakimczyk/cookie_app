@@ -17,6 +17,7 @@ public class RecipeMapperDTO implements Function<Recipe, RecipeDTO> {
                 recipe.getId(),
                 recipe.getRecipeName(),
                 recipe.getPreparationTime(),
+                recipe.getMealType(),
                 recipe.getCuisine(),
                 recipe.getPortions(),
                 ImageUtil.decompressImage(recipe.getRecipeImage()),

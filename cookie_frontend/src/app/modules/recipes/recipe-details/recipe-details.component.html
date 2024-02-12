@@ -16,13 +16,13 @@
       </div>
 
       <div class="header-and-value-container main-info">
-        <p>Cuisine:&nbsp;</p>
-        <p>{{ recipeDetails?.cuisine | valueOrDash }}</p>
+        <p>Meal type:&nbsp;</p>
+        <p>{{ recipeDetails?.mealType | enumPrintFormatter }}</p>
       </div>
 
-      <div class="header-and-value-container">
-        <p>Author :&nbsp;</p>
-        <p>{{ recipeDetails?.creatorName }}</p>
+      <div class="header-and-value-container main-info">
+        <p>Cuisine:&nbsp;</p>
+        <p>{{ recipeDetails?.cuisine | valueOrDash }}</p>
       </div>
 
       <div class="header-and-value-container">
@@ -33,6 +33,11 @@
       <div class="header-and-value-container">
         <p>Portions :&nbsp;</p>
         <p>{{ recipeDetails?.portions }}</p>
+      </div>
+
+      <div class="header-and-value-container">
+        <p>Author :&nbsp;</p>
+        <p>{{ recipeDetails?.creatorName }}</p>
       </div>
     </div>
 

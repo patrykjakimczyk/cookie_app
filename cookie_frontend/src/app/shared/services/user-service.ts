@@ -4,7 +4,7 @@ import { removeCookie } from 'typescript-cookie';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { BehaviorSubject } from 'rxjs';
 import { LoginResponse } from '../model/responses/registration-responses';
-import { AuthorityEnum } from '../model/enums/authority-enum';
+import { AuthorityEnum } from '../model/enums/authority.enum';
 import { AuthorityDTO } from '../model/types/user-types';
 
 @Injectable({ providedIn: 'root' })

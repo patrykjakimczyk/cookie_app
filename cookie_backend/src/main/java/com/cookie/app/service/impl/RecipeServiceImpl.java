@@ -4,6 +4,7 @@ import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.exception.ValidationException;
 import com.cookie.app.model.dto.*;
 import com.cookie.app.model.entity.*;
+import com.cookie.app.model.enums.MealType;
 import com.cookie.app.model.mapper.AuthorityMapperDTO;
 import com.cookie.app.model.mapper.RecipeDetailsMapperDTO;
 import com.cookie.app.model.mapper.RecipeMapperDTO;
@@ -21,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -58,18 +60,20 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
                                       String filterValue,
                                       int prepTime,
                                       int portions,
+                                      List<MealType> mealTypes,
                                       String sortColName,
                                       String sortDirection) {
         PageRequest pageRequest = super.createPageRequest(page, sortColName, sortDirection);
+        Set<String> selectedMealTypes = getMealTypesAsStrings(mealTypes);
 
         if (StringUtils.isBlank(filterValue)) {
             return this.recipeRepository
-                    .findRecipes(prepTime, portions, pageRequest)
+                    .findRecipes(prepTime, portions, selectedMealTypes, pageRequest)
                     .map(recipeMapperDTO::apply);
         }
 
         return this.recipeRepository
-                .findRecipesByFilter(filterValue, prepTime, portions, pageRequest)
+                .findRecipesByFilter(filterValue, prepTime, portions, selectedMealTypes, pageRequest)
                 .map(recipeMapperDTO::apply);
     }
 
@@ -79,19 +83,21 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
                                           String filterValue,
                                           int prepTime,
                                           int portions,
+                                          List<MealType> mealTypes,
                                           String sortColName,
                                           String sortDirection) {
         User user = super.getUserByEmail(userEmail);
         PageRequest pageRequest = super.createPageRequest(page, sortColName, sortDirection);
+        Set<String> selectedMealTypes = getMealTypesAsStrings(mealTypes);
 
         if (StringUtils.isBlank(filterValue)) {
             return this.recipeRepository
-                    .findCreatorRecipes(user.getId(), prepTime, portions, pageRequest)
+                    .findCreatorRecipes(user.getId(), prepTime, portions, selectedMealTypes, pageRequest)
                     .map(recipeMapperDTO::apply);
         }
 
         return this.recipeRepository
-                .findCreatorRecipesByFilter(user.getId(), filterValue, prepTime, portions, pageRequest)
+                .findCreatorRecipesByFilter(user.getId(), filterValue, prepTime, portions, selectedMealTypes, pageRequest)
                 .map(recipeMapperDTO::apply);
     }
 
@@ -101,7 +107,7 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
         Optional<Recipe> recipeOptional = this.recipeRepository.findById(recipeId);
 
         if (recipeOptional.isEmpty()) {
-            return new RecipeDetailsDTO(0, null, null, 0, null, 0, null, null, null);
+            return new RecipeDetailsDTO(0, null, null, 0, null, null,0, null, null, null);
         }
 
         return this.recipeDetailsMapperDTO.apply(recipeOptional.get());
@@ -189,6 +195,19 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
         return this.shoppingListProductService.addRecipeProductsToShoppingList(listId, user, recipeProductsToAdd);
     }
 
+    private Set<String> getMealTypesAsStrings(List<MealType> mealTypes) {
+        if (mealTypes.isEmpty()) {
+            return MealType.ALL_MEAL_TYPES
+                    .stream()
+                    .map(Enum::name)
+                    .collect(Collectors.toSet());
+        }
+
+        return mealTypes
+                .stream()
+                .map(Enum::name).collect(Collectors.toSet());
+    }
+
     private void modifyRecipe(Recipe recipe, CreateRecipeRequest recipeDetailsDTO, MultipartFile recipeImage) {
         if (!recipe.getRecipeName().equals(recipeDetailsDTO.recipeName())) {
             recipe.setRecipeName(recipeDetailsDTO.recipeName());
@@ -218,7 +237,7 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
             String contentType = recipeImage.getContentType();
 
             if (contentType != null && !contentType.equals("image/jpeg") &&
-                    !contentType.equals("image/png") && newImage.length > 0
+                    !contentType.equals("image/png") && newImage.length <= 0
             ) {
                 throw new UserPerformedForbiddenActionException("You tried to save file in forbidden format");
             }
@@ -308,6 +327,7 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
                 .recipeName(createRecipeRequest.recipeName())
                 .preparation(createRecipeRequest.preparation())
                 .preparationTime(createRecipeRequest.preparationTime())
+                .mealType(createRecipeRequest.mealType())
                 .cuisine(createRecipeRequest.cuisine())
                 .portions(createRecipeRequest.portions())
                 .recipeImage(recipeImg)

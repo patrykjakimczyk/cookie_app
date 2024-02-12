@@ -1,4 +1,4 @@
-import { Category } from '../enums/category-enum';
+import { Category } from '../enums/category.enum';
 import { Unit } from '../enums/unit.enum';
 import { AuthorityDTO } from './user-types';
 

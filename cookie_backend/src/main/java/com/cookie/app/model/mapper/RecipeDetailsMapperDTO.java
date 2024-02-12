@@ -23,6 +23,7 @@ public class RecipeDetailsMapperDTO implements Function<Recipe, RecipeDetailsDTO
                 recipe.getRecipeName(),
                 recipe.getPreparation(),
                 recipe.getPreparationTime(),
+                recipe.getMealType(),
                 recipe.getCuisine(),
                 recipe.getPortions(),
                 ImageUtil.decompressImage(recipe.getRecipeImage()),

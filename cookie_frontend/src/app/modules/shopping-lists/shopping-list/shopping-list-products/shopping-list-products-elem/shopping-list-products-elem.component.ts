@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
-import { AuthorityEnum } from 'src/app/shared/model/enums/authority-enum';
+import { AuthorityEnum } from 'src/app/shared/model/enums/authority.enum';
 import { Unit, units } from 'src/app/shared/model/enums/unit.enum';
 import {
   GetShoppingListResponse,

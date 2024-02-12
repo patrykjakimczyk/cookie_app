@@ -5,7 +5,6 @@ import com.cookie.app.model.enums.Unit;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 public final class RecipeProductDTO extends ProductDTO {

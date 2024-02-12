@@ -1,4 +1,4 @@
-import { AuthorityEnum } from '../enums/authority-enum';
+import { AuthorityEnum } from '../enums/authority.enum';
 
 export type CreateGroupRequest = {
   groupName: string;

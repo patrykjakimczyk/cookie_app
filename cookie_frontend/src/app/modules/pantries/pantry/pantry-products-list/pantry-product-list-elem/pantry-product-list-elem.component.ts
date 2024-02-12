@@ -1,7 +1,7 @@
 import {
   AuthorityEnum,
   authorityEnums,
-} from './../../../../../shared/model/enums/authority-enum';
+} from '../../../../../shared/model/enums/authority.enum';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';

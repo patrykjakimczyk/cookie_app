@@ -1,5 +1,5 @@
 import { Unit } from '../enums/unit.enum';
-import { Category } from '../enums/category-enum';
+import { Category } from '../enums/category.enum';
 
 export type PantryDTO = {
   pantryId: number;

@@ -10,6 +10,21 @@
     <mat-accordion>
       <mat-expansion-panel class="mat-elevation-z0">
         <mat-expansion-panel-header>
+          <mat-panel-title> Meal type </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div id="meal-types-container">
+          <mat-checkbox
+            *ngFor="let mealType of mealTypes"
+            (change)="onMealTypeChange($event, mealType)"
+          >
+            {{ mealType | enumPrintFormatter }}
+          </mat-checkbox>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+    <mat-accordion>
+      <mat-expansion-panel class="mat-elevation-z0">
+        <mat-expansion-panel-header>
           <mat-panel-title> Max. preparation time </mat-panel-title>
         </mat-expansion-panel-header>
         <mat-radio-group color="primary" formControlName="prepTime">

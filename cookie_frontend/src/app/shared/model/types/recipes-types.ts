@@ -1,9 +1,11 @@
+import { MealType } from '../enums/meal-type.enum';
 import { Unit } from '../enums/unit.enum';
 
 export type RecipeDTO = {
   id: number;
   recipeName: string;
   preparationTime: number;
+  mealType: MealType;
   cuisine: string;
   portions: number;
   recipeImage: Blob;
@@ -24,6 +26,7 @@ export type RecipeDetailsDTO = {
   recipeName: string;
   preparation: string;
   preparationTime: number;
+  mealType: MealType;
   cuisine: string;
   portions: number;
   recipeImage: Blob;
@@ -33,6 +36,7 @@ export type RecipeDetailsDTO = {
 
 export type GetRecipesParams = {
   filterValue: string;
+  mealTypes: MealType[];
   prepTime: number;
   portions: number;
   sortColName: string;

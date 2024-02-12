@@ -3,7 +3,7 @@ import { GetShoppingListResponse } from './../../../shared/model/types/shopping-
 import { ShoppingListsService } from './../shopping-lists.service';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { AuthorityEnum } from 'src/app/shared/model/enums/authority-enum';
+import { AuthorityEnum } from 'src/app/shared/model/enums/authority.enum';
 import { MatDialog } from '@angular/material/dialog';
 import { NewNamePopupComponentComponent } from 'src/app/shared/components/new-name-popup-component/new-name-popup-component.component';
 import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';

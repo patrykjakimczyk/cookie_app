@@ -1,4 +1,4 @@
-import { authorityEnums } from './../../../shared/model/enums/authority-enum';
+import { authorityEnums } from '../../../shared/model/enums/authority.enum';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component, Input, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -12,7 +12,7 @@ import { GroupService } from './../group.service';
 import { AuthorityDTO, UserDTO } from 'src/app/shared/model/types/user-types';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { AuthorityEnum } from 'src/app/shared/model/enums/authority-enum';
+import { AuthorityEnum } from 'src/app/shared/model/enums/authority.enum';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UserService } from 'src/app/shared/services/user-service';
 import { GroupNameTakenResponse } from 'src/app/shared/model/responses/group-response';
