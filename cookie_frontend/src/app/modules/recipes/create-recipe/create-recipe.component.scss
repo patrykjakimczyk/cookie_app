@@ -136,6 +136,11 @@ mat-card {
                 font-size: 25px;
               }
             }
+
+            &:hover {
+              background-color: darken($color: white, $amount: 5);
+              cursor: pointer;
+            }
           }
         }
       }

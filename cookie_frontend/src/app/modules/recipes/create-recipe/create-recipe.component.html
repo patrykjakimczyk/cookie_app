@@ -234,10 +234,10 @@
 
           <ng-container *ngIf="ingredientsToAdd.length > 0">
             <div
-              *ngFor="let product of ingredientsToAdd"
+              *ngFor="let product of ingredientsToAdd; index as i"
               class="product-container bolded-text"
             >
-              <span
+              <span (click)="modifyIngredient(product, i)"
                 >{{ product.quantity }} {{ printShortUnit(product) }} of
                 {{
                   product.productName +

@@ -24,6 +24,8 @@ import { portions } from 'src/app/shared/model/constants/recipes.constants';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CreateRecipeRequest } from 'src/app/shared/model/requests/recipe-requests';
 import { CreateRecipeResponse } from 'src/app/shared/model/responses/recipes-response';
+import { MatDialog } from '@angular/material/dialog';
+import { ModifyIngredientComponent } from './modify-ingredient/modify-ingredient.component';
 
 @Component({
   selector: 'app-create-recipe',
@@ -89,7 +91,8 @@ export class CreateRecipeComponent implements OnInit {
     private userService: UserService,
     private fb: FormBuilder,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -191,6 +194,20 @@ export class CreateRecipeComponent implements OnInit {
     if (this.edit && !this.updateImage) {
       this.updateImage = true;
     }
+  }
+
+  modifyIngredient(recipeProductDTO: RecipeProductDTO, productIdx: number) {
+    const modifyDialog = this.dialog.open(ModifyIngredientComponent, {
+      data: recipeProductDTO,
+    });
+
+    modifyDialog
+      .afterClosed()
+      .subscribe((modifiedIngredient: RecipeProductDTO) => {
+        if (modifiedIngredient) {
+          this.ingredientsToAdd[productIdx] = modifiedIngredient;
+        }
+      });
   }
 
   submitIngredientForm(form: FormGroupDirective) {

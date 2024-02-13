@@ -26,6 +26,7 @@ import { CreateRecipeComponent } from './create-recipe/create-recipe.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { ModifyIngredientComponent } from './create-recipe/modify-ingredient/modify-ingredient.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     RecipeTileComponent,
     RecipeDetailsComponent,
     CreateRecipeComponent,
+    ModifyIngredientComponent,
   ],
   imports: [
     BrowserModule,

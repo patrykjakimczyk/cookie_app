@@ -1,0 +1,35 @@
+@import "../../../../../assets/styles/mixins";
+
+h1 {
+  font-size: 24px !important;
+}
+
+#content {
+  @include flex-with-gap($direction: column, $gap: 10px);
+  width: 400px;
+
+  form {
+    .details-container {
+      span:nth-child(2) {
+        color: black;
+      }
+    }
+
+    mat-form-field {
+      width: 100%;
+
+      mat-hint {
+        font-size: 12px;
+      }
+
+      mat-error {
+        font-size: 12px;
+      }
+    }
+  }
+}
+
+#action-buttons {
+  @include flex-with-gap;
+  justify-content: space-between;
+}
