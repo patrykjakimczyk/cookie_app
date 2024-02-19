@@ -11,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Set;
 
 public interface RecipeService {
     Page<RecipeDTO> getRecipes(int page, String filterValue, int prepTime, int portions, List<MealType> mealTypes, String sortColName, String sortDirection);
