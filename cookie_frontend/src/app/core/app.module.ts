@@ -20,6 +20,7 @@ import { GroupModule } from '../modules/group/group.module';
 import { PantryModule } from '../modules/pantries/pantries.module';
 import { ShoppingListsModule } from '../modules/shopping-lists/shopping-lists.module';
 import { RecipesModule } from '../modules/recipes/recipes.module';
+import { MealsModule } from '../modules/meals/meals.module';
 
 @NgModule({
   declarations: [AppComponent, NavbarComponent],
@@ -41,6 +42,7 @@ import { RecipesModule } from '../modules/recipes/recipes.module';
     GroupModule,
     ShoppingListsModule,
     RecipesModule,
+    MealsModule,
   ],
   providers: [
     {
