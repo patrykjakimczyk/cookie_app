@@ -8,8 +8,8 @@ export enum AuthorityEnum {
   CREATE_SHOPPING_LIST = 'CREATE_SHOPPING_LIST',
   MODIFY_SHOPPING_LIST = 'MODIFY_SHOPPING_LIST',
   ADD_TO_SHOPPING_LIST = 'ADD_TO_SHOPPING_LIST',
-  ADD_MEAL = 'ADD_MEAL',
-  MODIFY_MEAL = 'MODIFY_MEAL',
+  ADD_MEALS = 'ADD_MEALS',
+  MODIFY_MEALS = 'MODIFY_MEALS',
 }
 
 export const authorityEnums = [
@@ -22,6 +22,6 @@ export const authorityEnums = [
   AuthorityEnum.CREATE_SHOPPING_LIST,
   AuthorityEnum.MODIFY_SHOPPING_LIST,
   AuthorityEnum.ADD_TO_SHOPPING_LIST,
-  AuthorityEnum.ADD_MEAL,
-  AuthorityEnum.MODIFY_MEAL,
+  AuthorityEnum.ADD_MEALS,
+  AuthorityEnum.MODIFY_MEALS,
 ];

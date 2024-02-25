@@ -119,6 +119,7 @@ const routes: Routes = [
   {
     path: 'meals',
     component: MealsComponent,
+    canActivate: [AuthGuard],
   },
 ];
 
