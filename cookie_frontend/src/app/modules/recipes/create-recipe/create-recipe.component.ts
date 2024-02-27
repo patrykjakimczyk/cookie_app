@@ -239,8 +239,6 @@ export class CreateRecipeComponent implements OnInit {
     const formData = new FormData();
     if (this.image && (this.updateImage || !this.edit)) {
       formData.append('image', this.image!);
-    } else {
-      formData.append('image', new Blob([]));
     }
 
     const recipe: CreateRecipeRequest = {

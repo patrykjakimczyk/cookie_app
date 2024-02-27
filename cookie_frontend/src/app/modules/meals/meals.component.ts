@@ -3,7 +3,6 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { calendarConfig } from './calendar.config';
 import { MealsService } from './meals.service';
 import { FullCalendarComponent } from '@fullcalendar/angular';
-import { s } from '@fullcalendar/core/internal-common';
 import { MealDTO } from 'src/app/shared/model/types/meals.types';
 
 @Component({
@@ -21,16 +20,25 @@ export class MealsComponent implements AfterViewInit {
   ) {}
 
   ngAfterViewInit(): void {
+    this.getMeals();
+
+    this.calendar.options = {
+      datesSet: () => this.getMeals(),
+    };
+  }
+
+  private getMeals() {
     const dateAfter = this.formatISOString(
       this.calendar.getApi().view.activeStart.toISOString()
     );
     const dateBefore = this.formatISOString(
       this.calendar.getApi().view.activeEnd.toISOString()
     );
-    console.log(dateAfter, dateBefore);
-    this.mealsService.getUserMeals(dateAfter, dateBefore).subscribe((meals) => {
-      this.calendar.events = meals.map((meal) => this.mapToEventObject(meal));
-      console.log(meals);
+
+    this.mealsService.getUserMeals(dateAfter, dateBefore).subscribe({
+      next: (meals) => {
+        this.calendar.events = meals.map((meal) => this.mapToEventObject(meal));
+      },
     });
   }
 

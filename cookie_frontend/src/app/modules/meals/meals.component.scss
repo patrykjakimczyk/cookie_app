@@ -1,5 +1,26 @@
-mat-card {
-  padding: 20px 16px;
-  margin: auto;
+@import "../../../assets/styles/mixins";
+@import "../../../assets/styles/colors";
+
+#main-container {
   width: 70%;
+  margin: auto;
+
+  #upper-container {
+    @include flex-with-gap;
+    justify-content: space-between;
+    align-items: center;
+
+    mat-icon {
+      color: $dark-main-color;
+      transform: scale(1.5);
+    }
+
+    button {
+      font-weight: 600;
+    }
+  }
+
+  mat-card {
+    padding: 20px 16px;
+  }
 }

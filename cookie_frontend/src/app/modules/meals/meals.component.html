@@ -1,3 +1,9 @@
-<mat-card>
-  <full-calendar [options]="calendarOptions" #calendar></full-calendar>
-</mat-card>
+<div id="main-container">
+  <div id="upper-container">
+    <h1><mat-icon>calendar_today</mat-icon> Planned meals</h1>
+    <button mat-raised-button color="primary">Schedule a meal</button>
+  </div>
+  <mat-card>
+    <full-calendar [options]="calendarOptions" #calendar></full-calendar>
+  </mat-card>
+</div>

@@ -1,6 +1,6 @@
 import { CalendarOptions } from '@fullcalendar/core';
 import timeGridPlugin from '@fullcalendar/timegrid';
-import Tooltip from 'tooltip.js';
+import tippy from 'tippy.js';
 
 export const calendarConfig: CalendarOptions = {
   initialView: 'timeGridWeek',
@@ -34,11 +34,8 @@ export const calendarConfig: CalendarOptions = {
     hour12: false,
   },
   eventDidMount: function (info) {
-    var tooltip = new Tooltip(info.el, {
-      title: info.event.extendedProps['description'],
-      placement: 'top',
-      trigger: 'hover',
-      container: 'body',
+    tippy(info.el, {
+      content: info.event.extendedProps['description'],
     });
   },
 };

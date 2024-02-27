@@ -31,7 +31,7 @@ mat-card {
       @include flex-with-gap($direction: column, $gap: 10px, $align: center);
 
       img {
-        width: 350px;
+        width: 250px;
         height: auto;
       }
 
