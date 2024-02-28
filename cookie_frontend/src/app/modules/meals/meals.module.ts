@@ -10,9 +10,11 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { EnumPrintFormatterPipe } from 'src/app/shared/pipes/enum-print-formatter.pipe';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MealDetailsPopupComponent } from './meal-details-popup/meal-details-popup.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
-  declarations: [MealsComponent],
+  declarations: [MealsComponent, MealDetailsPopupComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -25,6 +27,7 @@ import { MatButtonModule } from '@angular/material/button';
     MatCardModule,
     MatIconModule,
     MatButtonModule,
+    MatDialogModule,
   ],
   exports: [MealsComponent],
   providers: [EnumPrintFormatterPipe],

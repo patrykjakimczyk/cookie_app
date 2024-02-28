@@ -19,4 +19,8 @@ export class MealsService {
       params: params,
     });
   }
+
+  removeMeal(mealId: number) {
+    return this.http.delete<void>(`${this.url}${this.meals_path}/${mealId}`);
+  }
 }

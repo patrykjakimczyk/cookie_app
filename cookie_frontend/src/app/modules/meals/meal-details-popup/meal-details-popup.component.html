@@ -1,0 +1,64 @@
+<h1 mat-dialog-title>Meal details</h1>
+<div mat-dialog-content id="content">
+  <div class="details-container">
+    <span>Recipe name: </span>
+    <span
+      >{{ meal.recipe.recipeName }}
+      <button mat-button color="primary" (click)="goToRecipe()">
+        See recipe
+      </button>
+    </span>
+  </div>
+
+  <div class="details-container">
+    <span>Cuisine: </span>
+    <span>{{ meal.recipe.cuisine | valueOrDash }}</span>
+  </div>
+
+  <div class="details-container">
+    <span>Meal type: </span>
+    <span>{{ meal.recipe.mealType | enumPrintFormatter }}</span>
+  </div>
+
+  <div class="details-container">
+    <span>Portions: </span>
+    <span>{{ meal.recipe.portions }}</span>
+  </div>
+
+  <div class="details-container">
+    <span>Cookie: </span>
+    <span>{{ meal.user.username }}</span>
+  </div>
+
+  <div class="details-container">
+    <span>Group: </span>
+    <span>{{ meal.group.groupName }}</span>
+  </div>
+
+  <div class="details-container">
+    <span>Meal date: </span>
+    <span>{{ meal.mealDate | date : "MMM dd, yyyy 'at' HH:mm" }}</span>
+  </div>
+</div>
+
+<div mat-dialog-actions id="action-buttons">
+  <button mat-button (click)="close()">Close</button>
+  <div>
+    <button
+      mat-raised-button
+      cdkFocusInitial
+      color="warn"
+      (click)="removeMeal()"
+    >
+      Remove meal
+    </button>
+    <button
+      mat-raised-button
+      cdkFocusInitial
+      color="primary"
+      (click)="modifyMeal()"
+    >
+      Modify meal
+    </button>
+  </div>
+</div>

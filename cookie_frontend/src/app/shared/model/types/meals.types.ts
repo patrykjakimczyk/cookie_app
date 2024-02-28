@@ -3,6 +3,7 @@ import { RecipeDTO } from './recipes-types';
 import { UserDTO } from './user-types';
 
 export type MealDTO = {
+  id: number;
   mealDate: Date;
   user: UserDTO;
   group: GroupDTO;
