@@ -89,7 +89,7 @@ public class RecipeController {
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping(value = RECIPES_URL, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CreateRecipeResponse> createRecipe(
-            @RequestPart("image") MultipartFile recipeImage,
+            @RequestPart(value = "image", required = false) MultipartFile recipeImage,
             @RequestPart("jsonString") String jsonString,
             Authentication authentication
     ) throws IOException {
@@ -116,7 +116,7 @@ public class RecipeController {
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(value = RECIPES_URL, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CreateRecipeResponse> updateRecipe(
-            @RequestPart("image") MultipartFile recipeImage,
+            @RequestPart(value = "image", required = false) MultipartFile recipeImage,
             @RequestPart("jsonString") String jsonString,
             Authentication authentication
     ) throws JsonProcessingException {

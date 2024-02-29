@@ -1,7 +1,15 @@
 <div id="main-container">
   <div id="upper-container">
-    <h1>Recipes</h1>
-    <button mat-raised-button *ngIf="isUserLogged()" (click)="goToCreateRecipe()">Create recipe</button>
+    <h1>
+      <img src="../../../assets/img/recipes.svg" alt="fridge icon" />Recipes
+    </h1>
+    <button
+      mat-raised-button
+      *ngIf="isUserLogged()"
+      (click)="goToCreateRecipe()"
+    >
+      Create recipe
+    </button>
   </div>
 
   <div id="tabs-container">

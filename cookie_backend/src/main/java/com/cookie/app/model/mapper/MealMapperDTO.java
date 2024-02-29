@@ -17,6 +17,7 @@ public class MealMapperDTO implements Function<Meal, MealDTO> {
     @Override
     public MealDTO apply(Meal meal) {
         return new MealDTO(
+                meal.getId(),
                 meal.getMealDate(),
                 this.userMapperDTO.apply(meal.getUser()),
                 this.groupMapperDTO.apply(meal.getGroup()),

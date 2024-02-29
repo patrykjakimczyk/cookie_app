@@ -85,7 +85,7 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
     public void removeProductsFromPantry(long pantryId, List<Long> productIds, String userEmail) {
         Pantry pantry = this.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.MODIFY);
 
-        if (!this.isAnyProductNotOnList(pantry, productIds)) {
+        if (this.isAnyProductNotOnList(pantry, productIds)) {
             log.info("User with email={} tried to remove products from different pantry", userEmail);
             throw new UserPerformedForbiddenActionException("Cannot remove products from different pantry");
         }

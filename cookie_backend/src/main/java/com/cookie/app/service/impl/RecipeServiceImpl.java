@@ -228,18 +228,20 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
         if (recipeDetailsDTO.updateImage()) {
             byte[] newImage = new byte[0];
 
-            try {
-                newImage = recipeImage.getBytes();
-            } catch (IOException exception) {
-                log.info("Reading file data failed!");
-            }
+            if (recipeImage != null) {
+                try {
+                    newImage = recipeImage.getBytes();
+                } catch (IOException exception) {
+                    log.info("Reading file data failed!");
+                }
 
-            String contentType = recipeImage.getContentType();
+                String contentType = recipeImage.getContentType();
 
-            if (contentType != null && !contentType.equals("image/jpeg") &&
-                    !contentType.equals("image/png") && newImage.length <= 0
-            ) {
-                throw new UserPerformedForbiddenActionException("You tried to save file in forbidden format");
+                if (contentType != null && !contentType.equals("image/jpeg") &&
+                        !contentType.equals("image/png") && newImage.length <= 0
+                ) {
+                    throw new UserPerformedForbiddenActionException("You tried to save file in forbidden format");
+                }
             }
 
             recipe.setRecipeImage(ImageUtil.compressImage(newImage));
@@ -310,18 +312,22 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
 
 
     private Recipe mapRecipeDetailsToRecipe(User creator, CreateRecipeRequest createRecipeRequest, MultipartFile recipeImage) {
-        String contentType = recipeImage.getContentType();
-        if (contentType == null || (!contentType.equals("image/jpeg") && !contentType.equals("image/png"))) {
-            throw new UserPerformedForbiddenActionException("You tried to save file in forbidden format");
-        }
-
         byte[] recipeImg = null;
 
-        try {
-            recipeImg = ImageUtil.compressImage(recipeImage.getBytes());
-        } catch (IOException exception) {
-            log.info("Reading file data failed!");
+        if (recipeImage != null) {
+            String contentType = recipeImage.getContentType();
+
+            if (contentType == null || (!contentType.equals("image/jpeg") && !contentType.equals("image/png"))) {
+                throw new UserPerformedForbiddenActionException("You tried to save file in forbidden format");
+            }
+
+            try {
+                recipeImg = ImageUtil.compressImage(recipeImage.getBytes());
+            } catch (IOException exception) {
+                log.info("Reading file data failed!");
+            }
         }
+
 
         Recipe recipe =  Recipe.builder()
                 .recipeName(createRecipeRequest.recipeName())

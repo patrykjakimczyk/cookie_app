@@ -10,8 +10,12 @@
     @include flex-with-gap;
     justify-content: space-between;
 
-    img {
-      height: 26px;
+    h1 {
+      @include flex-with-gap($align: center, $gap: 10px);
+
+      img {
+        height: 36px;
+      }
     }
 
     button {

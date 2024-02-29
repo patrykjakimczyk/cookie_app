@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/cookie_db
+    url: jdbc:postgresql://localhost:5432/cookiedb
     username: postgres
     password: admin
     driver-class-name: org.postgresql.Driver

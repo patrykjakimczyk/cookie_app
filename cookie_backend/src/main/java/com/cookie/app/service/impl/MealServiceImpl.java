@@ -105,7 +105,7 @@ public class MealServiceImpl extends AbstractCookieService implements MealServic
 
         if (
                 !super.userHasAuthority(user, group.getId(), AuthorityEnum.MODIFY_MEALS) ||
-                meal.getUser().getId() == user.getId()
+                meal.getUser().getId() != user.getId()
         ) {
             log.info("User: {} tried to delete a meal from a group with id: {} without permission", userEmail, group.getId());
             throw new UserPerformedForbiddenActionException("You tried to delete a meal from group without permission");
