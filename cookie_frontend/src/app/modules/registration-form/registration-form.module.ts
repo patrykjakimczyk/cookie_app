@@ -18,6 +18,7 @@ import { MatRadioModule } from '@angular/material/radio';
 
 import { RegistrationFormComponent } from './registration-form.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { MatCardModule } from '@angular/material/card';
 
 @NgModule({
   declarations: [RegistrationFormComponent],
@@ -38,6 +39,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
     MatDatepickerModule,
     MatNativeDateModule,
     MatRadioModule,
+    MatCardModule,
   ],
   exports: [RegistrationFormComponent],
   providers: [

@@ -1,0 +1,49 @@
+@import "../../../../assets/styles/mixins";
+@import "../../../../assets/styles/colors";
+
+mat-card {
+  @include flex-with-gap($direction: column, $gap: 16px);
+  padding: 20px;
+  margin: auto;
+  width: 370px;
+
+  .header {
+    text-align: center;
+    font-size: 26px;
+
+    mat-icon {
+      position: relative;
+      top: 3px;
+      color: $main-color;
+    }
+  }
+
+  form {
+    @include flex-with-gap($direction: column, $align: center, $gap: 10px);
+    justify-content: center;
+    width: 100%;
+
+    mat-form-field {
+      width: 100%;
+
+      mat-hint {
+        font-size: 12px;
+      }
+
+      mat-error {
+        font-size: 12px;
+      }
+    }
+
+    #recipe-buttons {
+      @include flex-with-gap($gap: 10px);
+    }
+
+    #schedule-button {
+      margin-top: 20px;
+      width: 80%;
+      font-size: 16px;
+      font-weight: 500;
+    }
+  }
+}

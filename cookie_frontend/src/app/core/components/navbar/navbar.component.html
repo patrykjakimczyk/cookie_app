@@ -14,12 +14,7 @@
       </button>
     </ng-container>
     <ng-container *ngIf="isLogged">
-      <button
-        mat-button
-        routerLink="/meals"
-        routerLinkActive="active-route"
-        [routerLinkActiveOptions]="{ exact: true }"
-      >
+      <button mat-button routerLink="/meals" routerLinkActive="active-route">
         Meals
       </button>
       <button mat-button routerLink="/recipes" routerLinkActive="active-route">

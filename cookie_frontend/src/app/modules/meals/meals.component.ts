@@ -57,13 +57,13 @@ export class MealsComponent implements AfterViewInit {
   }
 
   private mapToEventObject(meal: MealDTO) {
+    const title = `${this.enumPrintFormatter.transform(
+      meal.recipe.mealType
+    )}: ${meal.recipe.recipeName}, for group: ${meal.group.groupName}`;
+
     return {
-      title: `${this.enumPrintFormatter.transform(meal.recipe.mealType)}: ${
-        meal.recipe.recipeName
-      }`,
-      description: `${this.enumPrintFormatter.transform(
-        meal.recipe.mealType
-      )}: ${meal.recipe.recipeName}`,
+      title: title,
+      description: title,
       start: meal.mealDate,
       meal: meal,
     };

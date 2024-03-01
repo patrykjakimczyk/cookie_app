@@ -2,7 +2,7 @@
 @import "../../../assets/styles/colors";
 
 #main-container {
-  width: 70%;
+  // width: 70%;
   margin: auto;
 
   #upper-container {
@@ -24,7 +24,12 @@
     }
   }
 
-  mat-card {
-    padding: 20px 16px;
+  #lower-container {
+    @include flex-with-gap($gap: 20px);
+
+    mat-card {
+      padding: 20px 16px;
+      width: calc(100% - 370px);
+    }
   }
 }

@@ -10,6 +10,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { RouterModule } from '@angular/router';
 
 import { LoginFormComponent } from './login-form.component';
+import { MatCardModule } from '@angular/material/card';
 
 @NgModule({
   declarations: [LoginFormComponent],
@@ -24,6 +25,7 @@ import { LoginFormComponent } from './login-form.component';
     MatInputModule,
     MatIconModule,
     MatDividerModule,
+    MatCardModule
   ],
   exports: [LoginFormComponent],
 })

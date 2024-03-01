@@ -3,15 +3,9 @@
 
 .container {
   @include flex-with-gap($direction: column, $gap: 16px);
-  background-color: white;
   margin: auto;
-  width: 330px;
+  width: 370px;
   padding: 20px;
-  border: 1px solid rgb(221, 221, 221);
-  border-radius: 12px;
-  -webkit-box-shadow: 0px 0px 30px -20px rgba(66, 68, 90, 1);
-  -moz-box-shadow: 0px 0px 30px -20px rgba(66, 68, 90, 1);
-  box-shadow: 0px 0px 30px -20px rgba(66, 68, 90, 1);
 
   .header {
     text-align: center;

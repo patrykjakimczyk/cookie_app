@@ -12,9 +12,25 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MealDetailsPopupComponent } from './meal-details-popup/meal-details-popup.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { ScheduleMealComponent } from './schedule-meal/schedule-meal.component';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+// import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
+import {
+  NgxMatDatetimePickerModule,
+  NgxMatNativeDateModule,
+  NgxMatTimepickerModule,
+} from '@angular-material-components/datetime-picker';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
-  declarations: [MealsComponent, MealDetailsPopupComponent],
+  declarations: [
+    MealsComponent,
+    MealDetailsPopupComponent,
+    ScheduleMealComponent,
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -28,6 +44,14 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatIconModule,
     MatButtonModule,
     MatDialogModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatFormFieldModule,
+    MatInputModule,
+    NgxMatDatetimePickerModule,
+    NgxMatTimepickerModule,
+    NgxMatNativeDateModule,
+    MatSelectModule,
   ],
   exports: [MealsComponent],
   providers: [EnumPrintFormatterPipe],

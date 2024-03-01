@@ -17,6 +17,7 @@ import { RecipesComponent } from 'src/app/modules/recipes/recipes.component';
 import { RecipeDetailsComponent } from 'src/app/modules/recipes/recipe-details/recipe-details.component';
 import { CreateRecipeComponent } from 'src/app/modules/recipes/create-recipe/create-recipe.component';
 import { MealsComponent } from 'src/app/modules/meals/meals.component';
+import { ScheduleMealComponent } from 'src/app/modules/meals/schedule-meal/schedule-meal.component';
 
 const routes: Routes = [
   {

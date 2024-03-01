@@ -1,0 +1,79 @@
+<mat-card>
+  <p class="header">Schedule a meal <mat-icon>calendar_today</mat-icon></p>
+
+  <form [formGroup]="mealForm" (ngSubmit)="submitMealForm(form)" #form="ngForm">
+    <mat-form-field color="accent">
+      <mat-label>Date and time</mat-label>
+      <input
+        matInput
+        [ngxMatDatetimePicker]="pickerCustomIcon"
+        [min]="now"
+        formControlName="mealDate"
+        [(ngModel)]="chosenDate"
+        required
+      />
+      <ngx-mat-datepicker-toggle
+        matSuffix
+        [for]="pickerCustomIcon"
+        [ariaValueMin]="now"
+      ></ngx-mat-datepicker-toggle>
+      <ngx-mat-datetime-picker
+        [stepMinute]="5"
+        [enableMeridian]="false"
+        color="primary"
+        #pickerCustomIcon
+      >
+        <ngx-mat-datepicker-actions>
+          <button mat-button ngxMatDatepickerCancel>Cancel</button>
+          <button mat-raised-button color="primary" ngxMatDatepickerApply>
+            Apply
+          </button>
+        </ngx-mat-datepicker-actions>
+      </ngx-mat-datetime-picker>
+      <mat-hint>Pick date and time</mat-hint>
+      <mat-error *ngIf="!mealForm.controls.mealDate.valid">
+        {{ getErrorMessage(mealForm.controls.mealDate) }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field color="accent">
+      <mat-label>Group</mat-label>
+      <mat-select formControlName="groupId" required>
+        <mat-option *ngFor="let group of userGroups" [value]="group.id">{{
+          group.groupName
+        }}</mat-option>
+      </mat-select>
+      <mat-hint>Pick group</mat-hint>
+      <mat-error *ngIf="!mealForm.controls.groupId.valid">
+        {{ getErrorMessage(mealForm.controls.groupId) }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field color="accent">
+      <mat-label>Recipe</mat-label>
+      <input type="text" matInput disabled [value]="printRecipe()" />
+      <mat-hint>Choose recipe to schedule</mat-hint>
+      <!-- <mat-error *ngIf="!mealForm.controls.recipeId.valid">
+        {{ getErrorMessage(mealForm.controls.recipeId) }}
+      </mat-error> -->
+    </mat-form-field>
+
+    <div id="recipe-buttons">
+      <button type="button" mat-raised-button [disabled]="!chosenRecipe">
+        See recipe
+      </button>
+      <button type="button" mat-raised-button (click)="goToRecipes()">
+        Choose recipe
+      </button>
+    </div>
+
+    <button
+      type="submit"
+      mat-raised-button
+      color="primary"
+      id="schedule-button"
+    >
+      Add meal to calendar
+    </button>
+  </form>
+</mat-card>
