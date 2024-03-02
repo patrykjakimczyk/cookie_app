@@ -14,25 +14,35 @@
       </button>
     </ng-container>
     <ng-container *ngIf="isLogged">
-      <button mat-button routerLink="/meals" routerLinkActive="active-route">
-        Meals
-      </button>
-      <button mat-button routerLink="/recipes" routerLinkActive="active-route">
-        Recipes
-      </button>
-      <button mat-button routerLink="/pantries" routerLinkActive="active-route">
-        Pantry
-      </button>
-      <button mat-button routerLink="/groups" routerLinkActive="active-route">
-        Groups
-      </button>
-      <button
-        mat-button
-        routerLink="/shopping-lists"
-        routerLinkActive="active-route"
-      >
-        Shopping lists
-      </button>
+      <ng-container *ngIf="showMenuButtons">
+        <button mat-button routerLink="/meals" routerLinkActive="active-route">
+          Meals
+        </button>
+        <button
+          mat-button
+          routerLink="/recipes"
+          routerLinkActive="active-route"
+        >
+          Recipes
+        </button>
+        <button
+          mat-button
+          routerLink="/pantries"
+          routerLinkActive="active-route"
+        >
+          Pantry
+        </button>
+        <button mat-button routerLink="/groups" routerLinkActive="active-route">
+          Groups
+        </button>
+        <button
+          mat-button
+          routerLink="/shopping-lists"
+          routerLinkActive="active-route"
+        >
+          Shopping lists
+        </button>
+      </ng-container>
       <button mat-button [matMenuTriggerFor]="menu">
         {{ "Hi, " + username }}
       </button>

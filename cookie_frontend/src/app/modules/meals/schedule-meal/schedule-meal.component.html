@@ -38,7 +38,11 @@
 
     <mat-form-field color="accent">
       <mat-label>Group</mat-label>
-      <mat-select formControlName="groupId" required>
+      <mat-select
+        formControlName="groupId"
+        required
+        [(ngModel)]="chosenGroupId"
+      >
         <mat-option *ngFor="let group of userGroups" [value]="group.id">{{
           group.groupName
         }}</mat-option>
@@ -53,13 +57,17 @@
       <mat-label>Recipe</mat-label>
       <input type="text" matInput disabled [value]="printRecipe()" />
       <mat-hint>Choose recipe to schedule</mat-hint>
-      <!-- <mat-error *ngIf="!mealForm.controls.recipeId.valid">
-        {{ getErrorMessage(mealForm.controls.recipeId) }}
-      </mat-error> -->
     </mat-form-field>
 
+    <p id="error-info" *ngIf="showUnselectedRecipe">Recipe is not selected</p>
+
     <div id="recipe-buttons">
-      <button type="button" mat-raised-button [disabled]="!chosenRecipe">
+      <button
+        type="button"
+        mat-raised-button
+        [disabled]="!chosenRecipe"
+        (click)="goToRecipeDetails()"
+      >
         See recipe
       </button>
       <button type="button" mat-raised-button (click)="goToRecipes()">

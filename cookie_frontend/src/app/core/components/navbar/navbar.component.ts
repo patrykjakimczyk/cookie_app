@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { LoginFormService } from 'src/app/modules/login-form/login-form.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { UserService } from 'src/app/shared/services/user-service';
 
@@ -12,14 +11,25 @@ import { UserService } from 'src/app/shared/services/user-service';
 export class NavbarComponent implements OnInit {
   protected username: string = '';
   protected isLogged: boolean = false;
+  protected showMenuButtons = true;
 
   constructor(
     private userService: UserService,
-    private loginService: LoginFormService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe((params) => {
+      let mealPlanning = params['mealPlanning'];
+
+      if (mealPlanning !== null) {
+        this.showMenuButtons = !mealPlanning;
+      } else {
+        this.showMenuButtons = true;
+      }
+    });
+
     this.userService.user.subscribe((user) => {
       if (user.auth && user.username) {
         this.username = user.username;

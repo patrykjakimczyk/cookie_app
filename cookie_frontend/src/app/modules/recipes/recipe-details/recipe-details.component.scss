@@ -1,107 +1,129 @@
 @import "../../../../assets/styles/mixins";
+@import "../../../../assets/styles/colors";
 
-mat-card {
+#container {
   margin: auto;
   width: 80%;
-  padding: 30px 30px;
 
-  #upper-container {
-    @include flex-with-gap($gap: 15px);
+  #return-button {
+    font-size: 26px;
+    margin-bottom: 20px;
 
-    img {
-      width: 250px;
-      height: auto;
+    mat-icon {
+      color: $main-color;
+      transform: scale(1.5);
     }
+  }
 
-    #recipe-data-container {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      width: 100%;
+  mat-card {
+    // margin: auto;
+    // width: 80%;
+    padding: 30px 30px;
 
-      .header-and-value-container {
-        padding: 5px;
-        min-height: 50%;
+    #upper-container {
+      @include flex-with-gap($gap: 15px);
 
-        & > *:first-child {
-          font-size: 14px;
+      img {
+        width: 250px;
+        height: auto;
+      }
+
+      #recipe-data-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        width: 100%;
+
+        .header-and-value-container {
+          padding: 5px;
+          min-height: 50%;
+
+          & > *:first-child {
+            font-size: 14px;
+          }
+
+          & > *:nth-child(2) {
+            font-size: 18px;
+          }
         }
 
-        & > *:nth-child(2) {
-          font-size: 18px;
+        .main-info {
+          & > *:first-child {
+            font-size: 18px;
+          }
+
+          & > *:nth-child(2) {
+            font-size: 22px;
+          }
         }
       }
 
-      .main-info {
-        & > *:first-child {
-          font-size: 18px;
-        }
+      #action-buttons {
+        @include flex-with-gap;
+        justify-content: flex-end;
 
-        & > *:nth-child(2) {
-          font-size: 22px;
+        button {
+          width: 50px !important;
+          min-width: unset !important;
+
+          mat-icon {
+            height: auto;
+            width: auto;
+            margin-right: 0;
+            font-size: 25px;
+          }
         }
       }
     }
 
-    #action-buttons {
-      @include flex-with-gap;
-      justify-content: flex-end;
+    #lower-container {
+      @include flex-with-gap($gap: 30px);
+      padding: 20px 30px;
 
+      .bolded-text {
+        font-weight: 500;
+      }
+
+      #lower-container-header {
+        font-size: 20px;
+        margin: 6px 0px;
+      }
+
+      #products-list-container {
+        width: 25%;
+
+        .product-container {
+          @include flex-with-gap($direction: column, $gap: 10px);
+          padding-bottom: 10px;
+        }
+      }
+
+      #preparation-container {
+        width: 75%;
+      }
+    }
+
+    #schedule-container {
       button {
-        width: 50px !important;
-        min-width: unset !important;
-
-        mat-icon {
-          height: auto;
-          width: auto;
-          margin-right: 0;
-          font-size: 25px;
-        }
+        float: right;
       }
     }
   }
 
-  #lower-container {
-    @include flex-with-gap($gap: 30px);
-    padding: 20px 30px;
+  .header-and-value-container {
+    @include flex-with-gap($direction: column, $gap: 5px);
 
-    .bolded-text {
+    & > p {
+      margin: 0px;
+      word-break: break-all;
+    }
+
+    & > *:nth-child(2) {
       font-weight: 500;
     }
-
-    #lower-container-header {
-      font-size: 20px;
-      margin: 6px 0px;
-    }
-
-    #products-list-container {
-      width: 25%;
-
-      .product-container {
-        @include flex-with-gap($direction: column, $gap: 10px);
-        padding-bottom: 10px;
-      }
-    }
-
-    #preparation-container {
-      width: 75%;
-    }
-  }
-}
-
-.header-and-value-container {
-  @include flex-with-gap($direction: column, $gap: 5px);
-
-  & > p {
-    margin: 0px;
-    word-break: break-all;
   }
 
-  & > *:nth-child(2) {
+  .bolded-text {
+    font-size: 18px;
     font-weight: 500;
   }
-}
-
-.bolded-text {
-  font-size: 18px;
-  font-weight: 500;
 }

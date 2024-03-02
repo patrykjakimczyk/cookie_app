@@ -1,3 +1,4 @@
+import { CurrentMealPlanningService } from 'src/app/shared/services/meal-planning-service';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RecipesService } from '../recipes.service';
@@ -19,6 +20,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class RecipeDetailsComponent implements OnInit {
   protected recipeDetails: RecipeDetailsDTO | null = null;
   protected recipeImage: string = '';
+  protected showReturnToMeals = false;
 
   constructor(
     private recipesService: RecipesService,
@@ -26,10 +28,21 @@ export class RecipeDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private currentMealPlanning: CurrentMealPlanningService
   ) {}
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe((params) => {
+      let mealPlanning = params['mealPlanning'];
+
+      if (mealPlanning !== null) {
+        this.showReturnToMeals = mealPlanning;
+      } else {
+        this.showReturnToMeals = true;
+      }
+    });
+
     const recipeId = this.route.snapshot.params['id'];
 
     this.recipesService.getRecipeDetails(recipeId).subscribe({
@@ -55,6 +68,12 @@ export class RecipeDetailsComponent implements OnInit {
     } else {
       return recipeProduct.quantity > 1 ? 'pcs' : 'pc';
     }
+  }
+
+  returnToMeals() {
+    this.router.navigate(['/meals'], {
+      queryParams: { scheduleMeal: true },
+    });
   }
 
   canUserModifyRecipe() {
@@ -86,5 +105,23 @@ export class RecipeDetailsComponent implements OnInit {
         });
       }
     });
+  }
+
+  scheduleMeal() {
+    if (this.currentMealPlanning.currentMealPlanning) {
+      this.currentMealPlanning.currentMealPlanning.recipe = this.recipeDetails;
+      this.router.navigate(['/meals'], {
+        queryParams: { scheduleMeal: true },
+      });
+    } else {
+      this.currentMealPlanning.currentMealPlanning = {
+        mealDate: null,
+        groupId: null,
+        recipe: this.recipeDetails,
+      };
+      this.router.navigate(['/meals'], {
+        queryParams: { scheduleMeal: true },
+      });
+    }
   }
 }

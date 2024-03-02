@@ -23,7 +23,7 @@ export class MealsService {
   }
 
   addMeal(request: AddMealRequest) {
-    return this.http.post<void>(`${this.url}${this.meals_path}`, request);
+    return this.http.post<MealDTO>(`${this.url}${this.meals_path}`, request);
   }
 
   removeMeal(mealId: number) {

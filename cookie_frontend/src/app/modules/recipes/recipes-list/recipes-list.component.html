@@ -2,7 +2,10 @@
   <div *ngIf="getRecipesClient.recipes.length > 0; else noRecipes">
     <div id="tiles-container">
       <ng-container *ngFor="let recipe of getRecipesClient.recipes">
-        <app-recipe-tile [recipe]="recipe"></app-recipe-tile>
+        <app-recipe-tile
+          [recipe]="recipe"
+          [mealPlanning]="mealPlanning"
+        ></app-recipe-tile>
       </ng-container>
     </div>
 

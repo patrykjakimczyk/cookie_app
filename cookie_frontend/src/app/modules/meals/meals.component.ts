@@ -32,9 +32,27 @@ export class MealsComponent implements AfterViewInit {
     };
   }
 
-  private openMealDetailsPopup(meal: MealDTO) {
+  addMeal(meal: MealDTO) {
     console.log(meal);
-    this.dialog.open(MealDetailsPopupComponent, { data: meal });
+    this.calendar.getApi().addEvent(this.mapToEventObject(meal));
+    this.calendar.getApi().render();
+  }
+
+  private openMealDetailsPopup(meal: MealDTO) {
+    const mealDetailsDialog = this.dialog.open(MealDetailsPopupComponent, {
+      data: meal,
+    });
+
+    mealDetailsDialog.afterClosed().subscribe((result) => {
+      if (result) {
+        const eventToRemove = this.calendar.getApi().getEventById(result);
+        console.log(eventToRemove, result);
+        if (eventToRemove) {
+          eventToRemove.remove();
+          this.calendar.getApi().render();
+        }
+      }
+    });
   }
 
   private getMeals() {
@@ -62,6 +80,7 @@ export class MealsComponent implements AfterViewInit {
     )}: ${meal.recipe.recipeName}, for group: ${meal.group.groupName}`;
 
     return {
+      id: String(meal.id),
       title: title,
       description: title,
       start: meal.mealDate,

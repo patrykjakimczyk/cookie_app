@@ -38,14 +38,14 @@ public class MealController {
 
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping(MEALS_URL)
-    public ResponseEntity<Void> addMeal(
+    public ResponseEntity<MealDTO> addMeal(
             @RequestBody @Valid AddMealRequest request,
             Authentication authentication
     ) {
         log.info("User with email={} is adding meal for group with id={}", authentication.getName(), request.groupId());
-        this.mealService.addMeal(request, authentication.getName());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(null);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(this.mealService.addMeal(request, authentication.getName()));
     }
 
     @SecurityRequirement(name = "bearerAuth")

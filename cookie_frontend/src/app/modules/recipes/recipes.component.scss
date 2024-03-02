@@ -4,6 +4,15 @@
 #main-container {
   @include flex-with-gap($direction: column, $gap: 20px);
 
+  #return-button {
+    font-size: 26px;
+
+    mat-icon {
+      color: $main-color;
+      transform: scale(1.5);
+    }
+  }
+
   #upper-container {
     @include flex-with-gap;
     justify-content: space-between;

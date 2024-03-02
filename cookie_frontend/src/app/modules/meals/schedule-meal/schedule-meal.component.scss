@@ -35,6 +35,11 @@ mat-card {
       }
     }
 
+    #error-info {
+      font-size: 12px;
+      color: $error-color;
+    }
+
     #recipe-buttons {
       @include flex-with-gap($gap: 10px);
     }

@@ -50,7 +50,7 @@ public class MealServiceImpl extends AbstractCookieService implements MealServic
 
     @Override
     public List<MealDTO> getMealsForUser(Timestamp dateAfter, Timestamp dateBefore, String userEmail) {
-        if (dateAfter.after(dateAfter)) {
+        if (dateAfter.after(dateBefore)) {
             throw new ValidationException("Date before must be after date after.");
         }
 
@@ -74,15 +74,15 @@ public class MealServiceImpl extends AbstractCookieService implements MealServic
     }
 
     @Override
-    public void addMeal(AddMealRequest request, String userEmail) {
+    public MealDTO addMeal(AddMealRequest request, String userEmail) {
         User user = super.getUserByEmail(userEmail);
         Group group = super.findUserGroupById(user, request.groupId()).orElseThrow(() -> {
             log.info("User: {} tried to add a meal to a group which he does not belong", userEmail);
-            throw new UserPerformedForbiddenActionException("You tried to add a meal to a group which does not exist");
+            return new UserPerformedForbiddenActionException("You tried to add a meal to a group which does not exist");
         });
         Recipe recipe = this.recipeRepository.findById(request.recipeId()).orElseThrow(() -> {
             log.info("User: {} tried to add a meal based on non existing recipe", userEmail);
-            throw new UserPerformedForbiddenActionException("You tried to add a meal based on non existing recipe");
+            return new UserPerformedForbiddenActionException("You tried to add a meal based on non existing recipe");
         });
 
         if (!super.userHasAuthority(user, group.getId(), AuthorityEnum.ADD_MEALS)) {
@@ -92,6 +92,8 @@ public class MealServiceImpl extends AbstractCookieService implements MealServic
 
         Meal meal = mapToMeal(request.mealDate(), user, group, recipe);
         this.mealRepository.save(meal);
+
+        return this.mealMapperDTO.apply(meal);
     }
 
     @Override
@@ -99,7 +101,7 @@ public class MealServiceImpl extends AbstractCookieService implements MealServic
         User user = super.getUserByEmail(userEmail);
         Meal meal = this.mealRepository.findById(mealId).orElseThrow(() -> {
             log.info("User: {} tried to delete a meal which does not exist", userEmail);
-            throw new UserPerformedForbiddenActionException("You tried to delete a meal which does not exist");
+            return new UserPerformedForbiddenActionException("You tried to delete a meal which does not exist");
         });
         Group group = meal.getGroup();
 

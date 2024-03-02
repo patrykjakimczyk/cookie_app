@@ -1,4 +1,10 @@
 <div id="main-container">
+  <div id="return-container" *ngIf="showReturnToMeals">
+    <button mat-button id="return-button" (click)="returnToMeals()">
+      <mat-icon>undo</mat-icon> Return to meals
+    </button>
+  </div>
+
   <div id="upper-container">
     <h1>
       <img src="../../../assets/img/recipes.svg" alt="fridge icon" />Recipes
@@ -20,6 +26,7 @@
       <app-recipes-list
         #allRecipes
         [getRecipesClient]="getAllRecipesClient"
+        [mealPlanning]="showReturnToMeals"
       ></app-recipes-list>
     </div>
 
@@ -33,6 +40,7 @@
           <app-recipes-list
             #allRecipes
             [getRecipesClient]="getAllRecipesClient"
+            [mealPlanning]="showReturnToMeals"
           ></app-recipes-list>
         </div>
       </mat-tab>
@@ -46,6 +54,7 @@
           <app-recipes-list
             #yourRecipes
             [getRecipesClient]="getUserRecipesClient"
+            [mealPlanning]="showReturnToMeals"
           ></app-recipes-list>
         </div>
       </mat-tab>

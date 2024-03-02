@@ -31,8 +31,6 @@ export class MealDetailsPopupComponent {
   }
 
   removeMeal() {
-    this.dialogRef.close();
-
     const deleteMealDialog = this.dialog.open(DeletePopupComponent, {
       data: {
         header: 'Are you sure you want to remove this meal from calendar?',
@@ -44,6 +42,7 @@ export class MealDetailsPopupComponent {
       if (removeMeal) {
         this.mealsService.removeMeal(this.meal!.id).subscribe({
           next: (_) => {
+            this.dialogRef.close(this.meal!.id);
             this.snackBar.open(`Meal has been removed from calendar`, 'Okay');
           },
         });

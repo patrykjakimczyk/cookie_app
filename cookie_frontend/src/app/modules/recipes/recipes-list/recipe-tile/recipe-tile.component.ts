@@ -10,8 +10,8 @@ import { CurrentMealPlanningService } from 'src/app/shared/services/meal-plannin
 })
 export class RecipeTileComponent implements OnInit {
   @Input() recipe!: RecipeDTO;
+  @Input() mealPlanning!: boolean;
   protected recipeImage: string = '';
-  private clearMealPlanning = true;
 
   constructor(
     private router: Router,
@@ -26,12 +26,17 @@ export class RecipeTileComponent implements OnInit {
   }
 
   goToRecipeDetails() {
-    this.router.navigate(['/recipes/' + this.recipe.id]);
+    console.log(this.mealPlanning);
+    if (this.mealPlanning) {
+      this.router.navigate(['/recipes/' + this.recipe.id], {
+        queryParams: { mealPlanning: true },
+      });
+    } else {
+      this.router.navigate(['/recipes/' + this.recipe.id]);
+    }
   }
 
   scheduleMeal() {
-    this.clearMealPlanning = false;
-
     if (this.currentMealPlanning.currentMealPlanning) {
       this.currentMealPlanning.currentMealPlanning.recipe = this.recipe;
       this.router.navigate(['/meals'], {
