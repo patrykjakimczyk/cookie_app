@@ -219,6 +219,7 @@ export class CreateRecipeComponent implements OnInit {
       id: 0,
       productName: this.ingredientForm.controls.productName.value!,
       category: this.ingredientForm.controls.category.value!,
+      recipeProductId: 0,
       quantity: +this.ingredientForm.controls.quantity.value!,
       unit: this.ingredientForm.controls.unit.value! as Unit,
     });

@@ -39,13 +39,15 @@ public class MealController {
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping(MEALS_URL)
     public ResponseEntity<MealDTO> addMeal(
+            @RequestParam("reserve") boolean reserve,
+            @RequestParam(value = "listId", required = false) @Min(value = 1, message = "List id must be greater than 0") Long listId,
             @RequestBody @Valid AddMealRequest request,
             Authentication authentication
     ) {
         log.info("User with email={} is adding meal for group with id={}", authentication.getName(), request.groupId());
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(this.mealService.addMeal(request, authentication.getName()));
+                .body(this.mealService.addMeal(request, authentication.getName(), reserve, listId));
     }
 
     @SecurityRequirement(name = "bearerAuth")
@@ -62,14 +64,14 @@ public class MealController {
 
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(MEALS_ID_URL)
-    public ResponseEntity<Void> modifyMeal(
+    public ResponseEntity<MealDTO> modifyMeal(
             @PathVariable("id") @Valid @Min(value = 1, message = "Id must be greater than 0") long mealId,
             @RequestBody @Valid AddMealRequest request,
             Authentication authentication
     ) {
         log.info("User with email={} is deleting meal with id={}", authentication.getName(), mealId);
-        this.mealService.modifyMeal(mealId, request, authentication.getName());
 
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(this.mealService.modifyMeal(mealId, request, authentication.getName()));
     }
 }

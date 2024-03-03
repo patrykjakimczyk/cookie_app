@@ -57,6 +57,7 @@
       cdkFocusInitial
       color="primary"
       (click)="modifyMeal()"
+      [disabled]="isMealDateInPast()"
     >
       Modify meal
     </button>

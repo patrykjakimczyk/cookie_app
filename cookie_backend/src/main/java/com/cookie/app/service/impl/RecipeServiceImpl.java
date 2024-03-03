@@ -158,37 +158,26 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
     }
 
     @Override
-    public List<PantryProductDTO> reserveRecipeProductsInPantry(String userEmail, long recipeId, long pantryId) {
-        User user = super.getUserByEmail(userEmail);
-        Recipe recipe = getRecipeById(recipeId, userEmail);
-
+    public List<PantryProductDTO> reserveRecipeProductsInPantry(User user, Recipe recipe, long pantryId) {
         return this.pantryProductService.reservePantryProductsFromRecipe(pantryId, user, recipe.getRecipeProducts());
     }
 
     @Override
-    public List<ShoppingListProductDTO> addRecipeProductsToShoppingList(String userEmail,
-                                                                        long recipeId,
+    public List<ShoppingListProductDTO> addRecipeProductsToShoppingList(User user,
+                                                                        Recipe recipe,
                                                                         long listId,
-                                                                        long groupId) {
-        User user = super.getUserByEmail(userEmail);
-        Group group = super.findUserGroupById(user, groupId).orElseThrow(() -> {
-            log.info("User: {} tried to add recipe products to shopping list which does not exists", userEmail);
-            throw new UserPerformedForbiddenActionException("You tried to add recipe products to " +
-                    "shopping list for non existing group");
-        });
-
+                                                                        Group group) {
         Optional<ShoppingList> shoppingList = group.getShoppingLists()
                 .stream()
                 .filter(list -> list.getId() == listId)
                 .findAny();
 
         if (shoppingList.isEmpty()) {
-            log.info("User: {} tried to add recipe products to shopping list which does not belong to their group", userEmail);
+            log.info("User: {} tried to add recipe products to shopping list which does not belong to their group", user.getEmail());
             throw new UserPerformedForbiddenActionException("You tried to add products to " +
                     "shopping list which does not belong to your group");
         }
 
-        Recipe recipe = getRecipeById(recipeId, userEmail);
         List<RecipeProduct> recipeProductsToAdd = this.pantryProductService
                 .getRecipeProductsNotInPantry(group.getPantry(), recipe.getRecipeProducts());
 
@@ -249,8 +238,8 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
 
         Map<Long, RecipeProductDTO> recipeProductDTOMap = recipeDetailsDTO.products()
                 .stream()
-                .filter(recipeProductDTO -> recipeProductDTO.getId() > 0)
-                .collect(Collectors.toMap(RecipeProductDTO::getId, Function.identity()));
+                .filter(recipeProductDTO -> recipeProductDTO.getRecipeProductId() > 0)
+                .collect(Collectors.toMap(RecipeProductDTO::getRecipeProductId, Function.identity()));
 
         for (RecipeProduct recipeProduct : recipe.getRecipeProducts()) {
             if (!recipeProductDTOMap.containsKey(recipeProduct.getId())) {
@@ -287,7 +276,7 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
 
         List<RecipeProduct> addedProducts = recipeDetailsDTO.products()
                 .stream()
-                .filter(recipeProductDTO -> recipeProductDTO.getId() == 0)
+                .filter(recipeProductDTO -> recipeProductDTO.getRecipeProductId() == 0)
                 .map(recipeProductDTO -> this.mapToRecipeProduct(recipeProductDTO, recipe))
                 .toList();
 

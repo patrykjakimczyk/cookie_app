@@ -34,17 +34,19 @@ public class MealServiceImpl extends AbstractCookieService implements MealServic
     private static final String MEAL_DATE_COLUMN = "meal_date";
     private final MealRepository mealRepository;
     private final RecipeRepository recipeRepository;
+    private final RecipeService recipeService;
     private final MealMapperDTO mealMapperDTO;
 
     protected MealServiceImpl(UserRepository userRepository,
                               ProductRepository productRepository,
                               AuthorityMapperDTO authorityMapperDTO,
                               MealRepository mealRepository,
-                              RecipeRepository recipeRepository,
+                              RecipeRepository recipeRepository, RecipeService recipeService,
                               MealMapperDTO mealMapperDTO) {
         super(userRepository, productRepository, authorityMapperDTO);
         this.mealRepository = mealRepository;
         this.recipeRepository = recipeRepository;
+        this.recipeService = recipeService;
         this.mealMapperDTO = mealMapperDTO;
     }
 
@@ -74,7 +76,7 @@ public class MealServiceImpl extends AbstractCookieService implements MealServic
     }
 
     @Override
-    public MealDTO addMeal(AddMealRequest request, String userEmail) {
+    public MealDTO addMeal(AddMealRequest request, String userEmail, boolean reserve, Long listId) {
         User user = super.getUserByEmail(userEmail);
         Group group = super.findUserGroupById(user, request.groupId()).orElseThrow(() -> {
             log.info("User: {} tried to add a meal to a group which he does not belong", userEmail);
@@ -92,6 +94,14 @@ public class MealServiceImpl extends AbstractCookieService implements MealServic
 
         Meal meal = mapToMeal(request.mealDate(), user, group, recipe);
         this.mealRepository.save(meal);
+
+        if (reserve) {
+            this.recipeService.reserveRecipeProductsInPantry(user, meal.getRecipe(), group.getPantry().getId());
+        }
+
+        if (listId != null) {
+            this.recipeService.addRecipeProductsToShoppingList(user, recipe, listId, group);
+        }
 
         return this.mealMapperDTO.apply(meal);
     }
@@ -117,7 +127,7 @@ public class MealServiceImpl extends AbstractCookieService implements MealServic
     }
 
     @Override
-    public void modifyMeal(long mealId, AddMealRequest request, String userEmail) {
+    public MealDTO modifyMeal(long mealId, AddMealRequest request, String userEmail) {
         User user = super.getUserByEmail(userEmail);
         Meal meal = this.mealRepository.findById(mealId).orElseThrow(() -> {
             log.info("User: {} tried to modify a meal which does not exist", userEmail);
@@ -127,7 +137,7 @@ public class MealServiceImpl extends AbstractCookieService implements MealServic
 
         if (
                 !super.userHasAuthority(user, group.getId(), AuthorityEnum.MODIFY_MEALS) ||
-                        meal.getUser().getId() == user.getId()
+                        meal.getUser().getId() != user.getId()
         ) {
             log.info("User: {} tried to modify a meal from a group with id: {} without permission", userEmail, group.getId());
             throw new UserPerformedForbiddenActionException("You tried to modify a meal from group without permission");
@@ -135,6 +145,8 @@ public class MealServiceImpl extends AbstractCookieService implements MealServic
 
         modifyMeal(meal, user, request);
         this.mealRepository.save(meal);
+
+        return this.mealMapperDTO.apply(meal);
     }
 
     private void modifyMeal(Meal meal, User user, AddMealRequest request) {

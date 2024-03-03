@@ -1,0 +1,13 @@
+<h1 mat-dialog-title>Reserve owned products required for chosen recipe</h1>
+<div mat-dialog-content>
+  <p>
+    Do you want to reserve owned products required for this recipe in your
+    chosen group's pantry?
+  </p>
+</div>
+<div mat-dialog-actions id="action-buttons">
+  <button mat-button (click)="close()">Close</button>
+  <button mat-raised-button (click)="reserve()" cdkFocusInitial color="primary">
+    Reserve
+  </button>
+</div>

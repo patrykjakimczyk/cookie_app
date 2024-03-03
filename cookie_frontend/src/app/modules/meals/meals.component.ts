@@ -33,7 +33,18 @@ export class MealsComponent implements AfterViewInit {
   }
 
   addMeal(meal: MealDTO) {
-    console.log(meal);
+    this.calendar.getApi().addEvent(this.mapToEventObject(meal));
+    this.calendar.getApi().render();
+  }
+
+  modifyMeal(meal: MealDTO) {
+    const eventToRemove = this.calendar
+      .getApi()
+      .getEventById(meal.id.toString());
+
+    if (eventToRemove) {
+      eventToRemove.remove();
+    }
     this.calendar.getApi().addEvent(this.mapToEventObject(meal));
     this.calendar.getApi().render();
   }
@@ -46,7 +57,7 @@ export class MealsComponent implements AfterViewInit {
     mealDetailsDialog.afterClosed().subscribe((result) => {
       if (result) {
         const eventToRemove = this.calendar.getApi().getEventById(result);
-        console.log(eventToRemove, result);
+
         if (eventToRemove) {
           eventToRemove.remove();
           this.calendar.getApi().render();

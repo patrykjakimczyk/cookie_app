@@ -8,6 +8,10 @@ import lombok.Getter;
 
 @Getter
 public final class RecipeProductDTO extends ProductDTO {
+    @NotNull(message = "Recipe product id must be present")
+    @Min(value = 0, message = "Recipe product id must be equal or greater than 0")
+    private final Long recipeProductId;
+
     @NotNull(message = "Quantity must be present")
     @Min(value = 0, message = "Quantity must be equal or greater than 1")
     private final int quantity;
@@ -15,12 +19,14 @@ public final class RecipeProductDTO extends ProductDTO {
 
     public RecipeProductDTO() {
         super(null, null, null);
+        this.recipeProductId = 0L;
         this.quantity = 0;
         this.unit = null;
     }
 
-    public RecipeProductDTO(Long id, String productName, Category category, int quantity, Unit unit) {
+    public RecipeProductDTO(Long id, String productName, Category category, Long recipeProductId, int quantity, Unit unit) {
         super(id, productName, category);
+        this.recipeProductId = recipeProductId;
         this.quantity = quantity;
         this.unit = unit;
     }

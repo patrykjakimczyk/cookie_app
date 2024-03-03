@@ -1,3 +1,9 @@
+import {
+  MealPlanning,
+  MealPlanningService,
+  ModifyMeal,
+  RecipeToSchedule,
+} from './../../../shared/services/meal-planning-service';
 import { Component, Inject } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
@@ -22,7 +28,8 @@ export class MealDetailsPopupComponent {
     private dialog: MatDialog,
     private router: Router,
     private mealsService: MealsService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private mealPlanningService: MealPlanningService
   ) {}
 
   goToRecipe() {
@@ -50,7 +57,26 @@ export class MealDetailsPopupComponent {
     });
   }
 
-  modifyMeal() {}
+  modifyMeal() {
+    const recipe: RecipeToSchedule = {
+      id: this.meal.recipe.id,
+      recipeName: this.meal.recipe.recipeName,
+      mealType: this.meal.recipe.mealType,
+    };
+    const modifyMeal: ModifyMeal = {
+      id: this.meal.id,
+      mealDate: this.meal.mealDate,
+      groupId: this.meal.group.id,
+      recipe: recipe,
+    };
+
+    this.mealPlanningService.modifyingMeal$.next(modifyMeal);
+    this.close();
+  }
+
+  isMealDateInPast() {
+    return new Date(this.meal.mealDate).getTime() <= new Date().getTime();
+  }
 
   close() {
     this.dialogRef.close();

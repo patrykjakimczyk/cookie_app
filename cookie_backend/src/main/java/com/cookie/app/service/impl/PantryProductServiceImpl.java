@@ -192,7 +192,7 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
             }
         }
 
-        return (List<RecipeProduct>) recipeProductMap.values();
+        return new ArrayList<>(recipeProductMap.values());
     }
 
     private boolean areRecipeAndPantryProductsEqual(RecipeProduct recipeProduct, PantryProduct pantryProduct) {

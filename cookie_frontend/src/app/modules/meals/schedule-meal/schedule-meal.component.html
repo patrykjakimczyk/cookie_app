@@ -1,5 +1,8 @@
 <mat-card>
-  <p class="header">Schedule a meal <mat-icon>calendar_today</mat-icon></p>
+  <p class="header">
+    {{ modifyingMeal ? "Modifying meal" : "Schedule a meal" }}
+    <mat-icon>calendar_today</mat-icon>
+  </p>
 
   <form [formGroup]="mealForm" (ngSubmit)="submitMealForm(form)" #form="ngForm">
     <mat-form-field color="accent">
@@ -81,7 +84,10 @@
       color="primary"
       id="schedule-button"
     >
-      Add meal to calendar
+      {{ modifyingMeal ? "Modify meal" : "Add meal to calendar" }}
+    </button>
+    <button type="button" mat-raised-button id="clear-button" (click)="clear()">
+      Clear
     </button>
   </form>
 </mat-card>

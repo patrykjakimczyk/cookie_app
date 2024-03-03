@@ -17,6 +17,7 @@ export type RecipeProductDTO = {
   id: number | null;
   productName: string;
   category: string;
+  recipeProductId: number;
   quantity: number;
   unit: Unit;
 };

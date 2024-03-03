@@ -1,0 +1,28 @@
+<h1 mat-dialog-title>Add missing products to a shopping list</h1>
+<div mat-dialog-content>
+  <p>
+    Do you want to add required products to your group's shopping list? If so,
+    choose a shopping list.
+  </p>
+
+  <form [formGroup]="listForm">
+    <mat-form-field color="accent">
+      <mat-label>Shopping list</mat-label>
+      <mat-select formControlName="listId" required>
+        <mat-option *ngFor="let list of shoppingLists" [value]="list.listId">{{
+          list.listName
+        }}</mat-option>
+      </mat-select>
+      <mat-hint>Pick shopping list</mat-hint>
+      <mat-error *ngIf="!listForm.controls.listId.valid">
+        You must pick a shoping list
+      </mat-error>
+    </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions id="action-buttons">
+  <button mat-button (click)="close()">Close</button>
+  <button mat-raised-button (click)="add()" cdkFocusInitial color="primary">
+    Add
+  </button>
+</div>

@@ -9,18 +9,22 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { RecipeDTO } from 'src/app/shared/model/types/recipes-types';
 import {
-  CurrentMealPlanningService,
+  MealPlanningService,
   MealPlanning,
-  MealToSchedule,
+  RecipeToSchedule,
 } from 'src/app/shared/services/meal-planning-service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EnumPrintFormatterPipe } from 'src/app/shared/pipes/enum-print-formatter.pipe';
-import { Observable, of } from 'rxjs';
+import { Observable, firstValueFrom, of } from 'rxjs';
 import { AddMealRequest } from 'src/app/shared/model/requests/meals-requests';
 import { MealDTO } from 'src/app/shared/model/types/meals.types';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationPopupComponent } from 'src/app/shared/components/confirmation-popup/confirmation-popup.component';
+import { ReserveProductsPopupComponent } from '../reserve-products-popup/reserve-products-popup.component';
+import { group } from '@angular/animations';
+import { AddToListPopupComponent } from '../add-to-list-popup/add-to-list-popup.component';
 
 @Component({
   selector: 'app-schedule-meal',
@@ -29,12 +33,15 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class ScheduleMealComponent implements OnInit {
   @Output() addedMeal = new EventEmitter<MealDTO>();
+  @Output() modifiedMeal = new EventEmitter<MealDTO>();
   readonly now = new Date();
   protected userGroups?: GroupDTO[];
   protected chosenDate: Date | null = null;
   protected chosenGroupId: number | null = null;
-  protected chosenRecipe: MealToSchedule | null = null;
+  protected chosenRecipe: RecipeToSchedule | null = null;
   protected showUnselectedRecipe = false;
+  protected modifyingMeal = false;
+  protected mealToModifyId = 0;
 
   protected mealForm = this.fb.group({
     mealDate: ['', Validators.required, this.invalidDateValidation],
@@ -45,36 +52,38 @@ export class ScheduleMealComponent implements OnInit {
   constructor(
     private mealsService: MealsService,
     private fb: FormBuilder,
-    private currentMealPlanning: CurrentMealPlanningService,
+    private mealPlanningService: MealPlanningService,
     private router: Router,
     private route: ActivatedRoute,
     private enumPrintFormatter: EnumPrintFormatterPipe,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
     this.getUserGroups();
+    this.setModifyMealSubscription();
 
     this.route.queryParams.subscribe((params) => {
       let scheduleMeal = params['scheduleMeal'];
 
       if (scheduleMeal) {
-        if (this.currentMealPlanning.currentMealPlanning?.mealDate) {
+        if (this.mealPlanningService.currentMealPlanning?.mealDate) {
           this.chosenDate =
-            this.currentMealPlanning.currentMealPlanning?.mealDate;
+            this.mealPlanningService.currentMealPlanning?.mealDate;
         }
 
-        if (this.currentMealPlanning.currentMealPlanning?.groupId) {
+        if (this.mealPlanningService.currentMealPlanning?.groupId) {
           this.chosenGroupId =
-            this.currentMealPlanning.currentMealPlanning?.groupId;
+            this.mealPlanningService.currentMealPlanning?.groupId;
         }
 
         this.chosenRecipe =
-          this.currentMealPlanning.currentMealPlanning!.recipe;
+          this.mealPlanningService.currentMealPlanning!.recipe;
 
         this.mealForm.controls.recipe.setValue(this.printRecipe());
       } else {
-        this.currentMealPlanning.currentMealPlanning = null;
+        this.mealPlanningService.currentMealPlanning = null;
       }
     });
   }
@@ -93,7 +102,7 @@ export class ScheduleMealComponent implements OnInit {
     return '';
   }
 
-  submitMealForm(form: FormGroupDirective) {
+  async submitMealForm(form: FormGroupDirective) {
     if (!this.mealForm.valid) {
       if (!this.chosenRecipe) {
         this.showUnselectedRecipe = true;
@@ -108,25 +117,55 @@ export class ScheduleMealComponent implements OnInit {
       recipeId: this.chosenRecipe!.id!,
     };
 
-    this.mealsService.addMeal(request).subscribe({
-      next: (response: MealDTO) => {
-        this.addedMeal.emit(response);
-        this.snackBar.open(`Meal has been removed from calendar`, 'Okay');
+    if (this.modifyingMeal) {
+      this.mealsService.modifyMeal(this.mealToModifyId, request).subscribe({
+        next: (response: MealDTO) => {
+          console.log(response);
+          this.modifiedMeal.emit(response);
+          this.snackBar.open(`Meal has been modified`, 'Okay');
 
-        this.chosenDate = null;
-        this.chosenGroupId = null;
-        this.chosenRecipe = null;
-        this.currentMealPlanning.currentMealPlanning = null;
-      },
-    });
+          this.clear();
+          form.resetForm(); // this combination of two resets allows to reset form without displaying form fields as invalid
+          this.mealForm.reset();
+        },
+      });
+    } else {
+      const chosenGroup = this.userGroups?.find(
+        (group) => group.id === this.chosenGroupId
+      );
 
-    form.resetForm(); // this combination of two resets allows to reset form without displaying form fields as invalid
-    this.mealForm.reset();
+      if (chosenGroup?.pantryId) {
+        const reserveProductsDialog = this.dialog.open(
+          ReserveProductsPopupComponent
+        );
+
+        const reserve = await firstValueFrom(
+          reserveProductsDialog.afterClosed()
+        );
+        const groupDetails = await firstValueFrom(
+          this.mealsService.getGroupDetails(this.chosenGroupId!)
+        );
+
+        if (groupDetails.shoppingLists.length > 0) {
+          const addToListDialog = this.dialog.open(AddToListPopupComponent, {
+            data: groupDetails.shoppingLists,
+          });
+          const addToList = await firstValueFrom(addToListDialog.afterClosed());
+          this.addMealSubscription(form, request, reserve, addToList);
+
+          return;
+        }
+
+        this.addMealSubscription(form, request, reserve, null);
+      } else {
+        this.addMealSubscription(form, request, false, null);
+      }
+    }
   }
 
   goToRecipes() {
     const mealPlanning = this.createMealPlanningObj();
-    this.currentMealPlanning.currentMealPlanning = mealPlanning;
+    this.mealPlanningService.currentMealPlanning = mealPlanning;
 
     this.router.navigate(['/recipes'], {
       queryParams: { mealPlanning: 'true' },
@@ -135,7 +174,7 @@ export class ScheduleMealComponent implements OnInit {
 
   goToRecipeDetails() {
     const mealPlanning = this.createMealPlanningObj();
-    this.currentMealPlanning.currentMealPlanning = mealPlanning;
+    this.mealPlanningService.currentMealPlanning = mealPlanning;
 
     this.router.navigate(['/recipes', this.chosenRecipe!.id], {
       queryParams: { mealPlanning: 'true' },
@@ -150,6 +189,49 @@ export class ScheduleMealComponent implements OnInit {
           this.chosenRecipe.mealType
         )}`
       : '';
+  }
+
+  clear() {
+    this.modifyingMeal = false;
+    this.mealToModifyId = 0;
+    this.chosenDate = null;
+    this.chosenGroupId = null;
+    this.chosenRecipe = null;
+    this.mealPlanningService.currentMealPlanning = null;
+    this.mealPlanningService.modifyingMeal$.next(null);
+  }
+
+  private addMealSubscription(
+    form: FormGroupDirective,
+    request: AddMealRequest,
+    reserve: boolean,
+    listId: number | null
+  ) {
+    this.mealsService.addMeal(request, reserve, listId).subscribe({
+      next: (response: MealDTO) => {
+        this.addedMeal.emit(response);
+        this.snackBar.open(`Meal has been added to calendar`, 'Okay');
+
+        this.clear();
+        form.resetForm(); // this combination of two resets allows to reset form without displaying form fields as invalid
+        this.mealForm.reset();
+      },
+    });
+  }
+
+  private setModifyMealSubscription() {
+    this.mealPlanningService.modifyingMeal$.subscribe((mealToModify) => {
+      if (mealToModify) {
+        this.modifyingMeal = true;
+        this.mealToModifyId = mealToModify.id;
+        this.chosenDate = mealToModify.mealDate;
+        this.chosenGroupId = mealToModify.groupId;
+        this.chosenRecipe = mealToModify.recipe;
+        this.mealForm.controls.recipe.setValue(this.printRecipe());
+      } else {
+        this.modifyingMeal = false;
+      }
+    });
   }
 
   private createMealPlanningObj(): MealPlanning {

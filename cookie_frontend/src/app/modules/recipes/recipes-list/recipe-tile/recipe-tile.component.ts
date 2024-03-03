@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RecipeDTO } from 'src/app/shared/model/types/recipes-types';
-import { CurrentMealPlanningService } from 'src/app/shared/services/meal-planning-service';
+import { MealPlanningService } from 'src/app/shared/services/meal-planning-service';
 
 @Component({
   selector: 'app-recipe-tile',
@@ -15,7 +15,7 @@ export class RecipeTileComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private currentMealPlanning: CurrentMealPlanningService
+    private mealPlanningService: MealPlanningService
   ) {}
 
   ngOnInit(): void {
@@ -37,13 +37,13 @@ export class RecipeTileComponent implements OnInit {
   }
 
   scheduleMeal() {
-    if (this.currentMealPlanning.currentMealPlanning) {
-      this.currentMealPlanning.currentMealPlanning.recipe = this.recipe;
+    if (this.mealPlanningService.currentMealPlanning) {
+      this.mealPlanningService.currentMealPlanning.recipe = this.recipe;
       this.router.navigate(['/meals'], {
         queryParams: { scheduleMeal: true },
       });
     } else {
-      this.currentMealPlanning.currentMealPlanning = {
+      this.mealPlanningService.currentMealPlanning = {
         mealDate: null,
         groupId: null,
         recipe: this.recipe,

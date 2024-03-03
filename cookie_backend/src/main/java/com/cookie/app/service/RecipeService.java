@@ -3,6 +3,9 @@ package com.cookie.app.service;
 import com.cookie.app.model.dto.PantryProductDTO;
 import com.cookie.app.model.dto.RecipeDTO;
 import com.cookie.app.model.dto.RecipeDetailsDTO;
+import com.cookie.app.model.entity.Group;
+import com.cookie.app.model.entity.Recipe;
+import com.cookie.app.model.entity.User;
 import com.cookie.app.model.enums.MealType;
 import com.cookie.app.model.request.CreateRecipeRequest;
 import com.cookie.app.model.dto.ShoppingListProductDTO;
@@ -19,7 +22,7 @@ public interface RecipeService {
     CreateRecipeResponse createRecipe(String userEmail, CreateRecipeRequest recipeDetailsDTO, MultipartFile recipeImage);
     void deleteRecipe(String userEmail, long recipeId);
     CreateRecipeResponse modifyRecipe(String userEmail, CreateRecipeRequest recipeDetailsDTO, MultipartFile recipeImage);
-    List<PantryProductDTO> reserveRecipeProductsInPantry(String userEmail, long recipeId, long pantryId);
-    List<ShoppingListProductDTO> addRecipeProductsToShoppingList(String userEmail, long recipeId, long listId, long groupId);
+    List<PantryProductDTO> reserveRecipeProductsInPantry(User user, Recipe recipe, long pantryId);
+    List<ShoppingListProductDTO> addRecipeProductsToShoppingList(User user, Recipe recipe, long listId, Group group);
 
 }

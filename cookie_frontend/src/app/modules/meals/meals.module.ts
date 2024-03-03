@@ -24,12 +24,16 @@ import {
   NgxMatTimepickerModule,
 } from '@angular-material-components/datetime-picker';
 import { MatSelectModule } from '@angular/material/select';
+import { AddToListPopupComponent } from './add-to-list-popup/add-to-list-popup.component';
+import { ReserveProductsPopupComponent } from './reserve-products-popup/reserve-products-popup.component';
 
 @NgModule({
   declarations: [
     MealsComponent,
     MealDetailsPopupComponent,
     ScheduleMealComponent,
+    AddToListPopupComponent,
+    ReserveProductsPopupComponent,
   ],
   imports: [
     BrowserModule,

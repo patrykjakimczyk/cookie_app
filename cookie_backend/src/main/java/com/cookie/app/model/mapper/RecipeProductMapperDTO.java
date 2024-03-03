@@ -11,9 +11,10 @@ public class RecipeProductMapperDTO implements Function<RecipeProduct, RecipePro
     @Override
     public RecipeProductDTO apply(RecipeProduct recipeProduct) {
         return new RecipeProductDTO(
-                recipeProduct.getId(),
+                recipeProduct.getProduct().getId(),
                 recipeProduct.getProduct().getProductName(),
                 recipeProduct.getProduct().getCategory(),
+                recipeProduct.getId(),
                 recipeProduct.getQuantity(),
                 recipeProduct.getUnit()
         );

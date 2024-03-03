@@ -7,6 +7,9 @@
     <mat-card>
       <full-calendar [options]="calendarOptions" #calendar></full-calendar>
     </mat-card>
-    <app-schedule-meal (addedMeal)="addMeal($event)"></app-schedule-meal>
+    <app-schedule-meal
+      (addedMeal)="addMeal($event)"
+      (modifiedMeal)="modifyMeal($event)"
+    ></app-schedule-meal>
   </div>
 </div>

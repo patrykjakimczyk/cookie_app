@@ -1,4 +1,4 @@
-import { CurrentMealPlanningService } from 'src/app/shared/services/meal-planning-service';
+import { MealPlanningService } from 'src/app/shared/services/meal-planning-service';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RecipesService } from '../recipes.service';
@@ -29,7 +29,7 @@ export class RecipeDetailsComponent implements OnInit {
     private router: Router,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private currentMealPlanning: CurrentMealPlanningService
+    private mealPlanningService: MealPlanningService
   ) {}
 
   ngOnInit(): void {
@@ -108,13 +108,13 @@ export class RecipeDetailsComponent implements OnInit {
   }
 
   scheduleMeal() {
-    if (this.currentMealPlanning.currentMealPlanning) {
-      this.currentMealPlanning.currentMealPlanning.recipe = this.recipeDetails;
+    if (this.mealPlanningService.currentMealPlanning) {
+      this.mealPlanningService.currentMealPlanning.recipe = this.recipeDetails;
       this.router.navigate(['/meals'], {
         queryParams: { scheduleMeal: true },
       });
     } else {
-      this.currentMealPlanning.currentMealPlanning = {
+      this.mealPlanningService.currentMealPlanning = {
         mealDate: null,
         groupId: null,
         recipe: this.recipeDetails,
