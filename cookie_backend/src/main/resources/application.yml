@@ -1,9 +1,7 @@
-server:
-  port: 8081
-
 spring:
+  profiles:
+    active: dev
   datasource:
-    url: jdbc:postgresql://localhost:5432/cookiedb
     username: postgres
     password: admin
     driver-class-name: org.postgresql.Driver
@@ -13,8 +11,3 @@ spring:
       ddl-auto: update
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-
-#  data:
-#    jdbc:
-#      repositories:
-#        enabled: 'false'

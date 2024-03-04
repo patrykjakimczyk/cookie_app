@@ -27,23 +27,26 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class PantryControllerTest {
+    final String username = "username";
+    final String pantryName = "pantryName";
+    final String password = "password";
+    final Long id = 1L;
+
     @Mock
     private PantryService pantryService;
-
     @InjectMocks
     private PantryController pantryController;
-
     private Authentication authentication;
 
     @BeforeEach
     void init() {
-        this.authentication = new UsernamePasswordAuthenticationToken("username", "password", Collections.emptyList());
+        this.authentication = new UsernamePasswordAuthenticationToken(username, password, Collections.emptyList());
     }
 
     @Test
     void test_createPantrySuccess() {
-        CreatePantryRequest request = new CreatePantryRequest("pantry", 1L);
-        GetPantryResponse getPantryResponse = new GetPantryResponse(1L, "name", Collections.emptySet());
+        CreatePantryRequest request = new CreatePantryRequest(pantryName, id);
+        GetPantryResponse getPantryResponse = new GetPantryResponse(id, pantryName, Collections.emptySet());
 
         Mockito.doReturn(getPantryResponse).when(pantryService).createPantry(Mockito.any(CreatePantryRequest.class), Mockito.anyString());
         ResponseEntity<GetPantryResponse> response = this.pantryController.createPantry(request, this.authentication);
@@ -56,7 +59,7 @@ class PantryControllerTest {
 
     @Test
     void test_createPantryUserNotFoundAfterAuth() {
-        CreatePantryRequest request = new CreatePantryRequest("pantry", 1L);
+        CreatePantryRequest request = new CreatePantryRequest(pantryName, id);
 
         Mockito.doThrow(new UserWasNotFoundAfterAuthException("User not found"))
                 .when(pantryService).createPantry(Mockito.any(CreatePantryRequest.class), Mockito.anyString());
@@ -66,7 +69,7 @@ class PantryControllerTest {
 
     @Test
     void test_createPantryForNonExistingGroup() {
-        CreatePantryRequest request = new CreatePantryRequest("pantry", 1L);
+        CreatePantryRequest request = new CreatePantryRequest(pantryName, id);
 
         Mockito.doThrow(new UserPerformedForbiddenActionException("You tried to create pantry for non existing group"))
                 .when(pantryService).createPantry(Mockito.any(CreatePantryRequest.class), Mockito.anyString());
@@ -76,7 +79,7 @@ class PantryControllerTest {
 
     @Test
     void test_createPantryWithoutPermission() {
-        CreatePantryRequest request = new CreatePantryRequest("pantry", 1L);
+        CreatePantryRequest request = new CreatePantryRequest(pantryName, id);
 
         Mockito.doThrow(new UserPerformedForbiddenActionException("You tried to create pantry for non existing group"))
                 .when(pantryService).createPantry(Mockito.any(CreatePantryRequest.class), Mockito.anyString());
@@ -86,10 +89,10 @@ class PantryControllerTest {
 
     @Test
     void test_getUserPantrySuccess() {
-        GetPantryResponse getPantryResponse = new GetPantryResponse(1L, "name", Collections.emptySet());
+        GetPantryResponse getPantryResponse = new GetPantryResponse(id, pantryName, Collections.emptySet());
 
         Mockito.doReturn(getPantryResponse).when(pantryService).getPantry(Mockito.anyLong(), Mockito.anyString());
-        ResponseEntity<GetPantryResponse> response = this.pantryController.getPantry(1L, this.authentication);
+        ResponseEntity<GetPantryResponse> response = this.pantryController.getPantry(id, this.authentication);
 
         assertSame(HttpStatus.OK, response.getStatusCode());
         assertEquals(getPantryResponse.id(), response.getBody().id());
@@ -102,7 +105,7 @@ class PantryControllerTest {
         GetPantryResponse getPantryResponse = new GetPantryResponse(null, null, null);
 
         Mockito.doReturn(getPantryResponse).when(pantryService).getPantry(Mockito.anyLong(), Mockito.anyString());
-        ResponseEntity<GetPantryResponse> response = this.pantryController.getPantry(1L, this.authentication);
+        ResponseEntity<GetPantryResponse> response = this.pantryController.getPantry(id, this.authentication);
 
         assertSame(HttpStatus.OK, response.getStatusCode());
         assertNull(response.getBody().id());
@@ -116,12 +119,12 @@ class PantryControllerTest {
         Mockito.doThrow(new UserWasNotFoundAfterAuthException("User not found"))
                 .when(pantryService).getPantry(Mockito.anyLong(), Mockito.anyString());
 
-        assertThrows(UserWasNotFoundAfterAuthException.class, () -> this.pantryController.getPantry(1L, this.authentication));
+        assertThrows(UserWasNotFoundAfterAuthException.class, () -> this.pantryController.getPantry(id, this.authentication));
     }
 
     @Test
     void test_getAllUserPantriesSuccess() {
-        PantryDTO pantryDTO = new PantryDTO(1L, "pantryName", 3, 3L, "groupName");
+        PantryDTO pantryDTO = new PantryDTO(id, pantryName, 3, 3L, "groupName");
         GetUserPantriesResponse getUserPantriesResponse = new GetUserPantriesResponse(Collections.singletonList(pantryDTO));
 
         Mockito.doReturn(getUserPantriesResponse).when(pantryService).getAllUserPantries(Mockito.anyString());
@@ -147,10 +150,10 @@ class PantryControllerTest {
 
     @Test
     void test_deleteUserPantrySuccess() {
-        DeletePantryResponse deletePantryResponse = new DeletePantryResponse( "pantry");
+        DeletePantryResponse deletePantryResponse = new DeletePantryResponse(pantryName);
 
         Mockito.doReturn(deletePantryResponse).when(pantryService).deletePantry(Mockito.anyLong(), Mockito.anyString());
-        ResponseEntity<DeletePantryResponse> response = this.pantryController.deletePantry(1L, this.authentication);
+        ResponseEntity<DeletePantryResponse> response = this.pantryController.deletePantry(id, this.authentication);
 
         assertSame(HttpStatus.OK, response.getStatusCode());
         assertEquals(deletePantryResponse.deletedPantryName(), response.getBody().deletedPantryName());
@@ -162,7 +165,7 @@ class PantryControllerTest {
         Mockito.doThrow(new UserPerformedForbiddenActionException("Pantry not found"))
                 .when(pantryService).deletePantry(Mockito.anyLong() ,Mockito.anyString());
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> this.pantryController.deletePantry(1L, this.authentication));
+        assertThrows(UserPerformedForbiddenActionException.class, () -> this.pantryController.deletePantry(id, this.authentication));
     }
 
     @Test
@@ -171,16 +174,16 @@ class PantryControllerTest {
         Mockito.doThrow(new UserWasNotFoundAfterAuthException("User not found"))
                 .when(pantryService).deletePantry(Mockito.anyLong(), Mockito.anyString());
 
-        assertThrows(UserWasNotFoundAfterAuthException.class, () -> this.pantryController.deletePantry(1L, this.authentication));
+        assertThrows(UserWasNotFoundAfterAuthException.class, () -> this.pantryController.deletePantry(id, this.authentication));
     }
 
     @Test
     void test_updateUserPantrySuccess() {
         UpdatePantryRequest updatePantryRequest = new UpdatePantryRequest("newName");
-        GetPantryResponse updatePantryResponse = new GetPantryResponse(1L, "pantry", Collections.emptySet());
+        GetPantryResponse updatePantryResponse = new GetPantryResponse(id, pantryName, Collections.emptySet());
 
         Mockito.doReturn(updatePantryResponse).when(pantryService).updatePantry(Mockito.anyLong(), Mockito.any(UpdatePantryRequest.class), Mockito.anyString());
-        ResponseEntity<GetPantryResponse> response = this.pantryController.updatePantry(1L, updatePantryRequest, this.authentication);
+        ResponseEntity<GetPantryResponse> response = this.pantryController.updatePantry(id, updatePantryRequest, this.authentication);
 
         assertSame(HttpStatus.OK, response.getStatusCode());
         assertEquals(updatePantryResponse.id(), response.getBody().id());
@@ -194,7 +197,7 @@ class PantryControllerTest {
         Mockito.doThrow(new UserPerformedForbiddenActionException("Pantry not found"))
                 .when(pantryService).updatePantry(Mockito.anyLong(), Mockito.any(UpdatePantryRequest.class), Mockito.anyString());
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> this.pantryController.updatePantry(1L, updatePantryRequest, this.authentication));
+        assertThrows(UserPerformedForbiddenActionException.class, () -> this.pantryController.updatePantry(id, updatePantryRequest, this.authentication));
     }
 
     @Test
@@ -204,6 +207,6 @@ class PantryControllerTest {
         Mockito.doThrow(new UserWasNotFoundAfterAuthException("User not found"))
                 .when(pantryService).updatePantry(Mockito.anyLong(), Mockito.any(UpdatePantryRequest.class), Mockito.anyString());
 
-        assertThrows(UserWasNotFoundAfterAuthException.class, () -> this.pantryController.updatePantry(1L, updatePantryRequest, this.authentication));
+        assertThrows(UserWasNotFoundAfterAuthException.class, () -> this.pantryController.updatePantry(id, updatePantryRequest, this.authentication));
     }
 }

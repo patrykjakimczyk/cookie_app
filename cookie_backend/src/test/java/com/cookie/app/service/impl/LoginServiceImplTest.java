@@ -1,7 +1,6 @@
 package com.cookie.app.service.impl;
 
 import com.cookie.app.exception.UserWasNotFoundAfterAuthException;
-import com.cookie.app.model.entity.Pantry;
 import com.cookie.app.model.entity.User;
 import com.cookie.app.model.request.RegistrationRequest;
 import com.cookie.app.model.response.LoginResponse;
@@ -19,6 +18,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
 class LoginServiceImplTest {
@@ -36,7 +36,7 @@ class LoginServiceImplTest {
         RegistrationRequest userToRegister = new RegistrationRequest("username", "email", null, null, null);
         User user = User.builder().username("username").email("email2").build();
 
-        Mockito.when(this.userRepository.findByUsername(Mockito.anyString())).thenReturn(Optional.of(user));
+        doReturn(Optional.of(user)).when(userRepository).findByUsername(Mockito.anyString());
         RegistrationResponse response = this.loginService.userRegistration(userToRegister);
 
         assertEquals(1, response.duplicates().size());
@@ -48,7 +48,7 @@ class LoginServiceImplTest {
         RegistrationRequest userToRegister = new RegistrationRequest("username", "email", null, null, null);
         User user = User.builder().username("username2").email("email").build();
 
-        Mockito.when(this.userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.of(user));
+        doReturn(Optional.of(user)).when(userRepository).findByEmail(Mockito.anyString());
         RegistrationResponse response = this.loginService.userRegistration(userToRegister);
 
         assertEquals(1, response.duplicates().size());
@@ -59,7 +59,7 @@ class LoginServiceImplTest {
     void test_userRegistrationSuccessful() {
         RegistrationRequest userToRegister = new RegistrationRequest("username", "email", null, null, null);
 
-        Mockito.when(this.userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.empty());
+        doReturn(Optional.empty()).when(userRepository).findByUsername(Mockito.anyString());
         RegistrationResponse response = this.loginService.userRegistration(userToRegister);
 
         assertEquals(0, response.duplicates().size());
@@ -70,7 +70,7 @@ class LoginServiceImplTest {
         String email = "email";
         User user = User.builder().username("username").email("email").build();
 
-        Mockito.when(this.userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.of(user));
+        doReturn(Optional.of(user)).when(userRepository).findByEmail(Mockito.anyString());
         LoginResponse response = this.loginService.getLoginInfo(email);
 
         assertEquals("username", response.username());
@@ -80,7 +80,7 @@ class LoginServiceImplTest {
     void test_getUsernameThrowsError() {
         String email = "email";
 
-        Mockito.when(this.userRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.empty());
+        doReturn(Optional.empty()).when(userRepository).findByEmail(Mockito.anyString());
 
         assertThrows(UserWasNotFoundAfterAuthException.class, () -> this.loginService.getLoginInfo(email));
     }

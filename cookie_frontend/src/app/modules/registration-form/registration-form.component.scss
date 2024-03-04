@@ -56,7 +56,7 @@
   }
 
   #login-link-container {
-    @include flex-with-gap($align: center, $gap: 10px);
+    @include flex-with-gap($align: center);
     justify-content: center;
     padding: 0;
 

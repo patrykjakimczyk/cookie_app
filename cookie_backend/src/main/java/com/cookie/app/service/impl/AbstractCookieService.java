@@ -38,31 +38,23 @@ public abstract class AbstractCookieService {
     protected User getUserByEmail(String userEmail) {
         Optional<User> userOptional = this.userRepository.findByEmail(userEmail);
 
-        if (userOptional.isEmpty()) {
-            throw new UserWasNotFoundAfterAuthException("User was not found in database after authentication");
-        }
-
-        return userOptional.get();
+        return userOptional.orElseThrow(() ->
+                new UserWasNotFoundAfterAuthException("User was not found in database after authentication"));
     }
 
     protected Optional<Group> findUserGroupById(User user, long groupId) {
-        for (Group group : user.getGroups()) {
-            if (group.getId() == groupId) {
-                return Optional.of(group);
-            }
-        }
-
-        return Optional.empty();
+        return user.getGroups()
+                .stream()
+                .filter(group -> group.getId() == groupId)
+                .findFirst();
     }
 
     protected boolean userHasAuthority(User user, long groupId, AuthorityEnum authorityEnum) {
-        for (Authority authority : user.getAuthorities()) {
-            if (authority.getGroup().getId() == groupId && authority.getAuthority() == authorityEnum) {
-                return true;
-            }
-        }
-
-        return false;
+        return user.getAuthorities()
+                .stream()
+                .anyMatch(authority ->
+                            authority.getGroup().getId() == groupId &&
+                                authority.getAuthority() == authorityEnum);
     }
 
     protected Set<AuthorityDTO> getAuthorityDTOsForSpecificGroup(User user, Group userGroup) {
@@ -93,18 +85,17 @@ public abstract class AbstractCookieService {
     }
 
     protected Product checkIfProductExists(ProductDTO productDTO) {
-        Product product;
         Optional<Product> productOptional = this.productRepository
                 .findByProductNameAndCategory(productDTO.getProductName(), productDTO.getCategory().name());
 
         if (productOptional.isPresent()) {
-            product = productOptional.get();
-        } else {
-            product = new Product();
-            product.setProductName(productDTO.getProductName());
-            product.setCategory(productDTO.getCategory());
-            this.productRepository.save(product);
+            return productOptional.get();
         }
+
+        Product product = new Product();
+        product.setProductName(productDTO.getProductName());
+        product.setCategory(productDTO.getCategory());
+        this.productRepository.save(product);
 
         return product;
     }

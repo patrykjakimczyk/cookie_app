@@ -1,6 +1,5 @@
 package com.cookie.app.model.request;
 
-
 import com.cookie.app.model.enums.Gender;
 import com.cookie.app.model.RegexConstants;
 import com.cookie.app.validation.AgeValidation;

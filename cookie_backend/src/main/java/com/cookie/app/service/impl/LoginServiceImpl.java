@@ -19,7 +19,7 @@ import java.util.*;
 
 @Slf4j
 @Service
-public class LoginServiceImpl extends AbstractCookieService implements LoginService {
+public final class LoginServiceImpl extends AbstractCookieService implements LoginService {
     private final PasswordEncoder passwordEncoder;
 
     public LoginServiceImpl(UserRepository userRepository,
@@ -32,7 +32,7 @@ public class LoginServiceImpl extends AbstractCookieService implements LoginServ
 
     @Override
     public LoginResponse getLoginInfo(String email) {
-        User user = this.getUserByEmail(email);
+        User user = super.getUserByEmail(email);
 
         return new LoginResponse(user.getUsername());
     }
@@ -59,7 +59,7 @@ public class LoginServiceImpl extends AbstractCookieService implements LoginServ
                 .role(Role.USER)
                 .username(request.username())
                 .email(request.email())
-                .password(passwordEncoder.encode(request.password()))
+                .password(this.passwordEncoder.encode(request.password()))
                 .activated(false)
                 .creationDate(Timestamp.from(Instant.now()))
                 .birthDate(request.birthDate())
@@ -67,7 +67,7 @@ public class LoginServiceImpl extends AbstractCookieService implements LoginServ
                 .build();
 
         this.userRepository.save(user);
-        log.info("User for email:{} has been successfully registered!", user.getEmail());
+        log.info("User for email={} has been successfully registered!", user.getEmail());
 
         return new RegistrationResponse(duplicatedFields);
     }

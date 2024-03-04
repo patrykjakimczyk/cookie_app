@@ -22,6 +22,7 @@ import { ScheduleMealComponent } from 'src/app/modules/meals/schedule-meal/sched
 const routes: Routes = [
   {
     path: '',
+    canActivate: [AuthGuard],
     component: DashboardComponent,
   },
   {

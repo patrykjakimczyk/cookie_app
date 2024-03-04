@@ -19,6 +19,11 @@ export class AuthGuard {
     const user = this.userService.user.getValue();
     const jwt = sessionStorage.getItem('JwtToken');
 
+    if (state.url === '/' && user.auth && !this.jwtHelper.isTokenExpired(jwt)) {
+      this.router.navigate(['/meals']);
+      return true;
+    }
+
     if (user.auth) {
       if (this.jwtHelper.isTokenExpired(jwt)) {
         this.userService.logoutUser();
@@ -26,10 +31,6 @@ export class AuthGuard {
 
         return false;
       } else {
-        // if (state.url) {
-        //   this.router.navigate(['/']);
-        //   return false;
-        // }
         return true;
       }
     } else {

@@ -24,20 +24,20 @@ public abstract class AbstractPantryService extends AbstractCookieService {
     }
 
     protected Pantry getPantryIfUserHasAuthority(long pantryId, String userEmail, AuthorityEnum requiredAuthority) {
-        User user = this.getUserByEmail(userEmail);
+        User user = super.getUserByEmail(userEmail);
 
-        return this.getPantryIfUserHasAuthority(pantryId, user, requiredAuthority);
+        return getPantryIfUserHasAuthority(pantryId, user, requiredAuthority);
     }
 
     protected Pantry getPantryIfUserHasAuthority(long pantryId, User user, AuthorityEnum requiredAuthority) {
-        Pantry pantry = this.findPantryInUserGroups(pantryId, user).orElseThrow(
+        Pantry pantry = findPantryInUserGroups(pantryId, user).orElseThrow(
                 () -> {
                     log.info("User: {} tried to access pantry without being a member of the pantry's group", user.getEmail());
                     return new UserPerformedForbiddenActionException("You cannot access the pantry because you are not member of its group");
                 }
         );
 
-        if (requiredAuthority!= null && !this.userHasAuthority(user, pantry.getGroup().getId(), requiredAuthority)) {
+        if (requiredAuthority!= null && !super.userHasAuthority(user, pantry.getGroup().getId(), requiredAuthority)) {
             log.info("User: {} tried to perform action in pantry without required permission", user.getEmail());
             throw new UserPerformedForbiddenActionException("You have not permissions to do that");
         }
@@ -46,12 +46,10 @@ public abstract class AbstractPantryService extends AbstractCookieService {
     }
 
     protected Optional<Pantry> findPantryInUserGroups(long pantryId, User user) {
-        for (Group group : user.getGroups()) {
-            if (group.getPantry() != null && group.getPantry().getId() == pantryId) {
-                return Optional.of(group.getPantry());
-            }
-        }
-
-        return Optional.empty();
+        return user.getGroups()
+                .stream()
+                .map(Group::getPantry)
+                .filter(pantry -> pantry != null && pantry.getId() == pantryId)
+                .findFirst();
     }
 }

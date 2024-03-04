@@ -41,13 +41,13 @@ public class PantryController {
             @PathVariable("id") @Valid @Min(value = 1, message = "Id must be greater than 0") long pantryId,
             Authentication authentication
     ) {
-        return ResponseEntity.status(HttpStatus.OK).body(this.pantryService.getPantry(pantryId, authentication.getName()));
+        return ResponseEntity.ok(this.pantryService.getPantry(pantryId, authentication.getName()));
     }
 
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping(PANTRY_URL)
     public ResponseEntity<GetUserPantriesResponse> getAllUserPantries(Authentication authentication) {
-        return ResponseEntity.status(HttpStatus.OK).body(this.pantryService.getAllUserPantries(authentication.getName()));
+        return ResponseEntity.ok(this.pantryService.getAllUserPantries(authentication.getName()));
     }
 
     @SecurityRequirement(name = "bearerAuth")
@@ -57,7 +57,7 @@ public class PantryController {
             Authentication authentication
     ) {
         log.info("User with email={} is deleting pantry with id={}", authentication.getName(), pantryId);
-        return ResponseEntity.status(HttpStatus.OK).body(this.pantryService.deletePantry(pantryId, authentication.getName()));
+        return ResponseEntity.ok(this.pantryService.deletePantry(pantryId, authentication.getName()));
     }
 
     @SecurityRequirement(name = "bearerAuth")
@@ -68,6 +68,6 @@ public class PantryController {
             Authentication authentication
     ) {
         log.info("User with email={} is updating pantry", authentication.getName());
-        return ResponseEntity.status(HttpStatus.OK).body(this.pantryService.updatePantry(pantryId, request, authentication.getName()));
+        return ResponseEntity.ok(this.pantryService.updatePantry(pantryId, request, authentication.getName()));
     }
 }

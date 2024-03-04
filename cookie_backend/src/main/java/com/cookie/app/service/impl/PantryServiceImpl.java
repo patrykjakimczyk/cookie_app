@@ -23,7 +23,7 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-public class PantryServiceImpl extends AbstractPantryService implements PantryService{
+public final class PantryServiceImpl extends AbstractPantryService implements PantryService {
     private final PantryRepository pantryRepository;
     private final PantryMapperDTO pantryMapperDTO;
 
@@ -39,13 +39,13 @@ public class PantryServiceImpl extends AbstractPantryService implements PantrySe
 
     @Override
     public GetPantryResponse createPantry(CreatePantryRequest request, String userEmail) {
-        User user = this.getUserByEmail(userEmail);
-        Optional<Group> userGroupOptional = this.findUserGroupById(user, request.groupId());
+        User user = super.getUserByEmail(userEmail);
+        Optional<Group> userGroupOptional = super.findUserGroupById(user, request.groupId());
         Group userGroup = userGroupOptional.orElseThrow(
                 () -> new UserPerformedForbiddenActionException("You tried to create pantry for non existing group")
         );
 
-        if (!this.userHasAuthority(user, userGroup.getId(), AuthorityEnum.MODIFY_PANTRY)) {
+        if (!super.userHasAuthority(user, userGroup.getId(), AuthorityEnum.MODIFY_PANTRY)) {
             log.info(String.format("User: %s tried to create pantry without permission", userEmail));
             throw new UserPerformedForbiddenActionException("You tried to create pantry without permission");
         }
@@ -67,8 +67,8 @@ public class PantryServiceImpl extends AbstractPantryService implements PantrySe
 
     @Override
     public GetPantryResponse getPantry(long pantryId, String userEmail) {
-        User user = this.getUserByEmail(userEmail);
-        Optional<Pantry> pantryOptional = this.findPantryInUserGroups(pantryId, user);
+        User user = super.getUserByEmail(userEmail);
+        Optional<Pantry> pantryOptional = super.findPantryInUserGroups(pantryId, user);
 
         if (pantryOptional.isEmpty()) {
             return new GetPantryResponse(null, null, null);
@@ -79,13 +79,13 @@ public class PantryServiceImpl extends AbstractPantryService implements PantrySe
         return new GetPantryResponse(
                 pantry.getId(),
                 pantry.getPantryName(),
-                this.getAuthorityDTOsForSpecificGroup(user, pantry.getGroup())
+                super.getAuthorityDTOsForSpecificGroup(user, pantry.getGroup())
         );
     }
 
     @Override
     public GetUserPantriesResponse getAllUserPantries(String userEmail) {
-        User user = this.getUserByEmail(userEmail);
+        User user = super.getUserByEmail(userEmail);
 
         return new GetUserPantriesResponse(
                 user.getGroups()
@@ -98,7 +98,7 @@ public class PantryServiceImpl extends AbstractPantryService implements PantrySe
 
     @Override
     public DeletePantryResponse deletePantry(long pantryId, String userEmail) {
-        Pantry pantry = this.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.MODIFY_PANTRY);
+        Pantry pantry = super.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.MODIFY_PANTRY);
 
         this.pantryRepository.delete(pantry);
 
@@ -107,8 +107,8 @@ public class PantryServiceImpl extends AbstractPantryService implements PantrySe
 
     @Override
     public GetPantryResponse updatePantry(long pantryId, UpdatePantryRequest request, String userEmail) {
-        User user = this.getUserByEmail(userEmail);
-        Pantry pantry = this.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.MODIFY_PANTRY);
+        User user = super.getUserByEmail(userEmail);
+        Pantry pantry = super.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.MODIFY_PANTRY);
 
         pantry.setPantryName(request.pantryName());
         this.pantryRepository.save(pantry);
@@ -116,7 +116,7 @@ public class PantryServiceImpl extends AbstractPantryService implements PantrySe
         return new GetPantryResponse(
                 pantry.getId(),
                 pantry.getPantryName(),
-                this.getAuthorityDTOsForSpecificGroup(user, pantry.getGroup())
+                super.getAuthorityDTOsForSpecificGroup(user, pantry.getGroup())
         );
     }
 }

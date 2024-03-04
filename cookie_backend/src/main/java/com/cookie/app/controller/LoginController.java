@@ -29,19 +29,19 @@ public class LoginController {
     @GetMapping(LOGIN_URL)
     public ResponseEntity<LoginResponse> login(Authentication auth) {
         LoginResponse response = this.loginService.getLoginInfo(auth.getName());
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping(REGISTRATION_URL)
     public ResponseEntity<RegistrationResponse> registerUser(@Valid @RequestBody RegistrationRequest request) {
-        log.info("Performing user registration for email {}", request.email());
+        log.info("Performing user registration for email={}", request.email());
         RegistrationResponse response = this.loginService.userRegistration(request);
 
         if (response.duplicates().isEmpty()) {
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.ok(response);
     }
 }
 
