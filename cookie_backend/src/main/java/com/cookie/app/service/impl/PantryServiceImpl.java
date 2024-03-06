@@ -108,7 +108,7 @@ public final class PantryServiceImpl extends AbstractPantryService implements Pa
     @Override
     public GetPantryResponse updatePantry(long pantryId, UpdatePantryRequest request, String userEmail) {
         User user = super.getUserByEmail(userEmail);
-        Pantry pantry = super.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.MODIFY_PANTRY);
+        Pantry pantry = super.getPantryIfUserHasAuthority(pantryId, user, AuthorityEnum.MODIFY_PANTRY);
 
         pantry.setPantryName(request.pantryName());
         this.pantryRepository.save(pantry);

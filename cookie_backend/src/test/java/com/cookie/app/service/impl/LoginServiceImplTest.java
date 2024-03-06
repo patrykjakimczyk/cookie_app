@@ -22,6 +22,8 @@ import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
 class LoginServiceImplTest {
+    final String email = "email@email.com";
+    final String username = "username";
     @Mock
     UserRepository userRepository;
 
@@ -33,8 +35,8 @@ class LoginServiceImplTest {
 
     @Test
     void test_userRegistrationUnSuccessfulUsernameTaken() {
-        RegistrationRequest userToRegister = new RegistrationRequest("username", "email", null, null, null);
-        User user = User.builder().username("username").email("email2").build();
+        RegistrationRequest userToRegister = new RegistrationRequest(username, email, null, null, null);
+        User user = User.builder().username(username).email("email2").build();
 
         doReturn(Optional.of(user)).when(userRepository).findByUsername(Mockito.anyString());
         RegistrationResponse response = this.loginService.userRegistration(userToRegister);
@@ -45,8 +47,8 @@ class LoginServiceImplTest {
 
     @Test
     void test_userRegistrationUnSuccessfulEmailTaken() {
-        RegistrationRequest userToRegister = new RegistrationRequest("username", "email", null, null, null);
-        User user = User.builder().username("username2").email("email").build();
+        RegistrationRequest userToRegister = new RegistrationRequest(username, email, null, null, null);
+        User user = User.builder().username("username2").email(email).build();
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(Mockito.anyString());
         RegistrationResponse response = this.loginService.userRegistration(userToRegister);
@@ -57,7 +59,7 @@ class LoginServiceImplTest {
 
     @Test
     void test_userRegistrationSuccessful() {
-        RegistrationRequest userToRegister = new RegistrationRequest("username", "email", null, null, null);
+        RegistrationRequest userToRegister = new RegistrationRequest(username, email, null, null, null);
 
         doReturn(Optional.empty()).when(userRepository).findByUsername(Mockito.anyString());
         RegistrationResponse response = this.loginService.userRegistration(userToRegister);
@@ -67,8 +69,7 @@ class LoginServiceImplTest {
 
     @Test
     void test_getUsernameSuccessful() {
-        String email = "email";
-        User user = User.builder().username("username").email("email").build();
+        User user = User.builder().username(username).email(email).build();
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(Mockito.anyString());
         LoginResponse response = this.loginService.getLoginInfo(email);
@@ -78,7 +79,6 @@ class LoginServiceImplTest {
 
     @Test
     void test_getUsernameThrowsError() {
-        String email = "email";
 
         doReturn(Optional.empty()).when(userRepository).findByEmail(Mockito.anyString());
 

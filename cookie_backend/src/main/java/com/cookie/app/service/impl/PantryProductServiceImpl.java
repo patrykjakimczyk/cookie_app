@@ -108,6 +108,7 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
                 .product(
                         Product
                                 .builder()
+                                .id(pantryProduct.getId())
                                 .productName(pantryProduct.getProductName())
                                 .category(pantryProduct.getCategory())
                                 .build()

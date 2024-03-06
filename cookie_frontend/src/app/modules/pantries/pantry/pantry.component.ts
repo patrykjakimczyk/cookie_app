@@ -9,7 +9,7 @@ import { UserService } from 'src/app/shared/services/user-service';
 import { PantriesService } from '../pantries.service';
 import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
 import { GetPantryResponse } from '../../../shared/model/responses/pantry-response';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthorityEnum } from 'src/app/shared/model/enums/authority.enum';
 
 @Component({
@@ -31,7 +31,8 @@ export class PantryComponent implements OnInit {
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     protected userService: UserService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -79,11 +80,10 @@ export class PantryComponent implements OnInit {
               `Pantry: ${response.deletedPantryName} has been deleted`,
               'Okay'
             );
+            this.pantry = { id: 0, pantryName: '', authorities: [] };
+            this.pantry$.next(this.pantry);
           },
         });
-
-        this.pantry = { id: 0, pantryName: '', authorities: [] };
-        this.pantry$.next(this.pantry);
       }
     });
   }

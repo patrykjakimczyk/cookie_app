@@ -120,7 +120,6 @@ export class ScheduleMealComponent implements OnInit {
     if (this.modifyingMeal) {
       this.mealsService.modifyMeal(this.mealToModifyId, request).subscribe({
         next: (response: MealDTO) => {
-          console.log(response);
           this.modifiedMeal.emit(response);
           this.snackBar.open(`Meal has been modified`, 'Okay');
 

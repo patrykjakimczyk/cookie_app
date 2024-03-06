@@ -26,7 +26,6 @@ export class RecipeTileComponent implements OnInit {
   }
 
   goToRecipeDetails() {
-    console.log(this.mealPlanning);
     if (this.mealPlanning) {
       this.router.navigate(['/recipes/' + this.recipe.id], {
         queryParams: { mealPlanning: true },

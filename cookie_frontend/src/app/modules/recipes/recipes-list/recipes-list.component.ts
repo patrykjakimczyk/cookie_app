@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { GetRecipesParams } from 'src/app/shared/model/types/recipes-types';
 import { GetRecipesClient } from './get-recipes-clients/abstract-get-recipes-client';
 import { PageEvent } from '@angular/material/paginator';
@@ -8,14 +8,10 @@ import { PageEvent } from '@angular/material/paginator';
   templateUrl: './recipes-list.component.html',
   styleUrls: ['./recipes-list.component.scss'],
 })
-export class RecipesListComponent implements AfterViewInit {
+export class RecipesListComponent {
   @Input() getRecipesClient!: GetRecipesClient;
   @Input() mealPlanning!: boolean;
   params!: GetRecipesParams;
-
-  ngAfterViewInit(): void {
-    console.log(this.mealPlanning);
-  }
 
   getRecipes(params: GetRecipesParams) {
     this.getRecipesClient.page = 0;

@@ -27,7 +27,7 @@ public abstract class AbstractCookieService {
     protected final ProductRepository productRepository;
     protected final AuthorityMapperDTO authorityMapperDTO;
 
-    protected AbstractCookieService(UserRepository userRepository,
+    AbstractCookieService(UserRepository userRepository,
                                     ProductRepository productRepository,
                                     AuthorityMapperDTO authorityMapperDTO) {
         this.userRepository = userRepository;
@@ -35,21 +35,21 @@ public abstract class AbstractCookieService {
         this.authorityMapperDTO = authorityMapperDTO;
     }
 
-    protected User getUserByEmail(String userEmail) {
+    User getUserByEmail(String userEmail) {
         Optional<User> userOptional = this.userRepository.findByEmail(userEmail);
 
         return userOptional.orElseThrow(() ->
                 new UserWasNotFoundAfterAuthException("User was not found in database after authentication"));
     }
 
-    protected Optional<Group> findUserGroupById(User user, long groupId) {
+    Optional<Group> findUserGroupById(User user, long groupId) {
         return user.getGroups()
                 .stream()
                 .filter(group -> group.getId() == groupId)
                 .findFirst();
     }
 
-    protected boolean userHasAuthority(User user, long groupId, AuthorityEnum authorityEnum) {
+    boolean userHasAuthority(User user, long groupId, AuthorityEnum authorityEnum) {
         return user.getAuthorities()
                 .stream()
                 .anyMatch(authority ->
@@ -57,7 +57,7 @@ public abstract class AbstractCookieService {
                                 authority.getAuthority() == authorityEnum);
     }
 
-    protected Set<AuthorityDTO> getAuthorityDTOsForSpecificGroup(User user, Group userGroup) {
+    Set<AuthorityDTO> getAuthorityDTOsForSpecificGroup(User user, Group userGroup) {
         return user.getAuthorities()
                 .stream()
                 .filter(authority -> authority.getGroup().getId() == userGroup.getId())
@@ -65,7 +65,7 @@ public abstract class AbstractCookieService {
                 .collect(Collectors.toSet());
     }
 
-    protected PageRequest createPageRequest(int page, String sortColName, String sortDirection) {
+    PageRequest createPageRequest(int page, String sortColName, String sortDirection) {
         PageRequest pageRequest = PageRequest.of(page, PRODUCTS_PAGE_SIZE);
         Sort idSort = Sort.by(Sort.Direction.DESC, "id");
         Sort sort = null;
@@ -84,7 +84,7 @@ public abstract class AbstractCookieService {
         return pageRequest.withSort(sort);
     }
 
-    protected Product checkIfProductExists(ProductDTO productDTO) {
+    Product checkIfProductExists(ProductDTO productDTO) {
         Optional<Product> productOptional = this.productRepository
                 .findByProductNameAndCategory(productDTO.getProductName(), productDTO.getCategory().name());
 

@@ -17,19 +17,19 @@ import java.util.Optional;
 @Component
 public abstract class AbstractPantryService extends AbstractCookieService {
 
-    protected AbstractPantryService(UserRepository userRepository,
+    AbstractPantryService(UserRepository userRepository,
                                     ProductRepository productRepository,
                                     AuthorityMapperDTO authorityMapperDTO) {
         super(userRepository, productRepository, authorityMapperDTO);
     }
 
-    protected Pantry getPantryIfUserHasAuthority(long pantryId, String userEmail, AuthorityEnum requiredAuthority) {
+    Pantry getPantryIfUserHasAuthority(long pantryId, String userEmail, AuthorityEnum requiredAuthority) {
         User user = super.getUserByEmail(userEmail);
 
         return getPantryIfUserHasAuthority(pantryId, user, requiredAuthority);
     }
 
-    protected Pantry getPantryIfUserHasAuthority(long pantryId, User user, AuthorityEnum requiredAuthority) {
+    Pantry getPantryIfUserHasAuthority(long pantryId, User user, AuthorityEnum requiredAuthority) {
         Pantry pantry = findPantryInUserGroups(pantryId, user).orElseThrow(
                 () -> {
                     log.info("User: {} tried to access pantry without being a member of the pantry's group", user.getEmail());
@@ -45,7 +45,7 @@ public abstract class AbstractPantryService extends AbstractCookieService {
         return pantry;
     }
 
-    protected Optional<Pantry> findPantryInUserGroups(long pantryId, User user) {
+    Optional<Pantry> findPantryInUserGroups(long pantryId, User user) {
         return user.getGroups()
                 .stream()
                 .map(Group::getPantry)
