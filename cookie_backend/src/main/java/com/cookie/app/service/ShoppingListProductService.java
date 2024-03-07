@@ -16,10 +16,10 @@ public interface ShoppingListProductService {
             String sortDirection,
             String userEmail
     );
-    void addProductsToShoppingList(long listId, List<ShoppingListProductDTO> productDTOList, String userEmail);
-    void removeProductsFromShoppingList(long listId, List<Long> productIds, String userEmail);
-    void modifyShoppingListProduct(long listId, ShoppingListProductDTO productDTO, String userEmail);
-    void changePurchaseStatusForProducts(long listId, List<Long> productIds, String userEmail);
+    void addProductsToShoppingList(long listId, List<ShoppingListProductDTO> listProductDTOList, String userEmail);
+    void removeProductsFromShoppingList(long listId, List<Long> listProductIds, String userEmail);
+    void modifyShoppingListProduct(long listId, ShoppingListProductDTO listProductDTO, String userEmail);
+    void changePurchaseStatusForProducts(long listId, List<Long> listProductIds, String userEmail);
     void transferProductsToPantry(long listId, String userEmail);
     List<ShoppingListProductDTO> addRecipeProductsToShoppingList(long listId, User user, List<RecipeProduct> recipeProducts);
 }

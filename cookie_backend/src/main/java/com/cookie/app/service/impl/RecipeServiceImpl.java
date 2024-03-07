@@ -22,7 +22,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -238,8 +237,8 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
 
         Map<Long, RecipeProductDTO> recipeProductDTOMap = recipeDetailsDTO.products()
                 .stream()
-                .filter(recipeProductDTO -> recipeProductDTO.getRecipeProductId() > 0)
-                .collect(Collectors.toMap(RecipeProductDTO::getRecipeProductId, Function.identity()));
+                .filter(recipeProductDTO -> recipeProductDTO.id() > 0)
+                .collect(Collectors.toMap(RecipeProductDTO::id, Function.identity()));
 
         for (RecipeProduct recipeProduct : recipe.getRecipeProducts()) {
             if (!recipeProductDTOMap.containsKey(recipeProduct.getId())) {
@@ -248,21 +247,21 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
             }
 
             RecipeProductDTO modifiedProduct = recipeProductDTOMap.get(recipeProduct.getId());
-            Optional<Product> productOptional = this.productRepository.findById(modifiedProduct.getId());
+            Optional<Product> productOptional = this.productRepository.findById(modifiedProduct.product().productId());
             Product product = productOptional.orElse(
                     Product.builder()
-                            .productName(modifiedProduct.getProductName())
-                            .category(modifiedProduct.getCategory())
+                            .productName(modifiedProduct.product().productName())
+                            .category(modifiedProduct.product().category())
                             .build()
             );
 
             if (!recipeProduct.getProduct().equals(product)) {
                 recipeProduct.setProduct(product);
             }
-            if (recipeProduct.getQuantity() != modifiedProduct.getQuantity()) {
-                recipeProduct.setQuantity(modifiedProduct.getQuantity());
+            if (recipeProduct.getQuantity() != modifiedProduct.quantity()) {
+                recipeProduct.setQuantity(modifiedProduct.quantity());
             }
-            if (recipeProduct.getUnit() !=  modifiedProduct.getUnit()) {
+            if (recipeProduct.getUnit() !=  modifiedProduct.unit()) {
                 recipeProduct.setUnit(recipeProduct.getUnit());
             }
 
@@ -276,7 +275,7 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
 
         List<RecipeProduct> addedProducts = recipeDetailsDTO.products()
                 .stream()
-                .filter(recipeProductDTO -> recipeProductDTO.getRecipeProductId() == 0)
+                .filter(recipeProductDTO -> recipeProductDTO.id() == 0)
                 .map(recipeProductDTO -> this.mapToRecipeProduct(recipeProductDTO, recipe))
                 .toList();
 
@@ -342,9 +341,9 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
 
     private RecipeProduct mapToRecipeProduct(RecipeProductDTO recipeProductDTO, Recipe recipe) {
         return RecipeProduct.builder()
-                .product(super.checkIfProductExists(recipeProductDTO))
-                .quantity(recipeProductDTO.getQuantity())
-                .unit(recipeProductDTO.getUnit())
+                .product(super.checkIfProductExists(recipeProductDTO.product()))
+                .quantity(recipeProductDTO.quantity())
+                .unit(recipeProductDTO.unit())
                 .recipe(recipe)
                 .build();
     }

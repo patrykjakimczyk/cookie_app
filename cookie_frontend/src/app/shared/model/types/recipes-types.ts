@@ -1,5 +1,6 @@
 import { MealType } from '../enums/meal-type.enum';
 import { Unit } from '../enums/unit.enum';
+import { ProductDTO } from './product-types';
 
 export type RecipeDTO = {
   id: number;
@@ -15,9 +16,7 @@ export type RecipeDTO = {
 
 export type RecipeProductDTO = {
   id: number | null;
-  productName: string;
-  category: string;
-  recipeProductId: number;
+  product: ProductDTO;
   quantity: number;
   unit: Unit;
 };

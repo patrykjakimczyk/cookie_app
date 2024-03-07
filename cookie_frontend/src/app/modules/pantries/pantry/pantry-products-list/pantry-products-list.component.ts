@@ -1,16 +1,11 @@
-import {
-  AuthorityEnum,
-  authorityEnums,
-} from '../../../../shared/model/enums/authority.enum';
+import { AuthorityEnum } from '../../../../shared/model/enums/authority.enum';
 import { Component, Input } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { Observable, Subject, of } from 'rxjs';
 import {
   AbstractControl,
   FormBuilder,
-  FormGroup,
   FormGroupDirective,
-  NgForm,
   Validators,
 } from '@angular/forms';
 
@@ -26,23 +21,9 @@ import { PantriesService } from '../../pantries.service';
 import { UserService } from 'src/app/shared/services/user-service';
 import { Router } from '@angular/router';
 import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
+import { PantryProductDTO } from 'src/app/shared/model/types/pantry-types';
+import { ProductDTO } from 'src/app/shared/model/types/product-types';
 
-export type ProductDTO = {
-  productName: string;
-  category: Category;
-};
-
-export type PantryProductDTO = {
-  id: number | null;
-  productName: string;
-  category: string;
-  quantity: number;
-  unit: Unit;
-  reserved: number;
-  purchaseDate: string;
-  expirationDate: string;
-  placement: string;
-};
 @Component({
   selector: 'app-pantry-products-list',
   templateUrl: './pantry-products-list.component.html',
@@ -162,6 +143,7 @@ export class PantryProductsListComponent {
   }
 
   reloadPage() {
+    console.log(this.productsToAdd, this.productsToAddCurrPage);
     this.page = 0;
     this.getPantryProducts();
   }
@@ -174,6 +156,11 @@ export class PantryProductsListComponent {
         (currentProduct) => currentProduct !== event.pantryProductId
       );
     }
+  }
+
+  updatePantryProductToAdd(updatedProduct: PantryProductDTO, index: number) {
+    const currentIndex = this.page_size * this.page + index;
+    this.productsToAdd[currentIndex] = updatedProduct;
   }
 
   checkboxClicked(event: PantryProductCheckboxEvent) {
@@ -192,9 +179,12 @@ export class PantryProductsListComponent {
     }
 
     this.productsToAdd.push({
-      id: this.productsToAdd.length,
-      productName: this.addForm.controls.productName.value!,
-      category: this.addForm.controls.category.value!,
+      id: 0,
+      product: {
+        productId: 0,
+        productName: this.addForm.controls.productName.value!,
+        category: this.addForm.controls.category.value! as Category,
+      },
       quantity: +this.addForm.controls.quantity.value!,
       unit: this.addForm.controls.unit.value as Unit,
       reserved: this.addForm.controls.reserved.value!,
@@ -274,6 +264,7 @@ export class PantryProductsListComponent {
         .subscribe({
           next: (response) => {
             this.products = response.content;
+            console.log(this.products);
             this.totalElements = response.totalElements;
             this.currentElementsLength = response.content.length;
           },

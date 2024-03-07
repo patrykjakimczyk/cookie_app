@@ -38,8 +38,11 @@ export class EditShoppingListProductsElemComponent {
     this.isShoppingListProduct = this.data.isShoppingListProduct;
     this.editForm = this.fb.group({
       id: [this.listProduct.id],
-      productName: [this.listProduct.productName],
-      category: [this.listProduct.category],
+      product: this.fb.control({
+        productId: this.listProduct.product.productId,
+        productName: this.listProduct.product.productName,
+        category: this.listProduct.product.category,
+      }),
       quantity: [
         this.listProduct.quantity,
         [Validators.required, Validators.min(1), Validators.pattern('[0-9]+')],
@@ -71,6 +74,7 @@ export class EditShoppingListProductsElemComponent {
     }
 
     if (this.isShoppingListProduct) {
+      console.log(this.editForm.value);
       this.shoppingListService
         .updateShoppingListProduct(this.listId, this.editForm.value)
         .subscribe({

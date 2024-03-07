@@ -11,8 +11,8 @@
       "
     ></mat-checkbox>
 
-    <span>{{ listProduct.productName }}</span>
-    <span>{{ listProduct.category | enumPrintFormatter }}</span>
+    <span>{{ listProduct.product.productName }}</span>
+    <span>{{ listProduct.product.category | enumPrintFormatter }}</span>
     <span
       >{{ listProduct.quantity }}
       {{ printShortUnit(listProduct.quantity) }}</span

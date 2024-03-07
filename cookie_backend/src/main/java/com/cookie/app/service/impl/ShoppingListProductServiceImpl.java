@@ -24,7 +24,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -74,22 +73,22 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
     }
 
     @Override
-    public void addProductsToShoppingList(long listId, List<ShoppingListProductDTO> productDTOList, String userEmail) {
+    public void addProductsToShoppingList(long listId, List<ShoppingListProductDTO> listProductDTOList, String userEmail) {
         User user = this.getUserByEmail(userEmail);
         ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(listId, user, AuthorityEnum.ADD_TO_SHOPPING_LIST);
 
         List<ShoppingListProduct> newShoppingListProducts = new ArrayList<>();
 
-        productDTOList.forEach(productDTO -> {
-            if (productDTO.getId() > 0) {
+        listProductDTOList.forEach(listProductDTO -> {
+            if (listProductDTO.id() > 0) {
                 throw new ValidationException(
                         "Shopping list product id must be not set while inserting it to shopping list");
-            } else if (productDTO.isPurchased()) {
+            } else if (listProductDTO.purchased()) {
                 throw new ValidationException(
                         "Shopping list product cannot be purchased while inserting it to shopping list");
             }
 
-            ShoppingListProduct shoppingListProduct = mapToShoppingListProduct(productDTO, shoppingList, null);
+            ShoppingListProduct shoppingListProduct = mapToShoppingListProduct(listProductDTO, shoppingList, null);
             shoppingList.getProductsList().add(shoppingListProduct);
             newShoppingListProducts.add(shoppingListProduct);
         });
@@ -102,8 +101,8 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
     }
 
     @Override
-    public void removeProductsFromShoppingList(long listId, List<Long> productIds, String userEmail) {
-        productIds.stream()
+    public void removeProductsFromShoppingList(long listId, List<Long> listProductIds, String userEmail) {
+        listProductIds.stream()
                 .filter(id -> id == null || id == 0)
                 .findAny()
                 .ifPresent(id -> {
@@ -113,21 +112,21 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
         User user = this.getUserByEmail(userEmail);
         ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(listId, user, AuthorityEnum.MODIFY_SHOPPING_LIST);
 
-        if (this.isAnyProductNotOnList(shoppingList, productIds)) {
+        if (this.isAnyProductNotOnList(shoppingList, listProductIds)) {
             log.info("User with email={} tried to remove products from different shopping list", userEmail);
             throw new UserPerformedForbiddenActionException("Cannot remove products from different shopping list");
         }
 
         log.info("User with email {} removed {} products from shopping list with id {}",
                 userEmail,
-                productIds.size(),
+                listProductIds.size(),
                 shoppingList.getId());
-        this.shoppingListProductRepository.deleteByIdIn(productIds);
+        this.shoppingListProductRepository.deleteByIdIn(listProductIds);
     }
 
     @Override
-    public void modifyShoppingListProduct(long listId, ShoppingListProductDTO productDTO, String userEmail) {
-        if (productDTO.getId() == 0) {
+    public void modifyShoppingListProduct(long listId, ShoppingListProductDTO listProductDTO, String userEmail) {
+        if (listProductDTO.id() == 0) {
             log.info("User with email={} tried to modify product which is not saved in database", userEmail);
             throw new ValidationException("Cannot modify product because it doesn't exist");
         }
@@ -137,11 +136,11 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
 
         ShoppingListProduct productToModify = ShoppingListProduct
                 .builder()
-                .id(productDTO.getId())
+                .id(listProductDTO.id())
                 .product(Product
                         .builder()
-                        .productName(productDTO.getProductName())
-                        .category(productDTO.getCategory())
+                        .productName(listProductDTO.product().productName())
+                        .category(listProductDTO.product().category())
                         .build()
                 )
                 .build();
@@ -152,13 +151,13 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
         }
 
         this.shoppingListProductRepository.save(
-                mapToShoppingListProduct(productDTO, shoppingList, productToModify.getProduct())
+                mapToShoppingListProduct(listProductDTO, shoppingList, productToModify.getProduct())
         );
     }
 
     @Override
-    public void changePurchaseStatusForProducts(long listId, List<Long> productIds, String userEmail) {
-        productIds.stream()
+    public void changePurchaseStatusForProducts(long listId, List<Long> listProductIds, String userEmail) {
+        listProductIds.stream()
                 .filter(id -> id == null || id == 0)
                 .findAny()
                 .ifPresent(id -> {
@@ -168,14 +167,14 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
         User user = this.getUserByEmail(userEmail);
         ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(listId, user, AuthorityEnum.MODIFY_SHOPPING_LIST);
 
-        if (this.isAnyProductNotOnList(shoppingList, productIds)) {
+        if (this.isAnyProductNotOnList(shoppingList, listProductIds)) {
             log.info("User with email={} tried to modify products from different shopping list", userEmail);
             throw new UserPerformedForbiddenActionException("Cannot modify products from different shopping list");
         }
 
         List<ShoppingListProduct> shoppingListProducts = shoppingList.getProductsList()
                 .stream()
-                .filter(shoppingListProduct -> productIds.contains(shoppingListProduct.getId()))
+                .filter(shoppingListProduct -> listProductIds.contains(shoppingListProduct.getId()))
                 .peek(shoppingListProduct -> shoppingListProduct.setPurchased(!shoppingListProduct.isPurchased()))
                 .toList();
 
@@ -251,9 +250,9 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
                 .toList();
     }
 
-    private boolean areRecipeAndListProductEquals(RecipeProduct recipeProduct, ShoppingListProduct shoppingListProduct) {
-        return recipeProduct.getProduct().equals(shoppingListProduct.getProduct()) &&
-                recipeProduct.getUnit() == shoppingListProduct.getUnit();
+    private boolean areRecipeAndListProductEquals(RecipeProduct recipeProduct, ShoppingListProduct listProduct) {
+        return recipeProduct.getProduct().equals(listProduct.getProduct()) &&
+                recipeProduct.getUnit() == listProduct.getUnit();
     }
 
     private List<PantryProduct> mapListProductsToPantryProducts(List<ShoppingListProduct> purchasedProducts, Pantry pantry) {
@@ -281,12 +280,12 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
         return this.isAnyProductNotOnList(shoppingListProductsIds, productIds);
     }
 
-    private ShoppingListProduct mapToShoppingListProduct(ShoppingListProductDTO productDTO, ShoppingList shoppingList, Product existingProduct) {
-        Product product = existingProduct != null ? existingProduct : this.checkIfProductExists(productDTO);
+    private ShoppingListProduct mapToShoppingListProduct(ShoppingListProductDTO listProductDTO, ShoppingList shoppingList, Product existingProduct) {
+        Product product = existingProduct != null ? existingProduct : this.checkIfProductExists(listProductDTO.product());
         ShoppingListProduct foundShoppingListProduct = null;
         // if product id > 0 then there is a chance that we have that product in our pantry, because product is in database
         if (product.getId() > 0) {
-            foundShoppingListProduct = this.findProductInShoppingList(shoppingList, productDTO, product);
+            foundShoppingListProduct = this.findProductInShoppingList(shoppingList, listProductDTO, product);
         }
 
         if (foundShoppingListProduct != null) {
@@ -297,40 +296,40 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
                 .builder()
                 .shoppingList(shoppingList)
                 .product(product)
-                .quantity(productDTO.getQuantity())
-                .unit(productDTO.getUnit())
+                .quantity(listProductDTO.quantity())
+                .unit(listProductDTO.unit())
                 .purchased(false)
                 .build();
     }
 
-    private ShoppingListProduct findProductInShoppingList(ShoppingList shoppingList, ShoppingListProductDTO productDTO, Product product) {
+    private ShoppingListProduct findProductInShoppingList(ShoppingList shoppingList, ShoppingListProductDTO listProductDTO, Product product) {
         List<ShoppingListProduct> productsList = shoppingList.getProductsList();
 
         if (productsList.isEmpty()) {
             return null;
         }
 
-        if (productDTO.getId() != null) {
+        if (listProductDTO.id() != null) {
             for (ShoppingListProduct shoppingListProduct : productsList) {
-                if (shoppingListProduct.getId() == productDTO.getId()) {
+                if (shoppingListProduct.getId() == listProductDTO.id()) {
                     // if products ids are equal, we are modifying shopping list product
-                    shoppingListProduct.setQuantity(productDTO.getQuantity());
-                    shoppingListProduct.setUnit(productDTO.getUnit());
+                    shoppingListProduct.setQuantity(listProductDTO.quantity());
+                    shoppingListProduct.setUnit(listProductDTO.unit());
 
                     return shoppingListProduct;
-                } else if (this.areShoppingListProductsEqual(shoppingListProduct, productDTO, product)) {
-                    this.shoppingListProductRepository.deleteById(productDTO.getId());
+                } else if (this.areShoppingListProductsEqual(shoppingListProduct, listProductDTO, product)) {
+                    this.shoppingListProductRepository.deleteById(listProductDTO.id());
                     // if products ids are not equal, we are adding exact same shopping list product, so we need to sum quantities
-                    shoppingListProduct.setQuantity(shoppingListProduct.getQuantity() + productDTO.getQuantity());
+                    shoppingListProduct.setQuantity(shoppingListProduct.getQuantity() + listProductDTO.quantity());
 
                     return shoppingListProduct;
                 }
             }
         } else {
             for (ShoppingListProduct shoppingListProduct : productsList) {
-                if (this.areShoppingListProductsEqual(shoppingListProduct, productDTO, product)) {
+                if (this.areShoppingListProductsEqual(shoppingListProduct, listProductDTO, product)) {
                     // if products are equal, we are adding exact same pantry product, so we need to sum quantities
-                    shoppingListProduct.setQuantity(shoppingListProduct.getQuantity() + productDTO.getQuantity());
+                    shoppingListProduct.setQuantity(shoppingListProduct.getQuantity() + listProductDTO.quantity());
 
                     return shoppingListProduct;
                 }
@@ -342,10 +341,10 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
 
     private boolean areShoppingListProductsEqual(
             ShoppingListProduct shoppingListProduct,
-            ShoppingListProductDTO productDTO,
+            ShoppingListProductDTO listProductDTO,
             Product product
     ) {
         return shoppingListProduct.getProduct().equals(product) &&
-                shoppingListProduct.getUnit() == productDTO.getUnit();
+                shoppingListProduct.getUnit() == listProductDTO.unit();
     }
 }

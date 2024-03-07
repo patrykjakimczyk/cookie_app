@@ -27,8 +27,8 @@ public class PantryProductController {
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping(GET_PANTRY_PRODUCTS_URL)
     public ResponseEntity<Page<PantryProductDTO>> getPantryProducts(
-            @PathVariable(value = "id") @Valid @Min(1) long id,
-            @PathVariable(value = "page") @Valid @Min(0) int page,
+            @PathVariable(value = "id") @Valid @Min(value = 1, message = "Id must be greater than 0") long id,
+            @PathVariable(value = "page") @Valid @Min(value = 0, message = "Page nr must be at least 0") int page,
             @RequestParam String filterValue,
             @RequestParam String sortColName,
             @RequestParam String sortDirection,
@@ -55,7 +55,7 @@ public class PantryProductController {
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping(PANTRY_PRODUCTS_URL)
     public ResponseEntity<Void> removeProductsFromPantry(
-            @PathVariable(value = "id") @Valid @Min(1) long id,
+            @PathVariable(value = "id") @Valid @Min(value = 1,message = "Id must be greater than 0") long id,
             @Valid @NotEmpty(message = "List of ids cannot be empty") @RequestBody List<Long> productIds,
             Authentication authentication
     ) {
@@ -66,7 +66,7 @@ public class PantryProductController {
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(PANTRY_PRODUCTS_URL)
     public ResponseEntity<Void> modifyPantryProduct(
-            @PathVariable(value = "id") @Valid @Min(1) long id,
+            @PathVariable(value = "id") @Valid @Min(value = 1, message = "Id must be greater than 0") long id,
             @Valid @RequestBody PantryProductDTO pantryProductDTO,
             Authentication authentication
     ) {
@@ -77,8 +77,9 @@ public class PantryProductController {
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(PANTRY_PRODUCT_URL)
     public ResponseEntity<PantryProductDTO> reservePantryProduct(
-            @PathVariable(value = "id") @Valid @Min(1) long id,
-            @PathVariable(value = "productId") @Valid @Min(1) long pantryProductId,
+            @PathVariable(value = "id") @Valid @Min(value = 1, message = "Id must be greater than 0") long id,
+            @PathVariable(value = "productId") @Valid
+            @Min(value = 1, message = "Pantry product id must be greater than 0") long pantryProductId,
             @RequestBody @Valid ReservePantryProductRequest reserveBody,
             Authentication authentication
     ) {

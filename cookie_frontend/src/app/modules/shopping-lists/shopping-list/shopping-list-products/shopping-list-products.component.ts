@@ -21,11 +21,11 @@ import { UserService } from 'src/app/shared/services/user-service';
 import { AuthorityEnum } from 'src/app/shared/model/enums/authority.enum';
 import { PageEvent } from '@angular/material/paginator';
 import { Unit, units } from 'src/app/shared/model/enums/unit.enum';
-import { ProductDTO } from 'src/app/shared/model/types/pantry-types';
-import { categories } from 'src/app/shared/model/enums/category.enum';
+import { Category, categories } from 'src/app/shared/model/enums/category.enum';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationPopupComponent } from 'src/app/shared/components/confirmation-popup/confirmation-popup.component';
 import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
+import { ProductDTO } from 'src/app/shared/model/types/product-types';
 
 @Component({
   selector: 'app-shopping-list-products',
@@ -104,6 +104,14 @@ export class ShoppingListProductsComponent implements OnInit {
   pageChange(event: PageEvent) {
     this.page = event.pageIndex;
     this.getShoppinglistProducts();
+  }
+
+  updateListProductToAdd(
+    updatedProduct: ShoppingListProductDTO,
+    index: number
+  ) {
+    const currentIndex = this.page_size * this.page + index;
+    this.productsToAdd[currentIndex] = updatedProduct;
   }
 
   checkboxClicked(event: ShoppingListProductCheckboxEvent) {
@@ -281,8 +289,11 @@ export class ShoppingListProductsComponent implements OnInit {
 
     this.productsToAdd.push({
       id: this.productsToAdd.length,
-      productName: this.addForm.controls.productName.value!,
-      category: this.addForm.controls.category.value!,
+      product: {
+        productId: 0,
+        productName: this.addForm.controls.productName.value!,
+        category: this.addForm.controls.category.value! as Category,
+      },
       quantity: +this.addForm.controls.quantity.value!,
       unit:
         this.addForm.controls.unit.value === Unit.GRAMS

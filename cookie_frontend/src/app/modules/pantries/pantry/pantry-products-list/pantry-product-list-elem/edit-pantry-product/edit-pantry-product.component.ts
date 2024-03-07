@@ -39,8 +39,11 @@ export class EditPantryProductComponent implements OnInit {
     this.isPantryProduct = this.data.isPantryProduct;
     this.editForm = this.fb.group({
       id: [this.pantryProduct.id],
-      productName: [this.pantryProduct.productName],
-      category: [this.pantryProduct.category],
+      product: this.fb.group({
+        productId: [this.pantryProduct.product.productId],
+        productName: [this.pantryProduct.product.productName],
+        category: [this.pantryProduct.product.category],
+      }),
       quantity: [
         this.pantryProduct.quantity,
         [Validators.required, Validators.min(1), Validators.pattern('[0-9]+')],
@@ -75,7 +78,7 @@ export class EditPantryProductComponent implements OnInit {
     if (!this.editForm.valid) {
       return;
     }
-
+    console.log(this.editForm.value);
     if (this.isPantryProduct) {
       this.pantriesService
         .modifyPantryProduct(this.pantryId, this.editForm.value)

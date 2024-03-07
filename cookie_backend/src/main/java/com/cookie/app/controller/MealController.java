@@ -40,7 +40,7 @@ public class MealController {
     @PostMapping(MEALS_URL)
     public ResponseEntity<MealDTO> addMeal(
             @RequestParam("reserve") boolean reserve,
-            @RequestParam(value = "listId", required = false) @Min(value = 1, message = "List id must be greater than 0") Long listId,
+            @RequestParam(value = "listId", required = false) @Valid @Min(value = 1, message = "List id must be greater than 0") Long listId,
             @RequestBody @Valid AddMealRequest request,
             Authentication authentication
     ) {

@@ -3,12 +3,12 @@
   <form [formGroup]="editForm" (ngSubmit)="submit()">
     <div class="details-container">
       <span>Product name: </span>
-      <span>{{ ingredient.productName }}</span>
+      <span>{{ ingredient.product.productName }}</span>
     </div>
 
     <div class="details-container">
       <span>Category: </span>
-      <span>{{ ingredient.category | enumPrintFormatter }}</span>
+      <span>{{ ingredient.product.category | enumPrintFormatter }}</span>
     </div>
 
     <mat-form-field color="accent">

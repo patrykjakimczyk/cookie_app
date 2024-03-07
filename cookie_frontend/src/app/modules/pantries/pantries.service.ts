@@ -11,7 +11,7 @@ import {
   GetPantryResponse,
   GetUserPantriesResponse,
 } from 'src/app/shared/model/responses/pantry-response';
-import { PantryProductDTO } from './pantry/pantry-products-list/pantry-products-list.component';
+import { PantryProductDTO } from 'src/app/shared/model/types/pantry-types';
 
 @Injectable({ providedIn: 'root' })
 export class PantriesService {

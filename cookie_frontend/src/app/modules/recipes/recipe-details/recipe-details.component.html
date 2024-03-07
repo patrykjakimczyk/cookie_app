@@ -58,15 +58,15 @@
       <div id="products-list-container">
         <p id="lower-container-header">Ingredients:</p>
         <div
-          *ngFor="let product of recipeDetails?.products"
+          *ngFor="let recipeProduct of recipeDetails?.products"
           class="product-container bolded-text"
         >
           <span
-            >{{ product.quantity }} {{ printShortUnit(product) }} of
+            >{{ recipeProduct.quantity }} {{ printShortUnit(recipeProduct) }} of
             {{
-              product.productName +
+              recipeProduct.product.productName +
                 " (" +
-                (product.category | enumPrintFormatter) +
+                (recipeProduct.product.category | enumPrintFormatter) +
                 ")"
             }}</span
           >

@@ -3,11 +3,7 @@
     <div id="upper-container">
       <div id="image-upload-container">
         <img
-          [src]="
-            imageUrl
-              ? imageUrl
-              : '../../../../assets/img/noimage.svg'
-          "
+          [src]="imageUrl ? imageUrl : '../../../../assets/img/noimage.svg'"
           alt="no image"
         />
 
@@ -234,21 +230,22 @@
 
           <ng-container *ngIf="ingredientsToAdd.length > 0">
             <div
-              *ngFor="let product of ingredientsToAdd; index as i"
+              *ngFor="let recipeProduct of ingredientsToAdd; index as i"
               class="product-container bolded-text"
             >
-              <span (click)="modifyIngredient(product, i)"
-                >{{ product.quantity }} {{ printShortUnit(product) }} of
+              <span (click)="modifyIngredient(recipeProduct, i)"
+                >{{ recipeProduct.quantity }}
+                {{ printShortUnit(recipeProduct) }} of
                 {{
-                  product.productName +
+                  recipeProduct.product.productName +
                     " (" +
-                    (product.category | enumPrintFormatter) +
+                    (recipeProduct.product.category | enumPrintFormatter) +
                     ")"
                 }}
                 <button
                   mat-button
                   type="button"
-                  (click)="removeIngredientFromAdding(product)"
+                  (click)="removeIngredientFromAdding(recipeProduct)"
                 >
                   <mat-icon>clear</mat-icon>
                 </button>

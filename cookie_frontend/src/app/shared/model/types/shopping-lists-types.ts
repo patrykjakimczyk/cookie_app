@@ -1,5 +1,5 @@
-import { Category } from '../enums/category.enum';
 import { Unit } from '../enums/unit.enum';
+import { ProductDTO } from './product-types';
 import { AuthorityDTO } from './user-types';
 
 export type ShoppingListDTO = {
@@ -38,8 +38,7 @@ export type UpdateShoppingListRequest = {
 
 export type ShoppingListProductDTO = {
   id: number | null;
-  productName: string;
-  category: string;
+  product: ProductDTO;
   quantity: number;
   unit: Unit;
   purchased: boolean;

@@ -32,13 +32,13 @@ public abstract class AbstractPantryService extends AbstractCookieService {
     Pantry getPantryIfUserHasAuthority(long pantryId, User user, AuthorityEnum requiredAuthority) {
         Pantry pantry = findPantryInUserGroups(pantryId, user).orElseThrow(
                 () -> {
-                    log.info("User: {} tried to access pantry without being a member of the pantry's group", user.getEmail());
+                    log.info("User={} tried to access pantry without being a member of the pantry's group", user.getEmail());
                     return new UserPerformedForbiddenActionException("You cannot access the pantry because you are not member of its group");
                 }
         );
 
         if (requiredAuthority!= null && !super.userHasAuthority(user, pantry.getGroup().getId(), requiredAuthority)) {
-            log.info("User: {} tried to perform action in pantry without required permission", user.getEmail());
+            log.info("User={} tried to perform action in pantry without required permission", user.getEmail());
             throw new UserPerformedForbiddenActionException("You have not permissions to do that");
         }
 

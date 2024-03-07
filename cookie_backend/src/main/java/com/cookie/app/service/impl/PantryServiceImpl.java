@@ -23,7 +23,7 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-public final class PantryServiceImpl extends AbstractPantryService implements PantryService {
+public class PantryServiceImpl extends AbstractPantryService implements PantryService {
     private final PantryRepository pantryRepository;
     private final PantryMapperDTO pantryMapperDTO;
 
@@ -46,7 +46,7 @@ public final class PantryServiceImpl extends AbstractPantryService implements Pa
         );
 
         if (!super.userHasAuthority(user, userGroup.getId(), AuthorityEnum.MODIFY_PANTRY)) {
-            log.info(String.format("User: %s tried to create pantry without permission", userEmail));
+            log.info("User={} tried to create pantry without permission", userEmail);
             throw new UserPerformedForbiddenActionException("You tried to create pantry without permission");
         }
 

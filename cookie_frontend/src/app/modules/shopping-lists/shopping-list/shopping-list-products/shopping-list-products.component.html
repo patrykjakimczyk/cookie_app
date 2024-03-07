@@ -120,12 +120,15 @@
 
                 <mat-divider></mat-divider>
 
-                <ng-container *ngFor="let product of productsToAddCurrPage">
+                <ng-container
+                  *ngFor="let product of productsToAddCurrPage; index as i"
+                >
                   <app-shopping-list-products-elem
                     [shoppingList]="shoppingList"
                     [listProduct]="product"
                     [isShoppingListProduct]="false"
                     (checkboxEvent)="productToAddCheckboxEvent($event)"
+                    (listProductChange)="updateListProductToAdd($event, i)"
                     (reloadEvent)="reloadPage()"
                   ></app-shopping-list-products-elem>
                 </ng-container>

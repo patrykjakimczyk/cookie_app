@@ -12,7 +12,6 @@ import {
 import { UserService } from 'src/app/shared/services/user-service';
 import { RecipesService } from '../recipes.service';
 import { Observable, of } from 'rxjs';
-import { ProductDTO } from 'src/app/shared/model/types/pantry-types';
 import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
 import { Category, categories } from 'src/app/shared/model/enums/category.enum';
 import { Unit, units } from 'src/app/shared/model/enums/unit.enum';
@@ -26,6 +25,7 @@ import { CreateRecipeRequest } from 'src/app/shared/model/requests/recipe-reques
 import { CreateRecipeResponse } from 'src/app/shared/model/responses/recipes-response';
 import { MatDialog } from '@angular/material/dialog';
 import { ModifyIngredientComponent } from './modify-ingredient/modify-ingredient.component';
+import { ProductDTO } from 'src/app/shared/model/types/product-types';
 
 @Component({
   selector: 'app-create-recipe',
@@ -217,9 +217,11 @@ export class CreateRecipeComponent implements OnInit {
 
     this.ingredientsToAdd.push({
       id: 0,
-      productName: this.ingredientForm.controls.productName.value!,
-      category: this.ingredientForm.controls.category.value!,
-      recipeProductId: 0,
+      product: {
+        productId: 0,
+        productName: this.ingredientForm.controls.productName.value!,
+        category: this.ingredientForm.controls.category.value! as Category,
+      },
       quantity: +this.ingredientForm.controls.quantity.value!,
       unit: this.ingredientForm.controls.unit.value! as Unit,
     });
@@ -291,13 +293,14 @@ export class CreateRecipeComponent implements OnInit {
     this.ingredientForm.controls.category.setValue(category);
   }
 
-  removeIngredientFromAdding(product: RecipeProductDTO) {
+  removeIngredientFromAdding(recipeProduct: RecipeProductDTO) {
     this.ingredientsToAdd = this.ingredientsToAdd.filter((ingredientToAdd) => {
       return !(
-        ingredientToAdd.productName === product.productName &&
-        ingredientToAdd.category === product.category &&
-        ingredientToAdd.quantity === product.quantity &&
-        ingredientToAdd.unit === product.unit
+        ingredientToAdd.product.productName ===
+          recipeProduct.product.productName &&
+        ingredientToAdd.product.category === recipeProduct.product.category &&
+        ingredientToAdd.quantity === recipeProduct.quantity &&
+        ingredientToAdd.unit === recipeProduct.unit
       );
     });
   }

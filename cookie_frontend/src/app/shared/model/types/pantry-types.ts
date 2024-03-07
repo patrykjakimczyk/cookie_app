@@ -1,5 +1,5 @@
 import { Unit } from '../enums/unit.enum';
-import { Category } from '../enums/category.enum';
+import { ProductDTO } from './product-types';
 
 export type PantryDTO = {
   pantryId: number;
@@ -9,15 +9,9 @@ export type PantryDTO = {
   groupName: string;
 };
 
-export type ProductDTO = {
-  productName: string;
-  category: Category;
-};
-
 export type PantryProductDTO = {
   id: number | null;
-  productName: string;
-  category: string;
+  product: ProductDTO;
   quantity: number;
   unit: Unit;
   reserved: number;

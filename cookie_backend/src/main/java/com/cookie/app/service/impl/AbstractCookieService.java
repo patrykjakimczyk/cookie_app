@@ -86,15 +86,15 @@ public abstract class AbstractCookieService {
 
     Product checkIfProductExists(ProductDTO productDTO) {
         Optional<Product> productOptional = this.productRepository
-                .findByProductNameAndCategory(productDTO.getProductName(), productDTO.getCategory().name());
+                .findByProductNameAndCategory(productDTO.productName(), productDTO.category().name());
 
         if (productOptional.isPresent()) {
             return productOptional.get();
         }
 
         Product product = new Product();
-        product.setProductName(productDTO.getProductName());
-        product.setCategory(productDTO.getCategory());
+        product.setProductName(productDTO.productName());
+        product.setCategory(productDTO.category());
         this.productRepository.save(product);
 
         return product;

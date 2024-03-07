@@ -26,6 +26,7 @@ export class ShoppingListProductsElemComponent {
   @Input() isShoppingListProduct!: boolean;
   @Output() checkboxEvent =
     new EventEmitter<ShoppingListProductCheckboxEvent>();
+  @Output() listProductChange = new EventEmitter<ShoppingListProductDTO>();
   @Output() reloadEvent = new EventEmitter<boolean>();
   protected units = units;
   protected authorityEnum = AuthorityEnum;
@@ -62,6 +63,7 @@ export class ShoppingListProductsElemComponent {
       .subscribe((modifiedListProduct: ShoppingListProductDTO) => {
         this.reloadEvent.emit(true);
         this.listProduct = modifiedListProduct;
+        this.listProductChange.emit(this.listProduct);
       });
   }
 }

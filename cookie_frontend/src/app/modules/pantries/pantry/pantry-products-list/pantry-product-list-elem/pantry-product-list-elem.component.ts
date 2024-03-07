@@ -33,6 +33,7 @@ export class PantryProductListElemComponent {
   @Input() isPantryProduct!: boolean;
   @Output() checkboxEvent = new EventEmitter<PantryProductCheckboxEvent>();
   @Output() reloadEvent = new EventEmitter<boolean>();
+  @Output() pantryProductChange = new EventEmitter<PantryProductDTO>();
   protected units = units;
   protected authorityEnum = AuthorityEnum;
 
@@ -83,6 +84,8 @@ export class PantryProductListElemComponent {
       .subscribe((modifiedPantryProduct: PantryProductDTO) => {
         this.reloadEvent.emit(true);
         this.pantryProduct = modifiedPantryProduct;
+        this.pantryProductChange.emit(this.pantryProduct);
+        console.log(this.pantryProduct);
       });
   }
 
