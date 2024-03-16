@@ -1,0 +1,72 @@
+<h1 mat-dialog-title>Add product to shopping list</h1>
+<div mat-dialog-content id="content">
+  <form ngNoForm [formGroup]="addForm" (ngSubmit)="submit()">
+    <div class="details-container">
+      <span>Group: </span>
+      <span>{{ data.pantry.groupName }}</span>
+    </div>
+    <div class="details-container">
+      <span>Product name: </span>
+      <span>{{ data.pantryProduct.product.productName }}</span>
+    </div>
+
+    <div class="details-container">
+      <span>Category: </span>
+      <span>{{
+        data.pantryProduct.product.category | enumPrintFormatter
+      }}</span>
+    </div>
+
+    <mat-form-field color="accent">
+      <mat-label>Quantity</mat-label>
+      <input type="text" matInput formControlName="quantity" required />
+      <mat-hint>Must be greater than 0</mat-hint>
+      <mat-error *ngIf="!addForm.controls.quantity.valid">
+        {{ getErrorMessage(addForm.controls.quantity) }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field color="accent">
+      <mat-label>Choose units</mat-label>
+      <mat-select formControlName="unit" required>
+        <mat-option *ngFor="let unit of units" [value]="unit">{{
+          unit | enumPrintFormatter
+        }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="!addForm.controls.unit.valid">
+        {{ getErrorMessage(addForm.controls.unit) }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field color="accent">
+      <mat-label>Choose shopping list</mat-label>
+      <mat-select formControlName="listId" required>
+        <ng-container *ngIf="!!groupDetails && !!groupDetails.shoppingLists">
+          <mat-option
+            *ngFor="let shoppingList of groupDetails.shoppingLists"
+            [value]="shoppingList.listId"
+            >{{ shoppingList.listName }}</mat-option
+          >
+        </ng-container>
+      </mat-select>
+      <mat-error *ngIf="!addForm.controls.listId.valid">
+        {{ getErrorMessage(addForm.controls.listId) }}
+      </mat-error>
+    </mat-form-field>
+
+    <button type="submit" style="display: none"></button>
+  </form>
+</div>
+
+<div mat-dialog-actions id="action-buttons">
+  <button mat-button (click)="close()">Close</button>
+  <button
+    mat-raised-button
+    cdkFocusInitial
+    color="primary"
+    (click)="submit()"
+    [disabled]="!addForm.valid"
+  >
+    Add product to shopping list
+  </button>
+</div>

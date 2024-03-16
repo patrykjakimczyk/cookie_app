@@ -30,7 +30,7 @@ export class CreatePantryComponent implements OnInit {
       .subscribe({
         next: (response) => {
           this.createPantrySucceded = true;
-          this.createdPantryId = response.id;
+          this.createdPantryId = response.pantryId;
         },
       });
   }

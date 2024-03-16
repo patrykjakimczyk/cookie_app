@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class PantryControllerTest {
     final String username = "username";
     final String pantryName = "pantryName";
+    final String groupName = "groupName";
     final String password = "password";
     final Long id = 1L;
 
@@ -46,13 +47,13 @@ class PantryControllerTest {
     @Test
     void test_createPantrySuccess() {
         CreatePantryRequest request = new CreatePantryRequest(pantryName, id);
-        GetPantryResponse getPantryResponse = new GetPantryResponse(id, pantryName, Collections.emptySet());
+        GetPantryResponse getPantryResponse = new GetPantryResponse(id, pantryName, id, groupName, Collections.emptySet());
 
         Mockito.doReturn(getPantryResponse).when(pantryService).createPantry(Mockito.any(CreatePantryRequest.class), Mockito.anyString());
         ResponseEntity<GetPantryResponse> response = this.pantryController.createPantry(request, this.authentication);
 
         assertSame(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(getPantryResponse.id(), response.getBody().id());
+        assertEquals(getPantryResponse.pantryId(), response.getBody().pantryId());
         assertEquals(getPantryResponse.pantryName(), response.getBody().pantryName());
         assertTrue(response.getBody().authorities().isEmpty());
     }
@@ -89,26 +90,26 @@ class PantryControllerTest {
 
     @Test
     void test_getUserPantrySuccess() {
-        GetPantryResponse getPantryResponse = new GetPantryResponse(id, pantryName, Collections.emptySet());
+        GetPantryResponse getPantryResponse = new GetPantryResponse(id, pantryName, id, groupName, Collections.emptySet());
 
         Mockito.doReturn(getPantryResponse).when(pantryService).getPantry(Mockito.anyLong(), Mockito.anyString());
         ResponseEntity<GetPantryResponse> response = this.pantryController.getPantry(id, this.authentication);
 
         assertSame(HttpStatus.OK, response.getStatusCode());
-        assertEquals(getPantryResponse.id(), response.getBody().id());
+        assertEquals(getPantryResponse.pantryId(), response.getBody().pantryId());
         assertEquals(getPantryResponse.pantryName(), response.getBody().pantryName());
         assertTrue(response.getBody().authorities().isEmpty());
     }
 
     @Test
     void test_getUserPantryReturnsNullPantry() {
-        GetPantryResponse getPantryResponse = new GetPantryResponse(null, null, null);
+        GetPantryResponse getPantryResponse = new GetPantryResponse(0, null, 0, null,null);
 
         Mockito.doReturn(getPantryResponse).when(pantryService).getPantry(Mockito.anyLong(), Mockito.anyString());
         ResponseEntity<GetPantryResponse> response = this.pantryController.getPantry(id, this.authentication);
 
         assertSame(HttpStatus.OK, response.getStatusCode());
-        assertNull(response.getBody().id());
+        assertEquals(0, response.getBody().pantryId());
         assertNull(response.getBody().pantryName());
         assertNull(response.getBody().authorities());
     }
@@ -180,13 +181,13 @@ class PantryControllerTest {
     @Test
     void test_updateUserPantrySuccess() {
         UpdatePantryRequest updatePantryRequest = new UpdatePantryRequest("newName");
-        GetPantryResponse updatePantryResponse = new GetPantryResponse(id, pantryName, Collections.emptySet());
+        GetPantryResponse updatePantryResponse = new GetPantryResponse(id, pantryName, id, groupName, Collections.emptySet());
 
         Mockito.doReturn(updatePantryResponse).when(pantryService).updatePantry(Mockito.anyLong(), Mockito.any(UpdatePantryRequest.class), Mockito.anyString());
         ResponseEntity<GetPantryResponse> response = this.pantryController.updatePantry(id, updatePantryRequest, this.authentication);
 
         assertSame(HttpStatus.OK, response.getStatusCode());
-        assertEquals(updatePantryResponse.id(), response.getBody().id());
+        assertEquals(updatePantryResponse.pantryId(), response.getBody().pantryId());
         assertEquals(updatePantryResponse.pantryName(), response.getBody().pantryName());
     }
 

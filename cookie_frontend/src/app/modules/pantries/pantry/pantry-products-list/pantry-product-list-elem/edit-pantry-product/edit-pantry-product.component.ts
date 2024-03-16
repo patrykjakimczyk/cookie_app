@@ -78,7 +78,7 @@ export class EditPantryProductComponent implements OnInit {
     if (!this.editForm.valid) {
       return;
     }
-    console.log(this.editForm.value);
+
     if (this.isPantryProduct) {
       this.pantriesService
         .modifyPantryProduct(this.pantryId, this.editForm.value)

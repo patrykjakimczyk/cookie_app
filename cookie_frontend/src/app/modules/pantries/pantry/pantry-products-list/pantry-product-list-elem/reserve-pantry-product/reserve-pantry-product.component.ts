@@ -38,7 +38,7 @@ export class ReservePantryProductComponent {
     this.reserveType = this.data.reserve;
     this.reserveForm = this.fb.group({
       reserved: [
-        1,
+        '',
         [
           Validators.required,
           Validators.min(1),

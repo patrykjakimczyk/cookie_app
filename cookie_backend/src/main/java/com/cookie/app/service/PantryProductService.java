@@ -18,6 +18,7 @@ public interface PantryProductService {
             String userEmail
     );
     void addProductsToPantry(long pantryId, List<PantryProductDTO> pantryProductDTOS, String userEmail);
+    void addProductsToPantryFromList(Pantry pantry, List<PantryProductDTO> pantryProductDTOS, User user);
     void removeProductsFromPantry(long pantryId, List<Long> pantryProductIds, String userEmail);
     void modifyPantryProduct(long pantryId, PantryProductDTO pantryProduct, String userEmail);
     PantryProductDTO reservePantryProduct(long pantryId, long pantryProductId, int reserved, String userEmail);

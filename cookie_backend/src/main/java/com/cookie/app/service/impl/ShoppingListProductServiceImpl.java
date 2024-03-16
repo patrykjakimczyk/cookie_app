@@ -2,6 +2,8 @@ package com.cookie.app.service.impl;
 
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.exception.ValidationException;
+import com.cookie.app.model.dto.PantryProductDTO;
+import com.cookie.app.model.dto.ProductDTO;
 import com.cookie.app.model.dto.ShoppingListProductDTO;
 import com.cookie.app.model.entity.*;
 import com.cookie.app.model.enums.AuthorityEnum;
@@ -11,6 +13,7 @@ import com.cookie.app.repository.PantryProductRepository;
 import com.cookie.app.repository.ProductRepository;
 import com.cookie.app.repository.ShoppingListProductRepository;
 import com.cookie.app.repository.UserRepository;
+import com.cookie.app.service.PantryProductService;
 import com.cookie.app.service.ShoppingListProductService;
 import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,18 +36,18 @@ import java.util.stream.Collectors;
 @Service
 public class ShoppingListProductServiceImpl extends AbstractShoppingListService implements ShoppingListProductService {
     private final ShoppingListProductRepository shoppingListProductRepository;
-    private final PantryProductRepository pantryProductRepository;
+    private final PantryProductService pantryProductService;
     private final ShoppingListProductMapperDTO shoppingListProductMapper;
 
     public ShoppingListProductServiceImpl(UserRepository userRepository,
                                           ProductRepository productRepository,
                                           AuthorityMapperDTO authorityMapperDTO,
                                           ShoppingListProductRepository shoppingListProductRepository,
-                                          PantryProductRepository pantryProductRepository,
+                                          PantryProductService pantryProductService,
                                           ShoppingListProductMapperDTO shoppingListProductMapper) {
         super(userRepository, productRepository, authorityMapperDTO);
         this.shoppingListProductRepository = shoppingListProductRepository;
-        this.pantryProductRepository = pantryProductRepository;
+        this.pantryProductService = pantryProductService;
         this.shoppingListProductMapper = shoppingListProductMapper;
     }
 
@@ -139,6 +143,7 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
                 .id(listProductDTO.id())
                 .product(Product
                         .builder()
+                        .id(listProductDTO.product().productId())
                         .productName(listProductDTO.product().productName())
                         .category(listProductDTO.product().category())
                         .build()
@@ -202,19 +207,19 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
             throw new UserPerformedForbiddenActionException("Cannot transfer unpurchased shopping list products");
         }
 
-        List<PantryProduct> newPantryProducts = this.mapListProductsToPantryProducts(purchasedProducts, pantry);
+        List<PantryProductDTO> newPantryProducts = this.mapListProductsToPantryProducts(purchasedProducts, pantry);
 
         log.info("User with email {} transfered {} products to shopping list with id {}",
                 userEmail,
                 newPantryProducts.size(),
                 shoppingList.getId());
         this.shoppingListProductRepository.deleteAll(purchasedProducts);
-        this.pantryProductRepository.saveAll(newPantryProducts);
+        this.pantryProductService.addProductsToPantryFromList(pantry, newPantryProducts, user);
     }
 
     @Override
     public List<ShoppingListProductDTO> addRecipeProductsToShoppingList(long listId, User user, List<RecipeProduct> recipeProducts) {
-        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(listId, user, AuthorityEnum.RESERVE);
+        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(listId, user, AuthorityEnum.ADD_TO_SHOPPING_LIST);
         List<ShoppingListProduct> addedProducts = new ArrayList<>();
         Map<Long, RecipeProduct> recipeProductMap = recipeProducts
                 .stream()
@@ -255,19 +260,25 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
                 recipeProduct.getUnit() == listProduct.getUnit();
     }
 
-    private List<PantryProduct> mapListProductsToPantryProducts(List<ShoppingListProduct> purchasedProducts, Pantry pantry) {
-        List<PantryProduct> newPantryProducts = new ArrayList<>();
-        Timestamp currentTimestamp = Timestamp.from(Instant.now());
+    private List<PantryProductDTO> mapListProductsToPantryProducts(List<ShoppingListProduct> purchasedProducts, Pantry pantry) {
+        List<PantryProductDTO> newPantryProducts = new ArrayList<>();
+        Timestamp currentTimestamp = Timestamp.from(Instant.now().truncatedTo(ChronoUnit.DAYS));
 
         for (ShoppingListProduct purchasedProduct : purchasedProducts) {
-            PantryProduct pantryProduct = PantryProduct.builder()
-                    .pantry(pantry)
-                    .product(purchasedProduct.getProduct())
-                    .purchaseDate(currentTimestamp)
-                    .quantity(purchasedProduct.getQuantity())
-                    .unit(purchasedProduct.getUnit())
-                    .reserved(0)
-                    .build();
+            PantryProductDTO pantryProduct = new PantryProductDTO(
+                    0L,
+                    new ProductDTO(
+                            purchasedProduct.getProduct().getId(),
+                            purchasedProduct.getProduct().getProductName(),
+                            purchasedProduct.getProduct().getCategory()
+                    ),
+                    currentTimestamp,
+                    null,
+                    purchasedProduct.getQuantity(),
+                    purchasedProduct.getUnit(),
+                    0,
+                    ""
+            );
 
             newPantryProducts.add(pantryProduct);
         }

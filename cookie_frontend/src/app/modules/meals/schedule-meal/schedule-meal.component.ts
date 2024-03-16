@@ -21,9 +21,7 @@ import { AddMealRequest } from 'src/app/shared/model/requests/meals-requests';
 import { MealDTO } from 'src/app/shared/model/types/meals.types';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmationPopupComponent } from 'src/app/shared/components/confirmation-popup/confirmation-popup.component';
 import { ReserveProductsPopupComponent } from '../reserve-products-popup/reserve-products-popup.component';
-import { group } from '@angular/animations';
 import { AddToListPopupComponent } from '../add-to-list-popup/add-to-list-popup.component';
 
 @Component({

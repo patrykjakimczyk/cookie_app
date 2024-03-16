@@ -80,9 +80,8 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService() {
         return email -> {
             Optional<User> optionalUser = userRepository.findByEmail(email);
-            User user = optionalUser.orElseThrow(() -> {
-                throw new UsernameNotFoundException("User with given email does not exists!");
-            });
+            User user = optionalUser.orElseThrow(() ->
+                    new UsernameNotFoundException("User with given email does not exists!"));
 
             List<GrantedAuthority> authorities = new ArrayList<>();
             authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + user.getRole().name()));

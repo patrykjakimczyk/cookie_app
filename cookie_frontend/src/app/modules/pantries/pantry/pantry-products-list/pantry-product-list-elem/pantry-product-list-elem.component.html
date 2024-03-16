@@ -56,6 +56,16 @@
       >
         Edit pantry product
       </button>
+      <button
+        mat-menu-item
+        (click)="AddToListButtonClicked()"
+        *ngIf="
+          userService.userHasAuthority(authorityEnum.ADD_TO_SHOPPING_LIST) &&
+          isPantryProduct
+        "
+      >
+        Add product to shopping list
+      </button>
     </mat-menu>
   </div>
 </mat-list-item>

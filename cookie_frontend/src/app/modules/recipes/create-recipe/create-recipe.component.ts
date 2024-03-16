@@ -36,6 +36,7 @@ export class CreateRecipeComponent implements OnInit {
   protected edit = false;
   protected updateImage = false;
   protected wrongImageFormat = false;
+  protected noIngrediendsAdded = false;
   protected productFilterValue = '';
   protected filteredProducts = new Observable<ProductDTO[]>();
   protected ingredientsToAdd: RecipeProductDTO[] = [];
@@ -231,11 +232,13 @@ export class CreateRecipeComponent implements OnInit {
   }
 
   submitRecipeForm() {
-    if (!this.recipeForm.valid) {
+    if (this.ingredientsToAdd.length === 0) {
+      this.noIngrediendsAdded = true;
       return;
     }
+    this.noIngrediendsAdded = false;
 
-    if (this.ingredientsToAdd.length === 0) {
+    if (!this.recipeForm.valid) {
       return;
     }
 
@@ -286,7 +289,7 @@ export class CreateRecipeComponent implements OnInit {
   }
 
   compareOptions(obj1: any, obj2: any) {
-    return obj1 === obj1;
+    return obj1 === obj2;
   }
 
   setCategoryForProduct(category: Category) {

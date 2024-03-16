@@ -11,7 +11,9 @@ import {
   GetPantryResponse,
   GetUserPantriesResponse,
 } from 'src/app/shared/model/responses/pantry-response';
+import { GroupDetailsDTO } from 'src/app/shared/model/types/group-types';
 import { PantryProductDTO } from 'src/app/shared/model/types/pantry-types';
+import { ShoppingListProductDTO } from 'src/app/shared/model/types/shopping-lists-types';
 
 @Injectable({ providedIn: 'root' })
 export class PantriesService {
@@ -20,6 +22,9 @@ export class PantriesService {
   private readonly pantry_id_path = 'pantry/{id}';
   private readonly products_path = 'products';
   private readonly pantry_products_path = '/products';
+  private readonly group_id_url = 'group/{id}';
+  private readonly shopping_list_id_path = 'shopping-list/{id}';
+  private readonly list_products_path = '/products';
 
   constructor(private http: HttpClient) {}
 
@@ -127,5 +132,23 @@ export class PantriesService {
     return this.http.get<any>(`${this.url}${this.products_path}`, {
       params: params,
     });
+  }
+
+  getGroup(groupId: number) {
+    return this.http.get<GroupDetailsDTO>(
+      this.url + this.group_id_url.replace('{id}', groupId.toString())
+    );
+  }
+
+  addProductsToShoppingList(
+    listId: number,
+    productsToAdd: ShoppingListProductDTO[]
+  ): Observable<void> {
+    return this.http.post<void>(
+      this.url +
+        this.shopping_list_id_path.replace('{id}', listId.toString()) +
+        this.list_products_path,
+      productsToAdd
+    );
   }
 }

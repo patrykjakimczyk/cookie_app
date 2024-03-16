@@ -3,7 +3,7 @@
   <mat-accordion
     [ngStyle]="{
       display:
-        pantry && pantry.id && pantry.pantryName && showAddProducts
+        pantry && pantry.pantryId && pantry.pantryName && showAddProducts
           ? 'block'
           : 'none'
     }"
@@ -15,7 +15,7 @@
 
       <div
         class="action-container first-action-container"
-        *ngIf="pantry && pantry.id && pantry.pantryName"
+        *ngIf="pantry && pantry.pantryId && pantry.pantryName"
       >
         <form
           [formGroup]="addForm"
@@ -132,7 +132,7 @@
         </form>
       </div>
 
-      <mat-card *ngIf="pantry && pantry.id && pantry.pantryName">
+      <mat-card *ngIf="pantry && pantry.pantryId && pantry.pantryName">
         <mat-card-content>
           <div id="add-products-container">
             <div
@@ -215,7 +215,7 @@
 
       <div
         class="action-container"
-        *ngIf="pantry && pantry.id && pantry.pantryName"
+        *ngIf="pantry && pantry.pantryId && pantry.pantryName"
       >
         <form [formGroup]="searchForm" (ngSubmit)="submitSearchForm()">
           <mat-form-field color="accent">
@@ -280,7 +280,7 @@
         <mat-card-content>
           <div
             id="pantry-products-container"
-            *ngIf="pantry && pantry.id && pantry.pantryName"
+            *ngIf="pantry && pantry.pantryId && pantry.pantryName"
           >
             <div class="empty-product-list-container" *ngIf="!totalElements">
               <p>You pantry is currently empty</p>

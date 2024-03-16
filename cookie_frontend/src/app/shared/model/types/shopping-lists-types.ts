@@ -37,7 +37,7 @@ export type UpdateShoppingListRequest = {
 };
 
 export type ShoppingListProductDTO = {
-  id: number | null;
+  id: number;
   product: ProductDTO;
   quantity: number;
   unit: Unit;

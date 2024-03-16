@@ -155,7 +155,12 @@ mat-card {
     }
   }
 
-  button {
-    float: right;
+  #button-and-error-container {
+    @include flex-with-gap($align: center, $gap: 10px);
+    justify-content: flex-end;
+
+    span {
+      color: $error-color;
+    }
   }
 }

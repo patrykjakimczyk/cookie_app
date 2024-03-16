@@ -19,15 +19,15 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 public class PantryProductController {
-    private static final String PANTRY_PRODUCTS_URL = "/pantry/{id}/products";
-    private static final String GET_PANTRY_PRODUCTS_URL = "/pantry/{id}/products/{page}";
-    private static final String PANTRY_PRODUCT_URL = "/pantry/{id}/products/{productId}";
+    private static final String PANTRY_PRODUCTS_URL = "/pantry/{pantryId}/products";
+    private static final String GET_PANTRY_PRODUCTS_URL = "/pantry/{pantryId}/products/{page}";
+    private static final String PANTRY_PRODUCT_URL = "/pantry/{pantryId}/products/{productId}";
     private final PantryProductService pantryProductService;
 
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping(GET_PANTRY_PRODUCTS_URL)
     public ResponseEntity<Page<PantryProductDTO>> getPantryProducts(
-            @PathVariable(value = "id") @Valid @Min(value = 1, message = "Id must be greater than 0") long id,
+            @PathVariable(value = "pantryId") @Valid @Min(value = 1, message = "Pantry id must be greater than 0") long pantryId,
             @PathVariable(value = "page") @Valid @Min(value = 0, message = "Page nr must be at least 0") int page,
             @RequestParam String filterValue,
             @RequestParam String sortColName,
@@ -37,54 +37,54 @@ public class PantryProductController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(this.pantryProductService.getPantryProducts(
-                        id, page, filterValue, sortColName, sortDirection, authentication.getName())
+                        pantryId, page, filterValue, sortColName, sortDirection, authentication.getName())
                 );
     }
 
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping(PANTRY_PRODUCTS_URL)
     public ResponseEntity<Void> addProductsToPantry(
-            @PathVariable(value = "id") @Valid @Min(value = 1, message = "Id must be greater than 0") long id,
+            @PathVariable(value = "pantryId") @Valid @Min(value = 1, message = "Pantry id must be greater than 0") long pantryId,
             @Valid @NotEmpty(message = "List of products cannot be empty") @RequestBody List<@Valid PantryProductDTO> products,
             Authentication authentication
     ) {
-        this.pantryProductService.addProductsToPantry(id, products, authentication.getName());
+        this.pantryProductService.addProductsToPantry(pantryId, products, authentication.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
 
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping(PANTRY_PRODUCTS_URL)
     public ResponseEntity<Void> removeProductsFromPantry(
-            @PathVariable(value = "id") @Valid @Min(value = 1,message = "Id must be greater than 0") long id,
+            @PathVariable(value = "pantryId") @Valid @Min(value = 1,message = "Pantry id must be greater than 0") long pantryId,
             @Valid @NotEmpty(message = "List of ids cannot be empty") @RequestBody List<Long> productIds,
             Authentication authentication
     ) {
-        this.pantryProductService.removeProductsFromPantry(id, productIds, authentication.getName());
+        this.pantryProductService.removeProductsFromPantry(pantryId, productIds, authentication.getName());
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(PANTRY_PRODUCTS_URL)
     public ResponseEntity<Void> modifyPantryProduct(
-            @PathVariable(value = "id") @Valid @Min(value = 1, message = "Id must be greater than 0") long id,
+            @PathVariable(value = "pantryId") @Valid @Min(value = 1, message = "Pantry id must be greater than 0") long pantryId,
             @Valid @RequestBody PantryProductDTO pantryProductDTO,
             Authentication authentication
     ) {
-        this.pantryProductService.modifyPantryProduct(id, pantryProductDTO, authentication.getName());
+        this.pantryProductService.modifyPantryProduct(pantryId, pantryProductDTO, authentication.getName());
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(PANTRY_PRODUCT_URL)
     public ResponseEntity<PantryProductDTO> reservePantryProduct(
-            @PathVariable(value = "id") @Valid @Min(value = 1, message = "Id must be greater than 0") long id,
+            @PathVariable(value = "pantryId") @Valid @Min(value = 1, message = "Pantry id must be greater than 0") long pantryId,
             @PathVariable(value = "productId") @Valid
             @Min(value = 1, message = "Pantry product id must be greater than 0") long pantryProductId,
             @RequestBody @Valid ReservePantryProductRequest reserveBody,
             Authentication authentication
     ) {
         PantryProductDTO response = this.pantryProductService
-                .reservePantryProduct(id, pantryProductId, reserveBody.reserved(), authentication.getName());
+                .reservePantryProduct(pantryId, pantryProductId, reserveBody.reserved(), authentication.getName());
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

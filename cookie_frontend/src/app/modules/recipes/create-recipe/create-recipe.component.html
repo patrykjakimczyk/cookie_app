@@ -276,8 +276,13 @@
       </div>
     </div>
 
-    <button mat-raised-button type="submit" color="primary">
-      {{ edit ? "Edit" : "Create" }} recipe
-    </button>
+    <div id="button-and-error-container">
+      <span *ngIf="noIngrediendsAdded"
+        >Recipe must have at least one ingredient</span
+      >
+      <button mat-raised-button type="submit" color="primary">
+        {{ edit ? "Edit" : "Create" }} recipe
+      </button>
+    </div>
   </form>
 </mat-card>

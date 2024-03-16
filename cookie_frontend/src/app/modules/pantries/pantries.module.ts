@@ -30,6 +30,7 @@ import { PantryProductListElemComponent } from './pantry/pantry-products-list/pa
 import { EditPantryProductComponent } from './pantry/pantry-products-list/pantry-product-list-elem/edit-pantry-product/edit-pantry-product.component';
 import { PantryProductDetailsComponent } from './pantry/pantry-products-list/pantry-product-list-elem/pantry-product-details/pantry-product-details.component';
 import { ReservePantryProductComponent } from './pantry/pantry-products-list/pantry-product-list-elem/reserve-pantry-product/reserve-pantry-product.component';
+import { AddToListComponent } from './pantry/pantry-products-list/pantry-product-list-elem/add-to-list/add-to-list.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +42,7 @@ import { ReservePantryProductComponent } from './pantry/pantry-products-list/pan
     PantryProductDetailsComponent,
     ReservePantryProductComponent,
     PantriesListComponent,
+    AddToListComponent,
   ],
   imports: [
     BrowserModule,
@@ -67,6 +69,7 @@ import { ReservePantryProductComponent } from './pantry/pantry-products-list/pan
     MatNativeDateModule,
     MatMenuModule,
     MatAutocompleteModule,
+    MatSnackBarModule,
   ],
   exports: [PantryComponent],
 })

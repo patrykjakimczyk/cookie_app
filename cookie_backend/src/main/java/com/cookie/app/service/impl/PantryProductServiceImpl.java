@@ -66,19 +66,17 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
     public void addProductsToPantry(long pantryId, List<PantryProductDTO> pantryProductDTOS, String userEmail) {
         Pantry pantry = this.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.ADD);
 
-        pantryProductDTOS.forEach(productDTO -> {
-            if (productDTO.id() > 0) {
-                throw new ValidationException(
-                        "Pantry product id must be 0 while inserting it to pantry");
-            } else if (productDTO.reserved() > 0) {
-                throw new ValidationException(
-                        "Pantry product reserved quantity must be 0 while inserting it to pantry");
-            }
+        addProductDTOsToPantry(pantryProductDTOS, pantry);
+    }
 
-            PantryProduct pantryProduct = mapToPantryProduct(productDTO, pantry, null);
-            pantry.getPantryProducts().add(pantryProduct);
-            this.pantryProductRepository.save(pantryProduct);
-        });
+    @Override
+    public void addProductsToPantryFromList(Pantry pantry, List<PantryProductDTO> pantryProductDTOS, User user) {
+        if (!super.userHasAuthority(user, pantry.getGroup().getId(), AuthorityEnum.ADD)) {
+            log.info("User: {} tried to perform action in pantry without required permission", user.getEmail());
+            throw new UserPerformedForbiddenActionException("You have not permissions to do that");
+        }
+
+        addProductDTOsToPantry(pantryProductDTOS, pantry);
     }
 
     @Override
@@ -260,7 +258,7 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
                         this.pantryProductRepository.deleteById(pantryProductDTO.id());
                         // if pantry products ids are not equal, we are adding exact same pantry product, so we need to sum quantities
                         pantryProduct.setQuantity(pantryProduct.getQuantity() + pantryProductDTO.quantity());
-                        pantryProduct.setReserved(pantryProduct.getReserved() + pantryProductDTO.quantity());
+                        pantryProduct.setReserved(pantryProduct.getReserved() + pantryProductDTO.reserved());
 
                         return pantryProduct;
                     }
@@ -285,5 +283,25 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
                 Objects.equals(pantryProduct.getPurchaseDate(), pantryProductDTO.purchaseDate()) &&
                 Objects.equals(pantryProduct.getExpirationDate(), pantryProductDTO.expirationDate()) &&
                 pantryProduct.getPlacement().equals(pantryProductDTO.placement());
+    }
+
+    private void addProductDTOsToPantry(List<PantryProductDTO> pantryProductDTOS, Pantry pantry) {
+        List<PantryProduct> productsToAdd = new ArrayList<>();
+
+        pantryProductDTOS.forEach(productDTO -> {
+            if (productDTO.id() > 0) {
+                throw new ValidationException(
+                        "Pantry product id must be 0 while inserting it to pantry");
+            } else if (productDTO.reserved() > 0) {
+                throw new ValidationException(
+                        "Pantry product reserved quantity must be 0 while inserting it to pantry");
+            }
+
+            PantryProduct pantryProduct = mapToPantryProduct(productDTO, pantry, null);
+            pantry.getPantryProducts().add(pantryProduct);
+            productsToAdd.add(pantryProduct);
+        });
+
+        this.pantryProductRepository.saveAll(productsToAdd);
     }
 }

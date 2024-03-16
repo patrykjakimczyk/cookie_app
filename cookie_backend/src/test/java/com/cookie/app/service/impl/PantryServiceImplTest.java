@@ -141,7 +141,7 @@ class PantryServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
         GetPantryResponse response = service.getPantry(id, email);
-        assertEquals(pantry.getId(), response.id());
+        assertEquals(pantry.getId(), response.pantryId());
         assertEquals(pantry.getPantryName(), response.pantryName());
         assertFalse(response.authorities().isEmpty());
 
@@ -170,7 +170,7 @@ class PantryServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
         GetPantryResponse response = service.getPantry(id, email);
-        assertNull(response.id());
+        assertEquals(0, response.pantryId());
         assertNull(response.pantryName());
         assertNull(response.authorities());
     }

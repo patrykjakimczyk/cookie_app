@@ -1,4 +1,5 @@
 import { Unit } from '../enums/unit.enum';
+import { GetPantryResponse } from '../responses/pantry-response';
 import { ProductDTO } from './product-types';
 
 export type PantryDTO = {
@@ -32,4 +33,9 @@ export type EditPantryInfo = {
   pantryId: number;
   pantryProduct: PantryProductDTO;
   isPantryProduct: boolean;
+};
+
+export type AddToListInfo = {
+  pantryProduct: PantryProductDTO;
+  pantry: GetPantryResponse;
 };

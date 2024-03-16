@@ -16,6 +16,8 @@ import {
   ReserveType,
 } from 'src/app/shared/model/types/pantry-types';
 import { UserService } from 'src/app/shared/services/user-service';
+import { AddToListComponent } from './add-to-list/add-to-list.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export type PantryProductCheckboxEvent = {
   checked: boolean;
@@ -37,7 +39,11 @@ export class PantryProductListElemComponent {
   protected units = units;
   protected authorityEnum = AuthorityEnum;
 
-  constructor(private dialog: MatDialog, protected userService: UserService) {}
+  constructor(
+    private dialog: MatDialog,
+    protected userService: UserService,
+    private snackBar: MatSnackBar
+  ) {}
 
   printShortUnit(quantity: number) {
     if (this.pantryProduct.unit === Unit.GRAMS) {
@@ -73,7 +79,7 @@ export class PantryProductListElemComponent {
   editButtonClicked() {
     const editDialog = this.dialog.open(EditPantryProductComponent, {
       data: {
-        pantryId: this.pantry.id,
+        pantryId: this.pantry.pantryId,
         pantryProduct: this.pantryProduct,
         isPantryProduct: this.isPantryProduct,
       },
@@ -85,14 +91,31 @@ export class PantryProductListElemComponent {
         this.reloadEvent.emit(true);
         this.pantryProduct = modifiedPantryProduct;
         this.pantryProductChange.emit(this.pantryProduct);
-        console.log(this.pantryProduct);
       });
+  }
+
+  AddToListButtonClicked() {
+    const addDialog = this.dialog.open(AddToListComponent, {
+      data: {
+        pantryProduct: this.pantryProduct,
+        pantry: this.pantry,
+      },
+    });
+
+    addDialog.afterClosed().subscribe((added: boolean) => {
+      if (added) {
+        this.snackBar.open(
+          `${this.pantryProduct.product.productName} has been added to shopping list successfuly`,
+          'Ok'
+        );
+      }
+    });
   }
 
   private showReservePopup(reserveType: ReserveType) {
     const reserveDialog = this.dialog.open(ReservePantryProductComponent, {
       data: {
-        pantryId: this.pantry.id,
+        pantryId: this.pantry.pantryId,
         pantryProduct: this.pantryProduct,
         reserve: reserveType,
       },

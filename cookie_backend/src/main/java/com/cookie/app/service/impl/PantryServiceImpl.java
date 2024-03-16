@@ -61,7 +61,9 @@ public class PantryServiceImpl extends AbstractPantryService implements PantrySe
         return new GetPantryResponse(
                 pantry.getId(),
                 pantry.getPantryName(),
-                this.getAuthorityDTOsForSpecificGroup(user, userGroup)
+                pantry.getGroup().getId(),
+                pantry.getGroup().getGroupName(),
+                super.getAuthorityDTOsForSpecificGroup(user, pantry.getGroup())
         );
     }
 
@@ -71,7 +73,7 @@ public class PantryServiceImpl extends AbstractPantryService implements PantrySe
         Optional<Pantry> pantryOptional = super.findPantryInUserGroups(pantryId, user);
 
         if (pantryOptional.isEmpty()) {
-            return new GetPantryResponse(null, null, null);
+            return new GetPantryResponse(0, null, 0, null, null);
         }
 
         Pantry pantry = pantryOptional.get();
@@ -79,6 +81,8 @@ public class PantryServiceImpl extends AbstractPantryService implements PantrySe
         return new GetPantryResponse(
                 pantry.getId(),
                 pantry.getPantryName(),
+                pantry.getGroup().getId(),
+                pantry.getGroup().getGroupName(),
                 super.getAuthorityDTOsForSpecificGroup(user, pantry.getGroup())
         );
     }
@@ -116,6 +120,8 @@ public class PantryServiceImpl extends AbstractPantryService implements PantrySe
         return new GetPantryResponse(
                 pantry.getId(),
                 pantry.getPantryName(),
+                pantry.getGroup().getId(),
+                pantry.getGroup().getGroupName(),
                 super.getAuthorityDTOsForSpecificGroup(user, pantry.getGroup())
         );
     }

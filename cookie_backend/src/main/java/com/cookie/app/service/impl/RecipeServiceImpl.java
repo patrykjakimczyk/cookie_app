@@ -11,6 +11,7 @@ import com.cookie.app.model.mapper.RecipeMapperDTO;
 import com.cookie.app.model.request.CreateRecipeRequest;
 import com.cookie.app.model.response.CreateRecipeResponse;
 import com.cookie.app.repository.ProductRepository;
+import com.cookie.app.repository.RecipeProductRepository;
 import com.cookie.app.repository.RecipeRepository;
 import com.cookie.app.repository.UserRepository;
 import com.cookie.app.service.PantryProductService;
@@ -26,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -33,6 +35,7 @@ import java.util.stream.Collectors;
 @Service
 public class RecipeServiceImpl extends AbstractCookieService implements RecipeService {
     private final RecipeRepository recipeRepository;
+    private final RecipeProductRepository recipeProductRepository;
     private final PantryProductService pantryProductService;
     private final ShoppingListProductService shoppingListProductService;
     private final RecipeMapperDTO recipeMapperDTO;
@@ -42,12 +45,14 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
                                 ProductRepository productRepository,
                                 AuthorityMapperDTO authorityMapperDTO,
                                 RecipeRepository recipeRepository,
+                                RecipeProductRepository recipeProductRepository,
                                 PantryProductService pantryProductService,
                                 ShoppingListProductService shoppingListProductService,
                                 RecipeMapperDTO recipeMapperDTO,
                                 RecipeDetailsMapperDTO recipeDetailsMapperDTO) {
         super(userRepository, productRepository, authorityMapperDTO);
         this.recipeRepository = recipeRepository;
+        this.recipeProductRepository = recipeProductRepository;
         this.pantryProductService = pantryProductService;
         this.shoppingListProductService = shoppingListProductService;
         this.recipeMapperDTO = recipeMapperDTO;
@@ -226,7 +231,7 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
                 String contentType = recipeImage.getContentType();
 
                 if (contentType != null && !contentType.equals("image/jpeg") &&
-                        !contentType.equals("image/png") && newImage.length <= 0
+                        !contentType.equals("image/png") && newImage.length == 0
                 ) {
                     throw new UserPerformedForbiddenActionException("You tried to save file in forbidden format");
                 }
@@ -240,9 +245,11 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
                 .filter(recipeProductDTO -> recipeProductDTO.id() > 0)
                 .collect(Collectors.toMap(RecipeProductDTO::id, Function.identity()));
 
-        for (RecipeProduct recipeProduct : recipe.getRecipeProducts()) {
+        for (RecipeProduct recipeProduct : new ArrayList<>(recipe.getRecipeProducts())) {
             if (!recipeProductDTOMap.containsKey(recipeProduct.getId())) {
                 recipe.getRecipeProducts().remove(recipeProduct);
+                recipeProductDTOMap.remove(recipeProduct.getId());
+                this.recipeProductRepository.delete(recipeProduct);
                 continue;
             }
 
@@ -261,7 +268,7 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
             if (recipeProduct.getQuantity() != modifiedProduct.quantity()) {
                 recipeProduct.setQuantity(modifiedProduct.quantity());
             }
-            if (recipeProduct.getUnit() !=  modifiedProduct.unit()) {
+            if (recipeProduct.getUnit() != modifiedProduct.unit()) {
                 recipeProduct.setUnit(recipeProduct.getUnit());
             }
 

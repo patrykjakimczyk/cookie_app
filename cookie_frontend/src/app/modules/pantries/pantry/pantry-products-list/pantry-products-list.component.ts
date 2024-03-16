@@ -87,7 +87,7 @@ export class PantryProductsListComponent {
 
   ngOnInit(): void {
     this.pantry$.subscribe((pantry: GetPantryResponse) => {
-      if (!pantry.id || !pantry.pantryName) {
+      if (!pantry.pantryId || !pantry.pantryName) {
         this.router.navigate(['/pantries']);
       }
       this.pantry = pantry;
@@ -143,7 +143,6 @@ export class PantryProductsListComponent {
   }
 
   reloadPage() {
-    console.log(this.productsToAdd, this.productsToAddCurrPage);
     this.page = 0;
     this.getPantryProducts();
   }
@@ -199,7 +198,7 @@ export class PantryProductsListComponent {
 
   sendProductsToAdd() {
     this.pantriesService
-      .addProductsToPantry(this.pantry!.id, this.productsToAdd)
+      .addProductsToPantry(this.pantry!.pantryId, this.productsToAdd)
       .subscribe({
         next: (_) => {
           this.closeAddProducts();
@@ -221,7 +220,7 @@ export class PantryProductsListComponent {
   }
 
   removeProductsFromAdding() {
-    if (this.pantry && this.pantry.id && this.pantry.pantryName) {
+    if (this.pantry && this.pantry.pantryId && this.pantry.pantryName) {
       this.productsToAddIdsToRemove.forEach((id) => {
         this.productsToAdd = this.productsToAdd.filter(
           (pantryProductDTO) => pantryProductDTO.id !== id
@@ -234,9 +233,12 @@ export class PantryProductsListComponent {
   }
 
   removeProductsFromPantry() {
-    if (this.pantry && this.pantry.id && this.pantry.pantryName) {
+    if (this.pantry && this.pantry.pantryId && this.pantry.pantryName) {
       this.pantriesService
-        .removeProductsFromPantry(this.pantry.id, this.productsIdsToRemove)
+        .removeProductsFromPantry(
+          this.pantry.pantryId,
+          this.productsIdsToRemove
+        )
         .subscribe({
           next: (_) => {
             this.productsIdsToRemove = [];
@@ -252,10 +254,10 @@ export class PantryProductsListComponent {
     const sortColName = this.searchForm.controls.sortColName.value!;
     const SortDirection = this.searchForm.controls.sortDirection.value!;
 
-    if (this.pantry && this.pantry.id && this.pantry.pantryName) {
+    if (this.pantry && this.pantry.pantryId && this.pantry.pantryName) {
       this.pantriesService
         .getPantryProducts(
-          this.pantry.id,
+          this.pantry.pantryId,
           this.page,
           filterValue,
           sortColName,
@@ -264,7 +266,6 @@ export class PantryProductsListComponent {
         .subscribe({
           next: (response) => {
             this.products = response.content;
-            console.log(this.products);
             this.totalElements = response.totalElements;
             this.currentElementsLength = response.content.length;
           },

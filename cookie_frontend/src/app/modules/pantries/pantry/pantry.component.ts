@@ -19,8 +19,10 @@ import { AuthorityEnum } from 'src/app/shared/model/enums/authority.enum';
 })
 export class PantryComponent implements OnInit {
   protected pantry: GetPantryResponse = {
-    id: 0,
+    pantryId: 0,
     pantryName: '',
+    groupId: 0,
+    groupName: '',
     authorities: [],
   };
   protected pantry$ = new Subject<GetPantryResponse>();
@@ -55,7 +57,7 @@ export class PantryComponent implements OnInit {
 
     changePantryNameDialog.afterClosed().subscribe((newPantryName: string) => {
       this.pantryService
-        .updateUserPantry(this.pantry.id, { pantryName: newPantryName })
+        .updateUserPantry(this.pantry.pantryId, { pantryName: newPantryName })
         .subscribe({
           next: (response: GetPantryResponse) => {
             this.pantry.pantryName = response.pantryName;
@@ -74,13 +76,19 @@ export class PantryComponent implements OnInit {
 
     deletePantryDialog.afterClosed().subscribe((deletePantry) => {
       if (deletePantry) {
-        this.pantryService.deleteUserPantry(this.pantry.id).subscribe({
+        this.pantryService.deleteUserPantry(this.pantry.pantryId).subscribe({
           next: (response) => {
             this.snackBar.open(
               `Pantry: ${response.deletedPantryName} has been deleted`,
               'Okay'
             );
-            this.pantry = { id: 0, pantryName: '', authorities: [] };
+            this.pantry = {
+              pantryId: 0,
+              pantryName: '',
+              groupId: 0,
+              groupName: '',
+              authorities: [],
+            };
             this.pantry$.next(this.pantry);
           },
         });

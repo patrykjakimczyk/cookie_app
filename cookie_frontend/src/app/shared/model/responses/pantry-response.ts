@@ -6,8 +6,10 @@ export type GetUserPantriesResponse = {
 };
 
 export type GetPantryResponse = {
-  id: number;
+  pantryId: number;
   pantryName: string;
+  groupId: number;
+  groupName: string;
   authorities: AuthorityDTO[];
 };
 

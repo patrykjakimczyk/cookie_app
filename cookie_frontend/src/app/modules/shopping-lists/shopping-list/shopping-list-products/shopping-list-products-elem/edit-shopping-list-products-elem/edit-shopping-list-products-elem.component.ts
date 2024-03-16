@@ -74,7 +74,6 @@ export class EditShoppingListProductsElemComponent {
     }
 
     if (this.isShoppingListProduct) {
-      console.log(this.editForm.value);
       this.shoppingListService
         .updateShoppingListProduct(this.listId, this.editForm.value)
         .subscribe({
