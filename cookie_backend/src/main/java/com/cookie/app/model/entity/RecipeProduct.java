@@ -31,7 +31,8 @@ public class RecipeProduct {
     @Column(nullable = false)
     private int quantity;
 
-    @Column(nullable = false)
+    @Column(length = 20, updatable = false, nullable = false)
+    @Enumerated(EnumType.STRING)
     private Unit unit;
 
     @ManyToOne(fetch = FetchType.LAZY)

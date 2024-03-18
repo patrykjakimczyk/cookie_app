@@ -11,7 +11,7 @@ public class AuthorityMapperDTO implements Function<Authority, AuthorityDTO> {
     @Override
     public AuthorityDTO apply(Authority authority) {
         return new AuthorityDTO(
-                authority.getAuthority(),
+                authority.getAuthorityName(),
                 authority.getUser().getId(),
                 authority.getGroup().getId()
         );

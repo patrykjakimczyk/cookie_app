@@ -7,8 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Objects;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,15 +24,15 @@ public class Authority {
     @Column(name = "id", insertable = false, updatable = false, unique = true, nullable = false)
     private long id;
 
-    @Column(name = "authority_name", nullable = false)
+    @Column(name = "authority_name", length = 25, nullable = false)
     @Enumerated(EnumType.STRING)
-    private AuthorityEnum authority;
+    private AuthorityEnum authorityName;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id", referencedColumnName = "id")
     private Group group;
 
@@ -43,7 +41,7 @@ public class Authority {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Authority authority1 = (Authority) o;
-        return this.authority == authority1.authority &&
+        return this.authorityName == authority1.authorityName &&
                 this.user.getId() == authority1.user.getId() &&
                 this.group.getId() == authority1.group.getId();
     }

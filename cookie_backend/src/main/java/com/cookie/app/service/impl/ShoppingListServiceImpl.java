@@ -58,7 +58,6 @@ public class ShoppingListServiceImpl extends AbstractShoppingListService impleme
                 .listName(request.shoppingListName())
                 .creator(user)
                 .creationDate(Timestamp.from(Instant.now()))
-                .purchased(false)
                 .group(userGroup)
                 .build();
 

@@ -20,8 +20,7 @@ public class ShoppingListMapperDTO implements Function<ShoppingList, ShoppingLis
                         .filter(ShoppingListProduct::isPurchased)
                         .count(),
                 shoppingList.getGroup().getId(),
-                shoppingList.getGroup().getGroupName(),
-                shoppingList.isPurchased()
+                shoppingList.getGroup().getGroupName()
         );
     }
 }

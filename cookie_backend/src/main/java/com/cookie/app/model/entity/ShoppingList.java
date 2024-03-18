@@ -36,9 +36,6 @@ public class ShoppingList {
     @Column(name = "creation_date", nullable = false)
     private Timestamp creationDate;
 
-    @Column(nullable = false)
-    private boolean purchased;
-
     @OneToMany(mappedBy = "shoppingList", cascade = CascadeType.REMOVE)
     private List<ShoppingListProduct> productsList;
 

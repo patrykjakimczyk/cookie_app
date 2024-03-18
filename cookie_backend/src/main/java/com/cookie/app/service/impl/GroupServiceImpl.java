@@ -99,12 +99,12 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
     @Override
     public GetUserGroupsResponse getUserGroups(String userEmail) {
         User user = this.getUserByEmail(userEmail);
-        List<GroupDTO> userGroupsIds = user.getGroups()
+        List<GroupDTO> userGroups = user.getGroups()
                 .stream()
                 .map(groupMapperDTO::apply)
                 .toList();
 
-        return new GetUserGroupsResponse(userGroupsIds);
+        return new GetUserGroupsResponse(userGroups);
     }
 
     @Override
@@ -126,7 +126,7 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
         List<Authority> userAuthoritiesForGroup = this.authorityRepository.findAuthoritiesByUserAndGroup(user, group);
         Set<AuthorityEnum> authorities = userAuthoritiesForGroup
                 .stream()
-                .map(Authority::getAuthority)
+                .map(Authority::getAuthorityName)
                 .collect(Collectors.toSet());
 
         if (!authorities.contains(AuthorityEnum.MODIFY_GROUP)) {
@@ -153,7 +153,7 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
         List<Authority> userAuthoritiesForGroup = this.authorityRepository.findAuthoritiesByUserAndGroup(user, group);
         Set<AuthorityEnum> authorities = userAuthoritiesForGroup
                 .stream()
-                .map(Authority::getAuthority)
+                .map(Authority::getAuthorityName)
                 .collect(Collectors.toSet());
 
         if (!authorities.contains(AuthorityEnum.MODIFY_GROUP)) {
@@ -300,7 +300,7 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
         List<Authority> authoritiesToTakeAway =
                 userToTakeAwayAuthorities.getAuthorities()
                 .stream()
-                .filter(authority -> request.authorities().contains(authority.getAuthority()))
+                .filter(authority -> request.authorities().contains(authority.getAuthorityName()))
                 .toList();
 
         this.authorityRepository.deleteAll(authoritiesToTakeAway);
@@ -312,7 +312,7 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
         for (AuthorityEnum authorityEnum : authoritiesSet) {
             Authority authority = Authority
                     .builder()
-                    .authority(authorityEnum)
+                    .authorityName(authorityEnum)
                     .user(user)
                     .group(group)
                     .build();
@@ -336,7 +336,7 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
         List<Authority> userAuthoritiesForGroup = this.authorityRepository.findAuthoritiesByUserAndGroup(user, group);
         Set<AuthorityEnum> authorities = userAuthoritiesForGroup
                 .stream()
-                .map(Authority::getAuthority)
+                .map(Authority::getAuthorityName)
                 .collect(Collectors.toSet());
 
         return new GroupUserAndAuthorities(group, user, authorities);

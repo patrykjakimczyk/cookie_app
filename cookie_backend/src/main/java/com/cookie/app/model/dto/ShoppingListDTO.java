@@ -6,6 +6,5 @@ public record ShoppingListDTO(
         int nrOfProducts,
         int nrOfPurchasedProducts,
         long groupId,
-        String groupName,
-        boolean purchased
+        String groupName
 ) {}

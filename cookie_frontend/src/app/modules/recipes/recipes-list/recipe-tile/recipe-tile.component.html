@@ -48,9 +48,12 @@
       <p>{{ recipe.creatorUserName }}</p>
     </div>
 
-    <mat-divider></mat-divider>
+    <mat-divider *ngIf="userService.isUserLogged()"></mat-divider>
 
-    <div class="header-and-value-container spanned-columns">
+    <div
+      class="header-and-value-container spanned-columns"
+      *ngIf="userService.isUserLogged()"
+    >
       <button mat-raised-button (click)="scheduleMeal()">
         Schedule a meal
       </button>

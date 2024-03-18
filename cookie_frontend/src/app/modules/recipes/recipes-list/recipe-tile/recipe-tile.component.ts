@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RecipeDTO } from 'src/app/shared/model/types/recipes-types';
 import { MealPlanningService } from 'src/app/shared/services/meal-planning-service';
+import { UserService } from 'src/app/shared/services/user-service';
 
 @Component({
   selector: 'app-recipe-tile',
@@ -15,7 +16,8 @@ export class RecipeTileComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private mealPlanningService: MealPlanningService
+    private mealPlanningService: MealPlanningService,
+    protected userService: UserService
   ) {}
 
   ngOnInit(): void {

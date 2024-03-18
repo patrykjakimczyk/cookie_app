@@ -54,7 +54,7 @@ public abstract class AbstractCookieService {
                 .stream()
                 .anyMatch(authority ->
                             authority.getGroup().getId() == groupId &&
-                                authority.getAuthority() == authorityEnum);
+                                authority.getAuthorityName() == authorityEnum);
     }
 
     Set<AuthorityDTO> getAuthorityDTOsForSpecificGroup(User user, Group userGroup) {

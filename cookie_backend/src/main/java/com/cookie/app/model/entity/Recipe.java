@@ -31,7 +31,7 @@ public class Recipe {
     @Column(length = 30, nullable = false)
     private String recipeName;
 
-    @Column(length = 512, nullable = false)
+    @Column(length = 1000, nullable = false)
     private String preparation;
 
     @Column(nullable = false)
@@ -48,7 +48,7 @@ public class Recipe {
     private int portions;
 
     @Lob
-    @Column(length = 1000)
+    @Column
     private byte[] recipeImage;
 
     @ManyToOne(fetch = FetchType.LAZY)

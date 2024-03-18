@@ -25,7 +25,7 @@ public class Meal {
     @Column(insertable = false, updatable = false, unique = true, nullable = false)
     private long id;
 
-    @Column
+    @Column(nullable = false)
     private Timestamp mealDate;
 
     @ManyToOne(fetch = FetchType.LAZY)

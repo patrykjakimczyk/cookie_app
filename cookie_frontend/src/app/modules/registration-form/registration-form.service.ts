@@ -3,10 +3,11 @@ import { Injectable } from '@angular/core';
 import { map } from 'rxjs';
 
 import { RegistrationResponse } from 'src/app/shared/model/responses/registration-responses';
+import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class RegistrationFormService {
-  private readonly url = 'http://localhost:8081/';
+  private readonly url = environment.backendUrl;
   private readonly register_path = 'register';
 
   constructor(private http: HttpClient) {}

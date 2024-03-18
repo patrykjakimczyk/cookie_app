@@ -40,14 +40,9 @@ public abstract class AbstractShoppingListService extends AbstractCookieService 
     }
 
     protected Optional<ShoppingList> findShoppingListInUserGroups(long listId, User user) {
-        for (Group group : user.getGroups()) {
-            for (ShoppingList shoppingList : group.getShoppingLists()) {
-                if (shoppingList.getId() == listId) {
-                    return Optional.of(shoppingList);
-                }
-            }
-        }
-
-        return Optional.empty();
+        return user.getGroups().stream()
+                .flatMap(group -> group.getShoppingLists().stream())
+                .filter(shoppingList -> shoppingList.getId() == listId)
+                .findFirst();
     }
 }

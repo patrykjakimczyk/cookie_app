@@ -29,21 +29,18 @@ public class User {
     @Column(insertable = false, updatable = false, unique = true, nullable = false)
     private long id;
 
-    @Column(updatable = false, nullable = false)
+    @Column(length = 20, updatable = false, nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 
     @Column(length = 30, unique = true, nullable = false)
     private String username;
 
-    @Column(length = 50, unique = true, nullable = false)
+    @Column(unique = true, nullable = false)
     private String email;
 
     @Column(nullable = false)
     private String password;
-
-    @Column(nullable = false)
-    private Boolean activated;
 
     @Column(nullable = false)
     private Timestamp creationDate;
@@ -58,7 +55,7 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private Set<Authority> authorities;
 
-    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "users")
     private List<Group> groups;
 
     @Override

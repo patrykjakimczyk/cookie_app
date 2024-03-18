@@ -9,10 +9,11 @@ import {
   ShoppingListProductDTO,
   UpdateShoppingListRequest,
 } from 'src/app/shared/model/types/shopping-lists-types';
+import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ShoppingListsService {
-  private readonly url = 'http://localhost:8081/';
+  private readonly url = environment.backendUrl;
   private readonly shopping_list_path = 'shopping-list';
   private readonly shopping_list_id_path = 'shopping-list/{id}';
   private readonly list_products_path = '/products';

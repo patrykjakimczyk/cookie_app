@@ -43,7 +43,10 @@
                 mat-raised-button
                 color="warn"
                 (click)="openRemoveUserPopup(user)"
-                *ngIf="userService.userHasAuthority(authorityEnum.MODIFY_GROUP)"
+                *ngIf="
+                  userService.userHasAuthority(authorityEnum.MODIFY_GROUP) &&
+                  user.username !== group?.creator?.username
+                "
               >
                 Remove user
               </button>

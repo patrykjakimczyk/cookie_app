@@ -80,7 +80,7 @@
       </div>
     </div>
 
-    <div id="schedule-container">
+    <div id="schedule-container" *ngIf="userService.isUserLogged()">
       <button mat-raised-button (click)="scheduleMeal()">
         Schedule a meal
       </button>

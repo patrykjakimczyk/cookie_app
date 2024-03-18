@@ -72,7 +72,7 @@ class PantryServiceImplTest {
         authority = Authority.builder()
                 .id(id)
                 .group(group)
-                .authority(AuthorityEnum.MODIFY_PANTRY)
+                .authorityName(AuthorityEnum.MODIFY_PANTRY)
                 .build();
         user = User.builder()
                 .id(id)
@@ -100,7 +100,7 @@ class PantryServiceImplTest {
                 .toList();
 
         assertEquals(1, responseAuthorities.size());
-        assertEquals(authority.getAuthority(), responseAuthorities.get(0).authority());
+        assertEquals(authority.getAuthorityName(), responseAuthorities.get(0).authority());
         assertEquals(group.getId(), responseAuthorities.get(0).groupId());
         assertEquals(user.getId(), responseAuthorities.get(0).userId());
     }
@@ -126,7 +126,7 @@ class PantryServiceImplTest {
 
     @Test
     void test_createPantryThrowsErrorOnNoRequiredAuthority() {
-        authority.setAuthority(AuthorityEnum.MODIFY);
+        authority.setAuthorityName(AuthorityEnum.MODIFY);
         final CreatePantryRequest request = new CreatePantryRequest(pantryName, id);
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
@@ -150,7 +150,7 @@ class PantryServiceImplTest {
                 .toList();
 
         assertEquals(1, responseAuthorities.size());
-        assertEquals(authority.getAuthority(), responseAuthorities.get(0).authority());
+        assertEquals(authority.getAuthorityName(), responseAuthorities.get(0).authority());
         assertEquals(group.getId(), responseAuthorities.get(0).groupId());
         assertEquals(user.getId(), responseAuthorities.get(0).userId());
     }
@@ -237,7 +237,7 @@ class PantryServiceImplTest {
 
     @Test
     void test_deletePantryUserHasNotRequiredAuthority() {
-        authority.setAuthority(AuthorityEnum.MODIFY);
+        authority.setAuthorityName(AuthorityEnum.MODIFY);
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
@@ -260,7 +260,7 @@ class PantryServiceImplTest {
                 .toList();
 
         assertEquals(1, responseAuthorities.size());
-        assertEquals(authority.getAuthority(), responseAuthorities.get(0).authority());
+        assertEquals(authority.getAuthorityName(), responseAuthorities.get(0).authority());
         assertEquals(group.getId(), responseAuthorities.get(0).groupId());
         assertEquals(user.getId(), responseAuthorities.get(0).userId());
         verify(pantryRepository, times(1)).save(any(Pantry.class));
@@ -288,7 +288,7 @@ class PantryServiceImplTest {
 
     @Test
     void test_updatePantryUserHasNotRequiredAuthority() {
-        authority.setAuthority(AuthorityEnum.MODIFY);
+        authority.setAuthorityName(AuthorityEnum.MODIFY);
         UpdatePantryRequest request = new UpdatePantryRequest("newPantryName");
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);

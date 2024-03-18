@@ -14,10 +14,11 @@ import {
 import { GroupDetailsDTO } from 'src/app/shared/model/types/group-types';
 import { PantryProductDTO } from 'src/app/shared/model/types/pantry-types';
 import { ShoppingListProductDTO } from 'src/app/shared/model/types/shopping-lists-types';
+import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class PantriesService {
-  private readonly url = 'http://localhost:8081/';
+  private readonly url = environment.backendUrl;
   private readonly pantry_path = 'pantry';
   private readonly pantry_id_path = 'pantry/{id}';
   private readonly products_path = 'products';

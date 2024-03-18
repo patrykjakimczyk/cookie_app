@@ -1,17 +1,17 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { CreateRecipeRequest } from 'src/app/shared/model/requests/recipe-requests';
 import { CreateRecipeResponse } from 'src/app/shared/model/responses/recipes-response';
 import {
   GetRecipesParams,
   RecipeDTO,
   RecipeDetailsDTO,
 } from 'src/app/shared/model/types/recipes-types';
+import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class RecipesService {
-  private readonly url = 'http://localhost:8081/';
+  private readonly url = environment.backendUrl;
   private readonly recipes_path = 'recipes';
   private readonly recipes_page_path = 'recipes/page/{page}';
   private readonly user_recipes_page_path = 'recipes/user-recipes/{page}';

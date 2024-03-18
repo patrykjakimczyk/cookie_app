@@ -24,12 +24,12 @@ export class RecipeDetailsComponent implements OnInit {
 
   constructor(
     private recipesService: RecipesService,
-    private userService: UserService,
     private route: ActivatedRoute,
     private router: Router,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private mealPlanningService: MealPlanningService
+    private mealPlanningService: MealPlanningService,
+    protected userService: UserService
   ) {}
 
   ngOnInit(): void {

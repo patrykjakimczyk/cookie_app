@@ -4,10 +4,11 @@ import { AddMealRequest } from 'src/app/shared/model/requests/meals-requests';
 import { GetUserGroupsResponse } from 'src/app/shared/model/responses/group-response';
 import { GroupDetailsDTO } from 'src/app/shared/model/types/group-types';
 import { MealDTO } from 'src/app/shared/model/types/meals.types';
+import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class MealsService {
-  private readonly url = 'http://localhost:8081/';
+  private readonly url = environment.backendUrl;
   private readonly meals_path = 'meals';
   private readonly group_path = 'group';
 

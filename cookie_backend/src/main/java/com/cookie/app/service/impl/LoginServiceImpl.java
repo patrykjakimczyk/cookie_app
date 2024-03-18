@@ -60,7 +60,6 @@ public class LoginServiceImpl extends AbstractCookieService implements LoginServ
                 .username(request.username())
                 .email(request.email())
                 .password(this.passwordEncoder.encode(request.password()))
-                .activated(false)
                 .creationDate(Timestamp.from(Instant.now()))
                 .birthDate(request.birthDate())
                 .gender(request.gender())
