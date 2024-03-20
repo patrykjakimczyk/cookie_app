@@ -6,6 +6,7 @@ import com.cookie.app.config.filter.JwtValidatorFilter;
 import com.cookie.app.model.entity.User;
 import com.cookie.app.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -31,6 +32,8 @@ import java.util.*;
 public class SecurityConfig {
     private static final String ROLE_PREFIX = "ROLE_";
     private final UserRepository userRepository;
+    @Value("${frontend.address}")
+    private String frontendAddress;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -42,7 +45,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors(corsConfigurer -> corsConfigurer.configurationSource(request -> {
                     CorsConfiguration configuration = new CorsConfiguration();
-                    configuration.setAllowedOrigins(List.of("http://localhost:4200"));
+                    configuration.setAllowedOrigins(List.of(this.frontendAddress));
                     configuration.setAllowedMethods(Collections.singletonList("*"));
                     configuration.setAllowCredentials(true);
                     configuration.setAllowedHeaders(Collections.singletonList("*"));
@@ -53,15 +56,28 @@ public class SecurityConfig {
                 .csrf(csrfConfigurer -> csrfConfigurer
                                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                         // used as a workaround for testing endpoints in swagger
-                        .ignoringRequestMatchers("/register", "/pantry", "/pantry/**", "/product", "/group", "/group/**", "/shopping-list", "/shopping-list/**", "/shopping-lists/**", "/shopping-lists", "/recipes", "/recipes/**", "/meals", "/meals/**")
-//                                .ignoringRequestMatchers("/register")
-                                .csrfTokenRequestHandler(requestHandler)
+                        .ignoringRequestMatchers(
+                                "/api/v1/register",
+                                "/api/v1/pantry",
+                                "/api/v1/pantry/**",
+                                "/api/v1/product",
+                                "/api/v1/group",
+                                "/api/v1/group/**",
+                                "/api/v1/shopping-lists",
+                                "/api/v1/shopping-lists/**",
+                                "/api/v1/recipes",
+                                "/api/v1/recipes/**",
+                                "/api/v1/meals",
+                                "/api/v1/meals/**"
+                        )
+//                                .ignoringRequestMatchers("/api/v1/register")
+                        .csrfTokenRequestHandler(requestHandler)
                 )
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 .addFilterAfter(new JwtValidatorFilter(), BasicAuthenticationFilter.class)
                 .addFilterAfter(new JwtGeneratorFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/register", "/recipes/**").permitAll()
+                        .requestMatchers("/api/v1/register", "/api/v1/recipes/**").permitAll()
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/configuration/ui",

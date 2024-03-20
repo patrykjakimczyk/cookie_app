@@ -14,8 +14,8 @@ import { environment } from 'src/environments/environment';
 @Injectable({ providedIn: 'root' })
 export class ShoppingListsService {
   private readonly url = environment.backendUrl;
-  private readonly shopping_list_path = 'shopping-list';
-  private readonly shopping_list_id_path = 'shopping-list/{id}';
+  private readonly shopping_list_path = 'shopping-lists';
+  private readonly shopping_list_id_path = 'shopping-lists/{id}';
   private readonly list_products_path = '/products';
   private readonly list_products_page_path = '/products/{page}';
   private readonly products_path = 'products';

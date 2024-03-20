@@ -19,6 +19,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
+@RequestMapping("/api/v1")
 @RestController
 public class MealController {
     private static final String MEALS_URL = "/meals";

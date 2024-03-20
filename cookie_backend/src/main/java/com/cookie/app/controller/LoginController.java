@@ -12,27 +12,24 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @Slf4j
+@RequestMapping("/api/v1")
 @RestController
 public class LoginController {
-    private static final String LOGIN_URL = "/user";
-    private static final String REGISTRATION_URL = "/register";
+    private static final String USER_URL = "/user";
     private final LoginService loginService;
 
     @SecurityRequirement(name = "basicAuth")
-    @GetMapping(LOGIN_URL)
+    @GetMapping(USER_URL)
     public ResponseEntity<LoginResponse> login(Authentication auth) {
         LoginResponse response = this.loginService.getLoginInfo(auth.getName());
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping(REGISTRATION_URL)
+    @PostMapping(USER_URL)
     public ResponseEntity<RegistrationResponse> registerUser(@Valid @RequestBody RegistrationRequest request) {
         log.info("Performing user registration for email={}", request.email());
         RegistrationResponse response = this.loginService.userRegistration(request);

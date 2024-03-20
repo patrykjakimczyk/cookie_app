@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
 @Injectable({ providedIn: 'root' })
 export class RegistrationFormService {
   private readonly url = environment.backendUrl;
-  private readonly register_path = 'register';
+  private readonly register_path = 'user';
 
   constructor(private http: HttpClient) {}
 

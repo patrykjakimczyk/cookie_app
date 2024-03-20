@@ -2,8 +2,6 @@ spring:
   profiles:
     active: dev
   datasource:
-    username: postgres
-    password: admin
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

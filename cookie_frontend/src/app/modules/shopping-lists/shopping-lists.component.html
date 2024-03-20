@@ -27,7 +27,7 @@
       <app-preview-card
         *ngFor="let shoppingList of userLists.get(groupName)"
         [firstColumn]="'List name: ' + shoppingList.listName"
-        [secondColumn]="'Purchased: ' + (shoppingList.purchased ? 'Yes' : 'No')"
+        [secondColumn]="'Creator: ' + shoppingList.creatorName"
         [thirdColumn]="
           'Products on list: ' +
           shoppingList.nrOfPurchasedProducts +

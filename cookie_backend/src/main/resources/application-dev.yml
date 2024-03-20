@@ -1,9 +1,18 @@
 spring:
   config:
+    import: ./env/env-dev.yaml
     activate:
       on-profile: dev
   datasource:
-    url: jdbc:postgresql://localhost:5432/cookiedb
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    url: ${DB_URL}
 
 server:
   port: 8081
+
+frontend:
+  address: http://localhost:4200
+
+jwt:
+  secret: SECRET

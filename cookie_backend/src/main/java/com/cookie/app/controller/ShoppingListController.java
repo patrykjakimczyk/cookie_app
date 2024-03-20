@@ -18,10 +18,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @Slf4j
+@RequestMapping("/api/v1")
 @RestController
 public class ShoppingListController {
-    private static final String SHOPPING_LIST_URL = "/shopping-list";
-    private static final String SHOPPING_LIST_ID_URL = "/shopping-list/{id}";
+    private static final String SHOPPING_LIST_URL = "/shopping-lists";
+    private static final String SHOPPING_LIST_ID_URL = "/shopping-lists/{id}";
     private final ShoppingListService shoppingListService;
 
     @SecurityRequirement(name = "bearerAuth")

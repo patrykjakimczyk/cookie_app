@@ -6,12 +6,12 @@ import { environment } from 'src/environments/environment';
 @Injectable({ providedIn: 'root' })
 export class LoginFormService {
   private readonly url = environment.backendUrl;
-  private readonly register_path = 'user';
+  private readonly login_path = 'user';
 
   constructor(private http: HttpClient) {}
 
   login(): Observable<any> {
-    return this.http.get<any>(this.url + this.register_path, {
+    return this.http.get<any>(this.url + this.login_path, {
       observe: 'response',
     });
   }

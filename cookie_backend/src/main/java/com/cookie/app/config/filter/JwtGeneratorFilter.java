@@ -8,9 +8,12 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.crypto.SecretKey;
@@ -21,7 +24,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+@Component(AbstractSecurityWebApplicationInitializer.DEFAULT_FILTER_NAME)
 public class JwtGeneratorFilter extends OncePerRequestFilter {
+    @Value("${jwt.secret}")
+    private String secret;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -38,11 +44,12 @@ public class JwtGeneratorFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return !request.getServletPath().equals("/user");
+        return !request.getServletPath().equals("/api/v1/user");
     }
 
     private String buildJwtToken(Authentication authentication) {
-        SecretKey key = Keys.hmacShaKeyFor(JwtConstants.SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+        System.out.println(this.secret);
+        SecretKey key = Keys.hmacShaKeyFor(this.secret.getBytes(StandardCharsets.UTF_8));
         return Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("role", transformAuthoritiesToString(authentication.getAuthorities()))

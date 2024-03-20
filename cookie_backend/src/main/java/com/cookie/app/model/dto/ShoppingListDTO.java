@@ -6,5 +6,6 @@ public record ShoppingListDTO(
         int nrOfProducts,
         int nrOfPurchasedProducts,
         long groupId,
-        String groupName
+        String groupName,
+        String creatorName
 ) {}

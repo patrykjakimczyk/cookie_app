@@ -20,12 +20,13 @@ import java.util.List;
 @RequiredArgsConstructor
 @Validated
 @Slf4j
+@RequestMapping("/api/v1")
 @RestController
 public class ShoppingListProductController {
-    private static final String LIST_PRODUCTS_URL = "/shopping-list/{id}/products";
-    private static final String LIST_PRODUCTS_TRANSFER_URL = "/shopping-list/{id}/products/transfer";
-    private static final String LIST_PRODUCTS_PURCHASE_URL = "/shopping-list/{id}/products/purchase";
-    private static final String LIST_PRODUCTS_PAGE_URL = "/shopping-list/{id}/products/{page}";
+    private static final String LIST_PRODUCTS_URL = "/shopping-lists/{id}/products";
+    private static final String LIST_PRODUCTS_TRANSFER_URL = "/shopping-lists/{id}/products/transfer";
+    private static final String LIST_PRODUCTS_PURCHASE_URL = "/shopping-lists/{id}/products/purchase";
+    private static final String LIST_PRODUCTS_PAGE_URL = "/shopping-lists/{id}/products/{page}";
 
     private final ShoppingListProductService shoppingListProductService;
 

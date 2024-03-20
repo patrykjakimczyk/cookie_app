@@ -1,9 +1,18 @@
 spring:
   config:
+    import: ./env/env-docker.yaml
     activate:
       on-profile: docker
   datasource:
-    url: jdbc:postgresql://postgres:5432/cookiedb
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    url: ${DB_URL}
 
 server:
   port: 8080
+
+frontend:
+  address: http://cookie-frontend:80
+
+jwt:
+  secret: SECRET

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @Slf4j
+@RequestMapping("/api/v1")
 @RestController
 public class PantryController {
     private static final String PANTRY_URL = "/pantry";

@@ -8,11 +8,14 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.crypto.SecretKey;
@@ -20,16 +23,22 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
+@Component(AbstractSecurityWebApplicationInitializer.DEFAULT_FILTER_NAME)
 public class JwtValidatorFilter extends OncePerRequestFilter {
-    private static final Set<String> NOT_FILTER_PATHS = Set.of("/user", "/register");
+    private static final Set<String> NOT_FILTER_PATHS = Set.of("/api/v1/user", "/api/v1/register");
+    @Value("${jwt.secret}")
+    private String secret;
+
+    @Value("${frontend.address}")
+    private String frontendAddress;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String jwt = request.getHeader(JwtConstants.HEADER);
-
+        System.out.println(this.secret);
         if (null != jwt && jwt.startsWith("Bearer ")) {
-            final SecretKey key = Keys.hmacShaKeyFor(JwtConstants.SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+            final SecretKey key = Keys.hmacShaKeyFor(this.secret.getBytes(StandardCharsets.UTF_8));
             final Claims claims;
 
             jwt = jwt.substring("Bearer ".length());

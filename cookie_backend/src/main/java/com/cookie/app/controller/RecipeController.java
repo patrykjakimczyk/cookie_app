@@ -30,6 +30,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @Validated
+@RequestMapping("/api/v1")
 @RestController
 public class RecipeController {
     private static final String RECIPES_URL = "/recipes";

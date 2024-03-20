@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequiredArgsConstructor
+@RequestMapping("/api/v1")
 @RestController
 public class PantryProductController {
     private static final String PANTRY_PRODUCTS_URL = "/pantry/{pantryId}/products";

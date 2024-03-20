@@ -9,7 +9,7 @@ export type ShoppingListDTO = {
   nrOfPurchasedProducts: number;
   groupId: number;
   groupName: string;
-  purchased: boolean;
+  creatorName: string;
 };
 
 export type GetUserShoppingListsResponse = {
