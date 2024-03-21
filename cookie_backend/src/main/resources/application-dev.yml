@@ -15,4 +15,4 @@ frontend:
   address: http://localhost:4200
 
 jwt:
-  secret: SECRET
+  secret: ${JWT_SECRET}

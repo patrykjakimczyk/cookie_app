@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
-@Component(AbstractSecurityWebApplicationInitializer.DEFAULT_FILTER_NAME)
+@Component
 public class JwtValidatorFilter extends OncePerRequestFilter {
     private static final Set<String> NOT_FILTER_PATHS = Set.of("/api/v1/user", "/api/v1/register");
     @Value("${jwt.secret}")
@@ -36,7 +36,7 @@ public class JwtValidatorFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String jwt = request.getHeader(JwtConstants.HEADER);
-        System.out.println(this.secret);
+
         if (null != jwt && jwt.startsWith("Bearer ")) {
             final SecretKey key = Keys.hmacShaKeyFor(this.secret.getBytes(StandardCharsets.UTF_8));
             final Claims claims;

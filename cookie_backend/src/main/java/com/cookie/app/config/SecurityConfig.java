@@ -36,7 +36,9 @@ public class SecurityConfig {
     private String frontendAddress;
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                            JwtValidatorFilter validatorFilter,
+                                            JwtGeneratorFilter generatorFilter) throws Exception {
         XorCsrfTokenRequestAttributeHandler delegate = new XorCsrfTokenRequestAttributeHandler();
         delegate.setCsrfRequestAttributeName(null);
         CsrfTokenRequestHandler requestHandler = delegate::handle;
@@ -74,8 +76,8 @@ public class SecurityConfig {
                         .csrfTokenRequestHandler(requestHandler)
                 )
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
-                .addFilterAfter(new JwtValidatorFilter(), BasicAuthenticationFilter.class)
-                .addFilterAfter(new JwtGeneratorFilter(), BasicAuthenticationFilter.class)
+                .addFilterAfter(validatorFilter, BasicAuthenticationFilter.class)
+                .addFilterAfter(generatorFilter, BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/api/v1/register", "/api/v1/recipes/**").permitAll()
                         .requestMatchers(

@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-@Component(AbstractSecurityWebApplicationInitializer.DEFAULT_FILTER_NAME)
+@Component
 public class JwtGeneratorFilter extends OncePerRequestFilter {
     @Value("${jwt.secret}")
     private String secret;
@@ -48,7 +48,6 @@ public class JwtGeneratorFilter extends OncePerRequestFilter {
     }
 
     private String buildJwtToken(Authentication authentication) {
-        System.out.println(this.secret);
         SecretKey key = Keys.hmacShaKeyFor(this.secret.getBytes(StandardCharsets.UTF_8));
         return Jwts.builder()
                 .setSubject(authentication.getName())

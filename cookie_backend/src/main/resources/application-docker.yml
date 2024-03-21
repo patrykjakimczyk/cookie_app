@@ -15,4 +15,4 @@ frontend:
   address: http://cookie-frontend:80
 
 jwt:
-  secret: SECRET
+  secret: ${JWT_SECRET}
