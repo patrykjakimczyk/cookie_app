@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -58,28 +59,29 @@ public class SecurityConfig {
                 .csrf(csrfConfigurer -> csrfConfigurer
                                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                         // used as a workaround for testing endpoints in swagger
-                        .ignoringRequestMatchers(
-                                "/api/v1/register",
-                                "/api/v1/pantry",
-                                "/api/v1/pantry/**",
-                                "/api/v1/product",
-                                "/api/v1/group",
-                                "/api/v1/group/**",
-                                "/api/v1/shopping-lists",
-                                "/api/v1/shopping-lists/**",
-                                "/api/v1/recipes",
-                                "/api/v1/recipes/**",
-                                "/api/v1/meals",
-                                "/api/v1/meals/**"
-                        )
-//                                .ignoringRequestMatchers("/api/v1/register")
+//                        .ignoringRequestMatchers(
+//                                "/api/v1/user",
+//                                "/api/v1/pantry",
+//                                "/api/v1/pantry/**",
+//                                "/api/v1/product",
+//                                "/api/v1/group",
+//                                "/api/v1/group/**",
+//                                "/api/v1/shopping-lists",
+//                                "/api/v1/shopping-lists/**",
+//                                "/api/v1/recipes",
+//                                "/api/v1/recipes/**",
+//                                "/api/v1/meals",
+//                                "/api/v1/meals/**"
+//                        )
+                        .ignoringRequestMatchers("/api/v1/user")
                         .csrfTokenRequestHandler(requestHandler)
                 )
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 .addFilterAfter(validatorFilter, BasicAuthenticationFilter.class)
                 .addFilterAfter(generatorFilter, BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/api/v1/register", "/api/v1/recipes/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/user").permitAll()
+                        .requestMatchers("/api/v1/recipes/**").permitAll()
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/configuration/ui",

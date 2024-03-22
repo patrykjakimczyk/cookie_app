@@ -1,0 +1,43 @@
+services:
+  cookie-backend:
+    build: ./cookie_backend
+    image: patrykjakimczyk/cookie-backend
+    container_name: cookie-backend
+    networks:
+      - cookie-network
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    restart: on-failure
+
+  cookie-frontend:
+    build: ./cookie_frontend
+    image: patrykjakimczyk/cookie-frontend
+    container_name: cookie-frontend
+    networks:
+      - cookie-network
+    ports:
+      - "80:80"
+    depends_on:
+      - cookie-backend
+    restart: on-failure
+
+  postgres:
+    image: postgres:16.2-alpine3.18
+    container_name: postgres
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    networks:
+      - cookie-network
+    ports:
+      - "6432:5432"
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    restart: on-failure
+
+networks:
+  cookie-network:

@@ -25,7 +25,7 @@ import java.util.Set;
 
 @Component
 public class JwtValidatorFilter extends OncePerRequestFilter {
-    private static final Set<String> NOT_FILTER_PATHS = Set.of("/api/v1/user", "/api/v1/register");
+    private static final String NOT_FILTER_PATH = "/api/v1/user";
     @Value("${jwt.secret}")
     private String secret;
 
@@ -64,8 +64,9 @@ public class JwtValidatorFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return NOT_FILTER_PATHS.contains(request.getServletPath());
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        System.out.println(request.getMethod());
+        return request.getServletPath().equals(NOT_FILTER_PATH);
     }
 
     private Claims extractClaims(SecretKey key, String jwt) {

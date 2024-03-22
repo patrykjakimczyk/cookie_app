@@ -18,15 +18,14 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/pantry")
 @RestController
 public class PantryController {
-    private static final String PANTRY_URL = "/pantry";
-    private static final String PANTRY_ID_URL = "/pantry/{id}";
+    private static final String PANTRY_ID_URL = "/{id}";
     private final PantryService pantryService;
 
     @SecurityRequirement(name = "bearerAuth")
-    @PostMapping(PANTRY_URL)
+    @PostMapping
     public ResponseEntity<GetPantryResponse> createPantry(
             @Valid @RequestBody CreatePantryRequest request,
             Authentication authentication
@@ -46,7 +45,7 @@ public class PantryController {
     }
 
     @SecurityRequirement(name = "bearerAuth")
-    @GetMapping(PANTRY_URL)
+    @GetMapping
     public ResponseEntity<GetUserPantriesResponse> getAllUserPantries(Authentication authentication) {
         return ResponseEntity.ok(this.pantryService.getAllUserPantries(authentication.getName()));
     }

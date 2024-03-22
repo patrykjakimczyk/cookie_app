@@ -26,6 +26,8 @@ import java.util.Set;
 
 @Component
 public class JwtGeneratorFilter extends OncePerRequestFilter {
+    private static final String NOT_FILTER_PATH = "/api/v1/user";
+
     @Value("${jwt.secret}")
     private String secret;
 
@@ -44,7 +46,7 @@ public class JwtGeneratorFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return !request.getServletPath().equals("/api/v1/user");
+        return !request.getServletPath().equals(NOT_FILTER_PATH);
     }
 
     private String buildJwtToken(Authentication authentication) {

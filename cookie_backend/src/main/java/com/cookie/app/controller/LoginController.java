@@ -16,20 +16,19 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/user")
 @RestController
 public class LoginController {
-    private static final String USER_URL = "/user";
     private final LoginService loginService;
 
     @SecurityRequirement(name = "basicAuth")
-    @GetMapping(USER_URL)
+    @GetMapping
     public ResponseEntity<LoginResponse> login(Authentication auth) {
         LoginResponse response = this.loginService.getLoginInfo(auth.getName());
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping(USER_URL)
+    @PostMapping
     public ResponseEntity<RegistrationResponse> registerUser(@Valid @RequestBody RegistrationRequest request) {
         log.info("Performing user registration for email={}", request.email());
         RegistrationResponse response = this.loginService.userRegistration(request);

@@ -19,15 +19,14 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/meals")
 @RestController
 public class MealController {
-    private static final String MEALS_URL = "/meals";
-    private static final String MEALS_ID_URL = "/meals/{id}";
+    private static final String MEALS_ID_URL = "/{id}";
     private final MealService mealService;
 
     @SecurityRequirement(name = "bearerAuth")
-    @GetMapping(MEALS_URL)
+    @GetMapping
     public ResponseEntity<List<MealDTO>> getMealsForUser(
             @RequestParam Timestamp dateAfter,
             @RequestParam Timestamp dateBefore,
@@ -38,7 +37,7 @@ public class MealController {
     }
 
     @SecurityRequirement(name = "bearerAuth")
-    @PostMapping(MEALS_URL)
+    @PostMapping
     public ResponseEntity<MealDTO> addMeal(
             @RequestParam("reserve") boolean reserve,
             @RequestParam(value = "listId", required = false) @Valid @Min(value = 1, message = "List id must be greater than 0") Long listId,

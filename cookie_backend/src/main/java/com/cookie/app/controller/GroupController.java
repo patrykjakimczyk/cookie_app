@@ -21,17 +21,16 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/group")
 @RestController
 public class GroupController {
-    private static final String GROUP_URL = "/group";
-    private static final String GROUP_ID_URL = "/group/{id}";
-    private static final String GROUP_ID_USERS_URL = "/group/{id}/users";
-    private static final String GROUP_ID_AUTHORITIES_URL = "/group/{id}/authorities";
+    private static final String GROUP_ID_URL = "/{id}";
+    private static final String GROUP_ID_USERS_URL = "/{id}/users";
+    private static final String GROUP_ID_AUTHORITIES_URL = "/{id}/authorities";
     private final GroupService groupService;
 
     @SecurityRequirement(name = "bearerAuth")
-    @PostMapping(GROUP_URL)
+    @PostMapping
     public ResponseEntity<GroupNameTakenResponse> createGroup(
             @RequestBody @Valid CreateGroupRequest createGroupRequest,
             Authentication authentication
@@ -53,7 +52,7 @@ public class GroupController {
     }
 
     @SecurityRequirement(name = "bearerAuth")
-    @GetMapping(GROUP_URL)
+    @GetMapping
     public ResponseEntity<GetUserGroupsResponse> getUserGroups(Authentication authentication) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(this.groupService.getUserGroups(authentication.getName()));
