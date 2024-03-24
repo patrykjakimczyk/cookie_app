@@ -14,7 +14,8 @@ import io.swagger.v3.oas.annotations.servers.Server;
                 version = "0.1"
         ),
         servers =  {
-                @Server(url = "http://localhost:8081")
+                @Server(url = "http://localhost:8081"),
+                @Server(url = "http://cookie-backend:8080")
         }
 )
 @SecurityScheme(

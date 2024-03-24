@@ -1,0 +1,59 @@
+@import "../../../assets/styles/mixins";
+@import "../../../assets/styles/colors";
+
+div {
+  @include flex-with-gap;
+  flex-direction: row;
+  margin: auto;
+  width: 70%;
+
+  #text-container {
+    flex: auto;
+    height: 100%;
+
+    #text-inner-container {
+      @include flex-with-gap($direction: column);
+      width: 90%;
+
+      p {
+        font-size: 48px;
+        text-align: center;
+        font-family: "Agbalumo";
+      }
+
+      span {
+        font-size: 32px;
+        margin-bottom: 5%;
+      }
+
+      button {
+        width: 220px;
+        padding: 20px;
+        border-radius: 20px;
+        font-size: 20px;
+        font-weight: 600;
+      }
+    }
+  }
+
+  #logo-container {
+    @include flex-with-gap($direction: column, $gap: 10px);
+    align-items: center;
+    width: 30%;
+    padding-top: 5%;
+    // padding: 50px 40px;
+
+    img {
+      width: 100%;
+      height: auto;
+    }
+
+    p {
+      text-align: center;
+      font-family: "Agbalumo";
+      margin: 0;
+      font-size: 56px;
+      font-weight: 500;
+    }
+  }
+}

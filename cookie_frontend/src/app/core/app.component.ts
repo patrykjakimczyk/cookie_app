@@ -8,8 +8,4 @@ import { environment } from 'src/environments/environment';
 })
 export class AppComponent {
   title = 'cookie_frontend';
-
-  constructor() {
-    console.log(environment.backendUrl);
-  }
 }

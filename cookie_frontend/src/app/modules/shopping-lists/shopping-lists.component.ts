@@ -13,6 +13,7 @@ import { Router } from '@angular/router';
 })
 export class ShoppingListsComponent implements OnInit {
   protected userLists: Map<string, ShoppingListDTO[]> = new Map();
+  protected userListsGroups: string[] = [];
 
   constructor(
     private shoppingListsService: ShoppingListsService,
@@ -29,6 +30,7 @@ export class ShoppingListsComponent implements OnInit {
             this.userLists.set(list.groupName, [list]);
           }
         }
+        this.userListsGroups = [...this.userLists.keys()];
       },
     });
   }

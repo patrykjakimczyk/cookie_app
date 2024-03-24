@@ -115,8 +115,14 @@ $cookie_frontend-theme: mat.define-light-theme(
 
 html,
 body {
-  height: 100%;
-  background-color: rgb(253, 245, 230);
+  min-height: 100%;
+  background: rgb(253, 245, 230);
+  background: linear-gradient(
+    148deg,
+    rgba(253, 245, 230, 1) 0%,
+    rgba(255, 236, 201, 1) 65%,
+    rgba(255, 230, 184, 1) 96%
+  );
 }
 
 body {
@@ -174,4 +180,9 @@ body {
       color: #fff;
     }
   }
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  transition: background-color 0s 600000s, color 0s 600000s !important;
 }

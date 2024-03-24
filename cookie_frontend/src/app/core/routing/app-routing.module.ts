@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { DashboardComponent } from '../../modules/dashboard/dashboard.component';
+import { HomeComponent } from '../../modules/home/home.component';
 import { RegistrationFormComponent } from '../../modules/registration-form/registration-form.component';
 import { LoginFormComponent } from '../../modules/login-form/login-form.component';
 import { AuthGuard } from './auth-guard';
@@ -17,13 +17,12 @@ import { RecipesComponent } from 'src/app/modules/recipes/recipes.component';
 import { RecipeDetailsComponent } from 'src/app/modules/recipes/recipe-details/recipe-details.component';
 import { CreateRecipeComponent } from 'src/app/modules/recipes/create-recipe/create-recipe.component';
 import { MealsComponent } from 'src/app/modules/meals/meals.component';
-import { ScheduleMealComponent } from 'src/app/modules/meals/schedule-meal/schedule-meal.component';
 
 const routes: Routes = [
   {
     path: '',
     canActivate: [AuthGuard],
-    component: DashboardComponent,
+    component: HomeComponent,
   },
   {
     path: 'registration',

@@ -20,12 +20,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Component
 public abstract class AbstractCookieService {
     private static final int PRODUCTS_PAGE_SIZE = 20;
-    protected final UserRepository userRepository;
-    protected final ProductRepository productRepository;
-    protected final AuthorityMapperDTO authorityMapperDTO;
+    final UserRepository userRepository;
+    final ProductRepository productRepository;
+    final AuthorityMapperDTO authorityMapperDTO;
 
     AbstractCookieService(UserRepository userRepository,
                                     ProductRepository productRepository,
@@ -88,6 +87,7 @@ public abstract class AbstractCookieService {
         Optional<Product> productOptional = this.productRepository
                 .findByProductNameAndCategory(productDTO.productName(), productDTO.category().name());
 
+
         if (productOptional.isPresent()) {
             return productOptional.get();
         }
@@ -100,7 +100,7 @@ public abstract class AbstractCookieService {
         return product;
     }
 
-    protected <T> boolean isAnyProductNotOnList(List<T> products, List<T> productsToPerformAction) {
+    <T> boolean isAnyProductNotOnList(List<T> products, List<T> productsToPerformAction) {
         return !products.containsAll(productsToPerformAction);
     }
 }

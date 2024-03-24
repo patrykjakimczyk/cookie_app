@@ -89,16 +89,16 @@ export class ShoppingListComponent implements OnInit {
                 `Pantry: ${response.deletedListName} has been deleted`,
                 'Okay'
               );
+
+              this.shoppingList = {
+                id: 0,
+                listName: '',
+                authorities: [],
+                assignedPantry: false,
+              };
+              this.shoppingList$.next(this.shoppingList);
             },
           });
-
-        this.shoppingList = {
-          id: 0,
-          listName: '',
-          authorities: [],
-          assignedPantry: false,
-        };
-        this.shoppingList$.next(this.shoppingList);
       }
     });
   }

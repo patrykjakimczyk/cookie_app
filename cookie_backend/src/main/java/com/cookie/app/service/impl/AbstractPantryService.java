@@ -14,12 +14,11 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Slf4j
-@Component
 public abstract class AbstractPantryService extends AbstractCookieService {
 
     AbstractPantryService(UserRepository userRepository,
-                                    ProductRepository productRepository,
-                                    AuthorityMapperDTO authorityMapperDTO) {
+                          ProductRepository productRepository,
+                          AuthorityMapperDTO authorityMapperDTO) {
         super(userRepository, productRepository, authorityMapperDTO);
     }
 

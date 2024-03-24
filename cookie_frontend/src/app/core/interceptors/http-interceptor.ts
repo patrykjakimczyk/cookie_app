@@ -8,7 +8,7 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { getCookie, removeCookie } from 'typescript-cookie';
+import { getCookie } from 'typescript-cookie';
 
 import { User } from 'src/app/shared/model/user';
 

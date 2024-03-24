@@ -320,30 +320,21 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
             return null;
         }
 
-        if (listProductDTO.id() != null) {
-            for (ShoppingListProduct shoppingListProduct : productsList) {
-                if (shoppingListProduct.getId() == listProductDTO.id()) {
-                    // if products ids are equal, we are modifying shopping list product
-                    shoppingListProduct.setQuantity(listProductDTO.quantity());
-                    shoppingListProduct.setUnit(listProductDTO.unit());
+        for (ShoppingListProduct shoppingListProduct : productsList) {
+            if (listProductDTO.id() > 0 && shoppingListProduct.getId() == listProductDTO.id()) {
+                // if products ids are equal, we are modifying shopping list product
+                shoppingListProduct.setQuantity(listProductDTO.quantity());
+                shoppingListProduct.setUnit(listProductDTO.unit());
 
-                    return shoppingListProduct;
-                } else if (this.areShoppingListProductsEqual(shoppingListProduct, listProductDTO, product)) {
+                return shoppingListProduct;
+            } else if (this.areShoppingListProductsEqual(shoppingListProduct, listProductDTO, product)) {
+                if (listProductDTO.id() > 0) {
                     this.shoppingListProductRepository.deleteById(listProductDTO.id());
-                    // if products ids are not equal, we are adding exact same shopping list product, so we need to sum quantities
-                    shoppingListProduct.setQuantity(shoppingListProduct.getQuantity() + listProductDTO.quantity());
-
-                    return shoppingListProduct;
                 }
-            }
-        } else {
-            for (ShoppingListProduct shoppingListProduct : productsList) {
-                if (this.areShoppingListProductsEqual(shoppingListProduct, listProductDTO, product)) {
-                    // if products are equal, we are adding exact same pantry product, so we need to sum quantities
-                    shoppingListProduct.setQuantity(shoppingListProduct.getQuantity() + listProductDTO.quantity());
+                // if products ids are not equal, we are adding exact same shopping list product, so we need to sum quantities
+                shoppingListProduct.setQuantity(shoppingListProduct.getQuantity() + listProductDTO.quantity());
 
-                    return shoppingListProduct;
-                }
+                return shoppingListProduct;
             }
         }
 

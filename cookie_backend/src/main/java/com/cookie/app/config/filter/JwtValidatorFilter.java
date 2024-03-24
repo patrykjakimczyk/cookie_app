@@ -65,7 +65,6 @@ public class JwtValidatorFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        System.out.println(request.getMethod());
         return request.getServletPath().equals(NOT_FILTER_PATH);
     }
 

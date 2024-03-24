@@ -216,6 +216,8 @@ export class ShoppingListProductsComponent implements OnInit {
   }
 
   sendProductsToAdd() {
+    this.productsToAdd.forEach((product) => (product.id = 0));
+
     this.shoppingListsService
       .addProductsToShoppingList(this.shoppingList!.id, this.productsToAdd)
       .subscribe({

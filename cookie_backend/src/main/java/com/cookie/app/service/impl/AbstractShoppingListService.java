@@ -14,16 +14,15 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Slf4j
-@Component
 public abstract class AbstractShoppingListService extends AbstractCookieService {
 
-    protected AbstractShoppingListService(UserRepository userRepository,
-                                          ProductRepository productRepository,
-                                          AuthorityMapperDTO authorityMapperDTO) {
+    AbstractShoppingListService(UserRepository userRepository,
+                                ProductRepository productRepository,
+                                AuthorityMapperDTO authorityMapperDTO) {
         super(userRepository, productRepository, authorityMapperDTO);
     }
 
-    protected ShoppingList getShoppingListIfUserHasAuthority(long shoppingListId, User user, AuthorityEnum requiredAuthority) {
+    ShoppingList getShoppingListIfUserHasAuthority(long shoppingListId, User user, AuthorityEnum requiredAuthority) {
         ShoppingList shoppingList = this.findShoppingListInUserGroups(shoppingListId, user).orElseThrow(
                 () -> {
                     log.info("User: {} tried to access shopping list without being a member of the shopping list's group", user.getEmail());
@@ -39,7 +38,7 @@ public abstract class AbstractShoppingListService extends AbstractCookieService 
         return shoppingList;
     }
 
-    protected Optional<ShoppingList> findShoppingListInUserGroups(long listId, User user) {
+    Optional<ShoppingList> findShoppingListInUserGroups(long listId, User user) {
         return user.getGroups().stream()
                 .flatMap(group -> group.getShoppingLists().stream())
                 .filter(shoppingList -> shoppingList.getId() == listId)

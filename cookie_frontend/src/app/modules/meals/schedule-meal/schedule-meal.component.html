@@ -10,15 +10,14 @@
       <input
         matInput
         [ngxMatDatetimePicker]="pickerCustomIcon"
-        [min]="now"
         formControlName="mealDate"
         [(ngModel)]="chosenDate"
+        [min]="now"
         required
       />
       <ngx-mat-datepicker-toggle
         matSuffix
         [for]="pickerCustomIcon"
-        [ariaValueMin]="now"
       ></ngx-mat-datepicker-toggle>
       <ngx-mat-datetime-picker
         [stepMinute]="5"

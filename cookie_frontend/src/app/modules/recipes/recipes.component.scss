@@ -3,6 +3,8 @@
 
 #main-container {
   @include flex-with-gap($direction: column, $gap: 20px);
+  max-width: 1600px;
+  margin: auto;
 
   #return-button {
     font-size: 26px;

@@ -1,6 +1,10 @@
 @import "../../../assets/styles/mixins";
 @import "../../../assets/styles/colors";
 
+::ng-deep input.mat-input-element {
+  color: white;
+}
+
 #login-container {
   @include flex-with-gap($direction: column, $gap: 16px);
   margin: auto;

@@ -17,12 +17,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/pantry/{pantryId}/products")
 @RestController
 public class PantryProductController {
-    private static final String PANTRY_PRODUCTS_URL = "/pantry/{pantryId}/products";
-    private static final String GET_PANTRY_PRODUCTS_URL = "/pantry/{pantryId}/products/{page}";
-    private static final String PANTRY_PRODUCT_URL = "/pantry/{pantryId}/products/{productId}";
+    private static final String GET_PANTRY_PRODUCTS_URL = "/{page}";
+    private static final String PANTRY_PRODUCT_URL = "/{productId}";
     private final PantryProductService pantryProductService;
 
     @SecurityRequirement(name = "bearerAuth")
@@ -43,7 +42,7 @@ public class PantryProductController {
     }
 
     @SecurityRequirement(name = "bearerAuth")
-    @PostMapping(PANTRY_PRODUCTS_URL)
+    @PostMapping
     public ResponseEntity<Void> addProductsToPantry(
             @PathVariable(value = "pantryId") @Valid @Min(value = 1, message = "Pantry id must be greater than 0") long pantryId,
             @Valid @NotEmpty(message = "List of products cannot be empty") @RequestBody List<@Valid PantryProductDTO> products,
@@ -54,7 +53,7 @@ public class PantryProductController {
     }
 
     @SecurityRequirement(name = "bearerAuth")
-    @DeleteMapping(PANTRY_PRODUCTS_URL)
+    @DeleteMapping
     public ResponseEntity<Void> removeProductsFromPantry(
             @PathVariable(value = "pantryId") @Valid @Min(value = 1,message = "Pantry id must be greater than 0") long pantryId,
             @Valid @NotEmpty(message = "List of ids cannot be empty") @RequestBody List<Long> productIds,
@@ -65,7 +64,7 @@ public class PantryProductController {
     }
 
     @SecurityRequirement(name = "bearerAuth")
-    @PatchMapping(PANTRY_PRODUCTS_URL)
+    @PatchMapping
     public ResponseEntity<Void> modifyPantryProduct(
             @PathVariable(value = "pantryId") @Valid @Min(value = 1, message = "Pantry id must be greater than 0") long pantryId,
             @Valid @RequestBody PantryProductDTO pantryProductDTO,

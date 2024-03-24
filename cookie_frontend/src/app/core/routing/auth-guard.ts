@@ -22,6 +22,8 @@ export class AuthGuard {
     if (state.url === '/' && user.auth && !this.jwtHelper.isTokenExpired(jwt)) {
       this.router.navigate(['/meals']);
       return true;
+    } else if (state.url === '/' && !user.auth) {
+      return true;
     }
 
     if (user.auth) {

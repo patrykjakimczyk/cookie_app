@@ -131,32 +131,57 @@ export class ScheduleMealComponent implements OnInit {
         (group) => group.id === this.chosenGroupId
       );
 
+      let reserve = false;
+      let addToList: number | null = null;
+
       if (chosenGroup?.pantryId) {
         const reserveProductsDialog = this.dialog.open(
           ReserveProductsPopupComponent
         );
 
-        const reserve = await firstValueFrom(
-          reserveProductsDialog.afterClosed()
-        );
-        const groupDetails = await firstValueFrom(
-          this.mealsService.getGroupDetails(this.chosenGroupId!)
-        );
-
-        if (groupDetails.shoppingLists.length > 0) {
-          const addToListDialog = this.dialog.open(AddToListPopupComponent, {
-            data: groupDetails.shoppingLists,
-          });
-          const addToList = await firstValueFrom(addToListDialog.afterClosed());
-          this.addMealSubscription(form, request, reserve, addToList);
-
-          return;
-        }
-
-        this.addMealSubscription(form, request, reserve, null);
-      } else {
-        this.addMealSubscription(form, request, false, null);
+        reserve = await firstValueFrom(reserveProductsDialog.afterClosed());
       }
+
+      const groupDetails = await firstValueFrom(
+        this.mealsService.getGroupDetails(this.chosenGroupId!)
+      );
+
+      if (groupDetails.shoppingLists.length > 0) {
+        const addToListDialog = this.dialog.open(AddToListPopupComponent, {
+          data: groupDetails.shoppingLists,
+        });
+
+        addToList = await firstValueFrom(addToListDialog.afterClosed());
+      }
+
+      this.addMealSubscription(form, request, reserve, addToList);
+
+      // if (chosenGroup?.pantryId) {
+      //   const reserveProductsDialog = this.dialog.open(
+      //     ReserveProductsPopupComponent
+      //   );
+
+      //   reserve = await firstValueFrom(
+      //     reserveProductsDialog.afterClosed()
+      //   );
+      //   const groupDetails = await firstValueFrom(
+      //     this.mealsService.getGroupDetails(this.chosenGroupId!)
+      //   );
+
+      //   if (groupDetails.shoppingLists.length > 0) {
+      //     const addToListDialog = this.dialog.open(AddToListPopupComponent, {
+      //       data: groupDetails.shoppingLists,
+      //     });
+      //     const addToList = await firstValueFrom(addToListDialog.afterClosed());
+      //     this.addMealSubscription(form, request, reserve, addToList);
+
+      //     return;
+      //   }
+
+      //   this.addMealSubscription(form, request, reserve, null);
+      // } else {
+      //   this.addMealSubscription(form, request, false, null);
+      // }
     }
   }
 

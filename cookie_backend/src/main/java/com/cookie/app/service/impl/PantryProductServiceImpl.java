@@ -178,6 +178,10 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
 
     @Override
     public List<RecipeProduct> getRecipeProductsNotInPantry(Pantry pantry, List<RecipeProduct> recipeProducts) {
+        if (pantry == null) {
+            return recipeProducts;
+        }
+
         Map<Long, RecipeProduct> recipeProductMap = recipeProducts
                 .stream()
                 .collect(Collectors.toMap(RecipeProduct::getId, Function.identity()));
@@ -242,35 +246,26 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
                 return null;
             }
 
-            if (pantryProductDTO.id() != null) {
-                for (PantryProduct pantryProduct : pantryProducts) {
-                    if (pantryProduct.getId() == pantryProductDTO.id()) {
-                        // if pantry products ids are equal, we are modifying pantry product
-                        pantryProduct.setQuantity(pantryProductDTO.quantity());
-                        pantryProduct.setUnit(pantryProductDTO.unit());
-                        pantryProduct.setReserved(pantryProductDTO.reserved());
-                        pantryProduct.setPlacement(pantryProductDTO.placement());
-                        pantryProduct.setPurchaseDate(pantryProductDTO.purchaseDate());
-                        pantryProduct.setExpirationDate(pantryProductDTO.expirationDate());
+            for (PantryProduct pantryProduct : pantryProducts) {
+                if (pantryProduct.getId() > 0 && pantryProduct.getId() == pantryProductDTO.id()) {
+                    // if pantry products ids are equal, we are modifying pantry product
+                    pantryProduct.setQuantity(pantryProductDTO.quantity());
+                    pantryProduct.setUnit(pantryProductDTO.unit());
+                    pantryProduct.setReserved(pantryProductDTO.reserved());
+                    pantryProduct.setPlacement(pantryProductDTO.placement());
+                    pantryProduct.setPurchaseDate(pantryProductDTO.purchaseDate());
+                    pantryProduct.setExpirationDate(pantryProductDTO.expirationDate());
 
-                        return pantryProduct;
-                    } else if (this.arePantryProductsEqual(pantryProduct, pantryProductDTO, product)) {
+                    return pantryProduct;
+                } else if (this.arePantryProductsEqual(pantryProduct, pantryProductDTO, product)) {
+                    if (pantryProductDTO.id() > 0) {
                         this.pantryProductRepository.deleteById(pantryProductDTO.id());
-                        // if pantry products ids are not equal, we are adding exact same pantry product, so we need to sum quantities
-                        pantryProduct.setQuantity(pantryProduct.getQuantity() + pantryProductDTO.quantity());
-                        pantryProduct.setReserved(pantryProduct.getReserved() + pantryProductDTO.reserved());
-
-                        return pantryProduct;
                     }
-                }
-            } else {
-                for (PantryProduct pantryProduct : pantryProducts) {
-                    if (this.arePantryProductsEqual(pantryProduct, pantryProductDTO, product)) {
-                        // if pantry products are equal, we are adding exact same pantry product, so we need to sum quantities
-                        pantryProduct.setQuantity(pantryProduct.getQuantity() + pantryProductDTO.quantity());
+                    // if pantry products ids are not equal, we are adding exact same pantry product, so we need to sum quantities
+                    pantryProduct.setQuantity(pantryProduct.getQuantity() + pantryProductDTO.quantity());
+                    pantryProduct.setReserved(pantryProduct.getReserved() + pantryProductDTO.reserved());
 
-                        return pantryProduct;
-                    }
+                    return pantryProduct;
                 }
             }
 
@@ -282,7 +277,7 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
                 pantryProduct.getUnit() == pantryProductDTO.unit() &&
                 Objects.equals(pantryProduct.getPurchaseDate(), pantryProductDTO.purchaseDate()) &&
                 Objects.equals(pantryProduct.getExpirationDate(), pantryProductDTO.expirationDate()) &&
-                pantryProduct.getPlacement().equals(pantryProductDTO.placement());
+                Objects.equals(pantryProduct.getPlacement(), pantryProductDTO.placement());
     }
 
     private void addProductDTOsToPantry(List<PantryProductDTO> pantryProductDTOS, Pantry pantry) {

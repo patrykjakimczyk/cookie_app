@@ -38,8 +38,8 @@ public class LoginServiceImpl extends AbstractCookieService implements LoginServ
     }
 
     public RegistrationResponse userRegistration(RegistrationRequest request) {
-        Optional<User> usernameOptional = this.userRepository.findByUsername(request.username());
-        Optional<User> emailOptional = this.userRepository.findByEmail(request.email());
+        Optional<User> usernameOptional = super.userRepository.findByUsername(request.username());
+        Optional<User> emailOptional = super.userRepository.findByEmail(request.email());
         final List<String> duplicatedFields = new ArrayList<>();
 
         if (usernameOptional.isPresent()) {

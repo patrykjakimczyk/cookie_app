@@ -6,6 +6,7 @@ import { FullCalendarComponent } from '@fullcalendar/angular';
 import { MealDTO } from 'src/app/shared/model/types/meals.types';
 import { MatDialog } from '@angular/material/dialog';
 import { MealDetailsPopupComponent } from './meal-details-popup/meal-details-popup.component';
+import { MealType } from 'src/app/shared/model/enums/meal-type.enum';
 
 @Component({
   selector: 'app-meals',
@@ -96,6 +97,28 @@ export class MealsComponent implements AfterViewInit {
       description: title,
       start: meal.mealDate,
       meal: meal,
+      color: this.getEventColor(meal.recipe.mealType),
     };
+  }
+
+  private getEventColor(mealType: MealType): string {
+    switch (mealType) {
+      case MealType.APPETIZER:
+        return '#9900ff';
+      case MealType.BREAKFAST:
+        return '#33cc33';
+      case MealType.DESSERT:
+        return '#ff33cc';
+      case MealType.DINNER:
+        return '#ff9900';
+      case MealType.LUNCH:
+        return '#669999';
+      case MealType.SNACK:
+        return '#ff3300';
+      case MealType.SOUP:
+        return '#3399ff';
+      default:
+        return '#004080';
+    }
   }
 }

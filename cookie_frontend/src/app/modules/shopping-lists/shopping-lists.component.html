@@ -3,7 +3,7 @@
     <h1><mat-icon>shopping_cart</mat-icon> Your shopping lists</h1>
   </div>
 
-  <mat-card *ngIf="!userLists.size">
+  <mat-card *ngIf="userListsGroups.length === 0">
     <mat-card-content>
       <div id="empty-list-container">
         <p>
@@ -19,7 +19,7 @@
 
   <div
     class="group-shopping-lists-container"
-    *ngFor="let groupName of userLists.keys()"
+    *ngFor="let groupName of userListsGroups"
   >
     <h2><span class="group-name">Group:</span> {{ groupName }}</h2>
 

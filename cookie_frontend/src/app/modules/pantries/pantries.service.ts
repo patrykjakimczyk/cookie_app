@@ -24,7 +24,7 @@ export class PantriesService {
   private readonly products_path = 'products';
   private readonly pantry_products_path = '/products';
   private readonly group_id_url = 'group/{id}';
-  private readonly shopping_list_id_path = 'shopping-list/{id}';
+  private readonly shopping_list_id_path = 'shopping-lists/{id}';
   private readonly list_products_path = '/products';
 
   constructor(private http: HttpClient) {}

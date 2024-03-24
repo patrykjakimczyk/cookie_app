@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/pantry")
 @RestController
 public class PantryController {
-    private static final String PANTRY_ID_URL = "/{id}";
+    private static final String PANTRY_ID_URL = "/{pantryId}";
     private final PantryService pantryService;
 
     @SecurityRequirement(name = "bearerAuth")
@@ -38,7 +38,7 @@ public class PantryController {
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping(PANTRY_ID_URL)
     public ResponseEntity<GetPantryResponse> getPantry(
-            @PathVariable("id") @Valid @Min(value = 1, message = "Id must be greater than 0") long pantryId,
+            @PathVariable("pantryId") @Valid @Min(value = 1, message = "Id must be greater than 0") long pantryId,
             Authentication authentication
     ) {
         return ResponseEntity.ok(this.pantryService.getPantry(pantryId, authentication.getName()));
@@ -53,7 +53,7 @@ public class PantryController {
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping(PANTRY_ID_URL)
     public ResponseEntity<DeletePantryResponse> deletePantry(
-            @PathVariable("id") @Valid @Min(value = 1, message = "Id must be greater than 0") long pantryId,
+            @PathVariable("pantryId") @Valid @Min(value = 1, message = "Id must be greater than 0") long pantryId,
             Authentication authentication
     ) {
         log.info("User with email={} is deleting pantry with id={}", authentication.getName(), pantryId);
@@ -63,7 +63,7 @@ public class PantryController {
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(PANTRY_ID_URL)
     public ResponseEntity<GetPantryResponse> updatePantry(
-            @PathVariable("id") @Valid @Min(value = 1, message = "Id must be greater than 0") long pantryId,
+            @PathVariable("pantryId") @Valid @Min(value = 1, message = "Id must be greater than 0") long pantryId,
             @RequestBody @Valid UpdatePantryRequest request,
             Authentication authentication
     ) {
