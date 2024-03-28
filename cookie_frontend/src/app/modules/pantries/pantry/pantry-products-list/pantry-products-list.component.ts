@@ -113,10 +113,8 @@ export class PantryProductsListComponent {
     if (this.addForm.controls.productName.value) {
       this.pantriesService
         .getProductsWithFilter(this.addForm.controls.productName.value)
-        .subscribe({
-          next: (response) => {
-            this.filteredProducts = of(response.content);
-          },
+        .subscribe((response) => {
+          this.filteredProducts = of(response.content);
         });
     }
   }
@@ -199,13 +197,11 @@ export class PantryProductsListComponent {
   sendProductsToAdd() {
     this.pantriesService
       .addProductsToPantry(this.pantry!.pantryId, this.productsToAdd)
-      .subscribe({
-        next: (_) => {
-          this.closeAddProducts();
-          this.productsToAddIdsToRemove = [];
-          this.page = 0;
-          this.getPantryProducts();
-        },
+      .subscribe((_) => {
+        this.closeAddProducts();
+        this.productsToAddIdsToRemove = [];
+        this.page = 0;
+        this.getPantryProducts();
       });
   }
 
@@ -239,12 +235,10 @@ export class PantryProductsListComponent {
           this.pantry.pantryId,
           this.productsIdsToRemove
         )
-        .subscribe({
-          next: (_) => {
-            this.productsIdsToRemove = [];
-            this.page = 0;
-            this.getPantryProducts();
-          },
+        .subscribe((_) => {
+          this.productsIdsToRemove = [];
+          this.page = 0;
+          this.getPantryProducts();
         });
     }
   }
@@ -263,12 +257,10 @@ export class PantryProductsListComponent {
           sortColName,
           SortDirection
         )
-        .subscribe({
-          next: (response) => {
-            this.products = response.content;
-            this.totalElements = response.totalElements;
-            this.currentElementsLength = response.content.length;
-          },
+        .subscribe((response) => {
+          this.products = response.content;
+          this.totalElements = response.totalElements;
+          this.currentElementsLength = response.content.length;
         });
     }
   }

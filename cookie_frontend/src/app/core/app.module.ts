@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule } from '@angular/material/button';
@@ -21,20 +21,26 @@ import { PantryModule } from '../modules/pantries/pantries.module';
 import { ShoppingListsModule } from '../modules/shopping-lists/shopping-lists.module';
 import { RecipesModule } from '../modules/recipes/recipes.module';
 import { MealsModule } from '../modules/meals/meals.module';
+import { CookieErrorHandler } from './handlers/error-handler';
+import { HttpErrorInterceptor } from './interceptors/error-interceptor';
+import { ErrorComponent } from './components/error/error.component';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
-  declarations: [AppComponent, NavbarComponent],
+  declarations: [AppComponent, NavbarComponent, ErrorComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     MatButtonModule,
     MatMenuModule,
+    MatIconModule,
     HttpClientModule,
     HttpClientXsrfModule.withOptions({
       cookieName: 'XSRF-TOKEN',
       headerName: 'X-XSRF-TOKEN',
     }),
+
     DashboardModule,
     LoginFormModule,
     RegistrationFormModule,
@@ -46,8 +52,17 @@ import { MealsModule } from '../modules/meals/meals.module';
   ],
   providers: [
     {
+      provide: ErrorHandler,
+      useClass: CookieErrorHandler,
+    },
+    {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpRequestInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorInterceptor,
       multi: true,
     },
   ],

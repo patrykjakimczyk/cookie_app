@@ -47,11 +47,9 @@ export class MealDetailsPopupComponent {
 
     deleteMealDialog.afterClosed().subscribe((removeMeal) => {
       if (removeMeal) {
-        this.mealsService.removeMeal(this.meal!.id).subscribe({
-          next: (_) => {
-            this.dialogRef.close(this.meal!.id);
-            this.snackBar.open(`Meal has been removed from calendar`, 'Okay');
-          },
+        this.mealsService.removeMeal(this.meal!.id).subscribe((_) => {
+          this.dialogRef.close(this.meal!.id);
+          this.snackBar.open(`Meal has been removed from calendar`, 'Okay');
         });
       }
     });

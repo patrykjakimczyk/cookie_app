@@ -98,10 +98,8 @@ export class ReservePantryProductComponent {
         this.pantryProduct.id!,
         reservedCount
       )
-      .subscribe({
-        next: (response: PantryProductDTO) => {
-          this.dialog.close(response);
-        },
+      .subscribe((response: PantryProductDTO) => {
+        this.dialog.close(response);
       });
   }
 }

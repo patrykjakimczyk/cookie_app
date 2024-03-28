@@ -27,11 +27,9 @@ export class CreateShoppingListComponent {
   createShoppingList(name: string) {
     this.shoppingListsService
       .createShoppingList({ shoppingListName: name, groupId: this.groupId })
-      .subscribe({
-        next: (response) => {
-          this.createShoppingListSucceded = true;
-          this.createdShoppingListId = response.id;
-        },
+      .subscribe((response) => {
+        this.createShoppingListSucceded = true;
+        this.createdShoppingListId = response.id;
       });
   }
 }

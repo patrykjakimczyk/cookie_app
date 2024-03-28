@@ -34,12 +34,12 @@ export class AddToListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.pantriesService.getGroup(this.data.pantry.groupId).subscribe({
-      next: (response: GroupDetailsDTO) => {
+    this.pantriesService
+      .getGroup(this.data.pantry.groupId)
+      .subscribe((response: GroupDetailsDTO) => {
         this.groupDetails = response;
         this.addForm.controls['listId'].enable();
-      },
-    });
+      });
   }
 
   getErrorMessage(control: AbstractControl): string {
@@ -82,10 +82,8 @@ export class AddToListComponent implements OnInit {
         +this.addForm.controls.listId.value!,
         productsToAdd
       )
-      .subscribe({
-        next: (_) => {
-          this.dialog.close(true);
-        },
+      .subscribe((_) => {
+        this.dialog.close(true);
       });
   }
 }

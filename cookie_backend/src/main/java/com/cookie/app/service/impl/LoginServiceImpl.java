@@ -37,6 +37,7 @@ public class LoginServiceImpl extends AbstractCookieService implements LoginServ
         return new LoginResponse(user.getUsername());
     }
 
+    @Override
     public RegistrationResponse userRegistration(RegistrationRequest request) {
         Optional<User> usernameOptional = super.userRepository.findByUsername(request.username());
         Optional<User> emailOptional = super.userRepository.findByEmail(request.email());

@@ -37,13 +37,13 @@ export class ShoppingListComponent implements OnInit {
   ngOnInit(): void {
     const listId = this.route.snapshot.params['id'];
 
-    this.shoppingListsService.getShoppingList(listId).subscribe({
-      next: (response: GetShoppingListResponse) => {
+    this.shoppingListsService
+      .getShoppingList(listId)
+      .subscribe((response: GetShoppingListResponse) => {
         this.userService.setUserAuthorities(response.authorities);
         this.shoppingList = response;
         this.shoppingList$.next(response);
-      },
-    });
+      });
   }
 
   openChangeListNameDialog() {
@@ -62,11 +62,9 @@ export class ShoppingListComponent implements OnInit {
         .updateShoppingList(this.shoppingList.id, {
           shoppingListName: newListName,
         })
-        .subscribe({
-          next: (response: GetShoppingListResponse) => {
-            this.userService.setUserAuthorities(response.authorities);
-            this.shoppingList = response;
-          },
+        .subscribe((response: GetShoppingListResponse) => {
+          this.userService.setUserAuthorities(response.authorities);
+          this.shoppingList = response;
         });
     });
   }
@@ -83,21 +81,19 @@ export class ShoppingListComponent implements OnInit {
       if (deleteList) {
         this.shoppingListsService
           .deleteShoppingList(this.shoppingList.id)
-          .subscribe({
-            next: (response) => {
-              this.snackBar.open(
-                `Pantry: ${response.deletedListName} has been deleted`,
-                'Okay'
-              );
+          .subscribe((response) => {
+            this.snackBar.open(
+              `Pantry: ${response.deletedListName} has been deleted`,
+              'Okay'
+            );
 
-              this.shoppingList = {
-                id: 0,
-                listName: '',
-                authorities: [],
-                assignedPantry: false,
-              };
-              this.shoppingList$.next(this.shoppingList);
-            },
+            this.shoppingList = {
+              id: 0,
+              listName: '',
+              authorities: [],
+              assignedPantry: false,
+            };
+            this.shoppingList$.next(this.shoppingList);
           });
       }
     });

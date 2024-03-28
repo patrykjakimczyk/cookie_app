@@ -76,10 +76,8 @@ export class EditShoppingListProductsElemComponent {
     if (this.isShoppingListProduct) {
       this.shoppingListService
         .updateShoppingListProduct(this.listId, this.editForm.value)
-        .subscribe({
-          next: (_) => {
-            this.dialog.close(this.editForm.value);
-          },
+        .subscribe((_) => {
+          this.dialog.close(this.editForm.value);
         });
     } else {
       this.dialog.close(this.editForm.value);

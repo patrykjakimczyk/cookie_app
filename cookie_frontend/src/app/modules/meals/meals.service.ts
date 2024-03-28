@@ -10,7 +10,7 @@ import { environment } from 'src/environments/environment';
 export class MealsService {
   private readonly url = environment.backendUrl;
   private readonly meals_path = 'meals';
-  private readonly group_path = 'group';
+  private readonly group_path = 'groups';
 
   constructor(private http: HttpClient) {}
 

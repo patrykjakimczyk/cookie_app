@@ -23,7 +23,7 @@ export class PantriesService {
   private readonly pantry_id_path = 'pantry/{id}';
   private readonly products_path = 'products';
   private readonly pantry_products_path = '/products';
-  private readonly group_id_url = 'group/{id}';
+  private readonly group_id_url = 'groups/{id}';
   private readonly shopping_list_id_path = 'shopping-lists/{id}';
   private readonly list_products_path = '/products';
 
@@ -58,7 +58,7 @@ export class PantriesService {
     );
   }
 
-  deleteUserPantry(pantryId: number): Observable<DeletePantryResponse> {
+  deletePantry(pantryId: number): Observable<DeletePantryResponse> {
     return this.http.delete<DeletePantryResponse>(
       this.url + this.pantry_id_path.replace('{id}', pantryId.toString())
     );

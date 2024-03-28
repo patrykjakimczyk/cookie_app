@@ -21,8 +21,9 @@ export class ShoppingListsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.shoppingListsService.getAllUserShoppingLists().subscribe({
-      next: (response: GetUserShoppingListsResponse) => {
+    this.shoppingListsService
+      .getAllUserShoppingLists()
+      .subscribe((response: GetUserShoppingListsResponse) => {
         for (const list of response.shoppingLists) {
           if (this.userLists.get(list.groupName)) {
             this.userLists.get(list.groupName)?.push(list);
@@ -31,8 +32,7 @@ export class ShoppingListsComponent implements OnInit {
           }
         }
         this.userListsGroups = [...this.userLists.keys()];
-      },
-    });
+      });
   }
 
   goToGroup(groupId: number) {

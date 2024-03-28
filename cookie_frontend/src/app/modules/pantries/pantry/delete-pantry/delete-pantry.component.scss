@@ -1,6 +1,0 @@
-@import "../../../../assets/styles/mixins";
-
-#action-buttons {
-  @include flex-with-gap;
-  justify-content: space-between;
-}

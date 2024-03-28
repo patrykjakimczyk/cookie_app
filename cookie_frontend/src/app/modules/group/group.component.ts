@@ -15,10 +15,8 @@ export class GroupComponent implements OnInit {
   constructor(private groupService: GroupService, private router: Router) {}
 
   ngOnInit(): void {
-    this.groupService.getUserGroups().subscribe({
-      next: (response) => {
-        this.userGroups = response.userGroups;
-      },
+    this.groupService.getUserGroups().subscribe((response) => {
+      this.userGroups = response.userGroups;
     });
   }
 

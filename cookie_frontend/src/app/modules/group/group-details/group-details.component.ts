@@ -16,6 +16,7 @@ import { AuthorityEnum } from 'src/app/shared/model/enums/authority.enum';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UserService } from 'src/app/shared/services/user-service';
 import { GroupNameTakenResponse } from 'src/app/shared/model/responses/group-response';
+import { EMPTY, catchError } from 'rxjs';
 
 @Component({
   selector: 'app-group-details',
@@ -81,21 +82,19 @@ export class GroupDetailsComponent implements OnInit {
           this.addAuthorityForm.value['authority'] as AuthorityEnum,
         ],
       })
-      .subscribe({
-        next: (response) => {
-          if (this.group) {
-            const user = this.group.users.find((user) => user.id === userId);
+      .subscribe((response) => {
+        if (this.group) {
+          const user = this.group.users.find((user) => user.id === userId);
 
-            if (user) {
-              for (let authorityDTO of response.assignedAuthorities) {
-                user.authorities.push(authorityDTO);
-              }
+          if (user) {
+            for (let authorityDTO of response.assignedAuthorities) {
+              user.authorities.push(authorityDTO);
             }
           }
+        }
 
-          this.addAuthorityForm.reset();
-          this.addAuthorityForm.controls.authority.setErrors(null);
-        },
+        this.addAuthorityForm.reset();
+        this.addAuthorityForm.controls.authority.setErrors(null);
       });
   }
 
@@ -106,32 +105,36 @@ export class GroupDetailsComponent implements OnInit {
           userId: userId,
           authorities: this.authoritiesToRemove,
         })
-        .subscribe({
-          next: (_) => {
-            if (this.group) {
-              const user = this.group.users.find((user) => user.id === userId);
-              const loggedUser = this.userService.user.getValue();
-
-              if (loggedUser.username === user?.username) {
-                this.getGroupDetails();
-              } else if (user) {
-                for (let authority of this.authoritiesToRemove) {
-                  user.authorities = user.authorities.filter(
-                    (userAuthority) => userAuthority.authority !== authority
-                  );
-                }
-              }
-              this.authoritiesToRemove = [];
-            }
-          },
-          error: (error: HttpErrorResponse) => {
+        .pipe(
+          catchError((error: HttpErrorResponse) => {
             if (error.status === 403) {
               this.snackBar.open(
                 `User doesn't exists or you tried to remove authorities from user without permissions`,
                 'Okay'
               );
+
+              return EMPTY;
             }
-          },
+
+            throw error;
+          })
+        )
+        .subscribe((_) => {
+          if (this.group) {
+            const user = this.group.users.find((user) => user.id === userId);
+            const loggedUser = this.userService.user.getValue();
+
+            if (loggedUser.username === user?.username) {
+              this.getGroupDetails();
+            } else if (user) {
+              for (let authority of this.authoritiesToRemove) {
+                user.authorities = user.authorities.filter(
+                  (userAuthority) => userAuthority.authority !== authority
+                );
+              }
+            }
+            this.authoritiesToRemove = [];
+          }
         });
     }
   }
@@ -156,16 +159,14 @@ export class GroupDetailsComponent implements OnInit {
     changeGroupNamePopup.afterClosed().subscribe((newGroupName: string) => {
       this.groupService
         .updateGroup(this.groupId, { newGroupName: newGroupName })
-        .subscribe({
-          next: (response: GroupNameTakenResponse) => {
-            if (response.groupNameTaken) {
-              this.groupNameTaken = true;
-              this.openChangeGroupNamePopup();
-            } else if (this.group) {
-              this.groupNameTaken = false;
-              this.group.groupName = newGroupName;
-            }
-          },
+        .subscribe((response: GroupNameTakenResponse) => {
+          if (response.groupNameTaken) {
+            this.groupNameTaken = true;
+            this.openChangeGroupNamePopup();
+          } else if (this.group) {
+            this.groupNameTaken = false;
+            this.group.groupName = newGroupName;
+          }
         });
     });
   }
@@ -180,14 +181,12 @@ export class GroupDetailsComponent implements OnInit {
 
     deleteGroupDialog.afterClosed().subscribe((deleteGroup) => {
       if (deleteGroup) {
-        this.groupService.deleteGroup(this.groupId).subscribe({
-          next: (_) => {
-            this.snackBar.open(
-              `Group: ${this.group?.groupName} has been deleted`,
-              'Okay'
-            );
-            this.router.navigate(['/groups']);
-          },
+        this.groupService.deleteGroup(this.groupId).subscribe((_) => {
+          this.snackBar.open(
+            `Group: ${this.group?.groupName} has been deleted`,
+            'Okay'
+          );
+          this.router.navigate(['/groups']);
         });
       }
     });
@@ -204,27 +203,33 @@ export class GroupDetailsComponent implements OnInit {
       }
       this.groupService
         .addUserToGroup(this.groupId, { usernameToAdd: username })
-        .subscribe({
-          next: (_: any) => {
-            this.getGroupDetails();
-            this.snackBar.open(
-              `User: ${username} has been added to the group`,
-              'Okay'
-            );
-          },
-          error: (error: HttpErrorResponse) => {
+        .pipe(
+          catchError((error: HttpErrorResponse) => {
             if (error.status === 403) {
               this.snackBar.open(
                 `User doesn't exists or you tried to add user without permissions`,
                 'Okay'
               );
+
+              return EMPTY;
             } else if (error.status === 409) {
               this.snackBar.open(
                 `User is already a member of the group`,
                 'Okay'
               );
+
+              return EMPTY;
             }
-          },
+
+            throw error;
+          })
+        )
+        .subscribe((_: any) => {
+          this.getGroupDetails();
+          this.snackBar.open(
+            `User: ${username} has been added to the group`,
+            'Okay'
+          );
         });
     });
   }
@@ -239,43 +244,44 @@ export class GroupDetailsComponent implements OnInit {
 
     removeUserDialog.afterClosed().subscribe((removeUser) => {
       if (removeUser) {
-        this.groupService.removeUserFromGroup(this.groupId, user.id).subscribe({
-          next: (_) => {
+        this.groupService
+          .removeUserFromGroup(this.groupId, user.id)
+          .pipe(
+            catchError((error: HttpErrorResponse) => {
+              if (error.status === 403) {
+                this.snackBar.open(
+                  `User doesn't exists or you tried to assign authorities which are already assigned to user, or you don't have permissions to do that`,
+                  'Okay'
+                );
+
+                return EMPTY;
+              }
+
+              throw error;
+            })
+          )
+          .subscribe((_) => {
             this.snackBar.open(
               `Group: ${user.username} has been removed from group`,
               'Okay'
             );
 
             this.getGroupDetails();
-          },
-          error: (error: HttpErrorResponse) => {
-            if (error.status === 403) {
-              this.snackBar.open(
-                `User doesn't exists or you tried to assign authorities which are already assigned to user, or you don't have permissions to do that`,
-                'Okay'
-              );
-            }
-          },
-        });
+          });
       }
     });
   }
 
   private getGroupDetails() {
-    this.groupService.getGroup(this.groupId).subscribe({
-      next: (response) => {
-        this.group = response;
+    this.groupService.getGroup(this.groupId).subscribe((response) => {
+      this.group = response;
 
-        const user = this.userService.user.getValue();
-        response.users.forEach((userDTO) => {
-          if (userDTO.username === user.username) {
-            this.userService.setUserAuthorities(userDTO.authorities);
-          }
-        });
-      },
-      error: (error) => {
-        this.router.navigate(['/']);
-      },
+      const user = this.userService.user.getValue();
+      response.users.forEach((userDTO) => {
+        if (userDTO.username === user.username) {
+          this.userService.setUserAuthorities(userDTO.authorities);
+        }
+      });
     });
   }
 }

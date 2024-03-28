@@ -43,13 +43,13 @@ public class ShoppingListServiceImpl extends AbstractShoppingListService impleme
 
     @Override
     public GetShoppingListResponse createShoppingList(CreateShoppingListRequest request, String userEmail) {
-        User user = this.getUserByEmail(userEmail);
-        Optional<Group> userGroupOptional = this.findUserGroupById(user, request.groupId());
+        User user = super.getUserByEmail(userEmail);
+        Optional<Group> userGroupOptional = super.findUserGroupById(user, request.groupId());
         Group userGroup = userGroupOptional.orElseThrow(
                 () -> new UserPerformedForbiddenActionException("You tried to create shopping list for non existing group")
         );
 
-        if (!this.userHasAuthority(user, userGroup.getId(), AuthorityEnum.CREATE_SHOPPING_LIST)) {
+        if (!super.userHasAuthority(user, userGroup.getId(), AuthorityEnum.CREATE_SHOPPING_LIST)) {
             log.info(String.format("User: %s tried to create shopping list without permission", userEmail));
             throw new UserPerformedForbiddenActionException("You tried to create shopping list without permission");
         }
@@ -67,7 +67,9 @@ public class ShoppingListServiceImpl extends AbstractShoppingListService impleme
         log.info("User with email {} created shopping list with id {} in group with id {}",
                 userEmail,
                 shoppingList.getId(),
-                request.groupId());
+                request.groupId()
+        );
+
         return new GetShoppingListResponse(
                 shoppingList.getId(),
                 shoppingList.getListName(),

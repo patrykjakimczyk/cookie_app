@@ -87,21 +87,19 @@ export class RegistrationFormComponent {
       return;
     }
 
-    this.service.register(this.form.value).subscribe({
-      next: (response) => {
-        if (response.length === 0) {
-          this.registrationSucceded = true;
-          return;
-        }
+    this.service.register(this.form.value).subscribe((response) => {
+      if (response.length === 0) {
+        this.registrationSucceded = true;
+        return;
+      }
 
-        if (response.includes('username')) {
-          this.form.controls.username.setErrors({ usernameTaken: true });
-        }
+      if (response.includes('username')) {
+        this.form.controls.username.setErrors({ usernameTaken: true });
+      }
 
-        if (response.includes('email')) {
-          this.form.controls.email.setErrors({ emailTaken: true });
-        }
-      },
+      if (response.includes('email')) {
+        this.form.controls.email.setErrors({ emailTaken: true });
+      }
     });
   }
 

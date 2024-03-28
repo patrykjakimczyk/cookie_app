@@ -18,10 +18,10 @@ import { environment } from 'src/environments/environment';
 @Injectable({ providedIn: 'root' })
 export class GroupService {
   private readonly url = environment.backendUrl;
-  private readonly group_url = 'group';
-  private readonly group_id_url = 'group/{id}';
-  private readonly group_id_users_url = 'group/{id}/users';
-  private readonly group_id_authorities_url = 'group/{id}/authorities';
+  private readonly group_url = 'groups';
+  private readonly group_id_url = 'groups/{id}';
+  private readonly group_id_users_url = 'groups/{id}/users';
+  private readonly group_id_authorities_url = 'groups/{id}/authorities';
 
   constructor(private http: HttpClient) {}
 

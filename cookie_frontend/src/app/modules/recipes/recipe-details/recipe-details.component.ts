@@ -45,19 +45,16 @@ export class RecipeDetailsComponent implements OnInit {
 
     const recipeId = this.route.snapshot.params['id'];
 
-    this.recipesService.getRecipeDetails(recipeId).subscribe({
-      next: (recipeDetails: RecipeDetailsDTO) => {
+    this.recipesService
+      .getRecipeDetails(recipeId)
+      .subscribe((recipeDetails: RecipeDetailsDTO) => {
         this.recipeDetails = recipeDetails;
 
         if (recipeDetails.recipeImage) {
           this.recipeImage =
             'data:image/JPEG;png;base64,' + recipeDetails.recipeImage;
         }
-      },
-      error: (_) => {
-        this.router.navigate(['/']);
-      },
-    });
+      });
   }
 
   printShortUnit(recipeProduct: RecipeProductDTO) {
@@ -97,12 +94,12 @@ export class RecipeDetailsComponent implements OnInit {
 
     deleteRecipeDialog.afterClosed().subscribe((deleteRecipe) => {
       if (deleteRecipe) {
-        this.recipesService.deleteRecipe(this.recipeDetails!.id).subscribe({
-          next: (_) => {
+        this.recipesService
+          .deleteRecipe(this.recipeDetails!.id)
+          .subscribe((_) => {
             this.snackBar.open(`Recipe has been deleted`, 'Okay');
             this.router.navigate(['/recipes']);
-          },
-        });
+          });
       }
     });
   }

@@ -66,7 +66,7 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
     public void addProductsToPantry(long pantryId, List<PantryProductDTO> pantryProductDTOS, String userEmail) {
         Pantry pantry = this.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.ADD);
 
-        addProductDTOsToPantry(pantryProductDTOS, pantry);
+        addProductsToPantry(pantryProductDTOS, pantry);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
             throw new UserPerformedForbiddenActionException("You have not permissions to do that");
         }
 
-        addProductDTOsToPantry(pantryProductDTOS, pantry);
+        addProductsToPantry(pantryProductDTOS, pantry);
     }
 
     @Override
@@ -280,7 +280,7 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
                 Objects.equals(pantryProduct.getPlacement(), pantryProductDTO.placement());
     }
 
-    private void addProductDTOsToPantry(List<PantryProductDTO> pantryProductDTOS, Pantry pantry) {
+    private void addProductsToPantry(List<PantryProductDTO> pantryProductDTOS, Pantry pantry) {
         List<PantryProduct> productsToAdd = new ArrayList<>();
 
         pantryProductDTOS.forEach(productDTO -> {

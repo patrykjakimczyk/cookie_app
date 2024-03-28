@@ -17,15 +17,15 @@ export class CreateGroupComponent {
   constructor(private groupService: GroupService) {}
 
   createGroup(name: string) {
-    this.groupService.createGroup({ groupName: name }).subscribe({
-      next: (response: GroupNameTakenResponse) => {
+    this.groupService
+      .createGroup({ groupName: name })
+      .subscribe((response: GroupNameTakenResponse) => {
         if (response.groupNameTaken) {
           this.groupNameTaken = true;
         } else {
           this.groupNameTaken = false;
           this.createGroupSucceded = true;
         }
-      },
-    });
+      });
   }
 }

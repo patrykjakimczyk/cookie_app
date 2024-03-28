@@ -212,14 +212,16 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
         log.info("User with email {} transfered {} products to shopping list with id {}",
                 userEmail,
                 newPantryProducts.size(),
-                shoppingList.getId());
+                shoppingList.getId()
+        );
+
         this.shoppingListProductRepository.deleteAll(purchasedProducts);
         this.pantryProductService.addProductsToPantryFromList(pantry, newPantryProducts, user);
     }
 
     @Override
     public List<ShoppingListProductDTO> addRecipeProductsToShoppingList(long listId, User user, List<RecipeProduct> recipeProducts) {
-        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(listId, user, AuthorityEnum.ADD_TO_SHOPPING_LIST);
+        ShoppingList shoppingList = super.getShoppingListIfUserHasAuthority(listId, user, AuthorityEnum.ADD_TO_SHOPPING_LIST);
         List<ShoppingListProduct> addedProducts = new ArrayList<>();
         Map<Long, RecipeProduct> recipeProductMap = recipeProducts
                 .stream()

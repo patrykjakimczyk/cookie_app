@@ -27,11 +27,9 @@ export class CreatePantryComponent implements OnInit {
   createPantry(name: string) {
     this.pantryService
       .createUserPantry({ pantryName: name, groupId: this.groupId })
-      .subscribe({
-        next: (response) => {
-          this.createPantrySucceded = true;
-          this.createdPantryId = response.pantryId;
-        },
+      .subscribe((response) => {
+        this.createPantrySucceded = true;
+        this.createdPantryId = response.pantryId;
       });
   }
 }

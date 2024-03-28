@@ -17,12 +17,17 @@ import { RecipesComponent } from 'src/app/modules/recipes/recipes.component';
 import { RecipeDetailsComponent } from 'src/app/modules/recipes/recipe-details/recipe-details.component';
 import { CreateRecipeComponent } from 'src/app/modules/recipes/create-recipe/create-recipe.component';
 import { MealsComponent } from 'src/app/modules/meals/meals.component';
+import { ErrorComponent } from '../components/error/error.component';
 
 const routes: Routes = [
   {
     path: '',
     canActivate: [AuthGuard],
     component: HomeComponent,
+  },
+  {
+    path: 'error',
+    component: ErrorComponent,
   },
   {
     path: 'registration',

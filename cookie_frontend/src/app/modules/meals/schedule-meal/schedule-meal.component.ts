@@ -116,16 +116,16 @@ export class ScheduleMealComponent implements OnInit {
     };
 
     if (this.modifyingMeal) {
-      this.mealsService.modifyMeal(this.mealToModifyId, request).subscribe({
-        next: (response: MealDTO) => {
+      this.mealsService
+        .modifyMeal(this.mealToModifyId, request)
+        .subscribe((response: MealDTO) => {
           this.modifiedMeal.emit(response);
           this.snackBar.open(`Meal has been modified`, 'Okay');
 
           this.clear();
           form.resetForm(); // this combination of two resets allows to reset form without displaying form fields as invalid
           this.mealForm.reset();
-        },
-      });
+        });
     } else {
       const chosenGroup = this.userGroups?.find(
         (group) => group.id === this.chosenGroupId
@@ -155,33 +155,6 @@ export class ScheduleMealComponent implements OnInit {
       }
 
       this.addMealSubscription(form, request, reserve, addToList);
-
-      // if (chosenGroup?.pantryId) {
-      //   const reserveProductsDialog = this.dialog.open(
-      //     ReserveProductsPopupComponent
-      //   );
-
-      //   reserve = await firstValueFrom(
-      //     reserveProductsDialog.afterClosed()
-      //   );
-      //   const groupDetails = await firstValueFrom(
-      //     this.mealsService.getGroupDetails(this.chosenGroupId!)
-      //   );
-
-      //   if (groupDetails.shoppingLists.length > 0) {
-      //     const addToListDialog = this.dialog.open(AddToListPopupComponent, {
-      //       data: groupDetails.shoppingLists,
-      //     });
-      //     const addToList = await firstValueFrom(addToListDialog.afterClosed());
-      //     this.addMealSubscription(form, request, reserve, addToList);
-
-      //     return;
-      //   }
-
-      //   this.addMealSubscription(form, request, reserve, null);
-      // } else {
-      //   this.addMealSubscription(form, request, false, null);
-      // }
     }
   }
 
@@ -229,16 +202,16 @@ export class ScheduleMealComponent implements OnInit {
     reserve: boolean,
     listId: number | null
   ) {
-    this.mealsService.addMeal(request, reserve, listId).subscribe({
-      next: (response: MealDTO) => {
+    this.mealsService
+      .addMeal(request, reserve, listId)
+      .subscribe((response: MealDTO) => {
         this.addedMeal.emit(response);
         this.snackBar.open(`Meal has been added to calendar`, 'Okay');
 
         this.clear();
         form.resetForm(); // this combination of two resets allows to reset form without displaying form fields as invalid
         this.mealForm.reset();
-      },
-    });
+      });
   }
 
   private setModifyMealSubscription() {
@@ -284,10 +257,10 @@ export class ScheduleMealComponent implements OnInit {
   }
 
   private getUserGroups() {
-    this.mealsService.getUserGroups().subscribe({
-      next: (response: GetUserGroupsResponse) => {
+    this.mealsService
+      .getUserGroups()
+      .subscribe((response: GetUserGroupsResponse) => {
         this.userGroups = response.userGroups;
-      },
-    });
+      });
   }
 }

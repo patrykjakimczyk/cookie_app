@@ -9,10 +9,10 @@ export class GetAllRecipesClient extends GetRecipesClient {
   }
 
   override getRecipes(params: GetRecipesParams): void {
-    this.recipesService.getAllRecipes(this.page, params).subscribe({
-      next: (recipes: any) => {
+    this.recipesService
+      .getAllRecipes(this.page, params)
+      .subscribe((recipes: any) => {
         this.saveResponseData(recipes);
-      },
-    });
+      });
   }
 }

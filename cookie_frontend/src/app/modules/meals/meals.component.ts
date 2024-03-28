@@ -75,10 +75,8 @@ export class MealsComponent implements AfterViewInit {
       this.calendar.getApi().view.activeEnd.toISOString()
     );
 
-    this.mealsService.getUserMeals(dateAfter, dateBefore).subscribe({
-      next: (meals) => {
-        this.calendar.events = meals.map((meal) => this.mapToEventObject(meal));
-      },
+    this.mealsService.getUserMeals(dateAfter, dateBefore).subscribe((meals) => {
+      this.calendar.events = meals.map((meal) => this.mapToEventObject(meal));
     });
   }
 

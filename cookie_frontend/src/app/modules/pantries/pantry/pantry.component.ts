@@ -40,12 +40,10 @@ export class PantryComponent implements OnInit {
   ngOnInit(): void {
     const pantryId = this.route.snapshot.params['id'];
 
-    this.pantryService.getUserPantry(pantryId).subscribe({
-      next: (response) => {
-        this.userService.setUserAuthorities(response.authorities);
-        this.pantry = response;
-        this.pantry$.next(response);
-      },
+    this.pantryService.getUserPantry(pantryId).subscribe((response) => {
+      this.userService.setUserAuthorities(response.authorities);
+      this.pantry = response;
+      this.pantry$.next(response);
     });
   }
 
@@ -58,10 +56,8 @@ export class PantryComponent implements OnInit {
     changePantryNameDialog.afterClosed().subscribe((newPantryName: string) => {
       this.pantryService
         .updateUserPantry(this.pantry.pantryId, { pantryName: newPantryName })
-        .subscribe({
-          next: (response: GetPantryResponse) => {
-            this.pantry.pantryName = response.pantryName;
-          },
+        .subscribe((response: GetPantryResponse) => {
+          this.pantry.pantryName = response.pantryName;
         });
     });
   }
@@ -76,8 +72,9 @@ export class PantryComponent implements OnInit {
 
     deletePantryDialog.afterClosed().subscribe((deletePantry) => {
       if (deletePantry) {
-        this.pantryService.deleteUserPantry(this.pantry.pantryId).subscribe({
-          next: (response) => {
+        this.pantryService
+          .deletePantry(this.pantry.pantryId)
+          .subscribe((response) => {
             this.snackBar.open(
               `Pantry: ${response.deletedPantryName} has been deleted`,
               'Okay'
@@ -90,8 +87,7 @@ export class PantryComponent implements OnInit {
               authorities: [],
             };
             this.pantry$.next(this.pantry);
-          },
-        });
+          });
       }
     });
   }

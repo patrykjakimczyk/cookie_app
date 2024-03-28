@@ -14,10 +14,8 @@ export class PantriesListComponent implements OnInit {
   constructor(private pantryService: PantriesService, private router: Router) {}
 
   ngOnInit(): void {
-    this.pantryService.getAllUserPantries().subscribe({
-      next: (response) => {
-        this.pantries = response.pantries;
-      },
+    this.pantryService.getAllUserPantries().subscribe((response) => {
+      this.pantries = response.pantries;
     });
   }
 

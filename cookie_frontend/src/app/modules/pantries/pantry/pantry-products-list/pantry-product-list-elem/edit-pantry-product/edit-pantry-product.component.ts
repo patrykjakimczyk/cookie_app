@@ -82,10 +82,8 @@ export class EditPantryProductComponent implements OnInit {
     if (this.isPantryProduct) {
       this.pantriesService
         .modifyPantryProduct(this.pantryId, this.editForm.value)
-        .subscribe({
-          next: (_) => {
-            this.dialog.close();
-          },
+        .subscribe((_) => {
+          this.dialog.close();
         });
     } else {
       this.dialog.close(this.editForm.value);

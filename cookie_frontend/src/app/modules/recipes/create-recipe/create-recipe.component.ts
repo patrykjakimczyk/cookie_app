@@ -106,8 +106,9 @@ export class CreateRecipeComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
 
     if (id) {
-      this.recipesService.getRecipeDetails(+id).subscribe({
-        next: (recipeDetails: RecipeDetailsDTO) => {
+      this.recipesService
+        .getRecipeDetails(+id)
+        .subscribe((recipeDetails: RecipeDetailsDTO) => {
           if (recipeDetails.creatorName !== this.getUserName()) {
             this.router.navigate(['/']);
           }
@@ -133,8 +134,7 @@ export class CreateRecipeComponent implements OnInit {
             this.imageUrl =
               'data:image/JPEG;png;base64,' + recipeDetails.recipeImage;
           }
-        },
-      });
+        });
     }
   }
 
@@ -269,10 +269,8 @@ export class CreateRecipeComponent implements OnInit {
       recipeRequest = this.recipesService.createRecipe(formData);
     }
 
-    recipeRequest.subscribe({
-      next: (response: CreateRecipeResponse) => {
-        this.router.navigate(['/recipes/', response.recipeId]);
-      },
+    recipeRequest.subscribe((response: CreateRecipeResponse) => {
+      this.router.navigate(['/recipes/', response.recipeId]);
     });
   }
 
@@ -280,10 +278,8 @@ export class CreateRecipeComponent implements OnInit {
     if (this.ingredientForm.controls.productName.value) {
       this.recipesService
         .getProductsWithFilter(this.ingredientForm.controls.productName.value)
-        .subscribe({
-          next: (response) => {
-            this.filteredProducts = of(response.content);
-          },
+        .subscribe((response) => {
+          this.filteredProducts = of(response.content);
         });
     }
   }

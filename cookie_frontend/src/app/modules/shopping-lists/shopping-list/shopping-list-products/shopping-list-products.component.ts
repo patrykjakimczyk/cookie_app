@@ -185,11 +185,9 @@ export class ShoppingListProductsComponent implements OnInit {
           this.shoppingList.id,
           this.productsIdsForAction
         )
-        .subscribe({
-          next: (_) => {
-            this.productsIdsForAction = [];
-            this.reloadPage();
-          },
+        .subscribe((_) => {
+          this.productsIdsForAction = [];
+          this.reloadPage();
         });
     }
   }
@@ -206,11 +204,9 @@ export class ShoppingListProductsComponent implements OnInit {
           this.shoppingList.id,
           this.productsIdsForAction
         )
-        .subscribe({
-          next: (_) => {
-            this.productsIdsForAction = [];
-            this.reloadPage();
-          },
+        .subscribe((_) => {
+          this.productsIdsForAction = [];
+          this.reloadPage();
         });
     }
   }
@@ -220,13 +216,11 @@ export class ShoppingListProductsComponent implements OnInit {
 
     this.shoppingListsService
       .addProductsToShoppingList(this.shoppingList!.id, this.productsToAdd)
-      .subscribe({
-        next: (_) => {
-          this.closeAddProducts();
-          this.productsToAddIdsToRemove = [];
-          this.page = 0;
-          this.getShoppinglistProducts();
-        },
+      .subscribe((_) => {
+        this.closeAddProducts();
+        this.productsToAddIdsToRemove = [];
+        this.page = 0;
+        this.getShoppinglistProducts();
       });
   }
 
@@ -263,10 +257,8 @@ export class ShoppingListProductsComponent implements OnInit {
       if (confirmed) {
         this.shoppingListsService
           .transferProductsToPantry(this.shoppingList!.id)
-          .subscribe({
-            next: (_) => {
-              this.reloadPage();
-            },
+          .subscribe((_) => {
+            this.reloadPage();
           });
       }
     });
@@ -276,10 +268,8 @@ export class ShoppingListProductsComponent implements OnInit {
     if (this.addForm.controls.productName.value) {
       this.shoppingListsService
         .getProductsWithFilter(this.addForm.controls.productName.value)
-        .subscribe({
-          next: (response) => {
-            this.filteredProducts = of(response.content);
-          },
+        .subscribe((response) => {
+          this.filteredProducts = of(response.content);
         });
     }
   }
@@ -328,12 +318,10 @@ export class ShoppingListProductsComponent implements OnInit {
           sortColName,
           SortDirection
         )
-        .subscribe({
-          next: (response) => {
-            this.products = response.content;
-            this.totalElements = response.totalElements;
-            this.currentElementsLength = response.content.length;
-          },
+        .subscribe((response) => {
+          this.products = response.content;
+          this.totalElements = response.totalElements;
+          this.currentElementsLength = response.content.length;
         });
     }
   }

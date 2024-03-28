@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/api/v1/group")
+@RequestMapping("/api/v1/groups")
 @RestController
 public class GroupController {
     private static final String GROUP_ID_URL = "/{id}";

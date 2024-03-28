@@ -7,6 +7,7 @@ import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
 import { LoginFormService } from './login-form.service';
 import { UserService } from 'src/app/shared/services/user-service';
 import { User } from 'src/app/shared/model/user';
+import { EMPTY, catchError } from 'rxjs';
 
 @Component({
   selector: 'app-login-form',
@@ -53,7 +54,7 @@ export class LoginFormComponent {
 
     let user = new User();
     if (this.form.value.email) {
-      user.email = this.form.value!.email;
+      user.email = this.form.value.email;
     }
 
     if (this.form.value.password) {
@@ -61,19 +62,24 @@ export class LoginFormComponent {
     }
 
     this.userService.saveUser(user);
-    this.loginService.login().subscribe({
-      next: (response: any) => {
+    this.loginService
+      .login()
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          if (error.status === 401) {
+            this.userService.logoutUser();
+            this.authenticationFailed = true;
+            return EMPTY;
+          }
+
+          throw error;
+        })
+      )
+      .subscribe((response: any) => {
         this.authenticationFailed = false;
         const jwtToken = response.headers.get('Authorization')!;
         this.userService.saveUserLoginData(jwtToken, response.body);
         this.router.navigate(['/']);
-      },
-      error: (error: HttpErrorResponse) => {
-        if (error.status === 401) {
-          this.userService.logoutUser();
-          this.authenticationFailed = true;
-        }
-      },
-    });
+      });
   }
 }
