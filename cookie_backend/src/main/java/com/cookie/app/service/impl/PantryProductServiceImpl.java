@@ -49,41 +49,36 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
             String sortDirection,
             String userEmail
     ) {
-        Pantry pantry = this.getPantryIfUserHasAuthority(pantryId, userEmail, null);
+        Pantry pantry = super.getPantryIfUserHasAuthority(pantryId, userEmail, null);
 
-        PageRequest pageRequest = this.createPageRequest(page, sortColName, sortDirection);
+        PageRequest pageRequest = super.createPageRequest(page, sortColName, sortDirection);
         if (!StringUtils.isBlank(filterValue)) {
-            return pantryProductRepository
+            return this.pantryProductRepository
                     .findProductsInPantryWithFilter(pantry.getId(), filterValue, pageRequest)
                     .map(pantryProductMapper);
         }
-        return pantryProductRepository
+        return this.pantryProductRepository
                 .findProductsInPantry(pantry.getId(), pageRequest)
                 .map(pantryProductMapper);
     }
 
     @Override
     public void addProductsToPantry(long pantryId, List<PantryProductDTO> pantryProductDTOS, String userEmail) {
-        Pantry pantry = this.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.ADD);
+        Pantry pantry = super.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.ADD);
 
         addProductsToPantry(pantryProductDTOS, pantry);
     }
 
     @Override
     public void addProductsToPantryFromList(Pantry pantry, List<PantryProductDTO> pantryProductDTOS, User user) {
-        if (!super.userHasAuthority(user, pantry.getGroup().getId(), AuthorityEnum.ADD)) {
-            log.info("User: {} tried to perform action in pantry without required permission", user.getEmail());
-            throw new UserPerformedForbiddenActionException("You have not permissions to do that");
-        }
-
         addProductsToPantry(pantryProductDTOS, pantry);
     }
 
     @Override
     public void removeProductsFromPantry(long pantryId, List<Long> pantryProductIds, String userEmail) {
-        Pantry pantry = this.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.MODIFY);
+        Pantry pantry = super.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.MODIFY);
 
-        if (this.isAnyProductNotOnList(pantry, pantryProductIds)) {
+        if (isAnyProductNotOnList(pantry, pantryProductIds)) {
             log.info("User with email={} tried to remove products from different pantry", userEmail);
             throw new UserPerformedForbiddenActionException("Cannot remove products from different pantry");
         }
@@ -98,7 +93,7 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
             throw new ValidationException("Cannot modify product because it doesn't exist");
         }
 
-        Pantry pantry = this.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.MODIFY);
+        Pantry pantry = super.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.MODIFY);
 
         PantryProduct productToModify = PantryProduct
                 .builder()
@@ -113,7 +108,7 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
                 )
                 .build();
 
-        if (!this.isAnyProductNotOnList(pantry.getPantryProducts(), List.of(productToModify))) {
+        if (!isAnyProductNotOnList(pantry.getPantryProducts(), List.of(productToModify))) {
             log.info("User with email={} tried to modify product from different pantry", userEmail);
             throw new UserPerformedForbiddenActionException("Cannot remove products from different pantry");
         }
@@ -124,12 +119,12 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
     @Override
     public PantryProductDTO reservePantryProduct(long pantryId, long pantryProductId, int reserved, String userEmail) {
         //if this method doesn't throw any exception, user can access this pantry
-        this.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.RESERVE);
+        super.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.RESERVE);
 
         Optional<PantryProduct> pantryProductOptional = this.pantryProductRepository.findById(pantryProductId);
         PantryProduct pantryProduct = pantryProductOptional.orElseThrow(() -> {
             log.info("User with email={} tried to reserve product which does not exists", userEmail);
-            throw new UserPerformedForbiddenActionException("Pantry product was not found");
+            return new UserPerformedForbiddenActionException("Pantry product was not found");
         });
 
         if (pantryProduct.getPantry().getId() != pantryId) {
@@ -149,31 +144,28 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
     }
 
     @Override
-    public List<PantryProductDTO> reservePantryProductsFromRecipe(long pantryId, User user, List<RecipeProduct> recipeProducts) {
-        Pantry pantry = this.getPantryIfUserHasAuthority(pantryId, user, AuthorityEnum.RESERVE);
-        List<PantryProduct> reservedProducts = new ArrayList<>();
-        Map<Long, RecipeProduct> recipeProductMap = recipeProducts
-                .stream()
-                .collect(Collectors.toMap(RecipeProduct::getId, Function.identity()));
+    public List<RecipeProduct>  reservePantryProductsFromRecipe(long pantryId, User user, List<RecipeProduct> recipeProducts) {
+        Pantry pantry = super.getPantryIfUserHasAuthority(pantryId, user, AuthorityEnum.RESERVE);
+        List<RecipeProduct> unreservedProducts = new ArrayList<>();
 
-        for (PantryProduct pantryProduct : pantry.getPantryProducts()) {
-            for (Map.Entry<Long, RecipeProduct> mapEntry : recipeProductMap.entrySet()) {
-                if (this.areRecipeAndPantryProductsEqual(mapEntry.getValue(), pantryProduct)) {
-                    pantryProduct.setReserved(pantryProduct.getReserved() + mapEntry.getValue().getQuantity());
-                    pantryProduct.setQuantity(pantryProduct.getQuantity() - mapEntry.getValue().getQuantity());
-                    reservedProducts.add(pantryProduct);
-                    recipeProductMap.remove(mapEntry.getKey());
-                    break;
-                }
+        for (RecipeProduct recipeProduct : recipeProducts) {
+            Optional<PantryProduct> optionalPantryProduct = pantry.getPantryProducts()
+                    .stream()
+                    .filter(pantryProduct -> areRecipeAndPantryProductsEqual(recipeProduct, pantryProduct))
+                    .findFirst();
+
+            if (optionalPantryProduct.isEmpty()) {
+                unreservedProducts.add(recipeProduct);
+                continue;
             }
+
+            PantryProduct pantryProduct = optionalPantryProduct.get();
+            pantryProduct.setReserved(pantryProduct.getReserved() + recipeProduct.getQuantity());
+            pantryProduct.setQuantity(pantryProduct.getQuantity() - recipeProduct.getQuantity());
+            this.pantryProductRepository.save(pantryProduct);
         }
 
-        this.pantryProductRepository.saveAll(reservedProducts);
-
-        return reservedProducts
-                .stream()
-                .map(this.pantryProductMapper::apply)
-                .toList();
+        return unreservedProducts;
     }
 
     @Override
@@ -182,20 +174,24 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
             return recipeProducts;
         }
 
-        Map<Long, RecipeProduct> recipeProductMap = recipeProducts
-                .stream()
-                .collect(Collectors.toMap(RecipeProduct::getId, Function.identity()));
+        List<RecipeProduct> missingProducts = new ArrayList<>();
 
-        for (PantryProduct pantryProduct : pantry.getPantryProducts()) {
-            for (Map.Entry<Long, RecipeProduct> mapEntry : recipeProductMap.entrySet()) {
-                if (this.areRecipeAndPantryProductsEqual(mapEntry.getValue(), pantryProduct)) {
-                    recipeProductMap.remove(mapEntry.getKey());
-                    break;
-                }
+        for (RecipeProduct recipeProduct : recipeProducts) {
+            Optional<PantryProduct> optionalPantryProduct = pantry.getPantryProducts()
+                    .stream()
+                    .filter(pantryProduct -> areRecipeAndPantryProductsEqual(recipeProduct, pantryProduct))
+                    .findFirst();
+
+            if (optionalPantryProduct.isEmpty()) {
+                missingProducts.add(recipeProduct);
+                continue;
             }
+
+            PantryProduct pantryProduct = optionalPantryProduct.get();
+            pantryProduct.setQuantity(pantryProduct.getQuantity() - recipeProduct.getQuantity());
         }
 
-        return new ArrayList<>(recipeProductMap.values());
+        return missingProducts;
     }
 
     private boolean areRecipeAndPantryProductsEqual(RecipeProduct recipeProduct, PantryProduct pantryProduct) {
@@ -211,15 +207,15 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
                 .map(PantryProduct::getId)
                 .toList();
 
-        return this.isAnyProductNotOnList(pantryProductsIds, pantryProductIds);
+        return super.isAnyProductNotOnList(pantryProductsIds, pantryProductIds);
     }
 
     private PantryProduct mapToPantryProduct(PantryProductDTO pantryProductDTO, Pantry pantry, Product existingProduct) {
-        Product product = existingProduct != null ? existingProduct : this.checkIfProductExists(pantryProductDTO.product());
+        Product product = existingProduct != null ? existingProduct : super.checkIfProductExists(pantryProductDTO.product());
         PantryProduct foundPantryProduct = null;
         // if product id > 0 then there is a chance that we have that product in our pantry, because product is in database
         if (product.getId() > 0) {
-            foundPantryProduct = this.findPantryProductInPantry(pantry, pantryProductDTO, product);
+            foundPantryProduct = findPantryProductInPantry(pantry, pantryProductDTO, product);
         }
 
         if (foundPantryProduct != null) {
@@ -247,7 +243,7 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
             }
 
             for (PantryProduct pantryProduct : pantryProducts) {
-                if (pantryProduct.getId() > 0 && pantryProduct.getId() == pantryProductDTO.id()) {
+                if (pantryProductDTO.id() > 0 && pantryProductDTO.id() == pantryProduct.getId()) {
                     // if pantry products ids are equal, we are modifying pantry product
                     pantryProduct.setQuantity(pantryProductDTO.quantity());
                     pantryProduct.setUnit(pantryProductDTO.unit());
@@ -257,7 +253,7 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
                     pantryProduct.setExpirationDate(pantryProductDTO.expirationDate());
 
                     return pantryProduct;
-                } else if (this.arePantryProductsEqual(pantryProduct, pantryProductDTO, product)) {
+                } else if (arePantryProductsEqual(pantryProduct, pantryProductDTO, product)) {
                     if (pantryProductDTO.id() > 0) {
                         this.pantryProductRepository.deleteById(pantryProductDTO.id());
                     }

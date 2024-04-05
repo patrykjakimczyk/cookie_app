@@ -16,13 +16,16 @@ import {
 } from 'src/app/shared/services/meal-planning-service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EnumPrintFormatterPipe } from 'src/app/shared/pipes/enum-print-formatter.pipe';
-import { Observable, firstValueFrom, of } from 'rxjs';
+import { EMPTY, Observable, catchError, firstValueFrom, of } from 'rxjs';
 import { AddMealRequest } from 'src/app/shared/model/requests/meals-requests';
 import { MealDTO } from 'src/app/shared/model/types/meals.types';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ReserveProductsPopupComponent } from '../reserve-products-popup/reserve-products-popup.component';
 import { AddToListPopupComponent } from '../add-to-list-popup/add-to-list-popup.component';
+import { HttpErrorResponse } from '@angular/common/http';
+import { UserService } from 'src/app/shared/services/user-service';
+import { AuthorityEnum } from 'src/app/shared/model/enums/authority.enum';
 
 @Component({
   selector: 'app-schedule-meal',
@@ -36,6 +39,7 @@ export class ScheduleMealComponent implements OnInit {
   protected userGroups?: GroupDTO[];
   protected chosenDate: Date | null = null;
   protected chosenGroupId: number | null = null;
+  protected chosenGroupName: string | null = null;
   protected chosenRecipe: RecipeToSchedule | null = null;
   protected showUnselectedRecipe = false;
   protected modifyingMeal = false;
@@ -55,7 +59,8 @@ export class ScheduleMealComponent implements OnInit {
     private route: ActivatedRoute,
     private enumPrintFormatter: EnumPrintFormatterPipe,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
@@ -74,6 +79,11 @@ export class ScheduleMealComponent implements OnInit {
         if (this.mealPlanningService.currentMealPlanning?.groupId) {
           this.chosenGroupId =
             this.mealPlanningService.currentMealPlanning?.groupId;
+        }
+
+        if (this.mealPlanningService.currentMealPlanning?.groupName) {
+          this.chosenGroupName =
+            this.mealPlanningService.currentMealPlanning?.groupName;
         }
 
         this.chosenRecipe =
@@ -112,12 +122,26 @@ export class ScheduleMealComponent implements OnInit {
     const request: AddMealRequest = {
       mealDate: new Date(this.mealForm.controls.mealDate.value!),
       groupId: +this.mealForm.controls.groupId.value!,
+      groupName: this.chosenGroupName!,
       recipeId: this.chosenRecipe!.id!,
     };
 
     if (this.modifyingMeal) {
       this.mealsService
         .modifyMeal(this.mealToModifyId, request)
+        .pipe(
+          catchError((error: HttpErrorResponse) => {
+            this.snackBar.open(
+              `You tried to modify a meal without permission for group: ${request.groupName}`,
+              'Okay'
+            );
+
+            this.clear();
+            form.resetForm(); // this combination of two resets allows to reset form without displaying form fields as invalid
+            this.mealForm.reset();
+            return EMPTY;
+          })
+        )
         .subscribe((response: MealDTO) => {
           this.modifiedMeal.emit(response);
           this.snackBar.open(`Meal has been modified`, 'Okay');
@@ -134,7 +158,10 @@ export class ScheduleMealComponent implements OnInit {
       let reserve = false;
       let addToList: number | null = null;
 
-      if (chosenGroup?.pantryId) {
+      if (
+        chosenGroup?.pantryId &&
+        this.userService.userHasAuthority(AuthorityEnum.RESERVE)
+      ) {
         const reserveProductsDialog = this.dialog.open(
           ReserveProductsPopupComponent
         );
@@ -142,16 +169,22 @@ export class ScheduleMealComponent implements OnInit {
         reserve = await firstValueFrom(reserveProductsDialog.afterClosed());
       }
 
-      const groupDetails = await firstValueFrom(
-        this.mealsService.getGroupDetails(this.chosenGroupId!)
-      );
+      if (
+        this.userService.userHasAuthority(AuthorityEnum.ADD_TO_SHOPPING_LIST)
+      ) {
+        const groupDetails = await firstValueFrom(
+          this.mealsService.getGroupDetails(this.chosenGroupId!)
+        );
 
-      if (groupDetails.shoppingLists.length > 0) {
-        const addToListDialog = this.dialog.open(AddToListPopupComponent, {
-          data: groupDetails.shoppingLists,
-        });
+        if (groupDetails.shoppingLists.length > 0) {
+          const addToListDialog = this.dialog.open(AddToListPopupComponent, {
+            data: groupDetails.shoppingLists,
+          });
 
-        addToList = await firstValueFrom(addToListDialog.afterClosed());
+          addToList = await firstValueFrom(addToListDialog.afterClosed());
+        }
+
+        request.groupName = groupDetails.groupName;
       }
 
       this.addMealSubscription(form, request, reserve, addToList);
@@ -191,6 +224,7 @@ export class ScheduleMealComponent implements OnInit {
     this.mealToModifyId = 0;
     this.chosenDate = null;
     this.chosenGroupId = null;
+    this.chosenGroupName = null;
     this.chosenRecipe = null;
     this.mealPlanningService.currentMealPlanning = null;
     this.mealPlanningService.modifyingMeal$.next(null);
@@ -204,6 +238,19 @@ export class ScheduleMealComponent implements OnInit {
   ) {
     this.mealsService
       .addMeal(request, reserve, listId)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          this.snackBar.open(
+            `You tried to schedule a meal without permission for group: ${request.groupName}`,
+            'Okay'
+          );
+
+          this.clear();
+          form.resetForm(); // this combination of two resets allows to reset form without displaying form fields as invalid
+          this.mealForm.reset();
+          return EMPTY;
+        })
+      )
       .subscribe((response: MealDTO) => {
         this.addedMeal.emit(response);
         this.snackBar.open(`Meal has been added to calendar`, 'Okay');
@@ -221,8 +268,10 @@ export class ScheduleMealComponent implements OnInit {
         this.mealToModifyId = mealToModify.id;
         this.chosenDate = mealToModify.mealDate;
         this.chosenGroupId = mealToModify.groupId;
+        this.chosenGroupName = mealToModify.groupName;
         this.chosenRecipe = mealToModify.recipe;
         this.mealForm.controls.recipe.setValue(this.printRecipe());
+        this.mealForm.controls.groupId.disable();
       } else {
         this.modifyingMeal = false;
       }
@@ -241,6 +290,7 @@ export class ScheduleMealComponent implements OnInit {
       groupId: this.mealForm.controls.groupId.value
         ? +this.mealForm.controls.groupId.value
         : 0,
+      groupName: this.chosenGroupName,
       recipe: this.chosenRecipe,
     };
   }
@@ -251,7 +301,7 @@ export class ScheduleMealComponent implements OnInit {
     if (control.value) {
       const hour = new Date(control.value).getHours();
 
-      return 6 < hour && hour < 23 ? of(null) : of({ invalidHour: true });
+      return 6 <= hour && hour < 22 ? of(null) : of({ invalidHour: true });
     }
     return of(null);
   }

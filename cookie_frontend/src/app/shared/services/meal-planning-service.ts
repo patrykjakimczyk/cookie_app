@@ -11,6 +11,7 @@ export type RecipeToSchedule = {
 export interface MealPlanning {
   mealDate: Date | null;
   groupId: number | null;
+  groupName: string | null;
   recipe: RecipeToSchedule | null;
 }
 

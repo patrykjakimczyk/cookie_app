@@ -241,7 +241,7 @@ export class ShoppingListProductsComponent implements OnInit {
   }
 
   transferAvailable() {
-    return this.products.find((product) => !product.purchased);
+    return !this.products.find((product) => product.purchased);
   }
 
   transferProductsToPantry() {

@@ -10,5 +10,7 @@ export namespace RegexConstants {
   export const productNameRegex = XRegExp('^([\\p{L}\\d\\s]{3,50})$');
   export const shoppingListRegex = XRegExp('^([\\p{L}\\d\\s]{3,30})$');
   export const recipeNameRegex = XRegExp('^([\\p{L}\\d\\s]{5,60})$');
-  export const preparationRegex = XRegExp('^([\\p{L}\\d\\s]{30,512})$');
+  export const preparationRegex = XRegExp(
+    '^([\\p{L}\\d\\s\'":\\-_@,.]{30,512})$'
+  );
 }

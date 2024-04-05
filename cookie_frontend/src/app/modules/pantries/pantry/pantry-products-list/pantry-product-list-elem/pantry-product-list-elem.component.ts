@@ -89,8 +89,10 @@ export class PantryProductListElemComponent {
       .afterClosed()
       .subscribe((modifiedPantryProduct: PantryProductDTO) => {
         this.reloadEvent.emit(true);
-        this.pantryProduct = modifiedPantryProduct;
-        this.pantryProductChange.emit(this.pantryProduct);
+        if (!this.isPantryProduct) {
+          this.pantryProduct = modifiedPantryProduct;
+          this.pantryProductChange.emit(this.pantryProduct);
+        }
       });
   }
 

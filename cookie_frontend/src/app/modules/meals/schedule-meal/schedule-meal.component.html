@@ -49,7 +49,7 @@
           group.groupName
         }}</mat-option>
       </mat-select>
-      <mat-hint>Pick group</mat-hint>
+      <mat-hint *ngIf="!modifyingMeal">Pick group</mat-hint>
       <mat-error *ngIf="!mealForm.controls.groupId.valid">
         {{ getErrorMessage(mealForm.controls.groupId) }}
       </mat-error>

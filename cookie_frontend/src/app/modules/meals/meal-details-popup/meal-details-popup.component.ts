@@ -65,6 +65,7 @@ export class MealDetailsPopupComponent {
       id: this.meal.id,
       mealDate: this.meal.mealDate,
       groupId: this.meal.group.id,
+      groupName: this.meal.group.groupName,
       recipe: recipe,
     };
 

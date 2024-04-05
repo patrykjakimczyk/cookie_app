@@ -114,6 +114,7 @@ export class RecipeDetailsComponent implements OnInit {
       this.mealPlanningService.currentMealPlanning = {
         mealDate: null,
         groupId: null,
+        groupName: null,
         recipe: this.recipeDetails,
       };
       this.router.navigate(['/meals'], {

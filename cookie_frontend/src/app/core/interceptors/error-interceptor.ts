@@ -7,6 +7,7 @@ import {
 import { Injectable } from '@angular/core';
 import { Observable, catchError } from 'rxjs';
 import { excludedMethods } from './excluded-methods';
+import { co, er } from '@fullcalendar/core/internal-common';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {

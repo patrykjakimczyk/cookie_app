@@ -21,5 +21,5 @@ public interface ShoppingListProductService {
     void modifyShoppingListProduct(long listId, ShoppingListProductDTO listProductDTO, String userEmail);
     void changePurchaseStatusForProducts(long listId, List<Long> listProductIds, String userEmail);
     void transferProductsToPantry(long listId, String userEmail);
-    List<ShoppingListProductDTO> addRecipeProductsToShoppingList(long listId, User user, List<RecipeProduct> recipeProducts);
+    void addRecipeProductsToShoppingList(long listId, User user, List<RecipeProduct> recipeProducts);
 }

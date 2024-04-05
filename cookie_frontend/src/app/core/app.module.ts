@@ -21,7 +21,7 @@ import { PantryModule } from '../modules/pantries/pantries.module';
 import { ShoppingListsModule } from '../modules/shopping-lists/shopping-lists.module';
 import { RecipesModule } from '../modules/recipes/recipes.module';
 import { MealsModule } from '../modules/meals/meals.module';
-import { CookieErrorHandler } from './handlers/error-handler';
+import { CookieErrorHandler } from './services/error-handler.service';
 import { HttpErrorInterceptor } from './interceptors/error-interceptor';
 import { ErrorComponent } from './components/error/error.component';
 import { MatIconModule } from '@angular/material/icon';

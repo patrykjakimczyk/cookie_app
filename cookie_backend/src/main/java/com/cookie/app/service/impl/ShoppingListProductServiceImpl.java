@@ -28,6 +28,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -188,13 +189,18 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
 
     @Override
     public void transferProductsToPantry(long listId, String userEmail) {
-        User user = this.getUserByEmail(userEmail);
-        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(listId, user, AuthorityEnum.MODIFY_SHOPPING_LIST);
+        User user = super.getUserByEmail(userEmail);
+        ShoppingList shoppingList = super.getShoppingListIfUserHasAuthority(listId, user, AuthorityEnum.MODIFY_SHOPPING_LIST);
         Pantry pantry = shoppingList.getGroup().getPantry();
 
         if (pantry == null) {
             log.info("User with email={} tried to transfer shopping list for group with not assigned pantry", userEmail);
             throw new UserPerformedForbiddenActionException("User cannot transfer products because his group does not have assigned pantry");
+        }
+
+        if (!super.userHasAuthority(user, pantry.getGroup().getId(), AuthorityEnum.ADD)) {
+            log.info("User: {} tried to perform action in pantry without required permission", user.getEmail());
+            throw new UserPerformedForbiddenActionException("You have not permissions to do that");
         }
 
         List<ShoppingListProduct> purchasedProducts = shoppingList.getProductsList()
@@ -207,7 +213,7 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
             throw new UserPerformedForbiddenActionException("Cannot transfer unpurchased shopping list products");
         }
 
-        List<PantryProductDTO> newPantryProducts = this.mapListProductsToPantryProducts(purchasedProducts, pantry);
+        List<PantryProductDTO> newPantryProducts = mapListProductsToPantryProducts(purchasedProducts, pantry);
 
         log.info("User with email {} transfered {} products to shopping list with id {}",
                 userEmail,
@@ -220,41 +226,35 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
     }
 
     @Override
-    public List<ShoppingListProductDTO> addRecipeProductsToShoppingList(long listId, User user, List<RecipeProduct> recipeProducts) {
+    public void addRecipeProductsToShoppingList(long listId, User user, List<RecipeProduct> recipeProducts) {
         ShoppingList shoppingList = super.getShoppingListIfUserHasAuthority(listId, user, AuthorityEnum.ADD_TO_SHOPPING_LIST);
         List<ShoppingListProduct> addedProducts = new ArrayList<>();
-        Map<Long, RecipeProduct> recipeProductMap = recipeProducts
-                .stream()
-                .collect(Collectors.toMap(RecipeProduct::getId, Function.identity()));
 
-        for (ShoppingListProduct shoppingListProduct : shoppingList.getProductsList()) {
-            for (Map.Entry<Long, RecipeProduct> mapEntry : recipeProductMap.entrySet()) {
-                if (this.areRecipeAndListProductEquals(mapEntry.getValue(), shoppingListProduct)) {
-                    shoppingListProduct.setQuantity(shoppingListProduct.getQuantity() + mapEntry.getValue().getQuantity());
-                    recipeProductMap.remove(mapEntry.getKey());
-                    addedProducts.add(shoppingListProduct);
-                    break;
-                }
-            }
-        }
+        for (RecipeProduct recipeProduct : recipeProducts) {
+            Optional<ShoppingListProduct> optionalShoppingListProduct = shoppingList.getProductsList()
+                    .stream()
+                    .filter(listProduct -> areRecipeAndListProductEquals(recipeProduct, listProduct))
+                    .findFirst();
 
-        List<ShoppingListProduct> newListProducts = recipeProductMap.values().stream()
-                .map(recipeProduct -> ShoppingListProduct.builder()
+            if (optionalShoppingListProduct.isEmpty()) {
+                addedProducts.add(
+                        ShoppingListProduct.builder()
                         .shoppingList(shoppingList)
                         .product(recipeProduct.getProduct())
                         .quantity(recipeProduct.getQuantity())
                         .unit(recipeProduct.getUnit())
                         .purchased(false)
-                        .build())
-                .toList();
+                        .build()
+                );
+                continue;
+            }
 
-        addedProducts.addAll(newListProducts);
+            ShoppingListProduct shoppingListProduct = optionalShoppingListProduct.get();
+            shoppingListProduct.setQuantity(shoppingListProduct.getQuantity() + recipeProduct.getQuantity());
+            this.shoppingListProductRepository.save(shoppingListProduct);
+        }
+
         this.shoppingListProductRepository.saveAll(addedProducts);
-
-        return addedProducts
-                .stream()
-                .map(this.shoppingListProductMapper::apply)
-                .toList();
     }
 
     private boolean areRecipeAndListProductEquals(RecipeProduct recipeProduct, ShoppingListProduct listProduct) {

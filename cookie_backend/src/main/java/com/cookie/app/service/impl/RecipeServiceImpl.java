@@ -162,30 +162,21 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
     }
 
     @Override
-    public List<PantryProductDTO> reserveRecipeProductsInPantry(User user, Recipe recipe, long pantryId) {
+    public List<RecipeProduct> reserveRecipeProductsInPantry(User user, Recipe recipe, long pantryId) {
         return this.pantryProductService.reservePantryProductsFromRecipe(pantryId, user, recipe.getRecipeProducts());
     }
 
     @Override
-    public List<ShoppingListProductDTO> addRecipeProductsToShoppingList(User user,
-                                                                        Recipe recipe,
-                                                                        long listId,
-                                                                        Group group) {
-        Optional<ShoppingList> shoppingList = group.getShoppingLists()
-                .stream()
-                .filter(list -> list.getId() == listId)
-                .findAny();
-
-        if (shoppingList.isEmpty()) {
-            log.info("User: {} tried to add recipe products to shopping list which does not belong to their group", user.getEmail());
-            throw new UserPerformedForbiddenActionException("You tried to add products to " +
-                    "shopping list which does not belong to your group");
-        }
-
-        List<RecipeProduct> recipeProductsToAdd = this.pantryProductService
+    public List<RecipeProduct> getRecipeProductsNotInPantry(Group group, Recipe recipe) {
+       return this.pantryProductService
                 .getRecipeProductsNotInPantry(group.getPantry(), recipe.getRecipeProducts());
+    }
 
-        return this.shoppingListProductService.addRecipeProductsToShoppingList(listId, user, recipeProductsToAdd);
+    @Override
+    public void addRecipeProductsToShoppingList(User user,
+                                                long listId,
+                                                List<RecipeProduct> productsToAdd) {
+        this.shoppingListProductService.addRecipeProductsToShoppingList(listId, user, productsToAdd);
     }
 
     private Set<String> getMealTypesAsStrings(List<MealType> mealTypes) {

@@ -22,6 +22,6 @@ public interface PantryProductService {
     void removeProductsFromPantry(long pantryId, List<Long> pantryProductIds, String userEmail);
     void modifyPantryProduct(long pantryId, PantryProductDTO pantryProduct, String userEmail);
     PantryProductDTO reservePantryProduct(long pantryId, long pantryProductId, int reserved, String userEmail);
-    List<PantryProductDTO> reservePantryProductsFromRecipe(long pantryId, User user, List<RecipeProduct> recipeProducts);
+    List<RecipeProduct> reservePantryProductsFromRecipe(long pantryId, User user, List<RecipeProduct> recipeProducts);
     List<RecipeProduct> getRecipeProductsNotInPantry(Pantry pantry, List<RecipeProduct> recipeProducts);
 }

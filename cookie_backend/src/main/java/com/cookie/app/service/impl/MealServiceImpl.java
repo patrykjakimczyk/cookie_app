@@ -3,10 +3,7 @@ package com.cookie.app.service.impl;
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.exception.ValidationException;
 import com.cookie.app.model.dto.MealDTO;
-import com.cookie.app.model.entity.Group;
-import com.cookie.app.model.entity.Meal;
-import com.cookie.app.model.entity.Recipe;
-import com.cookie.app.model.entity.User;
+import com.cookie.app.model.entity.*;
 import com.cookie.app.model.enums.AuthorityEnum;
 import com.cookie.app.model.mapper.AuthorityMapperDTO;
 import com.cookie.app.model.mapper.MealMapperDTO;
@@ -24,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -95,12 +93,23 @@ public class MealServiceImpl extends AbstractCookieService implements MealServic
         Meal meal = mapToMeal(request.mealDate(), user, group, recipe);
         this.mealRepository.save(meal);
 
-        if (reserve) {
-            this.recipeService.reserveRecipeProductsInPantry(user, meal.getRecipe(), group.getPantry().getId());
-        }
+        if (reserve && listId == null) {
+            this.recipeService.reserveRecipeProductsInPantry(
+                    user,
+                    meal.getRecipe(),
+                    group.getPantry().getId()
+            );
+        } else if (listId != null) {
+            List<RecipeProduct> productsToShoppingList = new ArrayList<>(reserve ?
+                    this.recipeService.reserveRecipeProductsInPantry(
+                            user,
+                            meal.getRecipe(),
+                            group.getPantry().getId()
+                    ) :
+                    this.recipeService.getRecipeProductsNotInPantry(group, recipe)
+            );
 
-        if (listId != null) {
-            this.recipeService.addRecipeProductsToShoppingList(user, recipe, listId, group);
+            this.recipeService.addRecipeProductsToShoppingList(user, listId, productsToShoppingList);
         }
 
         return this.mealMapperDTO.apply(meal);
@@ -153,14 +162,7 @@ public class MealServiceImpl extends AbstractCookieService implements MealServic
         if (!meal.getMealDate().equals(request.mealDate())) {
             meal.setMealDate(request.mealDate());
         }
-        if (meal.getGroup().getId() != request.groupId()) {
-            Group newGroup = super.findUserGroupById(user, request.groupId()).orElseThrow(() -> {
-                log.info("User: {} tried to assign a meal to group which he does not belongs", user.getEmail());
-                throw new UserPerformedForbiddenActionException("You tried to assign a meal to group which he does not belongs");
-            });
 
-            meal.setGroup(newGroup);
-        }
         if (meal.getRecipe().getId() != request.recipeId()) {
             Recipe recipe = this.recipeRepository.findById(request.recipeId()).orElseThrow(() -> {
                 log.info("User: {} tried to add a meal based on non existing recipe", user.getEmail());

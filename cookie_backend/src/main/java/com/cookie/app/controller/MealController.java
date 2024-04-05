@@ -69,7 +69,7 @@ public class MealController {
             @RequestBody @Valid AddMealRequest request,
             Authentication authentication
     ) {
-        log.info("User with email={} is deleting meal with id={}", authentication.getName(), mealId);
+        log.info("User with email={} is modifying meal with id={}", authentication.getName(), mealId);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(this.mealService.modifyMeal(mealId, request, authentication.getName()));
