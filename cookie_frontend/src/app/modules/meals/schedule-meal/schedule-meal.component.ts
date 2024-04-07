@@ -119,6 +119,11 @@ export class ScheduleMealComponent implements OnInit {
     }
     this.showUnselectedRecipe = false;
 
+    const chosenGroup = this.userGroups?.find(
+      (group) => group.id === this.chosenGroupId
+    );
+    this.chosenGroupName = chosenGroup!.groupName;
+
     const request: AddMealRequest = {
       mealDate: new Date(this.mealForm.controls.mealDate.value!),
       groupId: +this.mealForm.controls.groupId.value!,
@@ -151,10 +156,6 @@ export class ScheduleMealComponent implements OnInit {
           this.mealForm.reset();
         });
     } else {
-      const chosenGroup = this.userGroups?.find(
-        (group) => group.id === this.chosenGroupId
-      );
-
       let reserve = false;
       let addToList: number | null = null;
 
@@ -183,8 +184,6 @@ export class ScheduleMealComponent implements OnInit {
 
           addToList = await firstValueFrom(addToListDialog.afterClosed());
         }
-
-        request.groupName = groupDetails.groupName;
       }
 
       this.addMealSubscription(form, request, reserve, addToList);

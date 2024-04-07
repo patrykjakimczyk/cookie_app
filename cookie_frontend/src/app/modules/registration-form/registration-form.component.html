@@ -5,7 +5,7 @@
     </p>
 
     <form [formGroup]="form" (ngSubmit)="submit()">
-      <mat-form-field color="accent">
+      <mat-form-field color="accent" id="username-field">
         <mat-label>Username (at least 6 characters)</mat-label>
         <input matInput required formControlName="username" name="username" />
         <mat-hint *ngIf="!formSubmitted"

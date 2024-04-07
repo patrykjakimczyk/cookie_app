@@ -138,7 +138,7 @@ body {
 
 @keyframes bigger {
   from {
-    margin-bottom: 0;
+    margin-bottom: 5px;
   }
   to {
     margin-bottom: 17px;
@@ -148,7 +148,7 @@ body {
 .shrink-error {
   animation: smaller;
   animation-duration: 0.3s;
-  margin-bottom: 0px;
+  margin-bottom: 5px;
 }
 
 @keyframes smaller {
@@ -156,7 +156,7 @@ body {
     margin-bottom: 17px;
   }
   to {
-    margin-bottom: 0;
+    margin-bottom: 5px;
   }
 }
 

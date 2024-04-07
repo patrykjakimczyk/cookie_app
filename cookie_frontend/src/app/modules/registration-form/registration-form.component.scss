@@ -34,6 +34,10 @@
     mat-form-field {
       width: 100%;
 
+      &#username-field {
+        margin-bottom: 5px;
+      }
+
       mat-hint {
         font-size: 12px;
       }
@@ -76,8 +80,4 @@
       text-decoration: underline;
     }
   }
-}
-
-mat-form-field {
-  margin-bottom: 5px;
 }
