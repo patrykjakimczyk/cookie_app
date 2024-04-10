@@ -3,8 +3,7 @@ WORKDIR /usr/local/app
 
 COPY src ./src
 COPY .mvn/ ./.mvn
-COPY mvnw pom.xml .
-
+COPY mvnw pom.xml ./
 RUN ./mvnw clean package
 
 #SECOND STAGE
