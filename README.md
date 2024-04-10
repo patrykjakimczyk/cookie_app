@@ -1,6 +1,6 @@
 # Cookie - managing household pantry, shopping lists and planning meals
 
-It's a web app used for managing pantry and supporting shopping and food preparation in your household. The main functionalities are: keeping track of the items you own using a pantry, creating shopping lists, managing a group of household members, viewing ready-made recipes and planning meals using a calendar. The web app is built using Angular that communicates with a monolithic REST API, which is built using Spring Boot. The API connects to the PostgreSQL database to store the data.
+It's a web app used for managing pantry as well as supporting shopping and food preparation in your household. The main functionalities are: keeping track of the items you own using a pantry, creating shopping lists, managing a group of household members, viewing ready-made recipes and planning meals using a calendar. The web app is built using Angular that communicates with a monolithic REST API, which is built using Spring Boot. The API connects to the PostgreSQL database to store the data.
 
 ## Used technologies, frameworks and libraries
 
@@ -71,5 +71,5 @@ If you want to log in, firstly you have to register your account:
 Then, you can log in. First thing you will see is the calendar page:
 ![register](https://github.com/patrykjakimczyk/cookie_app/blob/master/images/calendar.png?raw=true)
 
-Another interesting view is recipe search, which look like this:
+Another interesting view is the recipe search, which look like this:
 ![register](https://github.com/patrykjakimczyk/cookie_app/blob/master/images/recipes.png?raw=true)
