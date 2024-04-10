@@ -63,10 +63,10 @@ To see the application, go to **localhost**:80
 ## Presentation
 
 The main view for unauthenticated user is:
-![landing_page](https://github.com/patrykjakimczyk/cookie_app/blob/master/landing_page.png?raw=true)
+![landing_page](https://github.com/patrykjakimczyk/cookie_app/blob/master/images/landing_page.png?raw=true)
 If you want to log in, firstly you have to register your account:
-![register](https://github.com/patrykjakimczyk/cookie_app/blob/master/registration.png?raw=true)
+![register](https://github.com/patrykjakimczyk/cookie_app/blob/master/images/registration.png?raw=true)
 Then, you can log in. First thing you will see is the calendar page:
-![register](https://github.com/patrykjakimczyk/cookie_app/blob/master/calendar.png?raw=true)
+![register](https://github.com/patrykjakimczyk/cookie_app/blob/master/images/calendar.png?raw=true)
 Another interesting view is recipe search, which look like this:
-![register](https://github.com/patrykjakimczyk/cookie_app/blob/master/calendar.png?raw=true)
+![register](https://github.com/patrykjakimczyk/cookie_app/blob/master/images/calendar.png?raw=true)
