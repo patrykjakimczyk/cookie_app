@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -69,11 +70,11 @@ public abstract class AbstractCookieService {
         Sort idSort = Sort.by(Sort.Direction.DESC, "id");
         Sort sort = null;
 
-        if (StringUtils.isBlank(sortColName) && StringUtils.isBlank(sortDirection)) {
+        if (StringUtils.isBlank(sortColName)) {
             return pageRequest.withSort(idSort);
         }
 
-        if (sortDirection.equals("DESC")) {
+        if (Objects.equals(sortDirection, "DESC")) {
             sort = Sort.by(Sort.Direction.DESC, sortColName);
         } else {
             sort = Sort.by(Sort.Direction.ASC, sortColName);

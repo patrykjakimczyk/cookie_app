@@ -88,11 +88,6 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
 
     @Override
     public void modifyPantryProduct(long pantryId, PantryProductDTO pantryProduct, String userEmail) {
-        if (pantryProduct.id() == 0) {
-            log.info("User with email={} tried to modify product which is not saved in database", userEmail);
-            throw new ValidationException("Cannot modify product because it doesn't exist");
-        }
-
         Pantry pantry = super.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.MODIFY);
 
         PantryProduct productToModify = PantryProduct

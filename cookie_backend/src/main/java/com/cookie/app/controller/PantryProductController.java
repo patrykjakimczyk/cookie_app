@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -27,8 +29,8 @@ public class PantryProductController {
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping(GET_PANTRY_PRODUCTS_URL)
     public ResponseEntity<Page<PantryProductDTO>> getPantryProducts(
-            @PathVariable(value = "pantryId") @Valid @Min(value = 1, message = "Pantry id must be greater than 0") long pantryId,
-            @PathVariable(value = "page") @Valid @Min(value = 0, message = "Page nr must be at least 0") int page,
+            @PathVariable(value = "pantryId") @Valid @Positive(message = "Pantry id must be greater than 0") long pantryId,
+            @PathVariable(value = "page") @Valid @PositiveOrZero(message = "Page nr must be at least 0") int page,
             @RequestParam String filterValue,
             @RequestParam String sortColName,
             @RequestParam String sortDirection,
@@ -44,7 +46,7 @@ public class PantryProductController {
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping
     public ResponseEntity<Void> addProductsToPantry(
-            @PathVariable(value = "pantryId") @Valid @Min(value = 1, message = "Pantry id must be greater than 0") long pantryId,
+            @PathVariable(value = "pantryId") @Valid @Positive(message = "Pantry id must be greater than 0") long pantryId,
             @Valid @NotEmpty(message = "List of products cannot be empty") @RequestBody List<@Valid PantryProductDTO> products,
             Authentication authentication
     ) {
@@ -55,8 +57,9 @@ public class PantryProductController {
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping
     public ResponseEntity<Void> removeProductsFromPantry(
-            @PathVariable(value = "pantryId") @Valid @Min(value = 1,message = "Pantry id must be greater than 0") long pantryId,
-            @Valid @NotEmpty(message = "List of ids cannot be empty") @RequestBody List<Long> productIds,
+            @PathVariable(value = "pantryId") @Valid @Positive(message = "Pantry id must be greater than 0") long pantryId,
+            @Valid @NotEmpty(message = "List of products ids cannot be empty") @RequestBody
+            List<@Positive(message = "Product id must be greater than 0") Long> productIds,
             Authentication authentication
     ) {
         this.pantryProductService.removeProductsFromPantry(pantryId, productIds, authentication.getName());
@@ -66,7 +69,7 @@ public class PantryProductController {
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping
     public ResponseEntity<Void> modifyPantryProduct(
-            @PathVariable(value = "pantryId") @Valid @Min(value = 1, message = "Pantry id must be greater than 0") long pantryId,
+            @PathVariable(value = "pantryId") @Valid @Positive(message = "Pantry id must be greater than 0") long pantryId,
             @Valid @RequestBody PantryProductDTO pantryProductDTO,
             Authentication authentication
     ) {
@@ -77,9 +80,9 @@ public class PantryProductController {
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(PANTRY_PRODUCT_URL)
     public ResponseEntity<PantryProductDTO> reservePantryProduct(
-            @PathVariable(value = "pantryId") @Valid @Min(value = 1, message = "Pantry id must be greater than 0") long pantryId,
+            @PathVariable(value = "pantryId") @Valid @Positive(message = "Pantry id must be greater than 0") long pantryId,
             @PathVariable(value = "productId") @Valid
-            @Min(value = 1, message = "Pantry product id must be greater than 0") long pantryProductId,
+            @Positive(message = "Pantry product id must be greater than 0") long pantryProductId,
             @RequestBody @Valid ReservePantryProductRequest reserveBody,
             Authentication authentication
     ) {

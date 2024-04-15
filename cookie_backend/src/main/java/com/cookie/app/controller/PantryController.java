@@ -9,6 +9,7 @@ import com.cookie.app.service.PantryService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -38,7 +39,7 @@ public class PantryController {
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping(PANTRY_ID_URL)
     public ResponseEntity<GetPantryResponse> getPantry(
-            @PathVariable("pantryId") @Valid @Min(value = 1, message = "Id must be greater than 0") long pantryId,
+            @PathVariable("pantryId") @Valid @Positive(message = "Id must be greater than 0") long pantryId,
             Authentication authentication
     ) {
         return ResponseEntity.ok(this.pantryService.getPantry(pantryId, authentication.getName()));
@@ -53,7 +54,7 @@ public class PantryController {
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping(PANTRY_ID_URL)
     public ResponseEntity<DeletePantryResponse> deletePantry(
-            @PathVariable("pantryId") @Valid @Min(value = 1, message = "Id must be greater than 0") long pantryId,
+            @PathVariable("pantryId") @Valid @Positive(message = "Id must be greater than 0") long pantryId,
             Authentication authentication
     ) {
         log.info("User with email={} is deleting pantry with id={}", authentication.getName(), pantryId);
@@ -63,7 +64,7 @@ public class PantryController {
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(PANTRY_ID_URL)
     public ResponseEntity<GetPantryResponse> updatePantry(
-            @PathVariable("pantryId") @Valid @Min(value = 1, message = "Id must be greater than 0") long pantryId,
+            @PathVariable("pantryId") @Valid @Positive(message = "Id must be greater than 0") long pantryId,
             @RequestBody @Valid UpdatePantryRequest request,
             Authentication authentication
     ) {

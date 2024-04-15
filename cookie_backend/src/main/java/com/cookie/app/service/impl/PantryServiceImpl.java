@@ -58,13 +58,7 @@ public class PantryServiceImpl extends AbstractPantryService implements PantrySe
 
         this.pantryRepository.save(pantry);
 
-        return new GetPantryResponse(
-                pantry.getId(),
-                pantry.getPantryName(),
-                pantry.getGroup().getId(),
-                pantry.getGroup().getGroupName(),
-                super.getAuthorityDTOsForSpecificGroup(user, pantry.getGroup())
-        );
+        return createGetPantryResponse(pantry, user);
     }
 
     @Override
@@ -78,13 +72,7 @@ public class PantryServiceImpl extends AbstractPantryService implements PantrySe
 
         Pantry pantry = pantryOptional.get();
 
-        return new GetPantryResponse(
-                pantry.getId(),
-                pantry.getPantryName(),
-                pantry.getGroup().getId(),
-                pantry.getGroup().getGroupName(),
-                super.getAuthorityDTOsForSpecificGroup(user, pantry.getGroup())
-        );
+        return createGetPantryResponse(pantry, user);
     }
 
     @Override
@@ -117,6 +105,10 @@ public class PantryServiceImpl extends AbstractPantryService implements PantrySe
         pantry.setPantryName(request.pantryName());
         this.pantryRepository.save(pantry);
 
+        return createGetPantryResponse(pantry, user);
+    }
+
+    private GetPantryResponse createGetPantryResponse(Pantry pantry, User user) {
         return new GetPantryResponse(
                 pantry.getId(),
                 pantry.getPantryName(),

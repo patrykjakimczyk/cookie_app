@@ -291,7 +291,7 @@ class PantryServiceImplTest {
         authority.setAuthorityName(AuthorityEnum.MODIFY);
         UpdatePantryRequest request = new UpdatePantryRequest("newPantryName");
 
-        doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
+        doReturn(Optional.of(user)).when(userRepository).findByEmail(eq(email));
 
         assertThrows(UserPerformedForbiddenActionException.class, () -> service.updatePantry(id, request, email));
         verify(pantryRepository, times(0)).save(any(Pantry.class));
