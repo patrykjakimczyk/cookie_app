@@ -222,7 +222,7 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
         );
 
         this.shoppingListProductRepository.deleteAll(purchasedProducts);
-        this.pantryProductService.addProductsToPantryFromList(pantry, newPantryProducts, user);
+        this.pantryProductService.addProductsToPantryFromList(pantry, newPantryProducts);
     }
 
     @Override

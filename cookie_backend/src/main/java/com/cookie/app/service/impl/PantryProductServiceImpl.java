@@ -70,7 +70,7 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
     }
 
     @Override
-    public void addProductsToPantryFromList(Pantry pantry, List<PantryProductDTO> pantryProductDTOS, User user) {
+    public void addProductsToPantryFromList(Pantry pantry, List<PantryProductDTO> pantryProductDTOS) {
         addProductsToPantry(pantryProductDTOS, pantry);
     }
 
@@ -103,12 +103,19 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
                 )
                 .build();
 
-        if (!isAnyProductNotOnList(pantry.getPantryProducts(), List.of(productToModify))) {
-            log.info("User with email={} tried to modify product from different pantry", userEmail);
-            throw new UserPerformedForbiddenActionException("Cannot remove products from different pantry");
+        if (!super.isAnyProductNotOnList(pantry.getPantryProducts(), List.of(productToModify))) {
+            log.info("User with email={} tried to modify product which is not present in pantry", userEmail);
+            throw new UserPerformedForbiddenActionException("Cannot modify product which is not present in pantry");
         }
 
-        this.pantryProductRepository.save(mapToPantryProduct(pantryProduct, pantry, productToModify.getProduct()));
+        PantryProduct modifiedProduct = findPantryProductInPantry(pantry, pantryProduct, productToModify.getProduct());
+
+        if (modifiedProduct == null) {
+            log.info("User with email={} tried to modify product which is not present in pantry", userEmail);
+            throw new NullPointerException("Cannot modify product which is not present in pantry");
+        }
+
+        this.pantryProductRepository.save(modifiedProduct);
     }
 
     @Override
@@ -284,7 +291,10 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
             }
 
             PantryProduct pantryProduct = mapToPantryProduct(productDTO, pantry, null);
-            pantry.getPantryProducts().add(pantryProduct);
+
+            if (pantryProduct.getId() == 0L) {
+                pantry.getPantryProducts().add(pantryProduct);
+            }
             productsToAdd.add(pantryProduct);
         });
 

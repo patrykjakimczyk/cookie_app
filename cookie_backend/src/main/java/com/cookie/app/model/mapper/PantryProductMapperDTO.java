@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import java.util.function.Function;
 
 @RequiredArgsConstructor
-@NoArgsConstructor(force = true)
 @Service
 public class PantryProductMapperDTO implements Function<PantryProduct, PantryProductDTO> {
     private final ProductMapperDTO productMapperDTO;

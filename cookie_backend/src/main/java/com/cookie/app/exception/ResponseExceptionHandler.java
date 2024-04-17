@@ -44,6 +44,12 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<ExceptionMessage> nullPointerException(NotUniqueValueException exception) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ExceptionMessage("Unindentified problem occured during request processing", Instant.now()));
+    }
+
     @ExceptionHandler(NotUniqueValueException.class)
     public ResponseEntity<ExceptionMessage> notUniqueSqlException(NotUniqueValueException exception) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
