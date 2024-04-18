@@ -174,7 +174,6 @@ class PantryProductServiceImplTest {
     @Test
     void test_addProductsToPantrySuccessfulAsNewProducts() {
         authority.setAuthorityName(AuthorityEnum.ADD);
-        pantry.setPantryProducts(new ArrayList<>());
         final ProductDTO productDTO = new ProductDTO(0L, "productName2", Category.CEREAL);
         final PantryProductDTO pantryProductDTO = new PantryProductDTO(0L, productDTO, null, null, 100, Unit.GRAMS, 0, null);
         final ProductDTO productDTO2 = new ProductDTO(0L, "productName2", Category.CEREAL);
@@ -203,7 +202,7 @@ class PantryProductServiceImplTest {
         assertEquals(productDTO2.category(), addedProducts.get(1).getProduct().getCategory());
         assertEquals(pantryProductDTO2.quantity(), addedProducts.get(1).getQuantity());
         assertEquals(pantryProductDTO2.unit(), addedProducts.get(1).getUnit());
-        assertEquals(2, pantry.getPantryProducts().size());
+        assertEquals(3, pantry.getPantryProducts().size());
         assertTrue(pantry.getPantryProducts().contains(addedProducts.get(0)));
         assertTrue(pantry.getPantryProducts().contains(addedProducts.get(1)));
     }
@@ -211,6 +210,7 @@ class PantryProductServiceImplTest {
     @Test
     void test_addProductsToPantrySuccessfulExistingProducts() {
         authority.setAuthorityName(AuthorityEnum.ADD);
+        pantry.setPantryProducts(new ArrayList<>());
         final ProductDTO productDTO = new ProductDTO(0L, "productName", Category.CEREAL);
         final PantryProductDTO pantryProductDTO = new PantryProductDTO(0L, productDTO, null, null, 100, Unit.GRAMS, 0, null);
         final ProductDTO productDTO2 = new ProductDTO(0L, "productName", Category.CEREAL);
@@ -238,7 +238,7 @@ class PantryProductServiceImplTest {
         assertEquals(productDTO2.category(), addedProducts.get(1).getProduct().getCategory());
         assertEquals(pantryProductDTO2.quantity(), addedProducts.get(1).getQuantity());
         assertEquals(pantryProductDTO2.unit(), addedProducts.get(1).getUnit());
-        assertEquals(3, pantry.getPantryProducts().size());
+        assertEquals(2, pantry.getPantryProducts().size());
         assertTrue(pantry.getPantryProducts().contains(addedProducts.get(0)));
         assertTrue(pantry.getPantryProducts().contains(addedProducts.get(1)));
     }

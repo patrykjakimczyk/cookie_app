@@ -205,11 +205,7 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
 
     private PantryProduct mapToPantryProduct(PantryProductDTO pantryProductDTO, Pantry pantry) {
         Product product = super.checkIfProductExists(pantryProductDTO.product());
-        PantryProduct foundPantryProduct = null;
-        // if product id > 0 then there is a chance that we have that product in our pantry, because product is in database
-        if (product.getId() > 0) {
-            foundPantryProduct = findPantryProductInPantry(pantry, pantryProductDTO, product);
-        }
+        PantryProduct foundPantryProduct = findPantryProductInPantry(pantry, pantryProductDTO, product);
 
         if (foundPantryProduct != null) {
             return foundPantryProduct;
