@@ -67,16 +67,21 @@ export class PantriesService {
   getPantryProducts(
     pantryId: number,
     page: number,
-    filterValue: string,
-    sortColName: string,
-    sortDirection: string
+    filterValue: string | null,
+    sortColName: string | null,
+    sortDirection: string | null
   ): Observable<any> {
     let params = new HttpParams();
 
-    params = params
-      .append('filterValue', filterValue)
-      .append('sortColName', sortColName)
-      .append('sortDirection', sortDirection);
+    if (filterValue) {
+      params = params.append('filterValue', filterValue);
+    }
+    if (sortColName) {
+      params = params.append('sortColName', sortColName);
+    }
+    if (sortDirection) {
+      params = params.append('sortDirection', sortDirection);
+    }
 
     return this.http.get<any>(
       `${this.url}${this.pantry_path}/${pantryId}${this.pantry_products_path}/${page}`,

@@ -17,10 +17,10 @@ public interface PantryProductService {
             String sortDirection,
             String userEmail
     );
-    void addProductsToPantry(long pantryId, List<PantryProductDTO> pantryProductDTOS, String userEmail);
-    void addProductsToPantryFromList(Pantry pantry, List<PantryProductDTO> pantryProductDTOS);
-    void removeProductsFromPantry(long pantryId, List<Long> pantryProductIds, String userEmail);
-    void modifyPantryProduct(long pantryId, PantryProductDTO pantryProduct, String userEmail);
+    void addProductsToPantry(long pantryId, List<PantryProductDTO> pantryProducts, String userEmail);
+    void addProductsToPantryFromList(Pantry pantry, List<PantryProductDTO> pantryProducts);
+    void removeProductsFromPantry(long pantryId, List<Long> pantryProductsIds, String userEmail);
+    void modifyPantryProduct(long pantryId, PantryProductDTO pantryProductsToModify, String userEmail);
     PantryProductDTO reservePantryProduct(long pantryId, long pantryProductId, int reserved, String userEmail);
     List<RecipeProduct> reservePantryProductsFromRecipe(long pantryId, User user, List<RecipeProduct> recipeProducts);
     List<RecipeProduct> getRecipeProductsNotInPantry(Pantry pantry, List<RecipeProduct> recipeProducts);

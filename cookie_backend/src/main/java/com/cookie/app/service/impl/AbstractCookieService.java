@@ -70,7 +70,7 @@ public abstract class AbstractCookieService {
         Sort idSort = Sort.by(Sort.Direction.DESC, "id");
         Sort sort = null;
 
-        if (StringUtils.isBlank(sortColName)) {
+        if (sortColName == null || StringUtils.isBlank(sortColName.trim())) {
             return pageRequest.withSort(idSort);
         }
 

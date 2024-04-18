@@ -1,17 +1,16 @@
 package com.cookie.app.controller;
 
+import com.cookie.app.model.RegexConstants;
 import com.cookie.app.model.dto.PantryProductDTO;
 import com.cookie.app.model.request.ReservePantryProductRequest;
 import com.cookie.app.service.PantryProductService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/pantry/{pantryId}/products")
+@RequestMapping(value = "/api/v1/pantry/{pantryId}/products", produces = { MediaType.APPLICATION_JSON_VALUE })
 @RestController
 public class PantryProductController {
     private static final String GET_PANTRY_PRODUCTS_URL = "/{page}";
@@ -30,10 +29,19 @@ public class PantryProductController {
     @GetMapping(GET_PANTRY_PRODUCTS_URL)
     public ResponseEntity<Page<PantryProductDTO>> getPantryProducts(
             @PathVariable(value = "pantryId") @Valid @Positive(message = "Pantry id must be greater than 0") long pantryId,
-            @PathVariable(value = "page") @Valid @PositiveOrZero(message = "Page nr must be at least 0") int page,
-            @RequestParam String filterValue,
-            @RequestParam String sortColName,
-            @RequestParam String sortDirection,
+            @PathVariable(value = "page") @Valid @Positive(message = "Page nr must be be greater than 0") int page,
+            @RequestParam(required = false) @Valid @Pattern(
+                    regexp = RegexConstants.FILTER_VALUE_REGEX,
+                    message = "Filter value can only contains letters, digits, whitespaces, dashes and its length must be greater than 0"
+            ) String filterValue,
+            @RequestParam(required = false) @Valid @Pattern(
+                    regexp = RegexConstants.SORT_COL_REGEX,
+                    message = "Filter value can only contains letters, underscores and its length must be greater than 0"
+            ) String sortColName,
+            @RequestParam(required = false) @Valid @Pattern(
+                    regexp = RegexConstants.SORT_DIRECTION_REGEX,
+                    message = "Sort direction must be 'DESC' or 'ASC'"
+            ) String sortDirection,
             Authentication authentication
     ) {
         return ResponseEntity

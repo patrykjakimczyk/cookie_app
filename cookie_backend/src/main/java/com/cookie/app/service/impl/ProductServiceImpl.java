@@ -16,12 +16,15 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class ProductServiceImpl implements ProductService {
+    private static final int PAGE_NUMBER = 0;
+    private static final int PAGE_SIZE = 10;
+
     private final ProductRepository productRepository;
     private final ProductMapperDTO productDTOMapper;
 
     @Override
     public Page<ProductDTO> getProductsWithFilter(String filterValue) {
-        PageRequest pageRequest = PageRequest.of(0, 10);
+        PageRequest pageRequest = PageRequest.of(PAGE_NUMBER, PAGE_SIZE);
 
         Page<Product> productsPage = this.productRepository.findProductsWithFilter(filterValue, pageRequest);
         return new PageImpl<>(

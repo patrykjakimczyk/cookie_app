@@ -244,15 +244,15 @@ export class PantryProductsListComponent {
   }
 
   private getPantryProducts() {
-    const filterValue = this.searchForm.controls.filterValue.value!;
-    const sortColName = this.searchForm.controls.sortColName.value!;
-    const SortDirection = this.searchForm.controls.sortDirection.value!;
+    const filterValue = this.searchForm.controls.filterValue.value;
+    const sortColName = this.searchForm.controls.sortColName.value;
+    const SortDirection = this.searchForm.controls.sortDirection.value;
 
     if (this.pantry && this.pantry.pantryId && this.pantry.pantryName) {
       this.pantriesService
         .getPantryProducts(
           this.pantry.pantryId,
-          this.page,
+          this.page + 1,
           filterValue,
           sortColName,
           SortDirection

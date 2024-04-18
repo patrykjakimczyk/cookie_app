@@ -21,45 +21,40 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-
 @ExtendWith(MockitoExtension.class)
-class LoginControllerTest {
-    final String username = "username";
-    final String password = "password";
+class LoginControllerTest extends AbstractControllerTest {
     final String email = "email";
 
     @Mock
     LoginService loginService;
     @InjectMocks
-    LoginController loginController;
+    LoginController controller;
 
     @Test
     void test_loginWithAuthenticatedUser() {
-        final Authentication authentication = new UsernamePasswordAuthenticationToken(username, password, Collections.emptyList());
 
         when(loginService.getLoginInfo(Mockito.anyString())).thenReturn(new LoginResponse(username));
 
-        ResponseEntity<LoginResponse> response = this.loginController.login(authentication);
+        ResponseEntity<LoginResponse> response = this.controller.login(authentication);
         assertEquals(username, response.getBody().username());
-        assertSame(HttpStatus.OK, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
     void test_loginUserWasNotFoundAfterAuthentication() {
-        Authentication authentication = new UsernamePasswordAuthenticationToken(username, password, Collections.emptyList());
 
         when(loginService.getLoginInfo(Mockito.anyString())).thenThrow(new UserWasNotFoundAfterAuthException("User not found after authorization"));
 
-        assertThrows(UserWasNotFoundAfterAuthException.class, () -> this.loginController.login(authentication));
+        assertThrows(UserWasNotFoundAfterAuthException.class, () -> this.controller.login(authentication));
     }
 
     @Test
     void test_registerUserSuccessfully() {
-        RegistrationRequest request = new RegistrationRequest(username, email, password, null, null);
+        final RegistrationRequest request = new RegistrationRequest(username, email, password, null, null);
 
         when(loginService.userRegistration(Mockito.any(RegistrationRequest.class)))
                 .thenReturn(new RegistrationResponse(Collections.emptyList()));
-        ResponseEntity<RegistrationResponse> response = this.loginController.registerUser(request);
+        ResponseEntity<RegistrationResponse> response = this.controller.registerUser(request);
 
         assertEquals(0, response.getBody().duplicates().size());
         assertSame(HttpStatus.CREATED, response.getStatusCode());
@@ -67,12 +62,12 @@ class LoginControllerTest {
 
     @Test
     void test_registerUserDuplicates() {
-        RegistrationRequest request = new RegistrationRequest(username, email, password, null, null);
-        String duplicate = username;
+        final RegistrationRequest request = new RegistrationRequest(username, email, password, null, null);
+        final String duplicate = username;
 
         when(loginService.userRegistration(Mockito.any(RegistrationRequest.class)))
                 .thenReturn(new RegistrationResponse(List.of(duplicate)));
-        ResponseEntity<RegistrationResponse> response = this.loginController.registerUser(request);
+        ResponseEntity<RegistrationResponse> response = this.controller.registerUser(request);
 
         assertEquals(1, response.getBody().duplicates().size());
         assertEquals(duplicate, response.getBody().duplicates().get(0));

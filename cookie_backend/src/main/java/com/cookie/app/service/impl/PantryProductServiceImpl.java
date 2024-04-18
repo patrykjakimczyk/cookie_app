@@ -50,9 +50,9 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
             String userEmail
     ) {
         Pantry pantry = super.getPantryIfUserHasAuthority(pantryId, userEmail, null);
+        PageRequest pageRequest = super.createPageRequest(page - 1, sortColName, sortDirection);
 
-        PageRequest pageRequest = super.createPageRequest(page, sortColName, sortDirection);
-        if (!StringUtils.isBlank(filterValue)) {
+        if (filterValue != null && !StringUtils.isBlank(filterValue.trim())) {
             return this.pantryProductRepository
                     .findProductsInPantryWithFilter(pantry.getId(), filterValue, pageRequest)
                     .map(pantryProductMapper);
@@ -63,56 +63,47 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
     }
 
     @Override
-    public void addProductsToPantry(long pantryId, List<PantryProductDTO> pantryProductDTOS, String userEmail) {
+    public void addProductsToPantry(long pantryId, List<PantryProductDTO> pantryProducts, String userEmail) {
         Pantry pantry = super.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.ADD);
 
-        addProductsToPantry(pantryProductDTOS, pantry);
+        addProductsToPantry(pantryProducts, pantry);
     }
 
     @Override
-    public void addProductsToPantryFromList(Pantry pantry, List<PantryProductDTO> pantryProductDTOS) {
-        addProductsToPantry(pantryProductDTOS, pantry);
+    public void addProductsToPantryFromList(Pantry pantry, List<PantryProductDTO> pantryProducts) {
+        addProductsToPantry(pantryProducts, pantry);
     }
 
     @Override
-    public void removeProductsFromPantry(long pantryId, List<Long> pantryProductIds, String userEmail) {
+    public void removeProductsFromPantry(long pantryId, List<Long> pantryProductsIds, String userEmail) {
         Pantry pantry = super.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.MODIFY);
 
-        if (isAnyProductNotOnList(pantry, pantryProductIds)) {
+        if (isAnyProductNotOnList(pantry, pantryProductsIds)) {
             log.info("User with email={} tried to remove products from different pantry", userEmail);
             throw new UserPerformedForbiddenActionException("Cannot remove products from different pantry");
         }
 
-        this.pantryProductRepository.deleteByIdIn(pantryProductIds);
+        this.pantryProductRepository.deleteByIdIn(pantryProductsIds);
     }
 
     @Override
-    public void modifyPantryProduct(long pantryId, PantryProductDTO pantryProduct, String userEmail) {
+    public void modifyPantryProduct(long pantryId, PantryProductDTO pantryProductToModify, String userEmail) {
         Pantry pantry = super.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.MODIFY);
+        //If this method doesn't throw exception, it means that pantryProduct exists in the pantry
+        getPantryProductById(pantryId, pantryProductToModify.id(), userEmail, "modify");
 
-        PantryProduct productToModify = PantryProduct
+        Product productToModify = Product
                 .builder()
-                .id(pantryProduct.id())
-                .product(
-                        Product
-                                .builder()
-                                .id(pantryProduct.product().productId())
-                                .productName(pantryProduct.product().productName())
-                                .category(pantryProduct.product().category())
-                                .build()
-                )
+                .id(pantryProductToModify.product().productId())
+                .productName(pantryProductToModify.product().productName())
+                .category(pantryProductToModify.product().category())
                 .build();
 
-        if (!super.isAnyProductNotOnList(pantry.getPantryProducts(), List.of(productToModify))) {
-            log.info("User with email={} tried to modify product which is not present in pantry", userEmail);
-            throw new UserPerformedForbiddenActionException("Cannot modify product which is not present in pantry");
-        }
-
-        PantryProduct modifiedProduct = findPantryProductInPantry(pantry, pantryProduct, productToModify.getProduct());
+        PantryProduct modifiedProduct = findPantryProductInPantry(pantry, pantryProductToModify, productToModify);
 
         if (modifiedProduct == null) {
-            log.info("User with email={} tried to modify product which is not present in pantry", userEmail);
-            throw new NullPointerException("Cannot modify product which is not present in pantry");
+            log.info("User with email={} tried to modify invalid pantry product", userEmail);
+            throw new UserPerformedForbiddenActionException("Cannot modify invalid pantry product");
         }
 
         this.pantryProductRepository.save(modifiedProduct);
@@ -122,17 +113,7 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
     public PantryProductDTO reservePantryProduct(long pantryId, long pantryProductId, int reserved, String userEmail) {
         //if this method doesn't throw any exception, user can access this pantry
         super.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.RESERVE);
-
-        Optional<PantryProduct> pantryProductOptional = this.pantryProductRepository.findById(pantryProductId);
-        PantryProduct pantryProduct = pantryProductOptional.orElseThrow(() -> {
-            log.info("User with email={} tried to reserve product which does not exists", userEmail);
-            return new UserPerformedForbiddenActionException("Pantry product was not found");
-        });
-
-        if (pantryProduct.getPantry().getId() != pantryId) {
-            log.info("User with email={} tried to reserve product from different pantry", userEmail);
-            throw new UserPerformedForbiddenActionException("Cannot reserve products from different pantry");
-        }
+        PantryProduct pantryProduct = getPantryProductById(pantryId, pantryProductId, userEmail, "reserve");
 
         if (reserved > pantryProduct.getQuantity() || (reserved * -1) > pantryProduct.getReserved()) {
             return null;
@@ -186,14 +167,24 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
 
             if (optionalPantryProduct.isEmpty()) {
                 missingProducts.add(recipeProduct);
-                continue;
             }
-
-            PantryProduct pantryProduct = optionalPantryProduct.get();
-            pantryProduct.setQuantity(pantryProduct.getQuantity() - recipeProduct.getQuantity());
         }
 
         return missingProducts;
+    }
+
+    private PantryProduct getPantryProductById(long pantryId, long pantryProductId, String userEmail, String action) {
+        PantryProduct pantryProduct = this.pantryProductRepository.findById(pantryProductId).orElseThrow(() -> {
+            log.info("User with email={} tried to {} product which does not exists", userEmail, action);
+            return new UserPerformedForbiddenActionException("Pantry product was not found");
+        });
+
+        if (pantryProduct.getPantry().getId() != pantryId) {
+            log.info("User with email={} tried to {} product from different pantry", userEmail, action);
+            throw new UserPerformedForbiddenActionException(String.format("Cannot %s products from different pantry", action));
+        }
+
+        return pantryProduct;
     }
 
     private boolean areRecipeAndPantryProductsEqual(RecipeProduct recipeProduct, PantryProduct pantryProduct) {
@@ -212,8 +203,8 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
         return super.isAnyProductNotOnList(pantryProductsIds, pantryProductIds);
     }
 
-    private PantryProduct mapToPantryProduct(PantryProductDTO pantryProductDTO, Pantry pantry, Product existingProduct) {
-        Product product = existingProduct != null ? existingProduct : super.checkIfProductExists(pantryProductDTO.product());
+    private PantryProduct mapToPantryProduct(PantryProductDTO pantryProductDTO, Pantry pantry) {
+        Product product = super.checkIfProductExists(pantryProductDTO.product());
         PantryProduct foundPantryProduct = null;
         // if product id > 0 then there is a chance that we have that product in our pantry, because product is in database
         if (product.getId() > 0) {
@@ -281,7 +272,7 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
     private void addProductsToPantry(List<PantryProductDTO> pantryProductDTOS, Pantry pantry) {
         List<PantryProduct> productsToAdd = new ArrayList<>();
 
-        pantryProductDTOS.forEach(productDTO -> {
+        for (PantryProductDTO productDTO : pantryProductDTOS) {
             if (productDTO.id() > 0) {
                 throw new ValidationException(
                         "Pantry product id must be 0 while inserting it to pantry");
@@ -290,13 +281,13 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
                         "Pantry product reserved quantity must be 0 while inserting it to pantry");
             }
 
-            PantryProduct pantryProduct = mapToPantryProduct(productDTO, pantry, null);
+            PantryProduct pantryProduct = mapToPantryProduct(productDTO, pantry);
 
             if (pantryProduct.getId() == 0L) {
                 pantry.getPantryProducts().add(pantryProduct);
             }
             productsToAdd.add(pantryProduct);
-        });
+        }
 
         this.pantryProductRepository.saveAll(productsToAdd);
     }

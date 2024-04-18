@@ -247,7 +247,7 @@ class PantryServiceImplTest {
 
     @Test
     void test_updatePantrySuccessful() {
-        UpdatePantryRequest request = new UpdatePantryRequest("newPantryName");
+        final UpdatePantryRequest request = new UpdatePantryRequest("newPantryName");
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
@@ -268,7 +268,7 @@ class PantryServiceImplTest {
 
     @Test
     void test_updatePantryUserNotFound() {
-        UpdatePantryRequest request = new UpdatePantryRequest("newPantryName");
+        final UpdatePantryRequest request = new UpdatePantryRequest("newPantryName");
 
         doReturn(Optional.empty()).when(userRepository).findByEmail(email);
 
@@ -278,7 +278,7 @@ class PantryServiceImplTest {
 
     @Test
     void test_updatePantryPantryNotFound() {
-        UpdatePantryRequest request = new UpdatePantryRequest("newPantryName");
+        final UpdatePantryRequest request = new UpdatePantryRequest("newPantryName");
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
@@ -289,7 +289,7 @@ class PantryServiceImplTest {
     @Test
     void test_updatePantryUserHasNotRequiredAuthority() {
         authority.setAuthorityName(AuthorityEnum.MODIFY);
-        UpdatePantryRequest request = new UpdatePantryRequest("newPantryName");
+        final UpdatePantryRequest request = new UpdatePantryRequest("newPantryName");
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(eq(email));
 

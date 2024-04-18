@@ -13,13 +13,14 @@ import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/api/v1/pantry")
+@RequestMapping(value = "/api/v1/pantry", produces = { MediaType.APPLICATION_JSON_VALUE })
 @RestController
 public class PantryController {
     private static final String PANTRY_ID_URL = "/{pantryId}";

@@ -12,21 +12,21 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/api/v1")
+@RequestMapping(value = "/api/v1/shopping-lists", produces = { MediaType.APPLICATION_JSON_VALUE })
 @RestController
 public class ShoppingListController {
-    private static final String SHOPPING_LIST_URL = "/shopping-lists";
-    private static final String SHOPPING_LIST_ID_URL = "/shopping-lists/{id}";
+    private static final String SHOPPING_LIST_ID_URL = "/{id}";
     private final ShoppingListService shoppingListService;
 
     @SecurityRequirement(name = "bearerAuth")
-    @PostMapping(SHOPPING_LIST_URL)
+    @PostMapping
     public ResponseEntity<GetShoppingListResponse> createShoppingList(
             @Valid @RequestBody CreateShoppingListRequest request,
             Authentication authentication
@@ -47,7 +47,7 @@ public class ShoppingListController {
     }
 
     @SecurityRequirement(name = "bearerAuth")
-    @GetMapping(SHOPPING_LIST_URL)
+    @GetMapping
     public ResponseEntity<GetUserShoppingListsResponse> getAllUserShoppingLists(
             Authentication authentication
     ) {
