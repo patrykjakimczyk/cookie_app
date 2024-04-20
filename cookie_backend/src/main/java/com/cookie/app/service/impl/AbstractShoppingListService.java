@@ -1,7 +1,6 @@
 package com.cookie.app.service.impl;
 
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
-import com.cookie.app.model.entity.Group;
 import com.cookie.app.model.entity.ShoppingList;
 import com.cookie.app.model.entity.User;
 import com.cookie.app.model.enums.AuthorityEnum;
@@ -9,7 +8,6 @@ import com.cookie.app.model.mapper.AuthorityMapperDTO;
 import com.cookie.app.repository.ProductRepository;
 import com.cookie.app.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
@@ -26,7 +24,7 @@ public abstract class AbstractShoppingListService extends AbstractCookieService 
         ShoppingList shoppingList = this.findShoppingListInUserGroups(shoppingListId, user).orElseThrow(
                 () -> {
                     log.info("User: {} tried to access shopping list without being a member of the shopping list's group", user.getEmail());
-                    return new UserPerformedForbiddenActionException("You cannot access the shopping list because you are not member of it");
+                    return new UserPerformedForbiddenActionException("You cannot access the shopping list because you are not member of its group");
                 }
         );
 

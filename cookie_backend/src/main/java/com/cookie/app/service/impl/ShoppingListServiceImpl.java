@@ -2,6 +2,7 @@ package com.cookie.app.service.impl;
 
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.model.entity.Group;
+import com.cookie.app.model.entity.Pantry;
 import com.cookie.app.model.entity.ShoppingList;
 import com.cookie.app.model.entity.User;
 import com.cookie.app.model.enums.AuthorityEnum;
@@ -10,6 +11,7 @@ import com.cookie.app.model.mapper.ShoppingListMapperDTO;
 import com.cookie.app.model.request.CreateShoppingListRequest;
 import com.cookie.app.model.request.UpdateShoppingListRequest;
 import com.cookie.app.model.response.DeleteShoppingListResponse;
+import com.cookie.app.model.response.GetPantryResponse;
 import com.cookie.app.model.response.GetShoppingListResponse;
 import com.cookie.app.model.response.GetUserShoppingListsResponse;
 import com.cookie.app.repository.ProductRepository;
@@ -44,8 +46,7 @@ public class ShoppingListServiceImpl extends AbstractShoppingListService impleme
     @Override
     public GetShoppingListResponse createShoppingList(CreateShoppingListRequest request, String userEmail) {
         User user = super.getUserByEmail(userEmail);
-        Optional<Group> userGroupOptional = super.findUserGroupById(user, request.groupId());
-        Group userGroup = userGroupOptional.orElseThrow(
+        Group userGroup = super.findUserGroupById(user, request.groupId()).orElseThrow(
                 () -> new UserPerformedForbiddenActionException("You tried to create shopping list for non existing group")
         );
 
@@ -63,43 +64,32 @@ public class ShoppingListServiceImpl extends AbstractShoppingListService impleme
 
         this.shoppingListRepository.save(shoppingList);
 
-
         log.info("User with email {} created shopping list with id {} in group with id {}",
                 userEmail,
                 shoppingList.getId(),
                 request.groupId()
         );
 
-        return new GetShoppingListResponse(
-                shoppingList.getId(),
-                shoppingList.getListName(),
-                this.getAuthorityDTOsForSpecificGroup(user, userGroup),
-                shoppingList.getGroup().getPantry() != null
-        );
+        return createGetShoppingLisstResponse(shoppingList, user);
     }
 
     @Override
     public GetShoppingListResponse getShoppingList(long shoppingListId, String userEmail) {
-        User user = this.getUserByEmail(userEmail);
-        Optional<ShoppingList> listOptional = this.findShoppingListInUserGroups(shoppingListId, user);
+        User user = super.getUserByEmail(userEmail);
+        Optional<ShoppingList> listOptional = super.findShoppingListInUserGroups(shoppingListId, user);
 
         if (listOptional.isEmpty()) {
-            return new GetShoppingListResponse(0L, "", Collections.emptySet(), false);
+            return new GetShoppingListResponse(0L, null, null, false);
         }
 
         ShoppingList shoppingList = listOptional.get();
 
-        return new GetShoppingListResponse(
-                shoppingList.getId(),
-                shoppingList.getListName(),
-                this.getAuthorityDTOsForSpecificGroup(user, shoppingList.getGroup()),
-                shoppingList.getGroup().getPantry() != null
-        );
+        return createGetShoppingLisstResponse(shoppingList, user);
     }
 
     @Override
     public GetUserShoppingListsResponse getUserShoppingLists(String userEmail) {
-        User user = this.getUserByEmail(userEmail);
+        User user = super.getUserByEmail(userEmail);
 
         return new GetUserShoppingListsResponse(
                 user.getGroups()
@@ -117,28 +107,32 @@ public class ShoppingListServiceImpl extends AbstractShoppingListService impleme
 
     @Override
     public DeleteShoppingListResponse deleteShoppingList(long shoppingListId, String userEmail) {
-        User user = this.getUserByEmail(userEmail);
-        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(shoppingListId, user, AuthorityEnum.MODIFY_SHOPPING_LIST);
+        User user = super.getUserByEmail(userEmail);
+        ShoppingList shoppingList = super.getShoppingListIfUserHasAuthority(
+                shoppingListId,
+                user,
+                AuthorityEnum.MODIFY_SHOPPING_LIST
+        );
 
         this.shoppingListRepository.delete(shoppingList);
+        log.info("User with email {} deleted shopping list with id {}", userEmail, shoppingList.getId());
 
-        log.info("User with email {} deleted shopping list with id {}",
-                userEmail,
-                shoppingList.getId());
         return new DeleteShoppingListResponse(shoppingList.getListName());
     }
 
     @Override
-    public GetShoppingListResponse modifyShoppingList(long shoppingListId, UpdateShoppingListRequest request, String userEmail) {
-        User user = this.getUserByEmail(userEmail);
-        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(shoppingListId, user, AuthorityEnum.MODIFY_SHOPPING_LIST);
+    public GetShoppingListResponse updateShoppingList(long shoppingListId, UpdateShoppingListRequest request, String userEmail) {
+        User user = super.getUserByEmail(userEmail);
+        ShoppingList shoppingList = super.getShoppingListIfUserHasAuthority(shoppingListId, user, AuthorityEnum.MODIFY_SHOPPING_LIST);
 
         shoppingList.setListName(request.shoppingListName());
         this.shoppingListRepository.save(shoppingList);
+        log.info("User with email {} modified shopping list with id {}", userEmail, shoppingList.getId());
 
-        log.info("User with email {} modified shopping list with id {}",
-                userEmail,
-                shoppingList.getId());
+        return createGetShoppingLisstResponse(shoppingList, user);
+    }
+
+    private GetShoppingListResponse createGetShoppingLisstResponse(ShoppingList shoppingList, User user) {
         return new GetShoppingListResponse(
                 shoppingList.getId(),
                 shoppingList.getListName(),

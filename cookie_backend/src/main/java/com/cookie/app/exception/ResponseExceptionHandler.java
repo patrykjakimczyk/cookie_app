@@ -44,12 +44,6 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(NotUniqueValueException.class)
-    public ResponseEntity<ExceptionMessage> notUniqueSqlException(NotUniqueValueException exception) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
-    }
-
     @ExceptionHandler(UserWasNotFoundAfterAuthException.class)
     public ResponseEntity<ExceptionMessage> userWasNotFoundAfterAuthException(UserWasNotFoundAfterAuthException exception) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

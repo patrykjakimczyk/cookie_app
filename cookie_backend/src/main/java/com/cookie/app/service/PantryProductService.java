@@ -1,5 +1,6 @@
 package com.cookie.app.service;
 
+import com.cookie.app.model.dto.PageResult;
 import com.cookie.app.model.dto.PantryProductDTO;
 import com.cookie.app.model.entity.Pantry;
 import com.cookie.app.model.entity.RecipeProduct;
@@ -9,7 +10,7 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public interface PantryProductService {
-    Page<PantryProductDTO> getPantryProducts(
+    PageResult<PantryProductDTO> getPantryProducts(
             long pantryId,
             int page,
             String filterValue,
@@ -20,7 +21,7 @@ public interface PantryProductService {
     void addProductsToPantry(long pantryId, List<PantryProductDTO> pantryProducts, String userEmail);
     void addProductsToPantryFromList(Pantry pantry, List<PantryProductDTO> pantryProducts);
     void removeProductsFromPantry(long pantryId, List<Long> pantryProductsIds, String userEmail);
-    void modifyPantryProduct(long pantryId, PantryProductDTO pantryProductsToModify, String userEmail);
+    void updatePantryProduct(long pantryId, PantryProductDTO pantryProductsToModify, String userEmail);
     PantryProductDTO reservePantryProduct(long pantryId, long pantryProductId, int reserved, String userEmail);
     List<RecipeProduct> reservePantryProductsFromRecipe(long pantryId, User user, List<RecipeProduct> recipeProducts);
     List<RecipeProduct> getRecipeProductsNotInPantry(Pantry pantry, List<RecipeProduct> recipeProducts);

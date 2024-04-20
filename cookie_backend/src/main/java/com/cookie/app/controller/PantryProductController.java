@@ -1,6 +1,7 @@
 package com.cookie.app.controller;
 
 import com.cookie.app.model.RegexConstants;
+import com.cookie.app.model.dto.PageResult;
 import com.cookie.app.model.dto.PantryProductDTO;
 import com.cookie.app.model.request.ReservePantryProductRequest;
 import com.cookie.app.service.PantryProductService;
@@ -27,7 +28,7 @@ public class PantryProductController {
 
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping(GET_PANTRY_PRODUCTS_URL)
-    public ResponseEntity<Page<PantryProductDTO>> getPantryProducts(
+    public ResponseEntity<PageResult<PantryProductDTO>> getPantryProducts(
             @PathVariable(value = "pantryId") @Valid @Positive(message = "Pantry id must be greater than 0") long pantryId,
             @PathVariable(value = "page") @Valid @Positive(message = "Page nr must be be greater than 0") int page,
             @RequestParam(required = false) @Valid @Pattern(
@@ -76,12 +77,12 @@ public class PantryProductController {
 
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping
-    public ResponseEntity<Void> modifyPantryProduct(
+    public ResponseEntity<Void> updatePantryProduct(
             @PathVariable(value = "pantryId") @Valid @Positive(message = "Pantry id must be greater than 0") long pantryId,
             @Valid @RequestBody PantryProductDTO pantryProductDTO,
             Authentication authentication
     ) {
-        this.pantryProductService.modifyPantryProduct(pantryId, pantryProductDTO, authentication.getName());
+        this.pantryProductService.updatePantryProduct(pantryId, pantryProductDTO, authentication.getName());
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 

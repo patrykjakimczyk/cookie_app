@@ -40,8 +40,7 @@ public class PantryServiceImpl extends AbstractPantryService implements PantrySe
     @Override
     public GetPantryResponse createPantry(CreatePantryRequest request, String userEmail) {
         User user = super.getUserByEmail(userEmail);
-        Optional<Group> userGroupOptional = super.findUserGroupById(user, request.groupId());
-        Group userGroup = userGroupOptional.orElseThrow(
+        Group userGroup = super.findUserGroupById(user, request.groupId()).orElseThrow(
                 () -> new UserPerformedForbiddenActionException("You tried to create pantry for non existing group")
         );
 
@@ -57,6 +56,12 @@ public class PantryServiceImpl extends AbstractPantryService implements PantrySe
                 .build();
 
         this.pantryRepository.save(pantry);
+
+        log.info("User with email {} created pantry with id {} in group with id {}",
+                userEmail,
+                pantry.getId(),
+                request.groupId()
+        );
 
         return createGetPantryResponse(pantry, user);
     }
@@ -93,6 +98,7 @@ public class PantryServiceImpl extends AbstractPantryService implements PantrySe
         Pantry pantry = super.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.MODIFY_PANTRY);
 
         this.pantryRepository.delete(pantry);
+        log.info("User with email {} deleted pantry with id {}", userEmail, pantry.getId());
 
         return new DeletePantryResponse(pantry.getPantryName());
     }
@@ -104,6 +110,7 @@ public class PantryServiceImpl extends AbstractPantryService implements PantrySe
 
         pantry.setPantryName(request.pantryName());
         this.pantryRepository.save(pantry);
+        log.info("User with email {} modified pantry with id {}", userEmail, pantry.getId());
 
         return createGetPantryResponse(pantry, user);
     }

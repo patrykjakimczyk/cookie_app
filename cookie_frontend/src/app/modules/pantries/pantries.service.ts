@@ -6,6 +6,7 @@ import {
   CreatePantryRequest,
   UpdatePantryRequest,
 } from 'src/app/shared/model/requests/pantry-requests';
+import { PageResult } from 'src/app/shared/model/responses/page-result-response';
 import {
   DeletePantryResponse,
   GetPantryResponse,
@@ -70,7 +71,7 @@ export class PantriesService {
     filterValue: string | null,
     sortColName: string | null,
     sortDirection: string | null
-  ): Observable<any> {
+  ): Observable<PageResult<PantryProductDTO>> {
     let params = new HttpParams();
 
     if (filterValue) {
@@ -83,7 +84,7 @@ export class PantriesService {
       params = params.append('sortDirection', sortDirection);
     }
 
-    return this.http.get<any>(
+    return this.http.get<PageResult<PantryProductDTO>>(
       `${this.url}${this.pantry_path}/${pantryId}${this.pantry_products_path}/${page}`,
       { params: params }
     );

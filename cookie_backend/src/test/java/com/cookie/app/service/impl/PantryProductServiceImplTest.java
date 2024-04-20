@@ -2,6 +2,7 @@ package com.cookie.app.service.impl;
 
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.exception.ValidationException;
+import com.cookie.app.model.dto.PageResult;
 import com.cookie.app.model.dto.PantryProductDTO;
 import com.cookie.app.model.dto.ProductDTO;
 import com.cookie.app.model.entity.*;
@@ -111,13 +112,13 @@ class PantryProductServiceImplTest {
                 eq(id),
                 this.pageRequestArgCaptor.capture()
         );
-        Page<PantryProductDTO> result = this.service.getPantryProducts(id, 1, null, col, "ASC", email);
+        PageResult<PantryProductDTO> result = this.service.getPantryProducts(id, 1, null, col, "ASC", email);
         PageRequest pageRequest = this.pageRequestArgCaptor.getValue();
 
         verify(pantryProductRepository).findProductsInPantry(anyLong(), any(PageRequest.class));
-        assertEquals(pageResponse.getTotalElements(), result.getTotalElements());
-        assertEquals(pageResponse.getContent().get(0).getProduct().getProductName(), result.getContent().get(0).product().productName());
-        assertEquals(pageResponse.getContent().get(0).getId(), result.getContent().get(0).id());
+        assertEquals(pageResponse.getTotalElements(), result.totalElements());
+        assertEquals(pageResponse.getContent().get(0).getProduct().getProductName(), result.content().get(0).product().productName());
+        assertEquals(pageResponse.getContent().get(0).getId(), result.content().get(0).id());
         assertNotNull(pageRequest.getSort().getOrderFor(col));
         assertEquals(Sort.Direction.ASC, pageRequest.getSort().getOrderFor(col).getDirection());
         assertEquals(0, pageRequest.getPageNumber());
@@ -134,13 +135,13 @@ class PantryProductServiceImplTest {
                 this.pageRequestArgCaptor.capture()
         );
 
-        Page<PantryProductDTO> result = this.service.getPantryProducts(id, 1, filter, col, "DESC", email);
+        PageResult<PantryProductDTO> result = this.service.getPantryProducts(id, 1, filter, col, "DESC", email);
         PageRequest pageRequest = this.pageRequestArgCaptor.getValue();
 
         verify(pantryProductRepository).findProductsInPantryWithFilter(anyLong(), anyString(), any(PageRequest.class));
-        assertEquals(pageResponse.getTotalElements(), result.getTotalElements());
-        assertEquals(pageResponse.getContent().get(0).getProduct().getProductName(), result.getContent().get(0).product().productName());
-        assertEquals(pageResponse.getContent().get(0).getId(), result.getContent().get(0).id());
+        assertEquals(pageResponse.getTotalElements(), result.totalElements());
+        assertEquals(pageResponse.getContent().get(0).getProduct().getProductName(), result.content().get(0).product().productName());
+        assertEquals(pageResponse.getContent().get(0).getId(), result.content().get(0).id());
         assertNotNull(pageRequest.getSort().getOrderFor(idCol));
         assertEquals(Sort.Direction.DESC, pageRequest.getSort().getOrderFor(idCol).getDirection());
         assertNotNull(pageRequest.getSort().getOrderFor(col));
@@ -159,13 +160,13 @@ class PantryProductServiceImplTest {
                 this.pageRequestArgCaptor.capture()
         );
 
-        Page<PantryProductDTO> result = this.service.getPantryProducts(id, 1, filter, null, null, email);
+        PageResult<PantryProductDTO> result = this.service.getPantryProducts(id, 1, filter, null, null, email);
         PageRequest pageRequest = this.pageRequestArgCaptor.getValue();
 
         verify(pantryProductRepository).findProductsInPantryWithFilter(anyLong(), anyString(), any(PageRequest.class));
-        assertEquals(pageResponse.getTotalElements(), result.getTotalElements());
-        assertEquals(pageResponse.getContent().get(0).getProduct().getProductName(), result.getContent().get(0).product().productName());
-        assertEquals(pageResponse.getContent().get(0).getId(), result.getContent().get(0).id());
+        assertEquals(pageResponse.getTotalElements(), result.totalElements());
+        assertEquals(pageResponse.getContent().get(0).getProduct().getProductName(), result.content().get(0).product().productName());
+        assertEquals(pageResponse.getContent().get(0).getId(), result.content().get(0).id());
         assertNotNull(pageRequest.getSort().getOrderFor(idCol));
         assertEquals(Sort.Direction.DESC, pageRequest.getSort().getOrderFor(idCol).getDirection());
         assertEquals(0, pageRequest.getPageNumber());
@@ -319,7 +320,7 @@ class PantryProductServiceImplTest {
     }
 
     @Test
-    void test_addProductsToPantryThrowsValidationExceptionPantryProductTOIdBiggerThan0() {
+    void test_addProductsToPantryPantryProductDTOIdBiggerThan0() {
         authority.setAuthorityName(AuthorityEnum.ADD);
         final ProductDTO productDTO = new ProductDTO(0L, "productName", Category.CEREAL);
         final PantryProductDTO pantryProductDTO = new PantryProductDTO(1L, productDTO, null, null, 100, Unit.GRAMS, 0, null);
@@ -332,7 +333,7 @@ class PantryProductServiceImplTest {
     }
 
     @Test
-    void test_addProductsToPantryThrowsValidationExceptionReservedOver0() {
+    void test_addProductsToPantryReservedQuantityOver0() {
         authority.setAuthorityName(AuthorityEnum.ADD);
         final ProductDTO productDTO = new ProductDTO(0L, "productName", Category.CEREAL);
         final PantryProductDTO pantryProductDTO = new PantryProductDTO(0L, productDTO, null, null, 100, Unit.GRAMS, 10, null);
@@ -391,7 +392,7 @@ class PantryProductServiceImplTest {
     }
 
     @Test
-    void test_removeProductsFromPantryThrowsException() {
+    void test_removeProductsFromPantryProductsFromDifferentPantry() {
         authority.setAuthorityName(AuthorityEnum.MODIFY);
         final List<Long> productsToRemoveIds = Collections.singletonList(2L);
 
@@ -414,7 +415,7 @@ class PantryProductServiceImplTest {
         doReturn(null).when(pantryProductRepository).save(
                 this.pantryProductArgCaptor.capture()
         );
-        this.service.modifyPantryProduct(id, pantryProductDTO, email);
+        this.service.updatePantryProduct(id, pantryProductDTO, email);
         PantryProduct modifiedProduct = this.pantryProductArgCaptor.getValue();
 
         verify(pantryProductRepository).save(foundPantryProduct);
@@ -443,7 +444,7 @@ class PantryProductServiceImplTest {
         doReturn(null).when(pantryProductRepository).save(
                 this.pantryProductArgCaptor.capture()
         );
-        this.service.modifyPantryProduct(id, pantryProductDTO, email);
+        this.service.updatePantryProduct(id, pantryProductDTO, email);
         PantryProduct modifiedProduct = this.pantryProductArgCaptor.getValue();
 
         verify(pantryProductRepository).save(pantryProduct);
@@ -461,7 +462,7 @@ class PantryProductServiceImplTest {
     }
 
     @Test
-    void test_modifyPantryProductThrowsExceptionProductDoesNotExist() {
+    void test_modifyPantryProductProductDoesNotExist() {
         authority.setAuthorityName(AuthorityEnum.MODIFY);
         final ProductDTO productDTO = new ProductDTO(0L, "productName", Category.CEREAL);
         final PantryProductDTO pantryProductDTO = new PantryProductDTO(2L, productDTO, null, null, 200, Unit.GRAMS, 100, null);
@@ -469,14 +470,14 @@ class PantryProductServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.empty()).when(pantryProductRepository).findById(pantryProductDTO.id());
 
-        Exception exception = assertThrows(UserPerformedForbiddenActionException.class, () -> this.service.modifyPantryProduct(id, pantryProductDTO, email));
+        Exception exception = assertThrows(UserPerformedForbiddenActionException.class, () -> this.service.updatePantryProduct(id, pantryProductDTO, email));
         assertEquals("Pantry product was not found", exception.getMessage());
         verify(pantryProductRepository, times(0)).save(pantryProduct);
         verify(pantryProductRepository, times(0)).deleteById(pantryProductDTO.id());
     }
 
     @Test
-    void test_modifyPantryProductThrowsExceptionProductFromDifferentPantry() {
+    void test_modifyPantryProductProductFromDifferentPantry() {
         authority.setAuthorityName(AuthorityEnum.MODIFY);
         final ProductDTO productDTO = new ProductDTO(0L, "productName", Category.CEREAL);
         final PantryProductDTO pantryProductDTO = new PantryProductDTO(2L, productDTO, null, null, 200, Unit.GRAMS, 100, null);
@@ -485,14 +486,14 @@ class PantryProductServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(foundPantryProduct)).when(pantryProductRepository).findById(pantryProductDTO.id());
 
-        Exception exception = assertThrows(UserPerformedForbiddenActionException.class, () -> this.service.modifyPantryProduct(id, pantryProductDTO, email));
+        Exception exception = assertThrows(UserPerformedForbiddenActionException.class, () -> this.service.updatePantryProduct(id, pantryProductDTO, email));
         assertEquals("Cannot modify products from different pantry", exception.getMessage());
         verify(pantryProductRepository, times(0)).save(pantryProduct);
         verify(pantryProductRepository, times(0)).deleteById(pantryProductDTO.id());
     }
 
     @Test
-    void test_modifyPantryProductThrowsExceptionInvalidProduct() {
+    void test_modifyPantryProductInvalidProduct() {
         authority.setAuthorityName(AuthorityEnum.MODIFY);
         final ProductDTO productDTO = new ProductDTO(0L, "productName", Category.ANIMAL_PRODUCTS);
         final PantryProductDTO pantryProductDTO = new PantryProductDTO(2L, productDTO, null, null, 200, Unit.GRAMS, 100, null);
@@ -501,7 +502,7 @@ class PantryProductServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(foundPantryProduct)).when(pantryProductRepository).findById(pantryProductDTO.id());
 
-        Exception exception = assertThrows(UserPerformedForbiddenActionException.class, () -> this.service.modifyPantryProduct(id, pantryProductDTO, email));
+        Exception exception = assertThrows(UserPerformedForbiddenActionException.class, () -> this.service.updatePantryProduct(id, pantryProductDTO, email));
         assertEquals("Cannot modify invalid pantry product", exception.getMessage());
         verify(pantryProductRepository, times(0)).save(pantryProduct);
         verify(pantryProductRepository, times(0)).deleteById(pantryProductDTO.id());

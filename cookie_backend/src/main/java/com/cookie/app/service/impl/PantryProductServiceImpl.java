@@ -1,6 +1,7 @@
 package com.cookie.app.service.impl;
 
 import com.cookie.app.exception.*;
+import com.cookie.app.model.dto.PageResult;
 import com.cookie.app.model.entity.*;
 import com.cookie.app.model.enums.AuthorityEnum;
 import com.cookie.app.model.mapper.AuthorityMapperDTO;
@@ -41,7 +42,7 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
     }
 
     @Override
-    public Page<PantryProductDTO> getPantryProducts(
+    public PageResult<PantryProductDTO> getPantryProducts(
             long pantryId,
             int page,
             String filterValue,
@@ -53,13 +54,13 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
         PageRequest pageRequest = super.createPageRequest(page - 1, sortColName, sortDirection);
 
         if (filterValue != null && !StringUtils.isBlank(filterValue.trim())) {
-            return this.pantryProductRepository
+            return new PageResult<>(this.pantryProductRepository
                     .findProductsInPantryWithFilter(pantry.getId(), filterValue, pageRequest)
-                    .map(pantryProductMapper);
+                    .map(pantryProductMapper));
         }
-        return this.pantryProductRepository
+        return new PageResult<>(this.pantryProductRepository
                 .findProductsInPantry(pantry.getId(), pageRequest)
-                .map(pantryProductMapper);
+                .map(pantryProductMapper));
     }
 
     @Override
@@ -87,7 +88,7 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
     }
 
     @Override
-    public void modifyPantryProduct(long pantryId, PantryProductDTO pantryProductToModify, String userEmail) {
+    public void updatePantryProduct(long pantryId, PantryProductDTO pantryProductToModify, String userEmail) {
         Pantry pantry = super.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.MODIFY);
         //If this method doesn't throw exception, it means that pantryProduct exists in the pantry
         getPantryProductById(pantryId, pantryProductToModify.id(), userEmail, "modify");

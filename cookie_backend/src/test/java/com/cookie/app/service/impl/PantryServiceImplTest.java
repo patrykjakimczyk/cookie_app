@@ -88,10 +88,9 @@ class PantryServiceImplTest {
         final CreatePantryRequest request = new CreatePantryRequest(pantryName, id);
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
-
         GetPantryResponse response = service.createPantry(request, email);
-        verify(pantryRepository).save(any(Pantry.class));
 
+        verify(pantryRepository).save(any(Pantry.class));
         assertEquals(request.pantryName(), response.pantryName());
         assertFalse(response.authorities().isEmpty());
 
@@ -115,7 +114,7 @@ class PantryServiceImplTest {
     }
 
     @Test
-    void test_createPantryThrowsErrorOnWrongGroupId() {
+    void test_createPantryWrongGroupId() {
         final CreatePantryRequest request = new CreatePantryRequest(pantryName, 2L);
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
@@ -125,7 +124,7 @@ class PantryServiceImplTest {
     }
 
     @Test
-    void test_createPantryThrowsErrorOnNoRequiredAuthority() {
+    void test_createPantryNoRequiredAuthority() {
         authority.setAuthorityName(AuthorityEnum.MODIFY);
         final CreatePantryRequest request = new CreatePantryRequest(pantryName, id);
 
@@ -139,8 +138,8 @@ class PantryServiceImplTest {
     void test_getPantrySuccessful() {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
-
         GetPantryResponse response = service.getPantry(id, email);
+
         assertEquals(pantry.getId(), response.pantryId());
         assertEquals(pantry.getPantryName(), response.pantryName());
         assertFalse(response.authorities().isEmpty());
@@ -168,8 +167,8 @@ class PantryServiceImplTest {
         group.setPantry(null);
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
-
         GetPantryResponse response = service.getPantry(id, email);
+
         assertEquals(0, response.pantryId());
         assertNull(response.pantryName());
         assertNull(response.authorities());
@@ -179,8 +178,8 @@ class PantryServiceImplTest {
     void test_getAllUserPantriesSuccessful() {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
-
         GetUserPantriesResponse response = service.getAllUserPantries(email);
+
         assertFalse(response.pantries().isEmpty());
         assertEquals(pantry.getId(), response.pantries().get(0).pantryId());
         assertEquals(pantry.getPantryName(), response.pantries().get(0).pantryName());
@@ -211,8 +210,8 @@ class PantryServiceImplTest {
     void test_deletePantrySuccessful() {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
-
         DeletePantryResponse response = service.deletePantry(id, email);
+
         assertEquals(pantry.getPantryName(), response.deletedPantryName());
         verify(pantryRepository, times(1)).delete(any(Pantry.class));
     }
@@ -236,7 +235,7 @@ class PantryServiceImplTest {
     }
 
     @Test
-    void test_deletePantryUserHasNotRequiredAuthority() {
+    void test_deletePantryNotRequiredAuthority() {
         authority.setAuthorityName(AuthorityEnum.MODIFY);
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
@@ -250,8 +249,8 @@ class PantryServiceImplTest {
         final UpdatePantryRequest request = new UpdatePantryRequest("newPantryName");
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
-
         GetPantryResponse response = service.updatePantry(id, request, email);
+
         assertEquals(request.pantryName(), response.pantryName());
         assertFalse(response.authorities().isEmpty());
 
@@ -287,7 +286,7 @@ class PantryServiceImplTest {
     }
 
     @Test
-    void test_updatePantryUserHasNotRequiredAuthority() {
+    void test_updatePantryRequiredAuthority() {
         authority.setAuthorityName(AuthorityEnum.MODIFY);
         final UpdatePantryRequest request = new UpdatePantryRequest("newPantryName");
 

@@ -42,8 +42,7 @@ public class ShoppingListController {
             @PathVariable("id") @Valid @Min(value = 1, message = "Id must be greater than 0") long listId,
             Authentication authentication
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(this.shoppingListService.getShoppingList(listId, authentication.getName()));
+        return ResponseEntity.ok(this.shoppingListService.getShoppingList(listId, authentication.getName()));
     }
 
     @SecurityRequirement(name = "bearerAuth")
@@ -51,8 +50,7 @@ public class ShoppingListController {
     public ResponseEntity<GetUserShoppingListsResponse> getAllUserShoppingLists(
             Authentication authentication
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(this.shoppingListService.getUserShoppingLists(authentication.getName()));
+        return ResponseEntity.ok(this.shoppingListService.getUserShoppingLists(authentication.getName()));
     }
 
     @SecurityRequirement(name = "bearerAuth")
@@ -62,19 +60,17 @@ public class ShoppingListController {
             Authentication authentication
     ) {
         log.info("User with email={} is deleting shopping list with id={}", authentication.getName(), listId);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(this.shoppingListService.deleteShoppingList(listId, authentication.getName()));
+        return ResponseEntity.ok(this.shoppingListService.deleteShoppingList(listId, authentication.getName()));
     }
 
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(SHOPPING_LIST_ID_URL)
-    public ResponseEntity<GetShoppingListResponse> modifyShoppingList(
+    public ResponseEntity<GetShoppingListResponse> updateShoppingList(
             @PathVariable("id") @Valid @Min(value = 1, message = "Id must be greater than 0") long listId,
             @RequestBody @Valid UpdateShoppingListRequest request,
             Authentication authentication
     ) {
         log.info("User with email={} is updating shopping list with id={}", authentication.getName(), listId);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(this.shoppingListService.modifyShoppingList(listId, request, authentication.getName()));
+        return ResponseEntity.ok(this.shoppingListService.updateShoppingList(listId, request, authentication.getName()));
     }
 }

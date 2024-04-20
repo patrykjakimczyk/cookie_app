@@ -73,8 +73,8 @@ public class SecurityConfig {
 //                                "/api/v1/meals",
 //                                "/api/v1/meals/**"
 //                        )
-                        .ignoringRequestMatchers("/api/v1/user")
-                        .csrfTokenRequestHandler(requestHandler)
+                                .ignoringRequestMatchers("/api/v1/user")
+                                .csrfTokenRequestHandler(requestHandler)
                 )
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 .addFilterAfter(validatorFilter, BasicAuthenticationFilter.class)

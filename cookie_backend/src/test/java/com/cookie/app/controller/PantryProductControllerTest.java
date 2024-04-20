@@ -1,6 +1,7 @@
 package com.cookie.app.controller;
 
 import com.cookie.app.exception.*;
+import com.cookie.app.model.dto.PageResult;
 import com.cookie.app.model.dto.PantryProductDTO;
 import com.cookie.app.model.dto.ProductDTO;
 import com.cookie.app.model.enums.Category;
@@ -41,9 +42,9 @@ class PantryProductControllerTest extends AbstractControllerTest {
         final PageImpl<PantryProductDTO> pageResponse = new PageImpl<>(pantryProductDTOS);
 
         doReturn(pageResponse).when(pantryProductService).getPantryProducts(Mockito.anyLong(), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
-        ResponseEntity<Page<PantryProductDTO>> response = this.controller.getPantryProducts(this.pantryId, 0, "", "", "", authentication);
+        ResponseEntity<PageResult<PantryProductDTO>> response = this.controller.getPantryProducts(this.pantryId, 0, "", "", "", authentication);
 
-        assertEquals(pantryProductDTOS.size(), response.getBody().getTotalElements());
+        assertEquals(pantryProductDTOS.size(), response.getBody().totalElements());
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
@@ -110,8 +111,8 @@ class PantryProductControllerTest extends AbstractControllerTest {
     void test_modifyPantryProductSuccess() {
         final PantryProductDTO pantryProductDTO = createPantryProduct();
 
-        doNothing().when(pantryProductService).modifyPantryProduct(Mockito.anyLong(), Mockito.any(PantryProductDTO.class), Mockito.anyString());
-        ResponseEntity<Void> response = this.controller.modifyPantryProduct(this.pantryId, pantryProductDTO, authentication);
+        doNothing().when(pantryProductService).updatePantryProduct(Mockito.anyLong(), Mockito.any(PantryProductDTO.class), Mockito.anyString());
+        ResponseEntity<Void> response = this.controller.updatePantryProduct(this.pantryId, pantryProductDTO, authentication);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
@@ -121,9 +122,9 @@ class PantryProductControllerTest extends AbstractControllerTest {
         final PantryProductDTO pantryProductDTO = createPantryProduct();
 
         doThrow(new UserPerformedForbiddenActionException("User tried to access wrong pantry"))
-                .when(pantryProductService).modifyPantryProduct(Mockito.anyLong(), Mockito.any(PantryProductDTO.class), Mockito.anyString());
+                .when(pantryProductService).updatePantryProduct(Mockito.anyLong(), Mockito.any(PantryProductDTO.class), Mockito.anyString());
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> this.controller.modifyPantryProduct(this.pantryId, pantryProductDTO, authentication));
+        assertThrows(UserPerformedForbiddenActionException.class, () -> this.controller.updatePantryProduct(this.pantryId, pantryProductDTO, authentication));
     }
 
     @Test

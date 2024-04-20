@@ -3,6 +3,7 @@ package com.cookie.app.model.request;
 import com.cookie.app.model.RegexConstants;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
 
 public record CreateShoppingListRequest(
         @Pattern(
@@ -11,6 +12,6 @@ public record CreateShoppingListRequest(
         )
         String shoppingListName,
 
-        @Min(value = 1, message = "Group id must be greater than 0")
+        @Positive(message = "Group id must be greater than 0")
         long groupId
 ) {}
