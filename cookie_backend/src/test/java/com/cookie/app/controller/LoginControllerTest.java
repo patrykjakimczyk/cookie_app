@@ -33,7 +33,7 @@ class LoginControllerTest extends AbstractControllerTest {
     @Test
     void test_loginWithAuthenticatedUser() {
 
-        when(loginService.getLoginInfo(Mockito.anyString())).thenReturn(new LoginResponse(username));
+        when(loginService.getLoginInfo(authentication.getName())).thenReturn(new LoginResponse(username));
 
         ResponseEntity<LoginResponse> response = this.controller.login(authentication);
         assertEquals(username, response.getBody().username());
@@ -43,7 +43,7 @@ class LoginControllerTest extends AbstractControllerTest {
     @Test
     void test_loginUserWasNotFoundAfterAuthentication() {
 
-        when(loginService.getLoginInfo(Mockito.anyString())).thenThrow(new UserWasNotFoundAfterAuthException("User not found after authorization"));
+        when(loginService.getLoginInfo(authentication.getName())).thenThrow(new UserWasNotFoundAfterAuthException("User not found after authorization"));
 
         assertThrows(UserWasNotFoundAfterAuthException.class, () -> this.controller.login(authentication));
     }
@@ -52,7 +52,7 @@ class LoginControllerTest extends AbstractControllerTest {
     void test_registerUserSuccessfully() {
         final RegistrationRequest request = new RegistrationRequest(username, email, password, null, null);
 
-        when(loginService.userRegistration(Mockito.any(RegistrationRequest.class)))
+        when(loginService.userRegistration(request))
                 .thenReturn(new RegistrationResponse(Collections.emptyList()));
         ResponseEntity<RegistrationResponse> response = this.controller.registerUser(request);
 
@@ -65,7 +65,7 @@ class LoginControllerTest extends AbstractControllerTest {
         final RegistrationRequest request = new RegistrationRequest(username, email, password, null, null);
         final String duplicate = username;
 
-        when(loginService.userRegistration(Mockito.any(RegistrationRequest.class)))
+        when(loginService.userRegistration(request))
                 .thenReturn(new RegistrationResponse(List.of(duplicate)));
         ResponseEntity<RegistrationResponse> response = this.controller.registerUser(request);
 

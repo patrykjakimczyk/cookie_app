@@ -114,7 +114,7 @@ export class PantryProductsListComponent {
       this.pantriesService
         .getProductsWithFilter(this.addForm.controls.productName.value)
         .subscribe((response) => {
-          this.filteredProducts = of(response.content);
+          this.filteredProducts = of(response);
         });
     }
   }

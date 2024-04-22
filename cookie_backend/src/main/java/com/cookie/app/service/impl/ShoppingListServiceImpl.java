@@ -51,7 +51,7 @@ public class ShoppingListServiceImpl extends AbstractShoppingListService impleme
         );
 
         if (!super.userHasAuthority(user, userGroup.getId(), AuthorityEnum.CREATE_SHOPPING_LIST)) {
-            log.info(String.format("User: %s tried to create shopping list without permission", userEmail));
+            log.info("User={} tried to create shopping list without permission", userEmail);
             throw new UserPerformedForbiddenActionException("You tried to create shopping list without permission");
         }
 
@@ -64,7 +64,7 @@ public class ShoppingListServiceImpl extends AbstractShoppingListService impleme
 
         this.shoppingListRepository.save(shoppingList);
 
-        log.info("User with email {} created shopping list with id {} in group with id {}",
+        log.info("User with email={} created shopping list with id={} in group with id={}",
                 userEmail,
                 shoppingList.getId(),
                 request.groupId()
@@ -115,7 +115,7 @@ public class ShoppingListServiceImpl extends AbstractShoppingListService impleme
         );
 
         this.shoppingListRepository.delete(shoppingList);
-        log.info("User with email {} deleted shopping list with id {}", userEmail, shoppingList.getId());
+        log.info("User with email={} deleted shopping list with id={}", userEmail, shoppingList.getId());
 
         return new DeleteShoppingListResponse(shoppingList.getListName());
     }
@@ -127,7 +127,7 @@ public class ShoppingListServiceImpl extends AbstractShoppingListService impleme
 
         shoppingList.setListName(request.shoppingListName());
         this.shoppingListRepository.save(shoppingList);
-        log.info("User with email {} modified shopping list with id {}", userEmail, shoppingList.getId());
+        log.info("User with email={} modified shopping list with id={}", userEmail, shoppingList.getId());
 
         return createGetShoppingLisstResponse(shoppingList, user);
     }

@@ -12,6 +12,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Slf4j
 @Service
@@ -23,14 +25,12 @@ public class ProductServiceImpl implements ProductService {
     private final ProductMapperDTO productDTOMapper;
 
     @Override
-    public Page<ProductDTO> getProductsWithFilter(String filterValue) {
+    public List<ProductDTO> getProductsWithFilter(String filterValue) {
         PageRequest pageRequest = PageRequest.of(PAGE_NUMBER, PAGE_SIZE);
 
         Page<Product> productsPage = this.productRepository.findProductsWithFilter(filterValue, pageRequest);
-        return new PageImpl<>(
-                productsPage.get()
+        return productsPage.get()
                         .map(productDTOMapper::apply)
-                        .toList()
-        );
+                        .toList();
     }
 }

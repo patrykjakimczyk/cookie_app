@@ -12,6 +12,7 @@ import com.cookie.app.model.response.GroupNameTakenResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -44,48 +45,45 @@ public class GroupController {
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping(GROUP_ID_URL)
     public ResponseEntity<GroupDetailsDTO> getGroupDetails(
-            @PathVariable("id") @Valid @Min(value = 1, message = "Id must be greater than 0") long groupId,
+            @PathVariable("id") @Valid @Positive(message = "Id must be greater than 0") long groupId,
             Authentication authentication
     ) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(this.groupService.getGroupDetails(groupId, authentication.getName()));
+        return ResponseEntity.ok(this.groupService.getGroupDetails(groupId, authentication.getName()));
     }
 
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping
     public ResponseEntity<GetUserGroupsResponse> getUserGroups(Authentication authentication) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(this.groupService.getUserGroups(authentication.getName()));
+        return ResponseEntity.ok(this.groupService.getUserGroups(authentication.getName()));
     }
 
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(GROUP_ID_URL)
     public ResponseEntity<GroupNameTakenResponse> updateGroup(
-            @PathVariable("id") @Valid @Min(value = 1, message = "Id must be greater than 0") long groupId,
+            @PathVariable("id") @Valid @Positive(message = "Id must be greater than 0") long groupId,
             @RequestBody @Valid UpdateGroupRequest updateGroupRequest,
             Authentication authentication
     ) {
         log.info("Performing group update by user with email {}", authentication.getName());
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(this.groupService.updateGroup(groupId, updateGroupRequest, authentication.getName()));
+        return ResponseEntity.ok(this.groupService.updateGroup(groupId, updateGroupRequest, authentication.getName()));
     }
 
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping(GROUP_ID_URL)
     public ResponseEntity<Void> deleteGroup(
-            @PathVariable("id") @Valid @Min(value = 1, message = "Id must be greater than 0") long groupId,
+            @PathVariable("id") @Valid @Positive(message = "Id must be greater than 0") long groupId,
             Authentication authentication
     ) {
         log.info("Performing group deletion by user for email {}", authentication.getName());
         this.groupService.deleteGroup(groupId, authentication.getName());
 
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        return ResponseEntity.ok().build();
     }
 
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping(GROUP_ID_USERS_URL)
     public ResponseEntity<Void> addUserToGroup(
-            @PathVariable("id") @Valid @Min(value = 1, message = "Id must be greater than 0") long groupId,
+            @PathVariable("id") @Valid @Positive(message = "Id must be greater than 0") long groupId,
             @RequestBody @Valid AddUserToGroupRequest addUserToGroupRequest,
             Authentication authentication
     ) {
@@ -97,14 +95,14 @@ public class GroupController {
         );
         this.groupService.addUserToGroup(groupId, addUserToGroupRequest.usernameToAdd(), authentication.getName());
 
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        return ResponseEntity.ok().build();
     }
 
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping(GROUP_ID_USERS_URL)
     public ResponseEntity<Void> removeUserFromGroup(
-            @PathVariable("id") @Valid @Min(value = 1, message = "Id must be greater than 0") long groupId,
-            @RequestParam @Valid @Min(value = 1, message = "Id must be greater than 0") long userToRemoveId,
+            @PathVariable("id") @Valid @Positive(message = "Id must be greater than 0") long groupId,
+            @RequestParam @Valid @Positive(message = "Id must be greater than 0") long userToRemoveId,
             Authentication authentication
     ) {
         log.info(
@@ -115,13 +113,13 @@ public class GroupController {
         );
         this.groupService.removeUserFromGroup(groupId, userToRemoveId, authentication.getName());
 
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        return ResponseEntity.ok().build();
     }
 
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping(GROUP_ID_AUTHORITIES_URL)
     public ResponseEntity<AssignAuthoritiesToUserResponse> assignAuthoritiesToUser(
-            @PathVariable("id") @Valid @Min(value = 1, message = "Id must be greater than 0") long groupId,
+            @PathVariable("id") @Valid @Positive(message = "Id must be greater than 0") long groupId,
             @RequestBody @Valid UserWithAuthoritiesRequest request,
             Authentication authentication
     ) {
@@ -131,14 +129,13 @@ public class GroupController {
                 groupId,
                 authentication.getName()
         );
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(this.groupService.assignAuthoritiesToUser(groupId, request, authentication.getName()));
+        return ResponseEntity.ok(this.groupService.assignAuthoritiesToUser(groupId, request, authentication.getName()));
     }
 
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(GROUP_ID_AUTHORITIES_URL)
     public ResponseEntity<Void> removeAuthoritiesFromUser(
-            @PathVariable("id") @Valid @Min(value = 1, message = "Id must be greater than 0") long groupId,
+            @PathVariable("id") @Valid @Positive(message = "Id must be greater than 0") long groupId,
             @RequestBody @Valid UserWithAuthoritiesRequest request,
             Authentication authentication
     ) {
@@ -150,6 +147,6 @@ public class GroupController {
         );
         this.groupService.removeAuthoritiesFromUser(groupId, request, authentication.getName());
 
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        return ResponseEntity.ok().build();
     }
 }

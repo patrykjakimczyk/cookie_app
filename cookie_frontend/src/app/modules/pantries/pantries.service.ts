@@ -14,6 +14,7 @@ import {
 } from 'src/app/shared/model/responses/pantry-response';
 import { GroupDetailsDTO } from 'src/app/shared/model/types/group-types';
 import { PantryProductDTO } from 'src/app/shared/model/types/pantry-types';
+import { ProductDTO } from 'src/app/shared/model/types/product-types';
 import { ShoppingListProductDTO } from 'src/app/shared/model/types/shopping-lists-types';
 import { environment } from 'src/environments/environment';
 
@@ -131,12 +132,12 @@ export class PantriesService {
     );
   }
 
-  getProductsWithFilter(filterValue: string): Observable<any> {
+  getProductsWithFilter(filterValue: string): Observable<ProductDTO[]> {
     let params = new HttpParams();
 
     params = params.append('filterValue', filterValue);
 
-    return this.http.get<any>(`${this.url}${this.products_path}`, {
+    return this.http.get<ProductDTO[]>(`${this.url}${this.products_path}`, {
       params: params,
     });
   }

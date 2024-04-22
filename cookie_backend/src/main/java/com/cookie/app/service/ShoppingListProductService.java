@@ -1,14 +1,14 @@
 package com.cookie.app.service;
 
+import com.cookie.app.model.dto.PageResult;
 import com.cookie.app.model.dto.ShoppingListProductDTO;
 import com.cookie.app.model.entity.RecipeProduct;
 import com.cookie.app.model.entity.User;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface ShoppingListProductService {
-    Page<ShoppingListProductDTO> getShoppingListProducts(
+    PageResult<ShoppingListProductDTO> getShoppingListProducts(
             long listId,
             int page,
             String filterValue,
@@ -18,7 +18,7 @@ public interface ShoppingListProductService {
     );
     void addProductsToShoppingList(long listId, List<ShoppingListProductDTO> listProductDTOList, String userEmail);
     void removeProductsFromShoppingList(long listId, List<Long> listProductIds, String userEmail);
-    void modifyShoppingListProduct(long listId, ShoppingListProductDTO listProductDTO, String userEmail);
+    void updateShoppingListProduct(long listId, ShoppingListProductDTO listProductDTO, String userEmail);
     void changePurchaseStatusForProducts(long listId, List<Long> listProductIds, String userEmail);
     void transferProductsToPantry(long listId, String userEmail);
     void addRecipeProductsToShoppingList(long listId, User user, List<RecipeProduct> recipeProducts);

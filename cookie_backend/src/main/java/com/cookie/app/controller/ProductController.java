@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.print.attribute.standard.Media;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -25,7 +26,7 @@ public class ProductController {
 
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping
-    public ResponseEntity<Page<ProductDTO>> getProductsWithFilter(
+    public ResponseEntity<List<ProductDTO>> getProductsWithFilter(
             @RequestParam String filterValue
     ) {
         return ResponseEntity

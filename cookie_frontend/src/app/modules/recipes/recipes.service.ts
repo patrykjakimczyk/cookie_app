@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CreateRecipeResponse } from 'src/app/shared/model/responses/recipes-response';
+import { ProductDTO } from 'src/app/shared/model/types/product-types';
 import {
   GetRecipesParams,
   RecipeDTO,
@@ -90,12 +91,12 @@ export class RecipesService {
     );
   }
 
-  getProductsWithFilter(filterValue: string): Observable<any> {
+  getProductsWithFilter(filterValue: string): Observable<ProductDTO[]> {
     let params = new HttpParams();
 
     params = params.append('filterValue', filterValue);
 
-    return this.http.get<any>(`${this.url}${this.products_path}`, {
+    return this.http.get<ProductDTO[]>(`${this.url}${this.products_path}`, {
       params: params,
     });
   }

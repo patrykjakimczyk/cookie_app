@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -107,7 +106,7 @@ class PantryProductServiceImplTest {
     void test_getPantryProductsSuccessfulWithAscSort() {
         final PageImpl<PantryProduct> pageResponse = new PageImpl<>(List.of(pantryProduct));
 
-        doReturn(Optional.of(user)).when(userRepository).findByEmail(anyString());
+        doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(pageResponse).when(pantryProductRepository).findProductsInPantry(
                 eq(id),
                 this.pageRequestArgCaptor.capture()
@@ -115,7 +114,7 @@ class PantryProductServiceImplTest {
         PageResult<PantryProductDTO> result = this.service.getPantryProducts(id, 1, null, col, "ASC", email);
         PageRequest pageRequest = this.pageRequestArgCaptor.getValue();
 
-        verify(pantryProductRepository).findProductsInPantry(anyLong(), any(PageRequest.class));
+        verify(pantryProductRepository).findProductsInPantry(eq(id), any(PageRequest.class));
         assertEquals(pageResponse.getTotalElements(), result.totalElements());
         assertEquals(pageResponse.getContent().get(0).getProduct().getProductName(), result.content().get(0).product().productName());
         assertEquals(pageResponse.getContent().get(0).getId(), result.content().get(0).id());
@@ -128,7 +127,7 @@ class PantryProductServiceImplTest {
     void test_getPantryProductsSuccessfulWithFilterAndDescSort() {
         final PageImpl<PantryProduct> pageResponse = new PageImpl<>(List.of(pantryProduct));
 
-        doReturn(Optional.of(user)).when(userRepository).findByEmail(anyString());
+        doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(pageResponse).when(pantryProductRepository).findProductsInPantryWithFilter(
                 eq(id),
                 eq(filter),
@@ -138,7 +137,7 @@ class PantryProductServiceImplTest {
         PageResult<PantryProductDTO> result = this.service.getPantryProducts(id, 1, filter, col, "DESC", email);
         PageRequest pageRequest = this.pageRequestArgCaptor.getValue();
 
-        verify(pantryProductRepository).findProductsInPantryWithFilter(anyLong(), anyString(), any(PageRequest.class));
+        verify(pantryProductRepository).findProductsInPantryWithFilter(eq(id), eq(filter), any(PageRequest.class));
         assertEquals(pageResponse.getTotalElements(), result.totalElements());
         assertEquals(pageResponse.getContent().get(0).getProduct().getProductName(), result.content().get(0).product().productName());
         assertEquals(pageResponse.getContent().get(0).getId(), result.content().get(0).id());
@@ -153,7 +152,7 @@ class PantryProductServiceImplTest {
     void test_getPantryProductsSuccessfulWithoutSort() {
         final PageImpl<PantryProduct> pageResponse = new PageImpl<>(List.of(pantryProduct));
 
-        doReturn(Optional.of(user)).when(userRepository).findByEmail(anyString());
+        doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(pageResponse).when(pantryProductRepository).findProductsInPantryWithFilter(
                 eq(id),
                 eq(filter),
@@ -163,7 +162,7 @@ class PantryProductServiceImplTest {
         PageResult<PantryProductDTO> result = this.service.getPantryProducts(id, 1, filter, null, null, email);
         PageRequest pageRequest = this.pageRequestArgCaptor.getValue();
 
-        verify(pantryProductRepository).findProductsInPantryWithFilter(anyLong(), anyString(), any(PageRequest.class));
+        verify(pantryProductRepository).findProductsInPantryWithFilter(eq(id), eq(filter), any(PageRequest.class));
         assertEquals(pageResponse.getTotalElements(), result.totalElements());
         assertEquals(pageResponse.getContent().get(0).getProduct().getProductName(), result.content().get(0).product().productName());
         assertEquals(pageResponse.getContent().get(0).getId(), result.content().get(0).id());
@@ -194,7 +193,7 @@ class PantryProductServiceImplTest {
 
         verify(productRepository, times(2)).findByProductNameAndCategory(anyString(), anyString());
         verify(productRepository, times(2)).save(any(Product.class));
-        verify(pantryProductRepository, times(0)).deleteByIdIn(any(List.class));
+        verify(pantryProductRepository, times(0)).deleteByIdIn(anyList());
         assertEquals(productDTO.productName(), addedProducts.get(0).getProduct().getProductName());
         assertEquals(productDTO.category(), addedProducts.get(0).getProduct().getCategory());
         assertEquals(pantryProductDTO.quantity(), addedProducts.get(0).getQuantity());
@@ -204,42 +203,6 @@ class PantryProductServiceImplTest {
         assertEquals(pantryProductDTO2.quantity(), addedProducts.get(1).getQuantity());
         assertEquals(pantryProductDTO2.unit(), addedProducts.get(1).getUnit());
         assertEquals(3, pantry.getPantryProducts().size());
-        assertTrue(pantry.getPantryProducts().contains(addedProducts.get(0)));
-        assertTrue(pantry.getPantryProducts().contains(addedProducts.get(1)));
-    }
-
-    @Test
-    void test_addProductsToPantrySuccessfulExistingProducts() {
-        authority.setAuthorityName(AuthorityEnum.ADD);
-        pantry.setPantryProducts(new ArrayList<>());
-        final ProductDTO productDTO = new ProductDTO(0L, "productName", Category.CEREAL);
-        final PantryProductDTO pantryProductDTO = new PantryProductDTO(0L, productDTO, null, null, 100, Unit.GRAMS, 0, null);
-        final ProductDTO productDTO2 = new ProductDTO(0L, "productName", Category.CEREAL);
-        final PantryProductDTO pantryProductDTO2 = new PantryProductDTO(0L, productDTO2, null, null, 200, Unit.PIECES, 0, null);
-        final List<PantryProductDTO> productsToAdd = List.of(pantryProductDTO, pantryProductDTO2);
-
-        doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
-        doReturn(Optional.of(product), Optional.of(product)).when(productRepository).findByProductNameAndCategory(
-                anyString(), anyString()
-        );
-        doReturn(Collections.emptyList()).when(pantryProductRepository).saveAll(
-                this.listOfProductsArgCaptor.capture()
-        );
-        this.service.addProductsToPantry(id, productsToAdd, email);
-        List<PantryProduct> addedProducts = this.listOfProductsArgCaptor.getValue();
-
-        verify(productRepository, times(2)).findByProductNameAndCategory(anyString(), anyString());
-        verify(productRepository, times(0)).save(any(Product.class));
-        verify(pantryProductRepository, times(0)).deleteByIdIn(any(List.class));
-        assertEquals(productDTO.productName(), addedProducts.get(0).getProduct().getProductName());
-        assertEquals(productDTO.category(), addedProducts.get(0).getProduct().getCategory());
-        assertEquals(pantryProductDTO.quantity(), addedProducts.get(0).getQuantity());
-        assertEquals(pantryProductDTO.unit(), addedProducts.get(0).getUnit());
-        assertEquals(productDTO2.productName(), addedProducts.get(1).getProduct().getProductName());
-        assertEquals(productDTO2.category(), addedProducts.get(1).getProduct().getCategory());
-        assertEquals(pantryProductDTO2.quantity(), addedProducts.get(1).getQuantity());
-        assertEquals(pantryProductDTO2.unit(), addedProducts.get(1).getUnit());
-        assertEquals(2, pantry.getPantryProducts().size());
         assertTrue(pantry.getPantryProducts().contains(addedProducts.get(0)));
         assertTrue(pantry.getPantryProducts().contains(addedProducts.get(1)));
     }
@@ -267,7 +230,7 @@ class PantryProductServiceImplTest {
 
         verify(productRepository, times(2)).findByProductNameAndCategory(anyString(), anyString());
         verify(productRepository, times(0)).save(any(Product.class));
-        verify(pantryProductRepository, times(0)).deleteByIdIn(any(List.class));
+        verify(pantryProductRepository, times(0)).deleteByIdIn(anyList());
         assertEquals(productDTO.productName(), addedProducts.get(0).getProduct().getProductName());
         assertEquals(productDTO.category(), addedProducts.get(0).getProduct().getCategory());
         assertEquals(pantryProductDTO.quantity(), addedProducts.get(0).getQuantity());
@@ -305,7 +268,7 @@ class PantryProductServiceImplTest {
 
         verify(productRepository, times(2)).findByProductNameAndCategory(anyString(), anyString());
         verify(productRepository, times(0)).save(any(Product.class));
-        verify(pantryProductRepository, times(0)).deleteByIdIn(any(List.class));
+        verify(pantryProductRepository, times(0)).deleteByIdIn(anyList());
         assertEquals(productDTO.productName(), addedProducts.get(0).getProduct().getProductName());
         assertEquals(productDTO.category(), addedProducts.get(0).getProduct().getCategory());
         assertEquals(pantryProductDTO.quantity() + productQuantityBeforeModifing, pantry.getPantryProducts().get(0).getQuantity());
@@ -366,7 +329,7 @@ class PantryProductServiceImplTest {
 
         verify(productRepository, times(2)).findByProductNameAndCategory(anyString(), anyString());
         verify(productRepository, times(2)).save(any(Product.class));
-        verify(pantryProductRepository, times(0)).deleteByIdIn(any(List.class));
+        verify(pantryProductRepository, times(0)).deleteByIdIn(anyList());
         assertEquals(productDTO.productName(), addedProducts.get(0).getProduct().getProductName());
         assertEquals(productDTO.category(), addedProducts.get(0).getProduct().getCategory());
         assertEquals(pantryProductDTO.quantity(), addedProducts.get(0).getQuantity());
@@ -403,7 +366,7 @@ class PantryProductServiceImplTest {
     }
 
     @Test
-    void test_modifyPantryProductSuccessful() {
+    void test_updatePantryProductSuccessful() {
         authority.setAuthorityName(AuthorityEnum.MODIFY);
         final ProductDTO productDTO = new ProductDTO(0L, "productName", Category.CEREAL);
         final PantryProductDTO pantryProductDTO = new PantryProductDTO(2L, productDTO, null, null, 200, Unit.PIECES, 0, null);
@@ -431,13 +394,13 @@ class PantryProductServiceImplTest {
     }
 
     @Test
-    void test_modifyPantryProductSuccessfulStackingWithDifferentProduct() {
+    void test_updatePantryProductSuccessfulStackingWithDifferentProduct() {
         final long productQuantityBeforeModifing = pantryProduct.getQuantity();
         final long productIdBeforeModifing = pantryProduct.getId();
         authority.setAuthorityName(AuthorityEnum.MODIFY);
         final ProductDTO productDTO = new ProductDTO(0L, "productName", Category.CEREAL);
         final PantryProductDTO pantryProductDTO = new PantryProductDTO(2L, productDTO, null, null, 200, Unit.GRAMS, 100, null);
-        final PantryProduct foundPantryProduct = new PantryProduct(2L, pantry, product, null, null, 100, Unit.GRAMS, 100, "placement");
+        final PantryProduct foundPantryProduct = new PantryProduct(3L, pantry, product, null, null, 100, Unit.GRAMS, 100, "placement");
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(foundPantryProduct)).when(pantryProductRepository).findById(pantryProductDTO.id());
@@ -454,7 +417,6 @@ class PantryProductServiceImplTest {
         assertEquals(pantryProductDTO.quantity() + productQuantityBeforeModifing, modifiedProduct.getQuantity());
         assertEquals(pantryProductDTO.unit(), modifiedProduct.getUnit());
         assertEquals(pantryProductDTO.reserved(), modifiedProduct.getReserved());
-        assertEquals(pantryProductDTO.reserved(), modifiedProduct.getReserved());
         assertEquals(pantryProductDTO.purchaseDate(), modifiedProduct.getPurchaseDate());
         assertEquals(pantryProductDTO.expirationDate(), modifiedProduct.getExpirationDate());
         assertEquals(pantryProductDTO.placement(), modifiedProduct.getPlacement());
@@ -462,7 +424,7 @@ class PantryProductServiceImplTest {
     }
 
     @Test
-    void test_modifyPantryProductProductDoesNotExist() {
+    void test_updatePantryProductProductDoesNotExist() {
         authority.setAuthorityName(AuthorityEnum.MODIFY);
         final ProductDTO productDTO = new ProductDTO(0L, "productName", Category.CEREAL);
         final PantryProductDTO pantryProductDTO = new PantryProductDTO(2L, productDTO, null, null, 200, Unit.GRAMS, 100, null);
@@ -477,7 +439,7 @@ class PantryProductServiceImplTest {
     }
 
     @Test
-    void test_modifyPantryProductProductFromDifferentPantry() {
+    void test_updatePantryProductProductFromDifferentPantry() {
         authority.setAuthorityName(AuthorityEnum.MODIFY);
         final ProductDTO productDTO = new ProductDTO(0L, "productName", Category.CEREAL);
         final PantryProductDTO pantryProductDTO = new PantryProductDTO(2L, productDTO, null, null, 200, Unit.GRAMS, 100, null);
@@ -493,7 +455,7 @@ class PantryProductServiceImplTest {
     }
 
     @Test
-    void test_modifyPantryProductInvalidProduct() {
+    void test_updatePantryProductInvalidProduct() {
         authority.setAuthorityName(AuthorityEnum.MODIFY);
         final ProductDTO productDTO = new ProductDTO(0L, "productName", Category.ANIMAL_PRODUCTS);
         final PantryProductDTO pantryProductDTO = new PantryProductDTO(2L, productDTO, null, null, 200, Unit.GRAMS, 100, null);
@@ -504,6 +466,18 @@ class PantryProductServiceImplTest {
 
         Exception exception = assertThrows(UserPerformedForbiddenActionException.class, () -> this.service.updatePantryProduct(id, pantryProductDTO, email));
         assertEquals("Cannot modify invalid pantry product", exception.getMessage());
+        verify(pantryProductRepository, times(0)).save(pantryProduct);
+        verify(pantryProductRepository, times(0)).deleteById(pantryProductDTO.id());
+    }
+
+    @Test
+    void test_updatePantryProductIdEquals0() {
+        authority.setAuthorityName(AuthorityEnum.MODIFY);
+        final ProductDTO productDTO = new ProductDTO(0L, "productName", Category.ANIMAL_PRODUCTS);
+        final PantryProductDTO pantryProductDTO = new PantryProductDTO(0L, productDTO, null, null, 200, Unit.GRAMS, 100, null);
+
+        Exception exception = assertThrows(ValidationException.class, () -> this.service.updatePantryProduct(id, pantryProductDTO, email));
+        assertEquals("Cannot modify product because it doesn't exist", exception.getMessage());
         verify(pantryProductRepository, times(0)).save(pantryProduct);
         verify(pantryProductRepository, times(0)).deleteById(pantryProductDTO.id());
     }

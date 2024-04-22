@@ -269,7 +269,7 @@ export class ShoppingListProductsComponent implements OnInit {
       this.shoppingListsService
         .getProductsWithFilter(this.addForm.controls.productName.value)
         .subscribe((response) => {
-          this.filteredProducts = of(response.content);
+          this.filteredProducts = of(response);
         });
     }
   }
@@ -301,9 +301,9 @@ export class ShoppingListProductsComponent implements OnInit {
   }
 
   private getShoppinglistProducts() {
-    const filterValue = this.searchForm.controls.filterValue.value!;
-    const sortColName = this.searchForm.controls.sortColName.value!;
-    const SortDirection = this.searchForm.controls.sortDirection.value!;
+    const filterValue = this.searchForm.controls.filterValue.value;
+    const sortColName = this.searchForm.controls.sortColName.value;
+    const SortDirection = this.searchForm.controls.sortDirection.value;
 
     if (
       this.shoppingList &&
@@ -313,7 +313,7 @@ export class ShoppingListProductsComponent implements OnInit {
       this.shoppingListsService
         .getShoppingListsProducts(
           this.shoppingList.id,
-          this.page,
+          this.page + 1,
           filterValue,
           sortColName,
           SortDirection

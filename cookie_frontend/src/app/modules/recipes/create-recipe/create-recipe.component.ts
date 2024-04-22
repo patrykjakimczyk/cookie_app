@@ -279,7 +279,7 @@ export class CreateRecipeComponent implements OnInit {
       this.recipesService
         .getProductsWithFilter(this.ingredientForm.controls.productName.value)
         .subscribe((response) => {
-          this.filteredProducts = of(response.content);
+          this.filteredProducts = of(response);
         });
     }
   }

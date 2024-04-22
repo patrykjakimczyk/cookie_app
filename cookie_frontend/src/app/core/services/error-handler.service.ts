@@ -9,8 +9,8 @@ export class CookieErrorHandler implements ErrorHandler {
   handleError(error: any): void {
     if (error instanceof HttpErrorResponse) {
       this.router.navigate(['/error']);
-    } else {
-      console.error(error);
     }
+
+    console.error(error);
   }
 }

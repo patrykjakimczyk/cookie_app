@@ -223,7 +223,7 @@ class ShoppingListServiceImplTest {
         doReturn(Optional.empty()).when(userRepository).findByEmail(email);
 
         assertThrows(UserWasNotFoundAfterAuthException.class, () -> service.deleteShoppingList(id, email));
-        verify(shoppingListRepository, times(0)).delete(any(ShoppingList.class));
+        verify(shoppingListRepository, times(0)).delete(shoppingList);
     }
 
     @Test
@@ -234,7 +234,7 @@ class ShoppingListServiceImplTest {
 
         Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () -> service.deleteShoppingList(2L, email));
         assertEquals("You cannot access the shopping list because you are not member of its group", ex.getMessage());
-        verify(shoppingListRepository, times(0)).delete(any(ShoppingList.class));
+        verify(shoppingListRepository, times(0)).delete(shoppingList);
     }
 
     @Test
@@ -244,7 +244,7 @@ class ShoppingListServiceImplTest {
 
         Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () -> service.deleteShoppingList(id, email));
         assertEquals("You have not permissions to do that", ex.getMessage());
-        verify(shoppingListRepository, times(0)).delete(any(ShoppingList.class));
+        verify(shoppingListRepository, times(0)).delete(shoppingList);
     }
 
     @Test
@@ -277,7 +277,7 @@ class ShoppingListServiceImplTest {
         doReturn(Optional.empty()).when(userRepository).findByEmail(email);
 
         assertThrows(UserWasNotFoundAfterAuthException.class, () -> service.updateShoppingList(id, request, email));
-        verify(shoppingListRepository, times(0)).save(any(ShoppingList.class));
+        verify(shoppingListRepository, times(0)).save(shoppingList);
     }
 
     @Test
@@ -289,7 +289,7 @@ class ShoppingListServiceImplTest {
 
         Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () -> service.updateShoppingList(2L, request, email));
         assertEquals("You cannot access the shopping list because you are not member of its group", ex.getMessage());
-        verify(shoppingListRepository, times(0)).save(any(ShoppingList.class));
+        verify(shoppingListRepository, times(0)).save(shoppingList);
     }
 
     @Test
@@ -300,6 +300,6 @@ class ShoppingListServiceImplTest {
 
         Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () -> service.updateShoppingList(id, request, email));
         assertEquals("You have not permissions to do that", ex.getMessage());
-        verify(shoppingListRepository, times(0)).save(any(ShoppingList.class));
+        verify(shoppingListRepository, times(0)).save(shoppingList);
     }
 }

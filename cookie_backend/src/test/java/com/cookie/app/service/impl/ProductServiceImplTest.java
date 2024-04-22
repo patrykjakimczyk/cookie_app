@@ -5,7 +5,6 @@ import com.cookie.app.model.entity.Product;
 import com.cookie.app.model.enums.Category;
 import com.cookie.app.model.mapper.ProductMapperDTO;
 import com.cookie.app.repository.ProductRepository;
-import com.cookie.app.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -41,12 +40,12 @@ class ProductServiceImplTest {
         final PageImpl<Product> pageResponse = new PageImpl<>(List.of(product));
 
         doReturn(pageResponse).when(productRepository).findProductsWithFilter(eq(filterValue), any(PageRequest.class));
-        Page<ProductDTO> returnValue = this.service.getProductsWithFilter(filterValue);
+        List<ProductDTO> returnValue = this.service.getProductsWithFilter(filterValue);
 
-        assertEquals(pageResponse.getContent().size(), returnValue.getContent().size());
-        assertEquals(product.getId(), returnValue.getContent().get(0).productId());
-        assertEquals(product.getProductName(), returnValue.getContent().get(0).productName());
-        assertEquals(product.getCategory(), returnValue.getContent().get(0).category());
+        assertEquals(pageResponse.getContent().size(), returnValue.size());
+        assertEquals(product.getId(), returnValue.get(0).productId());
+        assertEquals(product.getProductName(), returnValue.get(0).productName());
+        assertEquals(product.getCategory(), returnValue.get(0).category());
     }
 
     @Test
@@ -55,9 +54,9 @@ class ProductServiceImplTest {
         final PageImpl<Product> pageResponse = new PageImpl<>(Collections.emptyList());
 
         doReturn(pageResponse).when(productRepository).findProductsWithFilter(eq(filterValue), any(PageRequest.class));
-        Page<ProductDTO> returnValue = this.service.getProductsWithFilter(filterValue);
+        List<ProductDTO> returnValue = this.service.getProductsWithFilter(filterValue);
 
-        assertEquals(pageResponse.getContent().size(), returnValue.getContent().size());
+        assertEquals(pageResponse.getContent().size(), returnValue.size());
         assertTrue(returnValue.isEmpty());
     }
 }

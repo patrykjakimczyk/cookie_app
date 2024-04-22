@@ -13,7 +13,7 @@ public class RegexConstants {
     public static final String CUISINE_REGEX = "^([\\p{L}\\s]+$";
     public static final String PREPARATION_REGEX = "^([\\p{L}\\d\\s]{30,512})$";
     public static final String FILTER_VALUE_REGEX = "^([\\p{L}\\d\\s-])+$";
-    public static final String SORT_COL_REGEX = "^([\\p{L}_]+$";
+    public static final String SORT_COL_REGEX = "^am[\\p{L}_]+$";
     public static final String SORT_DIRECTION_REGEX = "DESC|ASC";
 
     private RegexConstants() {}

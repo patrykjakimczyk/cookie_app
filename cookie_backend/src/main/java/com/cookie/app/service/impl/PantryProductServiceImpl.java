@@ -68,6 +68,10 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
         Pantry pantry = super.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.ADD);
 
         addProductsToPantry(pantryProducts, pantry);
+        log.info("User with email {} added {} products to pantry from with id {}",
+                userEmail,
+                pantryProducts.size(),
+                pantry.getId());
     }
 
     @Override
@@ -85,10 +89,19 @@ public class PantryProductServiceImpl extends AbstractPantryService implements P
         }
 
         this.pantryProductRepository.deleteByIdIn(pantryProductsIds);
+        log.info("User with email {} removed {} products from pantry with id {}",
+                userEmail,
+                pantryProductsIds.size(),
+                pantry.getId());
     }
 
     @Override
     public void updatePantryProduct(long pantryId, PantryProductDTO pantryProductToModify, String userEmail) {
+        if (pantryProductToModify.id() == 0) {
+            log.info("User with email={} tried to modify product which is not saved in database", userEmail);
+            throw new ValidationException("Cannot modify product because it doesn't exist");
+        }
+
         Pantry pantry = super.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.MODIFY);
         //If this method doesn't throw exception, it means that pantryProduct exists in the pantry
         getPantryProductById(pantryId, pantryProductToModify.id(), userEmail, "modify");

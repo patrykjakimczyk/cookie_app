@@ -18,7 +18,7 @@ public class GroupDetailsMapperDTO implements Function<Group, GroupDetailsDTO> {
     @Override
     public GroupDetailsDTO apply(Group group) {
         User creator = group.getCreator();
-        this.extractAuthoritiesOnlyForGroup(creator, group);
+        extractAuthoritiesOnlyForGroup(creator, group);
 
         return new GroupDetailsDTO(
                 group.getId(),
@@ -27,7 +27,7 @@ public class GroupDetailsMapperDTO implements Function<Group, GroupDetailsDTO> {
                 group.getUsers()
                         .stream()
                         .map(user -> {
-                            this.extractAuthoritiesOnlyForGroup(user, group);
+                            extractAuthoritiesOnlyForGroup(user, group);
 
                             return userMapperDTO.apply(user);
                         })

@@ -31,27 +31,26 @@ class ProductControllerTest {
     void test_getProductsWithFilterSuccessful() {
         final String filterValue = "prod";
         final ProductDTO product = new ProductDTO(1L, "product", Category.CEREAL);
-        final PageImpl<ProductDTO> pageResponse = new PageImpl<>(List.of(product));
+        final List<ProductDTO> listResponse = List.of(product);
 
-        doReturn(pageResponse).when(productService).getProductsWithFilter(filterValue);
-        ResponseEntity<Page<ProductDTO>> response = this.controller.getProductsWithFilter(filterValue);
+        doReturn(listResponse).when(productService).getProductsWithFilter(filterValue);
+        ResponseEntity<List<ProductDTO>> response = this.controller.getProductsWithFilter(filterValue);
 
-        assertEquals(pageResponse.getContent().size(), response.getBody().getTotalElements());
-        assertEquals(product.productId(), response.getBody().getContent().get(0).productId());
-        assertEquals(product.productName(), response.getBody().getContent().get(0).productName());
-        assertEquals(product.category(), response.getBody().getContent().get(0).category());
+        assertEquals(listResponse.size(), response.getBody().size());
+        assertEquals(product.productId(), response.getBody().get(0).productId());
+        assertEquals(product.productName(), response.getBody().get(0).productName());
+        assertEquals(product.category(), response.getBody().get(0).category());
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
     void test_getProductsWithFilterSuccessfulWithEmptyContent() {
         final String filterValue = "prod";
-        final PageImpl<ProductDTO> pageResponse = new PageImpl<>(Collections.emptyList());
+        final List<ProductDTO> listResponse = Collections.emptyList();
 
-        doReturn(pageResponse).when(productService).getProductsWithFilter(filterValue);
-        ResponseEntity<Page<ProductDTO>> response = this.controller.getProductsWithFilter(filterValue);
+        doReturn(listResponse).when(productService).getProductsWithFilter(filterValue);
+        ResponseEntity<List<ProductDTO>> response = this.controller.getProductsWithFilter(filterValue);
 
-        assertEquals(pageResponse.getContent().size(), response.getBody().getTotalElements());
         assertTrue(response.getBody().isEmpty());
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
