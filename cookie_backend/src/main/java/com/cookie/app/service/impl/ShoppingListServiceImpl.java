@@ -29,11 +29,11 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-public class ShoppingListServiceImpl extends AbstractShoppingListService implements ShoppingListService {
+public non-sealed class ShoppingListServiceImpl extends AbstractShoppingListService implements ShoppingListService {
     private final ShoppingListRepository shoppingListRepository;
     private final ShoppingListMapperDTO shoppingListMapperDTO;
 
-    protected ShoppingListServiceImpl(UserRepository userRepository,
+    public ShoppingListServiceImpl(UserRepository userRepository,
                                       ProductRepository productRepository,
                                       AuthorityMapperDTO authorityMapperDTO,
                                       ShoppingListRepository shoppingListRepository,
@@ -78,13 +78,8 @@ public class ShoppingListServiceImpl extends AbstractShoppingListService impleme
         User user = super.getUserByEmail(userEmail);
         Optional<ShoppingList> listOptional = super.findShoppingListInUserGroups(shoppingListId, user);
 
-        if (listOptional.isEmpty()) {
-            return new GetShoppingListResponse(0L, null, null, false);
-        }
-
-        ShoppingList shoppingList = listOptional.get();
-
-        return createGetShoppingLisstResponse(shoppingList, user);
+        return listOptional.map(shoppingList -> createGetShoppingLisstResponse(shoppingList, user))
+                .orElseGet(() -> new GetShoppingListResponse(0L, null, null, false));
     }
 
     @Override

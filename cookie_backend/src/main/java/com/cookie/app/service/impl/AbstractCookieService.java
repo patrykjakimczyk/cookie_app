@@ -21,7 +21,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
-public abstract class AbstractCookieService {
+public abstract sealed class AbstractCookieService permits
+        AbstractPantryService, AbstractShoppingListService, GroupServiceImpl,
+        LoginServiceImpl, MealServiceImpl, RecipeServiceImpl {
     private static final int PRODUCTS_PAGE_SIZE = 20;
     final UserRepository userRepository;
     final ProductRepository productRepository;

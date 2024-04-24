@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Transactional
 @Service
-public class PantryProductServiceImpl extends AbstractPantryService implements PantryProductService {
+public non-sealed class PantryProductServiceImpl extends AbstractPantryService implements PantryProductService {
     private final PantryProductRepository pantryProductRepository;
     private final PantryProductMapperDTO pantryProductMapper;
 

@@ -23,7 +23,7 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-public class PantryServiceImpl extends AbstractPantryService implements PantryService {
+public non-sealed class PantryServiceImpl extends AbstractPantryService implements PantryService {
     private final PantryRepository pantryRepository;
     private final PantryMapperDTO pantryMapperDTO;
 
@@ -71,13 +71,9 @@ public class PantryServiceImpl extends AbstractPantryService implements PantrySe
         User user = super.getUserByEmail(userEmail);
         Optional<Pantry> pantryOptional = super.findPantryInUserGroups(pantryId, user);
 
-        if (pantryOptional.isEmpty()) {
-            return new GetPantryResponse(0, null, 0, null, null);
-        }
+        return pantryOptional.map(pantry -> createGetPantryResponse(pantry, user))
+                .orElseGet(() -> new GetPantryResponse(0, null, 0, null, null));
 
-        Pantry pantry = pantryOptional.get();
-
-        return createGetPantryResponse(pantry, user);
     }
 
     @Override

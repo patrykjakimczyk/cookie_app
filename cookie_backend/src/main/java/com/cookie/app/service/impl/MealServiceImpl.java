@@ -28,14 +28,14 @@ import java.util.List;
 @Transactional
 @Slf4j
 @Service
-public class MealServiceImpl extends AbstractCookieService implements MealService {
+public non-sealed class MealServiceImpl extends AbstractCookieService implements MealService {
     private static final String MEAL_DATE_COLUMN = "meal_date";
     private final MealRepository mealRepository;
     private final RecipeRepository recipeRepository;
     private final RecipeService recipeService;
     private final MealMapperDTO mealMapperDTO;
 
-    protected MealServiceImpl(UserRepository userRepository,
+    public MealServiceImpl(UserRepository userRepository,
                               ProductRepository productRepository,
                               AuthorityMapperDTO authorityMapperDTO,
                               MealRepository mealRepository,

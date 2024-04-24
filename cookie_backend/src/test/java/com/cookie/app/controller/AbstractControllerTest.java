@@ -9,7 +9,6 @@ import java.util.Collections;
 abstract class AbstractControllerTest {
     final String username = "username";
     final String password = "password";
-
     Authentication authentication;
 
     @BeforeEach

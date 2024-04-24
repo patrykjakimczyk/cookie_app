@@ -19,7 +19,7 @@ import java.util.*;
 
 @Slf4j
 @Service
-public class LoginServiceImpl extends AbstractCookieService implements LoginService {
+public non-sealed class LoginServiceImpl extends AbstractCookieService implements LoginService {
     private final PasswordEncoder passwordEncoder;
 
     public LoginServiceImpl(UserRepository userRepository,

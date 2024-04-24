@@ -10,7 +10,6 @@ import com.cookie.app.model.entity.*;
 import com.cookie.app.model.enums.AuthorityEnum;
 import com.cookie.app.model.mapper.AuthorityMapperDTO;
 import com.cookie.app.model.mapper.ShoppingListProductMapperDTO;
-import com.cookie.app.repository.PantryProductRepository;
 import com.cookie.app.repository.ProductRepository;
 import com.cookie.app.repository.ShoppingListProductRepository;
 import com.cookie.app.repository.UserRepository;
@@ -18,7 +17,6 @@ import com.cookie.app.service.PantryProductService;
 import com.cookie.app.service.ShoppingListProductService;
 import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,15 +26,12 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional
 @Service
-public class ShoppingListProductServiceImpl extends AbstractShoppingListService implements ShoppingListProductService {
+public non-sealed class ShoppingListProductServiceImpl extends AbstractShoppingListService implements ShoppingListProductService {
     private final ShoppingListProductRepository shoppingListProductRepository;
     private final PantryProductService pantryProductService;
     private final ShoppingListProductMapperDTO shoppingListProductMapper;

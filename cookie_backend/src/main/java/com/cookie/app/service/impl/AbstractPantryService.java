@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Slf4j
-public abstract class AbstractPantryService extends AbstractCookieService {
+public abstract sealed class AbstractPantryService extends AbstractCookieService permits PantryServiceImpl, PantryProductServiceImpl {
 
     AbstractPantryService(UserRepository userRepository,
                           ProductRepository productRepository,

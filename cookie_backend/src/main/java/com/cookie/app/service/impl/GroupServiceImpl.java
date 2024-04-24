@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Transactional
 @Service
-public class GroupServiceImpl extends AbstractCookieService implements GroupService {
+public non-sealed class GroupServiceImpl extends AbstractCookieService implements GroupService {
     private final GroupRepository groupRepository;
     private final AuthorityRepository authorityRepository;
     private final GroupMapperDTO groupMapperDTO;
@@ -134,14 +134,8 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
                 groupId, userEmail, AuthorityEnum.ADD_TO_GROUP, "add another user to group"
         );
         Group group = groupAndAuthorities.group;
-
-        Optional<User> userToAddOptional = this.userRepository.findByUsername(usernameToAdd);
-
-        if (userToAddOptional.isEmpty()) {
-            throw new UserPerformedForbiddenActionException("User tried to add non existing user to group");
-        }
-
-        User userToAdd = userToAddOptional.get();
+        User userToAdd = this.userRepository.findByUsername(usernameToAdd).orElseThrow(() ->
+                new UserPerformedForbiddenActionException("User tried to add non existing user to group"));
 
         if (group.getUsers().contains(userToAdd)) {
             log.info("User={} tried to add user which is already added to group", userEmail);
@@ -162,17 +156,16 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
         Group group = groupUserAndAuthorities.group;
         Set<AuthorityEnum> authorities = groupUserAndAuthorities.authorities;
         User user = groupUserAndAuthorities.user;
-        Optional<User> userToRemoveOptional = this.userRepository.findById(userToRemoveId);
+        User userToRemove;
 
-        if (userToRemoveOptional.isEmpty()) {
-            throw new UserPerformedForbiddenActionException("User tried to remove non existing user from group");
-        }
-
-        User userToRemove = userToRemoveOptional.get();
-
-        if (!authorities.contains(AuthorityEnum.MODIFY_GROUP) && userToRemove.getId() != user.getId()) {
+        if (user.getId() == userToRemoveId) {
+            userToRemove = user;
+        } else if (!authorities.contains(AuthorityEnum.MODIFY_GROUP)) {
             log.info("User={} tried to remove another user from group without permissions", userEmail);
             throw new UserPerformedForbiddenActionException("You have no permissions to do that");
+        } else {
+            userToRemove = this.userRepository.findById(userToRemoveId).orElseThrow(() ->
+                    new UserPerformedForbiddenActionException("User tried to remove non existing user from group"));
         }
 
         if (!group.getUsers().contains(userToRemove)) {
@@ -197,22 +190,22 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
                 groupId, userEmail, AuthorityEnum.MODIFY_GROUP, "assign authorities to user"
         );
         Group group = groupUserAndAuthorities.group;
+        User user = groupUserAndAuthorities.user;
+        User userToAssignAuthorities;
 
-        Optional<User> userToAssignAuthoritiesOptional = this.userRepository.findById(request.userId());
-
-        if (userToAssignAuthoritiesOptional.isEmpty()) {
-            throw new UserPerformedForbiddenActionException("You tried to assign authorities to non existing user");
+        if (user.getId() == request.userId()) {
+            userToAssignAuthorities = user;
+        } else {
+            userToAssignAuthorities = this.userRepository.findById(request.userId()).orElseThrow(() ->
+                new UserPerformedForbiddenActionException("You tried to assign authorities to non existing user"));
         }
-
-        User userToAssignAuthorities = userToAssignAuthoritiesOptional.get();
 
         if (!group.getUsers().contains(userToAssignAuthorities)) {
             log.info("User={} tried to assign authorities to user which is not in the group", userEmail);
             throw new UserPerformedForbiddenActionException("You tried to assign authorities to user which is not in the group");
         }
 
-        List<Authority> authoritiesToAssign = this.createAuthoritiesList(userToAssignAuthorities, group, request.authorities());
-
+        List<Authority> authoritiesToAssign = createAuthoritiesList(userToAssignAuthorities, group, request.authorities());
         authoritiesToAssign = authoritiesToAssign
                 .stream()
                 .filter(authority -> !userToAssignAuthorities.getAuthorities().contains(authority))
@@ -234,14 +227,15 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
                 groupId, userEmail, AuthorityEnum.MODIFY_GROUP, "take away authorities from user"
         );
         Group group = groupUserAndAuthorities.group;
+        User user = groupUserAndAuthorities.user;
+        User userToTakeAwayAuthorities;
 
-        Optional<User> userToTakeAwayAuthoritiesOptional = this.userRepository.findById(request.userId());
-
-        if (userToTakeAwayAuthoritiesOptional.isEmpty()) {
-            throw new UserPerformedForbiddenActionException("You tried to take away authorities from non existing user");
+        if (user.getId() == request.userId()) {
+            userToTakeAwayAuthorities = user;
+        } else {
+            userToTakeAwayAuthorities = this.userRepository.findById(request.userId()).orElseThrow(() ->
+                    new UserPerformedForbiddenActionException("You tried to take away authorities from non existing user"));
         }
-
-        User userToTakeAwayAuthorities = userToTakeAwayAuthoritiesOptional.get();
 
         if (!group.getUsers().contains(userToTakeAwayAuthorities)) {
             log.info("User={} tried to take away authorities from user which is not in the group", userEmail);
@@ -251,8 +245,13 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
         List<Authority> authoritiesToTakeAway =
                 userToTakeAwayAuthorities.getAuthorities()
                 .stream()
-                .filter(authority -> request.authorities().contains(authority.getAuthorityName()))
+                .filter(authority -> request.authorities().contains(authority.getAuthorityName()) &&
+                        authority.getGroup().equals(group))
                 .toList();
+
+        if (authoritiesToTakeAway.isEmpty()) {
+            return;
+        }
 
         this.authorityRepository.deleteAll(authoritiesToTakeAway);
     }
@@ -276,14 +275,8 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
 
     private GroupUserAndAuthorities getGroupAndUser(long groupId, String userEmail) {
         User user = super.getUserByEmail(userEmail);
-        Optional<Group> groupOptional = this.groupRepository.findById(groupId);
-
-        if (groupOptional.isEmpty()) {
-            log.info("User={} tried to perform action for non existing group", userEmail);
-            throw new UserPerformedForbiddenActionException("Group does not exist");
-        }
-
-        Group group = groupOptional.get();
+        Group group = this.groupRepository.findById(groupId).orElseThrow(() ->
+                new UserPerformedForbiddenActionException("Group does not exist"));
 
         return new GroupUserAndAuthorities(group, user, null);
     }
