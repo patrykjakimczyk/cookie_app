@@ -255,12 +255,11 @@ export class CreateRecipeComponent implements OnInit {
       mealType: this.recipeForm.controls.mealType.value as MealType,
       cuisine: this.recipeForm.controls.cuisine.value!,
       portions: +this.recipeForm.controls.portions.value!,
-      creatorName: this.getUserName(),
       updateImage: this.updateImage,
       products: this.ingredientsToAdd,
     };
 
-    formData.append('jsonString', JSON.stringify(recipe));
+    formData.append('recipe', JSON.stringify(recipe));
 
     let recipeRequest = null;
     if (this.edit) {

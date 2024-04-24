@@ -26,6 +26,7 @@ public class CookieAuthenticationProvider implements AuthenticationProvider {
         if (passwordEncoder.matches(password, user.getPassword())) {
             return new UsernamePasswordAuthenticationToken(username, password, user.getAuthorities());
         }
+
         throw new BadCredentialsException("Invalid password!");
     }
 

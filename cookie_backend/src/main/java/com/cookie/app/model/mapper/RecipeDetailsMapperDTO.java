@@ -1,7 +1,6 @@
 package com.cookie.app.model.mapper;
 
 import com.cookie.app.model.dto.RecipeDetailsDTO;
-import com.cookie.app.model.request.CreateRecipeRequest;
 import com.cookie.app.model.entity.Recipe;
 import com.cookie.app.util.ImageUtil;
 import lombok.RequiredArgsConstructor;

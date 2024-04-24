@@ -57,7 +57,7 @@ public non-sealed class PantryServiceImpl extends AbstractPantryService implemen
 
         this.pantryRepository.save(pantry);
 
-        log.info("User with email {} created pantry with id {} in group with id {}",
+        log.info("User with email={} created pantry with id={} in group with id={}",
                 userEmail,
                 pantry.getId(),
                 request.groupId()
@@ -94,7 +94,7 @@ public non-sealed class PantryServiceImpl extends AbstractPantryService implemen
         Pantry pantry = super.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.MODIFY_PANTRY);
 
         this.pantryRepository.delete(pantry);
-        log.info("User with email {} deleted pantry with id {}", userEmail, pantry.getId());
+        log.info("User with email={} deleted pantry with id={}", userEmail, pantry.getId());
 
         return new DeletePantryResponse(pantry.getPantryName());
     }
@@ -106,7 +106,7 @@ public non-sealed class PantryServiceImpl extends AbstractPantryService implemen
 
         pantry.setPantryName(request.pantryName());
         this.pantryRepository.save(pantry);
-        log.info("User with email {} modified pantry with id {}", userEmail, pantry.getId());
+        log.info("User with email={} modified pantry with id={}", userEmail, pantry.getId());
 
         return createGetPantryResponse(pantry, user);
     }

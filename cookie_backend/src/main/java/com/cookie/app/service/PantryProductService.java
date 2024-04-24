@@ -5,7 +5,6 @@ import com.cookie.app.model.dto.PantryProductDTO;
 import com.cookie.app.model.entity.Pantry;
 import com.cookie.app.model.entity.RecipeProduct;
 import com.cookie.app.model.entity.User;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
 

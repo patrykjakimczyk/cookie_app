@@ -59,21 +59,21 @@ public class SecurityConfig {
                 .csrf(csrfConfigurer -> csrfConfigurer
                                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                         // used as a workaround for testing endpoints in swagger
-//                        .ignoringRequestMatchers(
-//                                "/api/v1/user",
-//                                "/api/v1/pantry",
-//                                "/api/v1/pantry/**",
-//                                "/api/v1/product",
-//                                "/api/v1/group",
-//                                "/api/v1/group/**",
-//                                "/api/v1/shopping-lists",
-//                                "/api/v1/shopping-lists/**",
-//                                "/api/v1/recipes",
-//                                "/api/v1/recipes/**",
-//                                "/api/v1/meals",
-//                                "/api/v1/meals/**"
-//                        )
-                                .ignoringRequestMatchers("/api/v1/user")
+                        .ignoringRequestMatchers(
+                                "/api/v1/user",
+                                "/api/v1/pantry",
+                                "/api/v1/pantry/**",
+                                "/api/v1/product",
+                                "/api/v1/group",
+                                "/api/v1/group/**",
+                                "/api/v1/shopping-lists",
+                                "/api/v1/shopping-lists/**",
+                                "/api/v1/recipes",
+                                "/api/v1/recipes/**",
+                                "/api/v1/meals",
+                                "/api/v1/meals/**"
+                        )
+//                                .ignoringRequestMatchers("/api/v1/user")
                                 .csrfTokenRequestHandler(requestHandler)
                 )
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)

@@ -8,9 +8,9 @@ import jakarta.validation.constraints.*;
 
 import java.util.List;
 
-public record CreateRecipeRequest(
+public record UpdateRecipeRequest(
         @NotNull(message = "Recipe id must be present")
-        @PositiveOrZero(message = "Recipe id must be equal or greater than 0")
+        @Positive(message = "Recipe id must be greater than 0")
         Long id,
         @Pattern(
                 regexp = RegexConstants.RECIPE_NAME_REGEX,
@@ -44,4 +44,5 @@ public record CreateRecipeRequest(
         @NotNull(message = "Products list must be present")
         @NotEmpty(message = "Nr of products must be at least 1")
         List<@Valid RecipeProductDTO> products
-) {}
+) {
+}

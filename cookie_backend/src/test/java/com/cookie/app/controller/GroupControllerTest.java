@@ -11,26 +11,14 @@ import com.cookie.app.model.request.UserWithAuthoritiesRequest;
 import com.cookie.app.model.response.AssignAuthoritiesToUserResponse;
 import com.cookie.app.model.response.GetUserGroupsResponse;
 import com.cookie.app.model.response.GroupNameTakenResponse;
-import com.cookie.app.service.GroupService;
 import com.cookie.app.service.impl.GroupServiceImpl;
-import com.cookie.app.service.impl.LoginServiceImpl;
-import org.aspectj.lang.annotation.Before;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
 import java.util.Collections;
 import java.util.Set;
 
@@ -38,9 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 class GroupControllerTest extends AbstractControllerTest {
@@ -53,7 +38,7 @@ class GroupControllerTest extends AbstractControllerTest {
     GroupController controller;
 
     @Test
-    void test_createGroupSuccessful() throws Exception {
+    void test_createGroupSuccessful() {
         final CreateGroupRequest createGroupRequest = new CreateGroupRequest(groupName);
         final GroupNameTakenResponse serviceResponse = new GroupNameTakenResponse(false);
 

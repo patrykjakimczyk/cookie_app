@@ -93,7 +93,7 @@ public non-sealed class ShoppingListProductServiceImpl extends AbstractShoppingL
             newShoppingListProducts.add(shoppingListProduct);
         }
 
-        log.info("User with email {} added {} products to shopping list with id {}",
+        log.info("User with email={} added={} products to shopping list with id={}",
                 userEmail,
                 newShoppingListProducts.size(),
                 shoppingList.getId());
@@ -178,7 +178,7 @@ public non-sealed class ShoppingListProductServiceImpl extends AbstractShoppingL
         }
 
         if (!super.userHasAuthority(user, pantry.getGroup().getId(), AuthorityEnum.ADD)) {
-            log.info("User: {} tried to perform action in pantry without required permission", user.getEmail());
+            log.info("User={} tried to perform action in pantry without required permission", user.getEmail());
             throw new UserPerformedForbiddenActionException("You have not permissions to do that");
         }
 
@@ -197,7 +197,7 @@ public non-sealed class ShoppingListProductServiceImpl extends AbstractShoppingL
         this.shoppingListProductRepository.deleteAll(purchasedProducts);
         this.pantryProductService.addProductsToPantryFromList(pantry, newPantryProducts);
 
-        log.info("User with email {} transfered {} products from shopping list with id {} to pantry with id {}",
+        log.info("User with email={} transfered={} products from shopping list with id={} to pantry with id={}",
                 userEmail,
                 newPantryProducts.size(),
                 shoppingList.getId(),

@@ -9,7 +9,6 @@ export type CreateRecipeRequest = {
   mealType: MealType;
   cuisine: string;
   portions: number;
-  creatorName: string;
   updateImage: boolean;
   products: RecipeProductDTO[];
 };

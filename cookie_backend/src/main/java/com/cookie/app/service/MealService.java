@@ -1,7 +1,6 @@
 package com.cookie.app.service;
 
 import com.cookie.app.model.dto.MealDTO;
-import com.cookie.app.model.entity.Meal;
 import com.cookie.app.model.request.AddMealRequest;
 
 import java.sql.Timestamp;

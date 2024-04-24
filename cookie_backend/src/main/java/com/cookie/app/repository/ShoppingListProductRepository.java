@@ -1,6 +1,5 @@
 package com.cookie.app.repository;
 
-import com.cookie.app.model.entity.PantryProduct;
 import com.cookie.app.model.entity.ShoppingListProduct;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

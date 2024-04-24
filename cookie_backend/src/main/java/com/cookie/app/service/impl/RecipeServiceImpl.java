@@ -9,6 +9,7 @@ import com.cookie.app.model.mapper.AuthorityMapperDTO;
 import com.cookie.app.model.mapper.RecipeDetailsMapperDTO;
 import com.cookie.app.model.mapper.RecipeMapperDTO;
 import com.cookie.app.model.request.CreateRecipeRequest;
+import com.cookie.app.model.request.UpdateRecipeRequest;
 import com.cookie.app.model.response.CreateRecipeResponse;
 import com.cookie.app.repository.ProductRepository;
 import com.cookie.app.repository.RecipeProductRepository;
@@ -20,20 +21,18 @@ import com.cookie.app.service.ShoppingListProductService;
 import com.cookie.app.util.ImageUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class RecipeServiceImpl extends AbstractCookieService implements RecipeService {
+public non-sealed class RecipeServiceImpl extends AbstractCookieService implements RecipeService {
     private final RecipeRepository recipeRepository;
     private final RecipeProductRepository recipeProductRepository;
     private final PantryProductService pantryProductService;
@@ -41,7 +40,7 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
     private final RecipeMapperDTO recipeMapperDTO;
     private final RecipeDetailsMapperDTO recipeDetailsMapperDTO;
 
-    protected RecipeServiceImpl(UserRepository userRepository,
+    public RecipeServiceImpl(UserRepository userRepository,
                                 ProductRepository productRepository,
                                 AuthorityMapperDTO authorityMapperDTO,
                                 RecipeRepository recipeRepository,
@@ -60,49 +59,53 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
     }
 
     @Override
-    public Page<RecipeDTO> getRecipes(int page,
-                                      String filterValue,
-                                      int prepTime,
-                                      int portions,
+    public PageResult<RecipeDTO> getRecipes(int page,
+                                      Integer prepTime,
+                                      Integer portions,
                                       List<MealType> mealTypes,
+                                      String filterValue,
                                       String sortColName,
                                       String sortDirection) {
-        PageRequest pageRequest = super.createPageRequest(page, sortColName, sortDirection);
+        PageRequest pageRequest = super.createPageRequest(page - 1, sortColName, sortDirection);
         Set<String> selectedMealTypes = getMealTypesAsStrings(mealTypes);
+        prepTime = prepTime == null ? 0 : prepTime;
+        portions = portions == null ? 0 : portions;
 
         if (StringUtils.isBlank(filterValue)) {
-            return this.recipeRepository
+            return new PageResult<>(this.recipeRepository
                     .findRecipes(prepTime, portions, selectedMealTypes, pageRequest)
-                    .map(recipeMapperDTO::apply);
+                    .map(recipeMapperDTO::apply));
         }
 
-        return this.recipeRepository
+        return new PageResult<>(this.recipeRepository
                 .findRecipesByFilter(filterValue, prepTime, portions, selectedMealTypes, pageRequest)
-                .map(recipeMapperDTO::apply);
+                .map(recipeMapperDTO::apply));
     }
 
     @Override
-    public Page<RecipeDTO> getUserRecipes(String userEmail,
+    public PageResult<RecipeDTO> getUserRecipes(String userEmail,
                                           int page,
-                                          String filterValue,
-                                          int prepTime,
-                                          int portions,
+                                          Integer prepTime,
+                                          Integer portions,
                                           List<MealType> mealTypes,
+                                          String filterValue,
                                           String sortColName,
                                           String sortDirection) {
         User user = super.getUserByEmail(userEmail);
-        PageRequest pageRequest = super.createPageRequest(page, sortColName, sortDirection);
+        PageRequest pageRequest = super.createPageRequest(page - 1, sortColName, sortDirection);
         Set<String> selectedMealTypes = getMealTypesAsStrings(mealTypes);
+        prepTime = prepTime == null ? 0 : prepTime;
+        portions = portions == null ? 0 : portions;
 
         if (StringUtils.isBlank(filterValue)) {
-            return this.recipeRepository
+            return new PageResult<>(this.recipeRepository
                     .findCreatorRecipes(user.getId(), prepTime, portions, selectedMealTypes, pageRequest)
-                    .map(recipeMapperDTO::apply);
+                    .map(recipeMapperDTO::apply));
         }
 
-        return this.recipeRepository
+        return new PageResult<>(this.recipeRepository
                 .findCreatorRecipesByFilter(user.getId(), filterValue, prepTime, portions, selectedMealTypes, pageRequest)
-                .map(recipeMapperDTO::apply);
+                .map(recipeMapperDTO::apply));
     }
 
 
@@ -110,23 +113,20 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
     public RecipeDetailsDTO getRecipeDetails(long recipeId) {
         Optional<Recipe> recipeOptional = this.recipeRepository.findById(recipeId);
 
-        if (recipeOptional.isEmpty()) {
-            return new RecipeDetailsDTO(0, null, null, 0, null, null,0, null, null, null);
-        }
-
-        return this.recipeDetailsMapperDTO.apply(recipeOptional.get());
+        return recipeOptional.map(this.recipeDetailsMapperDTO::apply)
+                .orElseGet(() -> new RecipeDetailsDTO(0, null, null, 0, null, null,0, null, null, null));
     }
 
     @Override
-    public CreateRecipeResponse createRecipe(String userEmail, CreateRecipeRequest recipeDetailsDTO, MultipartFile recipeImage) {
+    public CreateRecipeResponse createRecipe(String userEmail, CreateRecipeRequest createRecipeRequest, MultipartFile recipeImage) {
         User user = super.getUserByEmail(userEmail);
 
-        if (recipeDetailsDTO.id() != 0) {
-            log.info("User: {} tried to create recipe with id set to {}", userEmail, recipeDetailsDTO.id());
+        if (createRecipeRequest.id() != 0) {
+            log.info("User={} tried to create recipe with id set to {}", userEmail, createRecipeRequest.id());
             throw new ValidationException("Recipe id must be 0 while creating it");
         }
 
-        Recipe recipe = mapRecipeDetailsToRecipe(user, recipeDetailsDTO, recipeImage);
+        Recipe recipe = mapRecipeRequestToRecipe(user, createRecipeRequest, recipeImage);
         this.recipeRepository.save(recipe);
 
         return new CreateRecipeResponse(recipe.getId());
@@ -146,7 +146,7 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
     }
 
     @Override
-    public CreateRecipeResponse modifyRecipe(String userEmail, CreateRecipeRequest recipeDetailsDTO, MultipartFile recipeImage) {
+    public CreateRecipeResponse updateRecipe(String userEmail, UpdateRecipeRequest recipeDetailsDTO, MultipartFile recipeImage) {
         User user = super.getUserByEmail(userEmail);
         Recipe recipe = getRecipeById(recipeDetailsDTO.id(), userEmail);
 
@@ -180,7 +180,7 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
     }
 
     private Set<String> getMealTypesAsStrings(List<MealType> mealTypes) {
-        if (mealTypes.isEmpty()) {
+        if (mealTypes == null || mealTypes.isEmpty()) {
             return MealType.ALL_MEAL_TYPES
                     .stream()
                     .map(Enum::name)
@@ -189,10 +189,11 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
 
         return mealTypes
                 .stream()
-                .map(Enum::name).collect(Collectors.toSet());
+                .map(Enum::name)
+                .collect(Collectors.toSet());
     }
 
-    private void modifyRecipe(Recipe recipe, CreateRecipeRequest recipeDetailsDTO, MultipartFile recipeImage) {
+    private void modifyRecipe(Recipe recipe, UpdateRecipeRequest recipeDetailsDTO, MultipartFile recipeImage) {
         if (!recipe.getRecipeName().equals(recipeDetailsDTO.recipeName())) {
             recipe.setRecipeName(recipeDetailsDTO.recipeName());
         }
@@ -281,23 +282,16 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
     }
 
     private Recipe getRecipeById(long recipeId, String userEmail) {
-        if (recipeId == 0) {
-            log.info("User: {} tried to access recipe which does not exists", userEmail);
-            throw new UserPerformedForbiddenActionException("Recipe does not exists");
-        }
-
         Optional<Recipe> recipeOptional = this.recipeRepository.findById(recipeId);
 
-        if (recipeOptional.isEmpty()) {
+        return recipeOptional.orElseThrow(() -> {
             log.info("User: {} tried to access recipe which does not exists", userEmail);
-            throw new UserPerformedForbiddenActionException("Recipe does not exists");
-        }
-
-        return recipeOptional.get();
+            return new UserPerformedForbiddenActionException("Recipe does not exists");
+        });
     }
 
 
-    private Recipe mapRecipeDetailsToRecipe(User creator, CreateRecipeRequest createRecipeRequest, MultipartFile recipeImage) {
+    private Recipe mapRecipeRequestToRecipe(User creator, CreateRecipeRequest createRecipeRequest, MultipartFile recipeImage) {
         byte[] recipeImg = null;
 
         if (recipeImage != null) {

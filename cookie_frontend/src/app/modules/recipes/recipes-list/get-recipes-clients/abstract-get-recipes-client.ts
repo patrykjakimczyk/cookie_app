@@ -4,6 +4,7 @@ import {
   GetRecipesParams,
   RecipeDTO,
 } from 'src/app/shared/model/types/recipes-types';
+import { PageResult } from 'src/app/shared/model/responses/page-result-response';
 
 @Injectable({ providedIn: 'root' })
 export abstract class GetRecipesClient {
@@ -24,7 +25,7 @@ export abstract class GetRecipesClient {
 
   abstract getRecipes(params: GetRecipesParams): void;
 
-  protected saveResponseData(recipes: any) {
+  protected saveResponseData(recipes: PageResult<RecipeDTO>) {
     this.totalPages = recipes.totalPages;
     this.totalElements = recipes.totalElements;
     this.recipes = recipes.content;

@@ -11,18 +11,18 @@ import com.cookie.app.service.GroupService;
 import com.cookie.app.model.response.GroupNameTakenResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/api/v1/groups")
+@RequestMapping(value = "/api/v1/groups", produces = { MediaType.APPLICATION_JSON_VALUE })
 @RestController
 public class GroupController {
     private static final String GROUP_ID_URL = "/{id}";
@@ -36,7 +36,7 @@ public class GroupController {
             @RequestBody @Valid CreateGroupRequest createGroupRequest,
             Authentication authentication
     ) {
-        log.info("Performing group creation by user with email {}", authentication.getName());
+        log.info("Performing group creation by user with email={}", authentication.getName());
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(this.groupService.createGroup(createGroupRequest, authentication.getName()));
@@ -64,7 +64,7 @@ public class GroupController {
             @RequestBody @Valid UpdateGroupRequest updateGroupRequest,
             Authentication authentication
     ) {
-        log.info("Performing group update by user with email {}", authentication.getName());
+        log.info("Performing group update by user with email={}", authentication.getName());
         return ResponseEntity.ok(this.groupService.updateGroup(groupId, updateGroupRequest, authentication.getName()));
     }
 
@@ -74,7 +74,7 @@ public class GroupController {
             @PathVariable("id") @Valid @Positive(message = "Id must be greater than 0") long groupId,
             Authentication authentication
     ) {
-        log.info("Performing group deletion by user for email {}", authentication.getName());
+        log.info("Performing group deletion by user for email={}", authentication.getName());
         this.groupService.deleteGroup(groupId, authentication.getName());
 
         return ResponseEntity.ok().build();
@@ -88,7 +88,7 @@ public class GroupController {
             Authentication authentication
     ) {
         log.info(
-                "Performing user addition with username {} to group with id {} by user with email {}",
+                "Performing user addition with username={} to group with id={} by user with email={}",
                 addUserToGroupRequest.usernameToAdd(),
                 groupId,
                 authentication.getName()
@@ -106,7 +106,7 @@ public class GroupController {
             Authentication authentication
     ) {
         log.info(
-                "Performing user removal with id {} from group with id {} by user with email {}",
+                "Performing user removal with id={} from group with id={} by user with email={}",
                 userToRemoveId,
                 groupId,
                 authentication.getName()
@@ -124,7 +124,7 @@ public class GroupController {
             Authentication authentication
     ) {
         log.info(
-                "Performing authorities assignment for user with id {} from group with id {} by user with email {}",
+                "Performing authorities assignment for user with id={} from group with id={} by user with email={}",
                 request.userId(),
                 groupId,
                 authentication.getName()
@@ -140,7 +140,7 @@ public class GroupController {
             Authentication authentication
     ) {
         log.info(
-                "Performing authorities removal from user with id {} from group with id {} by user with email {}",
+                "Performing authorities removal from user with id={} from group with id={} by user with email={}",
                 request.userId(),
                 groupId,
                 authentication.getName()

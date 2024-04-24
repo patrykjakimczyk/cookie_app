@@ -9,7 +9,6 @@ import com.cookie.app.model.mapper.AuthorityMapperDTO;
 import com.cookie.app.repository.ProductRepository;
 import com.cookie.app.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 

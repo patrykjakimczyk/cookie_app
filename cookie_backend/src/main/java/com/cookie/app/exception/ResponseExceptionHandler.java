@@ -67,4 +67,10 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
     }
+
+    @ExceptionHandler(MappingJsonToObjectException.class)
+    public ResponseEntity<ExceptionMessage> mappingJsonToObjectException(MappingJsonToObjectException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ExceptionMessage(exception.getMessage(), Instant.now()));
+    }
 }

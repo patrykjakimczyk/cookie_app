@@ -8,7 +8,6 @@ import com.cookie.app.model.response.GetUserPantriesResponse;
 import com.cookie.app.service.PantryService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

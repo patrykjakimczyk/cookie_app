@@ -16,6 +16,7 @@
           <mat-checkbox
             *ngFor="let mealType of mealTypes"
             (change)="onMealTypeChange($event, mealType)"
+            color="primary"
           >
             {{ mealType | enumPrintFormatter }}
           </mat-checkbox>

@@ -1,3 +1,4 @@
+import { PageResult } from './../../shared/model/responses/page-result-response';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -24,7 +25,7 @@ export class RecipesService {
   getAllRecipes(
     page: number,
     filterValues: GetRecipesParams
-  ): Observable<RecipeDTO[]> {
+  ): Observable<PageResult<RecipeDTO>> {
     return this.getRecipes(
       filterValues,
       this.url + this.recipes_page_path.replace('{page}', page.toString())
@@ -34,7 +35,7 @@ export class RecipesService {
   getUserRecipes(
     page: number,
     filterValues: GetRecipesParams
-  ): Observable<RecipeDTO[]> {
+  ): Observable<PageResult<RecipeDTO>> {
     return this.getRecipes(
       filterValues,
       this.url + this.user_recipes_page_path.replace('{page}', page.toString())
@@ -44,25 +45,31 @@ export class RecipesService {
   private getRecipes(
     filterValues: GetRecipesParams,
     path: string
-  ): Observable<RecipeDTO[]> {
+  ): Observable<PageResult<RecipeDTO>> {
     let params = new HttpParams();
 
-    params = params
-      .append('filterValue', filterValues.filterValue)
-      .append('prepTime', filterValues.prepTime)
-      .append('portions', filterValues.portions)
-      .append('sortColName', filterValues.sortColName)
-      .append('sortDirection', filterValues.sortDirection);
-
-    if (filterValues.mealTypes.length === 0) {
-      params = params.append('mealTypes', '');
-    } else {
+    if (filterValues.filterValue) {
+      params = params.append('filterValue', filterValues.filterValue);
+    }
+    if (filterValues.prepTime) {
+      params = params.append('prepTime', filterValues.prepTime);
+    }
+    if (filterValues.portions) {
+      params = params.append('portions', filterValues.portions);
+    }
+    if (filterValues.sortColName) {
+      params = params.append('sortColName', filterValues.sortColName);
+    }
+    if (filterValues.sortDirection) {
+      params = params.append('sortDirection', filterValues.sortDirection);
+    }
+    if (filterValues.mealTypes.length) {
       for (let mealType of filterValues.mealTypes) {
         params = params.append('mealTypes', mealType);
       }
     }
 
-    return this.http.get<RecipeDTO[]>(path, { params: params });
+    return this.http.get<PageResult<RecipeDTO>>(path, { params: params });
   }
 
   getRecipeDetails(recipeId: number) {

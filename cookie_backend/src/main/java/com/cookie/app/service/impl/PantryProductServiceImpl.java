@@ -13,14 +13,11 @@ import com.cookie.app.repository.UserRepository;
 import com.cookie.app.service.PantryProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional
@@ -68,7 +65,7 @@ public non-sealed class PantryProductServiceImpl extends AbstractPantryService i
         Pantry pantry = super.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.ADD);
 
         addProductsToPantry(pantryProducts, pantry);
-        log.info("User with email {} added {} products to pantry from with id {}",
+        log.info("User with email={} added={} products to pantry from with id={}",
                 userEmail,
                 pantryProducts.size(),
                 pantry.getId());
@@ -89,7 +86,7 @@ public non-sealed class PantryProductServiceImpl extends AbstractPantryService i
         }
 
         this.pantryProductRepository.deleteByIdIn(pantryProductsIds);
-        log.info("User with email {} removed {} products from pantry with id {}",
+        log.info("User with email={} removed={} products from pantry with id={}",
                 userEmail,
                 pantryProductsIds.size(),
                 pantry.getId());
