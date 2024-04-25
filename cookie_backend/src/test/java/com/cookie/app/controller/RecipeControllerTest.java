@@ -86,7 +86,7 @@ class RecipeControllerTest extends AbstractControllerTest {
     void test_createRecipeSuccessful() throws IOException {
         final ProductDTO productDTO = new ProductDTO(id, "productName", Category.CEREAL);
         final RecipeProductDTO recipeProductDTO = new RecipeProductDTO(id, productDTO, 100, Unit.GRAMS);
-        final CreateRecipeRequest request = new CreateRecipeRequest(id, recipeName, "preparationpreparationpreparation",
+        final CreateRecipeRequest request = new CreateRecipeRequest(recipeName, "preparationpreparationpreparation",
                 5, MealType.APPETIZER, null, 1, false, Collections.singletonList(recipeProductDTO));
         final CreateRecipeResponse createRecipeResponse = new CreateRecipeResponse(id);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -109,7 +109,7 @@ class RecipeControllerTest extends AbstractControllerTest {
     void test_createRecipeInvalidRequestBodyData() throws IOException {
         final ProductDTO productDTO = new ProductDTO(id, "productName", Category.CEREAL);
         final RecipeProductDTO recipeProductDTO = new RecipeProductDTO(id, productDTO, 100, Unit.GRAMS);
-        final CreateRecipeRequest request = new CreateRecipeRequest(id, recipeName, "tooshort",
+        final CreateRecipeRequest request = new CreateRecipeRequest(recipeName, "tooshort",
                 5, MealType.APPETIZER, null, 1, false, Collections.singletonList(recipeProductDTO));
         ObjectMapper objectMapper = new ObjectMapper();
 

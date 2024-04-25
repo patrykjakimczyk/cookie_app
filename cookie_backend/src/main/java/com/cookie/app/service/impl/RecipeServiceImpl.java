@@ -1,7 +1,6 @@
 package com.cookie.app.service.impl;
 
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
-import com.cookie.app.exception.ValidationException;
 import com.cookie.app.model.dto.*;
 import com.cookie.app.model.entity.*;
 import com.cookie.app.model.enums.MealType;
@@ -41,14 +40,14 @@ public non-sealed class RecipeServiceImpl extends AbstractCookieService implemen
     private final RecipeDetailsMapperDTO recipeDetailsMapperDTO;
 
     public RecipeServiceImpl(UserRepository userRepository,
-                                ProductRepository productRepository,
-                                AuthorityMapperDTO authorityMapperDTO,
-                                RecipeRepository recipeRepository,
-                                RecipeProductRepository recipeProductRepository,
-                                PantryProductService pantryProductService,
-                                ShoppingListProductService shoppingListProductService,
-                                RecipeMapperDTO recipeMapperDTO,
-                                RecipeDetailsMapperDTO recipeDetailsMapperDTO) {
+                             ProductRepository productRepository,
+                             AuthorityMapperDTO authorityMapperDTO,
+                             RecipeRepository recipeRepository,
+                             RecipeProductRepository recipeProductRepository,
+                             PantryProductService pantryProductService,
+                             ShoppingListProductService shoppingListProductService,
+                             RecipeMapperDTO recipeMapperDTO,
+                             RecipeDetailsMapperDTO recipeDetailsMapperDTO) {
         super(userRepository, productRepository, authorityMapperDTO);
         this.recipeRepository = recipeRepository;
         this.recipeProductRepository = recipeProductRepository;
@@ -121,11 +120,6 @@ public non-sealed class RecipeServiceImpl extends AbstractCookieService implemen
     public CreateRecipeResponse createRecipe(String userEmail, CreateRecipeRequest createRecipeRequest, MultipartFile recipeImage) {
         User user = super.getUserByEmail(userEmail);
 
-        if (createRecipeRequest.id() != 0) {
-            log.info("User={} tried to create recipe with id set to {}", userEmail, createRecipeRequest.id());
-            throw new ValidationException("Recipe id must be 0 while creating it");
-        }
-
         Recipe recipe = mapRecipeRequestToRecipe(user, createRecipeRequest, recipeImage);
         this.recipeRepository.save(recipe);
 
@@ -138,7 +132,7 @@ public non-sealed class RecipeServiceImpl extends AbstractCookieService implemen
         Recipe recipe = getRecipeById(recipeId, userEmail);
 
         if (recipe.getCreator().getId() != user.getId()) {
-            log.info("User: {} tried to delete recipe which they did not created", userEmail);
+            log.info("User={} tried to delete recipe which they did not created", userEmail);
             throw new UserPerformedForbiddenActionException("You did not create this recipe so you cannot delete it");
         }
 
@@ -151,11 +145,11 @@ public non-sealed class RecipeServiceImpl extends AbstractCookieService implemen
         Recipe recipe = getRecipeById(recipeDetailsDTO.id(), userEmail);
 
         if (recipe.getCreator().getId() != user.getId()) {
-            log.info("User: {} tried to modify recipe which they did not created", userEmail);
-            throw new UserPerformedForbiddenActionException("You did not create this recipe so you cannot delete it");
+            log.info("User={} tried to modify recipe which they did not created", userEmail);
+            throw new UserPerformedForbiddenActionException("You did not create this recipe so you cannot update it");
         }
 
-        modifyRecipe(recipe, recipeDetailsDTO, recipeImage);
+        updateRecipe(recipe, recipeDetailsDTO, recipeImage);
         this.recipeRepository.save(recipe);
 
         return new CreateRecipeResponse(recipe.getId());
@@ -193,7 +187,7 @@ public non-sealed class RecipeServiceImpl extends AbstractCookieService implemen
                 .collect(Collectors.toSet());
     }
 
-    private void modifyRecipe(Recipe recipe, UpdateRecipeRequest recipeDetailsDTO, MultipartFile recipeImage) {
+    private void updateRecipe(Recipe recipe, UpdateRecipeRequest recipeDetailsDTO, MultipartFile recipeImage) {
         if (!recipe.getRecipeName().equals(recipeDetailsDTO.recipeName())) {
             recipe.setRecipeName(recipeDetailsDTO.recipeName());
         }
@@ -203,11 +197,14 @@ public non-sealed class RecipeServiceImpl extends AbstractCookieService implemen
         if (recipe.getPreparationTime() != recipeDetailsDTO.preparationTime()) {
             recipe.setPreparationTime(recipeDetailsDTO.preparationTime());
         }
-        if (!recipe.getCuisine().equals(recipeDetailsDTO.cuisine())) {
+        if (!Objects.equals(recipe.getCuisine(), recipeDetailsDTO.cuisine())) {
             recipe.setCuisine(recipeDetailsDTO.cuisine());
         }
         if (recipe.getPortions() != recipeDetailsDTO.portions()) {
             recipe.setPortions(recipeDetailsDTO.portions());
+        }
+        if (recipe.getMealType() != recipeDetailsDTO.mealType()) {
+            recipe.setMealType(recipeDetailsDTO.mealType());
         }
 
         if (recipeDetailsDTO.updateImage()) {
@@ -222,9 +219,7 @@ public non-sealed class RecipeServiceImpl extends AbstractCookieService implemen
 
                 String contentType = recipeImage.getContentType();
 
-                if (contentType != null && !contentType.equals("image/jpeg") &&
-                        !contentType.equals("image/png") && newImage.length == 0
-                ) {
+                if (contentType != null && !contentType.equals("image/jpeg") && !contentType.equals("image/png")) {
                     throw new UserPerformedForbiddenActionException("You tried to save file in forbidden format");
                 }
             }
@@ -236,32 +231,21 @@ public non-sealed class RecipeServiceImpl extends AbstractCookieService implemen
                 .stream()
                 .filter(recipeProductDTO -> recipeProductDTO.id() > 0)
                 .collect(Collectors.toMap(RecipeProductDTO::id, Function.identity()));
+        List<RecipeProduct> productsToRemove = new ArrayList<>();
 
         for (RecipeProduct recipeProduct : new ArrayList<>(recipe.getRecipeProducts())) {
             if (!recipeProductDTOMap.containsKey(recipeProduct.getId())) {
                 recipe.getRecipeProducts().remove(recipeProduct);
-                recipeProductDTOMap.remove(recipeProduct.getId());
-                this.recipeProductRepository.delete(recipeProduct);
+                productsToRemove.add(recipeProduct);
                 continue;
             }
 
             RecipeProductDTO modifiedProduct = recipeProductDTOMap.get(recipeProduct.getId());
-            Optional<Product> productOptional = this.productRepository.findById(modifiedProduct.product().productId());
-            Product product = productOptional.orElse(
-                    Product.builder()
-                            .productName(modifiedProduct.product().productName())
-                            .category(modifiedProduct.product().category())
-                            .build()
-            );
-
-            if (!recipeProduct.getProduct().equals(product)) {
-                recipeProduct.setProduct(product);
-            }
             if (recipeProduct.getQuantity() != modifiedProduct.quantity()) {
                 recipeProduct.setQuantity(modifiedProduct.quantity());
             }
             if (recipeProduct.getUnit() != modifiedProduct.unit()) {
-                recipeProduct.setUnit(recipeProduct.getUnit());
+                recipeProduct.setUnit(modifiedProduct.unit());
             }
 
             recipeProductDTOMap.remove(recipeProduct.getId());
@@ -271,6 +255,8 @@ public non-sealed class RecipeServiceImpl extends AbstractCookieService implemen
             log.info("User tried to modify recipe product from different recipe");
             throw new UserPerformedForbiddenActionException("You tried to modify recipe product from different recipe");
         }
+
+        this.recipeProductRepository.deleteAll(productsToRemove);
 
         List<RecipeProduct> addedProducts = recipeDetailsDTO.products()
                 .stream()
@@ -285,7 +271,7 @@ public non-sealed class RecipeServiceImpl extends AbstractCookieService implemen
         Optional<Recipe> recipeOptional = this.recipeRepository.findById(recipeId);
 
         return recipeOptional.orElseThrow(() -> {
-            log.info("User: {} tried to access recipe which does not exists", userEmail);
+            log.info("User={} tried to access recipe which does not exists", userEmail);
             return new UserPerformedForbiddenActionException("Recipe does not exists");
         });
     }

@@ -21,11 +21,15 @@ import {
 } from 'src/app/shared/model/types/recipes-types';
 import { portions } from 'src/app/shared/model/constants/recipes.constants';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CreateRecipeRequest } from 'src/app/shared/model/requests/recipe-requests';
+import {
+  CreateRecipeRequest,
+  UpdateRecipeRequest,
+} from 'src/app/shared/model/requests/recipe-requests';
 import { CreateRecipeResponse } from 'src/app/shared/model/responses/recipes-response';
 import { MatDialog } from '@angular/material/dialog';
 import { ModifyIngredientComponent } from './modify-ingredient/modify-ingredient.component';
 import { ProductDTO } from 'src/app/shared/model/types/product-types';
+import { el } from '@fullcalendar/core/internal-common';
 
 @Component({
   selector: 'app-create-recipe',
@@ -247,17 +251,32 @@ export class CreateRecipeComponent implements OnInit {
       formData.append('image', this.image!);
     }
 
-    const recipe: CreateRecipeRequest = {
-      id: +this.recipeForm.controls.id.value!,
-      recipeName: this.recipeForm.controls.recipeName.value!,
-      preparation: this.recipeForm.controls.preparation.value!,
-      preparationTime: +this.recipeForm.controls.preparationTime.value!,
-      mealType: this.recipeForm.controls.mealType.value as MealType,
-      cuisine: this.recipeForm.controls.cuisine.value!,
-      portions: +this.recipeForm.controls.portions.value!,
-      updateImage: this.updateImage,
-      products: this.ingredientsToAdd,
-    };
+    let recipe: CreateRecipeRequest | UpdateRecipeRequest;
+
+    if (this.edit) {
+      recipe = {
+        id: +this.recipeForm.controls.id.value!,
+        recipeName: this.recipeForm.controls.recipeName.value!,
+        preparation: this.recipeForm.controls.preparation.value!,
+        preparationTime: +this.recipeForm.controls.preparationTime.value!,
+        mealType: this.recipeForm.controls.mealType.value as MealType,
+        cuisine: this.recipeForm.controls.cuisine.value!,
+        portions: +this.recipeForm.controls.portions.value!,
+        updateImage: this.updateImage,
+        products: this.ingredientsToAdd,
+      };
+    } else {
+      recipe = {
+        recipeName: this.recipeForm.controls.recipeName.value!,
+        preparation: this.recipeForm.controls.preparation.value!,
+        preparationTime: +this.recipeForm.controls.preparationTime.value!,
+        mealType: this.recipeForm.controls.mealType.value as MealType,
+        cuisine: this.recipeForm.controls.cuisine.value!,
+        portions: +this.recipeForm.controls.portions.value!,
+        updateImage: this.updateImage,
+        products: this.ingredientsToAdd,
+      };
+    }
 
     formData.append('recipe', JSON.stringify(recipe));
 

@@ -9,9 +9,6 @@ import jakarta.validation.constraints.*;
 import java.util.List;
 
 public record CreateRecipeRequest(
-        @NotNull(message = "Recipe id must be present")
-        @PositiveOrZero(message = "Recipe id must be equal or greater than 0")
-        Long id,
         @Pattern(
                 regexp = RegexConstants.RECIPE_NAME_REGEX,
                 message = "Recipe name can only contains letters, digits, whitespaces and its length has to be between 5 and 60"
