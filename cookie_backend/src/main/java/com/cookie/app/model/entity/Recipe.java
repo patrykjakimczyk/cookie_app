@@ -56,5 +56,6 @@ public class Recipe {
     private User creator;
 
     @OneToMany(mappedBy = "recipe", cascade = { CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE })
+    @OrderBy("id ASC")
     private List<RecipeProduct> recipeProducts;
 }

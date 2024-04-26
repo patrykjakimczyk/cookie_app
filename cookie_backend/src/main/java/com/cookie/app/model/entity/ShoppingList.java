@@ -37,6 +37,7 @@ public class ShoppingList {
     private Timestamp creationDate;
 
     @OneToMany(mappedBy = "shoppingList", cascade = CascadeType.REMOVE)
+    @OrderBy("id ASC")
     private List<ShoppingListProduct> productsList;
 
     @ManyToOne(fetch = FetchType.LAZY)

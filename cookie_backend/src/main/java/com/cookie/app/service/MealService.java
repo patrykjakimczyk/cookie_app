@@ -10,5 +10,5 @@ public interface MealService {
     List<MealDTO> getMealsForUser(Timestamp dateAfter, Timestamp dateBefore, String userEmail);
     MealDTO addMeal(AddMealRequest request, String userEmail, boolean reserve, Long listId);
     void deleteMeal(long mealId, String userEmail);
-    MealDTO modifyMeal(long mealId, AddMealRequest request, String userEmail);
+    MealDTO updateMeal(long mealId, AddMealRequest request, String userEmail);
 }

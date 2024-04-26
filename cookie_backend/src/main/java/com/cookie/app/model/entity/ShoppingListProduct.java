@@ -43,11 +43,9 @@ public class ShoppingListProduct {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof ShoppingListProduct)) {
+        if (!(o instanceof ShoppingListProduct shoppingListProduct)) {
             return false;
         }
-
-        ShoppingListProduct shoppingListProduct = (ShoppingListProduct) o;
 
         return this.getId() == shoppingListProduct.getId() && this.getProduct().equals(shoppingListProduct.getProduct());
     }

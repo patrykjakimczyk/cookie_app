@@ -2,6 +2,7 @@ package com.cookie.app.service.impl;
 
 import com.cookie.app.exception.UserWasNotFoundAfterAuthException;
 import com.cookie.app.model.entity.User;
+import com.cookie.app.model.enums.Gender;
 import com.cookie.app.model.request.RegistrationRequest;
 import com.cookie.app.model.response.LoginResponse;
 import com.cookie.app.model.response.RegistrationResponse;
@@ -58,7 +59,7 @@ class LoginServiceImplTest {
 
     @Test
     void test_userRegistrationSuccessful() {
-        final RegistrationRequest userToRegister = new RegistrationRequest(username, email, null, null, null);
+        final RegistrationRequest userToRegister = new RegistrationRequest(username, email, null, null, Gender.MALE);
 
         doReturn(Optional.empty()).when(userRepository).findByUsername(userToRegister.username());
         RegistrationResponse response = this.service.userRegistration(userToRegister);

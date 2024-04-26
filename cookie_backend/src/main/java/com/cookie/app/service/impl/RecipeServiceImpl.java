@@ -128,28 +128,16 @@ public non-sealed class RecipeServiceImpl extends AbstractCookieService implemen
 
     @Override
     public void deleteRecipe(String userEmail, long recipeId) {
-        User user = super.getUserByEmail(userEmail);
-        Recipe recipe = getRecipeById(recipeId, userEmail);
-
-        if (recipe.getCreator().getId() != user.getId()) {
-            log.info("User={} tried to delete recipe which they did not created", userEmail);
-            throw new UserPerformedForbiddenActionException("You did not create this recipe so you cannot delete it");
-        }
+        Recipe recipe = findRecipeIfUserIsCreator(userEmail, recipeId, "delete");
 
         this.recipeRepository.delete(recipe);
     }
 
     @Override
-    public CreateRecipeResponse updateRecipe(String userEmail, UpdateRecipeRequest recipeDetailsDTO, MultipartFile recipeImage) {
-        User user = super.getUserByEmail(userEmail);
-        Recipe recipe = getRecipeById(recipeDetailsDTO.id(), userEmail);
+    public CreateRecipeResponse updateRecipe(String userEmail, UpdateRecipeRequest updateRecipeRequest, MultipartFile recipeImage) {
+        Recipe recipe = findRecipeIfUserIsCreator(userEmail, updateRecipeRequest.id(), "update");
 
-        if (recipe.getCreator().getId() != user.getId()) {
-            log.info("User={} tried to modify recipe which they did not created", userEmail);
-            throw new UserPerformedForbiddenActionException("You did not create this recipe so you cannot update it");
-        }
-
-        updateRecipe(recipe, recipeDetailsDTO, recipeImage);
+        updateRecipe(recipe, updateRecipeRequest, recipeImage);
         this.recipeRepository.save(recipe);
 
         return new CreateRecipeResponse(recipe.getId());
@@ -171,6 +159,20 @@ public non-sealed class RecipeServiceImpl extends AbstractCookieService implemen
                                                 long listId,
                                                 List<RecipeProduct> productsToAdd) {
         this.shoppingListProductService.addRecipeProductsToShoppingList(listId, user, productsToAdd);
+    }
+
+    private Recipe findRecipeIfUserIsCreator(String userEmail, long recipeId, String action) {
+        User user = super.getUserByEmail(userEmail);
+        Recipe recipe = getRecipeById(recipeId, userEmail);
+
+        if (recipe.getCreator().getId() != user.getId()) {
+            log.info("User={} tried to {} recipe which they did not created", userEmail, action);
+            throw new UserPerformedForbiddenActionException(
+                    String.format("You did not create this recipe so you cannot %s it", action)
+            );
+        }
+
+        return recipe;
     }
 
     private Set<String> getMealTypesAsStrings(List<MealType> mealTypes) {

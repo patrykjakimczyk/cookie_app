@@ -33,11 +33,9 @@ public class Product {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof Product)) {
+        if (!(o instanceof Product product)) {
             return false;
         }
-
-        Product product = (Product) o;
 
         return this.getProductName().equals(product.getProductName()) && this.getCategory() == product.getCategory();
     }

@@ -64,6 +64,7 @@ class GroupServiceImplTest {
     User user;
     Group group;
     Authority authority;
+    ShoppingList shoppingList;
 
     @BeforeEach
     void init() {
@@ -71,11 +72,12 @@ class GroupServiceImplTest {
                 .id(id)
                 .email(email)
                 .build();
+        shoppingList = ShoppingList.builder().id(0).listName("list").build();
         group = Group.builder()
                 .id(id)
                 .groupName(groupName)
                 .users(new ArrayList<>(Collections.singletonList(user)))
-                .shoppingLists(Collections.emptyList())
+                .shoppingLists(Collections.singletonList(shoppingList))
                 .creator(user)
                 .build();
         user.setGroups(Collections.singletonList(group));
@@ -138,7 +140,9 @@ class GroupServiceImplTest {
         assertEquals(group.getUsers().size(), response.users().size());
         assertEquals(0L, response.pantryId());
         assertEquals("", response.pantryName());
-        assertTrue(response.shoppingLists().isEmpty());
+        assertEquals(group.getShoppingLists().size(), response.shoppingLists().size());
+        assertEquals(group.getShoppingLists().get(0).getId(), response.shoppingLists().get(0).listId());
+        assertEquals(group.getShoppingLists().get(0).getListName(), response.shoppingLists().get(0).listName());
     }
 
     @Test

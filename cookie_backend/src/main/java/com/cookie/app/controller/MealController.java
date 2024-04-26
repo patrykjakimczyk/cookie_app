@@ -5,7 +5,7 @@ import com.cookie.app.model.request.AddMealRequest;
 import com.cookie.app.service.MealService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -14,7 +14,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -32,15 +31,14 @@ public class MealController {
             @RequestParam Timestamp dateBefore,
             Authentication authentication
     ) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(this.mealService.getMealsForUser(dateAfter, dateBefore, authentication.getName()));
+        return ResponseEntity.ok(this.mealService.getMealsForUser(dateAfter, dateBefore, authentication.getName()));
     }
 
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping
     public ResponseEntity<MealDTO> addMeal(
             @RequestParam("reserve") boolean reserve,
-            @RequestParam(value = "listId", required = false) @Valid @Min(value = 1, message = "List id must be greater than 0") Long listId,
+            @RequestParam(value = "listId", required = false) @Valid @Positive(message = "List id must be greater than 0") Long listId,
             @RequestBody @Valid AddMealRequest request,
             Authentication authentication
     ) {
@@ -53,25 +51,24 @@ public class MealController {
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping(MEALS_ID_URL)
     public ResponseEntity<Void> deleteMeal(
-            @PathVariable("id") @Valid @Min(value = 1, message = "Id must be greater than 0") long mealId,
+            @PathVariable("id") @Valid @Positive(message = "Id must be greater than 0") long mealId,
             Authentication authentication
     ) {
         log.info("User with email={} is deleting meal with id={}", authentication.getName(), mealId);
         this.mealService.deleteMeal(mealId, authentication.getName());
 
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        return ResponseEntity.ok().build();
     }
 
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(MEALS_ID_URL)
-    public ResponseEntity<MealDTO> modifyMeal(
-            @PathVariable("id") @Valid @Min(value = 1, message = "Id must be greater than 0") long mealId,
+    public ResponseEntity<MealDTO> updateMeal(
+            @PathVariable("id") @Valid @Positive(message = "Id must be greater than 0") long mealId,
             @RequestBody @Valid AddMealRequest request,
             Authentication authentication
     ) {
         log.info("User with email={} is modifying meal with id={}", authentication.getName(), mealId);
 
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(this.mealService.modifyMeal(mealId, request, authentication.getName()));
+        return ResponseEntity.ok(this.mealService.updateMeal(mealId, request, authentication.getName()));
     }
 }

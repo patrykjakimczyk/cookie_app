@@ -102,7 +102,7 @@ public non-sealed class ShoppingListProductServiceImpl extends AbstractShoppingL
 
     @Override
     public void removeProductsFromShoppingList(long listId, List<Long> listProductIds, String userEmail) {
-        ShoppingList shoppingList = checkIfAllProductIdsAreOnList(listId, listProductIds, userEmail, "remove");
+        ShoppingList shoppingList = checkIfAllProductIdsAreOnList(listId, listProductIds, userEmail);
 
         this.shoppingListProductRepository.deleteByIdIn(listProductIds);
         log.info("User with email {} removed {} products from shopping list with id {}",
@@ -192,7 +192,7 @@ public non-sealed class ShoppingListProductServiceImpl extends AbstractShoppingL
             throw new UserPerformedForbiddenActionException("Cannot transfer unpurchased shopping list products");
         }
 
-        List<PantryProductDTO> newPantryProducts = mapListProductsToPantryProducts(purchasedProducts, pantry);
+        List<PantryProductDTO> newPantryProducts = mapListProductsToPantryProducts(purchasedProducts);
 
         this.shoppingListProductRepository.deleteAll(purchasedProducts);
         this.pantryProductService.addProductsToPantryFromList(pantry, newPantryProducts);
@@ -244,7 +244,7 @@ public non-sealed class ShoppingListProductServiceImpl extends AbstractShoppingL
                 recipeProduct.getUnit() == listProduct.getUnit();
     }
 
-    private List<PantryProductDTO> mapListProductsToPantryProducts(List<ShoppingListProduct> purchasedProducts, Pantry pantry) {
+    private List<PantryProductDTO> mapListProductsToPantryProducts(List<ShoppingListProduct> purchasedProducts) {
         List<PantryProductDTO> newPantryProducts = new ArrayList<>();
         Timestamp currentTimestamp = Timestamp.from(Instant.now().truncatedTo(ChronoUnit.DAYS));
 
@@ -270,12 +270,12 @@ public non-sealed class ShoppingListProductServiceImpl extends AbstractShoppingL
         return newPantryProducts;
     }
 
-    private ShoppingList checkIfAllProductIdsAreOnList(long listId, List<Long> listProductIds, String userEmail, String action) {
+    private ShoppingList checkIfAllProductIdsAreOnList(long listId, List<Long> listProductIds, String userEmail) {
         ShoppingList shoppingList = super.getShoppingListIfUserHasAuthority(listId, userEmail, AuthorityEnum.MODIFY_SHOPPING_LIST);
 
         if (this.isAnyProductNotOnList(shoppingList, listProductIds)) {
-            log.info("User with email={} tried to {} products from different shopping list", userEmail, action);
-            throw new UserPerformedForbiddenActionException(String.format("Cannot %s products from different shopping list", action));
+            log.info("User with email={} tried to remove products from different shopping list", userEmail);
+            throw new UserPerformedForbiddenActionException("Cannot remove products from different shopping list");
         }
 
         return shoppingList;

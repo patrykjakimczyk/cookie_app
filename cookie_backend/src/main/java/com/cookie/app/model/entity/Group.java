@@ -40,12 +40,14 @@ public class Group {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "group_id")
     )
+    @OrderBy("username ASC")
     private List<User> users;
 
     @OneToOne(mappedBy = "group", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private Pantry pantry;
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.REMOVE)
+    @OrderBy("id ASC")
     private List<ShoppingList> shoppingLists;
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
