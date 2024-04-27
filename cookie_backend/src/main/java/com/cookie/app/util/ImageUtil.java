@@ -18,29 +18,25 @@ public class ImageUtil {
             return new byte[0];
         }
 
-        Deflater compressor = new Deflater(Deflater.BEST_COMPRESSION);
-        compressor.setInput(data);
-        compressor.finish();
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length)) {
+            Deflater compressor = new Deflater(Deflater.BEST_COMPRESSION);
+            compressor.setInput(data);
+            compressor.finish();
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
-        byte[] tmp = new byte[4 * 1024];
-        int readCount = 0;
-
-        while (!compressor.finished()) {
-            readCount = compressor.deflate(tmp);
-            if (readCount > 0) {
-                outputStream.write(tmp, 0, readCount);
+            byte[] tmp = new byte[4 * 1024];
+            int readCount;
+            while (!compressor.finished()) {
+                readCount = compressor.deflate(tmp);
+                if (readCount > 0) {
+                    outputStream.write(tmp, 0, readCount);
+                }
             }
-        }
+            return outputStream.toByteArray();
 
-        try {
-            outputStream.close();
         } catch (IOException e) {
-            log.info("Compressing image failed due to IOException. Returning empty byte array");
+            log.error("Compressing image failed due to IOException", e);
             return new byte[0];
         }
-
-        return outputStream.toByteArray();
     }
 
     public static byte[] decompressImage(byte[] data) {
@@ -48,27 +44,21 @@ public class ImageUtil {
             return new byte[0];
         }
 
-        Inflater decompressor = new Inflater();
-        decompressor.setInput(data);
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length)) {
+            Inflater decompressor = new Inflater();
+            decompressor.setInput(data);
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
-        byte[] tmp = new byte[4*1024];
-        int readCount = 0;
-
-        try {
+            byte[] tmp = new byte[4 * 1024];
+            int readCount;
             while (!decompressor.finished()) {
                 readCount = decompressor.inflate(tmp);
                 outputStream.write(tmp, 0, readCount);
             }
-            outputStream.close();
-        } catch (IOException e) {
-            log.info("Decompressing image failed due to IOException. Returning empty byte array", e);
-            return new byte[0];
-        } catch (DataFormatException e) {
-            log.info("Decompressing recipe image failed due to DataFormatException. Returning empty byte array", e);
+            return outputStream.toByteArray();
+
+        } catch (IOException | DataFormatException e) {
+            log.error("Decompressing image failed", e);
             return new byte[0];
         }
-
-        return outputStream.toByteArray();
     }
 }
