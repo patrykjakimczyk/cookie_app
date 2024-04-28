@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -126,6 +127,7 @@ public non-sealed class RecipeServiceImpl extends AbstractCookieService implemen
         return new CreateRecipeResponse(recipe.getId());
     }
 
+    @Transactional
     @Override
     public void deleteRecipe(String userEmail, long recipeId) {
         Recipe recipe = findRecipeIfUserIsCreator(userEmail, recipeId, "delete");
@@ -133,6 +135,7 @@ public non-sealed class RecipeServiceImpl extends AbstractCookieService implemen
         this.recipeRepository.delete(recipe);
     }
 
+    @Transactional
     @Override
     public CreateRecipeResponse updateRecipe(String userEmail, UpdateRecipeRequest updateRecipeRequest, MultipartFile recipeImage) {
         Recipe recipe = findRecipeIfUserIsCreator(userEmail, updateRecipeRequest.id(), "update");

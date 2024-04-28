@@ -32,7 +32,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Transactional
 @Service
 public non-sealed class GroupServiceImpl extends AbstractCookieService implements GroupService {
     private final GroupRepository groupRepository;
@@ -54,6 +53,7 @@ public non-sealed class GroupServiceImpl extends AbstractCookieService implement
         this.groupDetailsMapperDTO = groupDetailsMapperDTO;
     }
 
+    @Transactional
     @Override
     public GroupNameTakenResponse createGroup(CreateGroupRequest request, String userEmail) {
         if (this.groupRepository.findByGroupName(request.groupName()).isPresent()) {
@@ -101,6 +101,7 @@ public non-sealed class GroupServiceImpl extends AbstractCookieService implement
         return new GetUserGroupsResponse(userGroups);
     }
 
+    @Transactional
     @Override
     public GroupNameTakenResponse updateGroup(Long groupId, UpdateGroupRequest request, String userEmail) {
         if (this.groupRepository.findByGroupName(request.newGroupName()).isPresent()) {
@@ -117,6 +118,7 @@ public non-sealed class GroupServiceImpl extends AbstractCookieService implement
         return new GroupNameTakenResponse(false);
     }
 
+    @Transactional
     @Override
     public void deleteGroup(Long groupId, String userEmail) {
         GroupUserAndAuthorities groupAndAuthorities = getGroupUserAndHisAuthorities(
@@ -128,6 +130,7 @@ public non-sealed class GroupServiceImpl extends AbstractCookieService implement
         this.groupRepository.delete(group);
     }
 
+    @Transactional
     @Override
     public void addUserToGroup(Long groupId, String usernameToAdd, String userEmail) {
         GroupUserAndAuthorities groupAndAuthorities = getGroupUserAndHisAuthorities(
@@ -150,6 +153,7 @@ public non-sealed class GroupServiceImpl extends AbstractCookieService implement
         this.authorityRepository.saveAll(authoritiesForAddedUser);
     }
 
+    @Transactional
     @Override
     public void removeUserFromGroup(Long groupId, Long userToRemoveId, String userEmail) {
         GroupUserAndAuthorities groupUserAndAuthorities = getGroupUserAndHisAuthorities(groupId, userEmail);
@@ -184,6 +188,7 @@ public non-sealed class GroupServiceImpl extends AbstractCookieService implement
         this.authorityRepository.deleteByUserAndGroup(userToRemove, group);
     }
 
+    @Transactional
     @Override
     public AssignAuthoritiesToUserResponse assignAuthoritiesToUser(Long groupId, UserWithAuthoritiesRequest request, String userEmail) {
         GroupUserAndAuthorities groupUserAndAuthorities = getGroupUserAndHisAuthorities(
@@ -221,6 +226,7 @@ public non-sealed class GroupServiceImpl extends AbstractCookieService implement
         );
     }
 
+    @Transactional
     @Override
     public void removeAuthoritiesFromUser(Long groupId, UserWithAuthoritiesRequest request, String userEmail) {
         GroupUserAndAuthorities groupUserAndAuthorities = getGroupUserAndHisAuthorities(

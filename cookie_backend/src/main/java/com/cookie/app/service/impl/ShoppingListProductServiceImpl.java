@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-@Transactional
 @Service
 public non-sealed class ShoppingListProductServiceImpl extends AbstractShoppingListService implements ShoppingListProductService {
     private final ShoppingListProductRepository shoppingListProductRepository;
@@ -71,6 +70,7 @@ public non-sealed class ShoppingListProductServiceImpl extends AbstractShoppingL
                 .map(shoppingListProductMapper));
     }
 
+    @Transactional
     @Override
     public void addProductsToShoppingList(long listId, List<ShoppingListProductDTO> listProductDTOList, String userEmail) {
         ShoppingList shoppingList = super.getShoppingListIfUserHasAuthority(listId, userEmail, AuthorityEnum.ADD_TO_SHOPPING_LIST);
@@ -100,6 +100,7 @@ public non-sealed class ShoppingListProductServiceImpl extends AbstractShoppingL
         this.shoppingListProductRepository.saveAll(newShoppingListProducts);
     }
 
+    @Transactional
     @Override
     public void removeProductsFromShoppingList(long listId, List<Long> listProductIds, String userEmail) {
         ShoppingList shoppingList = checkIfAllProductIdsAreOnList(listId, listProductIds, userEmail);
@@ -111,6 +112,7 @@ public non-sealed class ShoppingListProductServiceImpl extends AbstractShoppingL
                 shoppingList.getId());
     }
 
+    @Transactional
     @Override
     public void updateShoppingListProduct(long listId, ShoppingListProductDTO listProductDTO, String userEmail) {
         if (listProductDTO.id() == 0) {
@@ -147,6 +149,7 @@ public non-sealed class ShoppingListProductServiceImpl extends AbstractShoppingL
         this.shoppingListProductRepository.save(modifiedProduct);
     }
 
+    @Transactional
     @Override
     public void changePurchaseStatusForProducts(long listId, List<Long> listProductIds, String userEmail) {
         ShoppingList shoppingList =
@@ -166,6 +169,7 @@ public non-sealed class ShoppingListProductServiceImpl extends AbstractShoppingL
         this.shoppingListProductRepository.saveAll(listProductsToChange);
     }
 
+    @Transactional
     @Override
     public void transferProductsToPantry(long listId, String userEmail) {
         User user = super.getUserByEmail(userEmail);

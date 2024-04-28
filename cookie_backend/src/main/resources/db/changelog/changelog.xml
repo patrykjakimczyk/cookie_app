@@ -1,0 +1,229 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                   http://www.liquibase.org/xml/ns/pro
+                   http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd
+                   http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet author="patrykjakimczyk" id="1">
+        <createTable tableName="authority">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="authority_pkey"/>
+            </column>
+            <column name="authority_name" type="VARCHAR(25)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="group_id" type="BIGINT"/>
+            <column name="user_id" type="BIGINT"/>
+        </createTable>
+        <createTable tableName="pantry_product">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pantry_product_pkey"/>
+            </column>
+            <column name="expiration_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="placement" type="VARCHAR(60)"/>
+            <column name="purchase_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="quantity" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="reserved" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="unit" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pantry_id" type="BIGINT"/>
+            <column name="product_id" type="BIGINT"/>
+        </createTable>
+        <createTable tableName="product">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="product_pkey"/>
+            </column>
+            <column name="category" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="recipe">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="recipe_pkey"/>
+            </column>
+            <column name="cuisine" type="VARCHAR(30)"/>
+            <column name="meal_type" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="portions" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="preparation" type="VARCHAR(1000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="preparation_time" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="recipe_image" type="OID"/>
+            <column name="recipe_name" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creator_id" type="BIGINT"/>
+        </createTable>
+        <createTable tableName="recipe_product">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="recipe_product_pkey"/>
+            </column>
+            <column name="quantity" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="unit" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_id" type="BIGINT"/>
+            <column name="recipe_id" type="BIGINT"/>
+        </createTable>
+        <createTable tableName="shopping_list_product">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="shopping_list_product_pkey"/>
+            </column>
+            <column name="purchased" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="unit" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_id" type="BIGINT"/>
+            <column name="shopping_list_id" type="BIGINT"/>
+        </createTable>
+        <createTable tableName="user_table">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="user_table_pkey"/>
+            </column>
+            <column name="birth_date" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creation_date" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="gender" type="VARCHAR(6)"/>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="username" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="group_table">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="group_table_pkey"/>
+            </column>
+            <column name="creation_date" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="group_name" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creator_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="pantry">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pantry_pkey"/>
+            </column>
+            <column name="pantry_name" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="group_id" type="BIGINT"/>
+        </createTable>
+        <addUniqueConstraint columnNames="email" constraintName="uk_eamk4l51hm6yqb8xw37i23kb5" tableName="user_table"/>
+        <addUniqueConstraint columnNames="username" constraintName="uk_en3wad7p8qfu8pcmh62gvef6v" tableName="user_table"/>
+        <addUniqueConstraint columnNames="group_name" constraintName="uk_5awb2k4ure0fi6kk52ui3hyvk" tableName="group_table"/>
+        <addUniqueConstraint columnNames="group_id" constraintName="uk_9tl2sg6jenmt96q6tys9u0sdd" tableName="pantry"/>
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="authority_sequence" startValue="1"/>
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="group_sequence" startValue="1"/>
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="meal_sequence" startValue="1"/>
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="pantry_product_sequence" startValue="1"/>
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="pantry_sequence" startValue="1"/>
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="product_sequence" startValue="1"/>
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="recipe_product_sequence" startValue="1"/>
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="recipe_sequence" startValue="1"/>
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="shopping_list_product_sequence" startValue="1"/>
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="shopping_list_sequence" startValue="1"/>
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="user_sequence" startValue="1"/>
+        <createTable tableName="meal">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="meal_pkey"/>
+            </column>
+            <column name="meal_date" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="group_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="recipe_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="shopping_list">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="shopping_list_pkey"/>
+            </column>
+            <column name="creation_date" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="list_name" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creator_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="group_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="user_in_group">
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="group_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="group_table" constraintName="fk1jkb196w6pjp270eqbtnu02kc" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user_table" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="recipe_id" baseTableName="meal" constraintName="fk1yf3o7o2bksniig17qipb5bk7" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="recipe" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="shopping_list" constraintName="fk2iv6nqe78bkm76fk7kxpualcp" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user_table" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="pantry_id" baseTableName="pantry_product" constraintName="fk398hneb7ojtakq8dkqgx97uh1" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="pantry" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="group_id" baseTableName="user_in_group" constraintName="fk61b1kg70fiq2v9fs53fboc6tk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user_table" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="meal" constraintName="fk7umsktike6grxhekbca218p1b" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user_table" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="recipe_product" constraintName="fk935n2g21lw35urnpf7vwcyp0w" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="product" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="group_id" baseTableName="shopping_list" constraintName="fkaijsm2jpfsoffpyqqsbe2qu7n" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="group_table" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="recipe_id" baseTableName="recipe_product" constraintName="fkb3poss884qc7j3wsvbq63aad3" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="recipe" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="pantry_product" constraintName="fkeho2gn56vc323pbk4po37pbq3" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="product" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="shopping_list_id" baseTableName="shopping_list_product" constraintName="fkeiwoyrb6sfqivylb63lorprgl" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="shopping_list" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="authority" constraintName="fkiei2qsheg4n1ubh2w86wtslsj" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user_table" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="group_id" baseTableName="authority" constraintName="fkig39v4djuaybicsskn3brfvsy" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="group_table" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="group_id" baseTableName="pantry" constraintName="fkn7uo64l9jc8fshqullgaq7fow" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="group_table" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="group_id" baseTableName="meal" constraintName="fkpbvdn1ge0awfg9qp1dve1s42v" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="group_table" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="creator_id" baseTableName="recipe" constraintName="fkqd7k03khbwo4g1db30tdwdfkx" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user_table" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="shopping_list_product" constraintName="fkrhysluuh22blgh883dkxfow2f" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="product" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="user_in_group" constraintName="fkrknu9an98einniqbxcbrxjqjd" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="group_table" validate="true"/>
+    </changeSet>
+</databaseChangeLog>

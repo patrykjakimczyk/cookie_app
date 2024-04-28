@@ -123,7 +123,7 @@ public class RecipeController {
             ObjectMapper objMapper = new ObjectMapper();
             recipe = objMapper.readValue(recipeJson, CreateRecipeRequest.class);
         } catch (IOException exception) {
-            throw new MappingJsonToObjectException("Ann error occured during request body reading. Its structure is probably incorrect");
+            throw new MappingJsonToObjectException("An error occured during request body reading. Its structure is probably incorrect");
         }
 
         Set<ConstraintViolation<CreateRecipeRequest>> violations = validator.validate(recipe);
@@ -163,7 +163,7 @@ public class RecipeController {
             ObjectMapper objMapper = new ObjectMapper();
             recipe = objMapper.readValue(recipeJson, UpdateRecipeRequest.class);
         } catch (IOException exception) {
-            throw new MappingJsonToObjectException("Ann error occured during request body reading. Its structure is probably incorrect");
+            throw new MappingJsonToObjectException("An error occured during request body reading. Its structure is probably incorrect");
         }
 
         Set<ConstraintViolation<UpdateRecipeRequest>> violations = validator.validate( recipe );

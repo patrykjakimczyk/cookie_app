@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 @Slf4j
-@Transactional
 @Service
 public non-sealed class PantryProductServiceImpl extends AbstractPantryService implements PantryProductService {
     private final PantryProductRepository pantryProductRepository;
@@ -60,6 +59,7 @@ public non-sealed class PantryProductServiceImpl extends AbstractPantryService i
                 .map(pantryProductMapper));
     }
 
+    @Transactional
     @Override
     public void addProductsToPantry(long pantryId, List<PantryProductDTO> pantryProducts, String userEmail) {
         Pantry pantry = super.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.ADD);
@@ -71,11 +71,13 @@ public non-sealed class PantryProductServiceImpl extends AbstractPantryService i
                 pantry.getId());
     }
 
+    @Transactional
     @Override
     public void addProductsToPantryFromList(Pantry pantry, List<PantryProductDTO> pantryProducts) {
         addProductsToPantry(pantryProducts, pantry);
     }
 
+    @Transactional
     @Override
     public void removeProductsFromPantry(long pantryId, List<Long> pantryProductsIds, String userEmail) {
         Pantry pantry = super.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.MODIFY);
@@ -92,6 +94,7 @@ public non-sealed class PantryProductServiceImpl extends AbstractPantryService i
                 pantry.getId());
     }
 
+    @Transactional
     @Override
     public void updatePantryProduct(long pantryId, PantryProductDTO pantryProductToModify, String userEmail) {
         if (pantryProductToModify.id() == 0) {
@@ -120,6 +123,7 @@ public non-sealed class PantryProductServiceImpl extends AbstractPantryService i
         this.pantryProductRepository.save(modifiedProduct);
     }
 
+    @Transactional
     @Override
     public PantryProductDTO reservePantryProduct(long pantryId, long pantryProductId, int reserved, String userEmail) {
         //if this method doesn't throw any exception, user can access this pantry
@@ -137,6 +141,7 @@ public non-sealed class PantryProductServiceImpl extends AbstractPantryService i
         return this.pantryProductMapper.apply(pantryProduct);
     }
 
+    @Transactional
     @Override
     public List<RecipeProduct>  reservePantryProductsFromRecipe(long pantryId, User user, List<RecipeProduct> recipeProducts) {
         Pantry pantry = super.getPantryIfUserHasAuthority(pantryId, user, AuthorityEnum.RESERVE);

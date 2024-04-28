@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@Transactional
 @Slf4j
 @Service
 public non-sealed class MealServiceImpl extends AbstractCookieService implements MealService {
@@ -73,6 +72,7 @@ public non-sealed class MealServiceImpl extends AbstractCookieService implements
                 .toList();
     }
 
+    @Transactional
     @Override
     public MealDTO addMeal(AddMealRequest request, String userEmail, boolean reserve, Long listId) {
         User user = super.getUserByEmail(userEmail);
@@ -115,6 +115,7 @@ public non-sealed class MealServiceImpl extends AbstractCookieService implements
         return this.mealMapperDTO.apply(meal);
     }
 
+    @Transactional
     @Override
     public void deleteMeal(long mealId, String userEmail) {
         // If this method doesn't throw any exception, it means that meal exists, so we can delete it
@@ -123,6 +124,7 @@ public non-sealed class MealServiceImpl extends AbstractCookieService implements
         this.mealRepository.deleteById(mealId);
     }
 
+    @Transactional
     @Override
     public MealDTO updateMeal(long mealId, AddMealRequest request, String userEmail) {
         MealAndUser mealAndUser = findMealAndUserIfUserHasModifyAuthority(userEmail, mealId, "update");

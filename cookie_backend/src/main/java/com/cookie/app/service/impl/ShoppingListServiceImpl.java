@@ -2,7 +2,6 @@ package com.cookie.app.service.impl;
 
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.model.entity.Group;
-import com.cookie.app.model.entity.Pantry;
 import com.cookie.app.model.entity.ShoppingList;
 import com.cookie.app.model.entity.User;
 import com.cookie.app.model.enums.AuthorityEnum;
@@ -11,7 +10,6 @@ import com.cookie.app.model.mapper.ShoppingListMapperDTO;
 import com.cookie.app.model.request.CreateShoppingListRequest;
 import com.cookie.app.model.request.UpdateShoppingListRequest;
 import com.cookie.app.model.response.DeleteShoppingListResponse;
-import com.cookie.app.model.response.GetPantryResponse;
 import com.cookie.app.model.response.GetShoppingListResponse;
 import com.cookie.app.model.response.GetUserShoppingListsResponse;
 import com.cookie.app.repository.ProductRepository;
@@ -20,10 +18,10 @@ import com.cookie.app.repository.UserRepository;
 import com.cookie.app.service.ShoppingListService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,7 +68,7 @@ public non-sealed class ShoppingListServiceImpl extends AbstractShoppingListServ
                 request.groupId()
         );
 
-        return createGetShoppingLisstResponse(shoppingList, user);
+        return createGetShoppingListResponse(shoppingList, user);
     }
 
     @Override
@@ -78,7 +76,7 @@ public non-sealed class ShoppingListServiceImpl extends AbstractShoppingListServ
         User user = super.getUserByEmail(userEmail);
         Optional<ShoppingList> listOptional = super.findShoppingListInUserGroups(shoppingListId, user);
 
-        return listOptional.map(shoppingList -> createGetShoppingLisstResponse(shoppingList, user))
+        return listOptional.map(shoppingList -> createGetShoppingListResponse(shoppingList, user))
                 .orElseGet(() -> new GetShoppingListResponse(0L, null, null, false));
     }
 
@@ -100,6 +98,7 @@ public non-sealed class ShoppingListServiceImpl extends AbstractShoppingListServ
         );
     }
 
+    @Transactional
     @Override
     public DeleteShoppingListResponse deleteShoppingList(long shoppingListId, String userEmail) {
         User user = super.getUserByEmail(userEmail);
@@ -115,6 +114,7 @@ public non-sealed class ShoppingListServiceImpl extends AbstractShoppingListServ
         return new DeleteShoppingListResponse(shoppingList.getListName());
     }
 
+    @Transactional
     @Override
     public GetShoppingListResponse updateShoppingList(long shoppingListId, UpdateShoppingListRequest request, String userEmail) {
         User user = super.getUserByEmail(userEmail);
@@ -124,10 +124,10 @@ public non-sealed class ShoppingListServiceImpl extends AbstractShoppingListServ
         this.shoppingListRepository.save(shoppingList);
         log.info("User with email={} modified shopping list with id={}", userEmail, shoppingList.getId());
 
-        return createGetShoppingLisstResponse(shoppingList, user);
+        return createGetShoppingListResponse(shoppingList, user);
     }
 
-    private GetShoppingListResponse createGetShoppingLisstResponse(ShoppingList shoppingList, User user) {
+    private GetShoppingListResponse createGetShoppingListResponse(ShoppingList shoppingList, User user) {
         return new GetShoppingListResponse(
                 shoppingList.getId(),
                 shoppingList.getListName(),

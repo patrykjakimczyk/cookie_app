@@ -12,6 +12,7 @@ import com.cookie.app.service.LoginService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -37,6 +38,7 @@ public non-sealed class LoginServiceImpl extends AbstractCookieService implement
         return new LoginResponse(user.getUsername());
     }
 
+    @Transactional
     @Override
     public RegistrationResponse userRegistration(RegistrationRequest request) {
         Optional<User> usernameOptional = super.userRepository.findByUsername(request.username());

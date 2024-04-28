@@ -18,6 +18,7 @@ import com.cookie.app.repository.UserRepository;
 import com.cookie.app.service.PantryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -37,6 +38,7 @@ public non-sealed class PantryServiceImpl extends AbstractPantryService implemen
         this.pantryMapperDTO = pantryMapperDTO;
     }
 
+    @Transactional
     @Override
     public GetPantryResponse createPantry(CreatePantryRequest request, String userEmail) {
         User user = super.getUserByEmail(userEmail);
@@ -89,6 +91,7 @@ public non-sealed class PantryServiceImpl extends AbstractPantryService implemen
         );
     }
 
+    @Transactional
     @Override
     public DeletePantryResponse deletePantry(long pantryId, String userEmail) {
         Pantry pantry = super.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.MODIFY_PANTRY);
@@ -99,6 +102,7 @@ public non-sealed class PantryServiceImpl extends AbstractPantryService implemen
         return new DeletePantryResponse(pantry.getPantryName());
     }
 
+    @Transactional
     @Override
     public GetPantryResponse updatePantry(long pantryId, UpdatePantryRequest request, String userEmail) {
         User user = super.getUserByEmail(userEmail);

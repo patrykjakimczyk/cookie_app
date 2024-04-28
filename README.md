@@ -17,6 +17,7 @@ It's a web app used for managing pantry as well as supporting shopping and food 
 - FullCalendar
 - Docker
 - PostgreSQL 16.2
+- Liquibase
 
 ## Requirements
 

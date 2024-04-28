@@ -6,6 +6,8 @@ spring:
   jpa:
     hibernate:
       # Hibernate ddl auto (create, create-drop, validate, update)
-      ddl-auto: update
+      ddl-auto: none
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+  liquibase:
+    change-log: classpath:db/changelog/changelog.xml
