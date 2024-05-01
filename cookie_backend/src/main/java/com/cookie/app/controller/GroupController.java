@@ -18,16 +18,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping(value = "/api/v1/groups", produces = { MediaType.APPLICATION_JSON_VALUE })
+//@Validated
 @RestController
 public class GroupController {
-    private static final String GROUP_ID_URL = "/{id}";
-    private static final String GROUP_ID_USERS_URL = "/{id}/users";
-    private static final String GROUP_ID_AUTHORITIES_URL = "/{id}/authorities";
+    private static final String GROUP_ID_URL = "/{groupId}";
+    private static final String GROUP_ID_USERS_URL = "/{groupId}/users";
+    private static final String GROUP_ID_AUTHORITIES_URL = "/{groupId}/authorities";
+
     private final GroupService groupService;
 
     @SecurityRequirement(name = "bearerAuth")
@@ -36,7 +39,7 @@ public class GroupController {
             @RequestBody @Valid CreateGroupRequest createGroupRequest,
             Authentication authentication
     ) {
-        log.info("Performing group creation by user with email={}", authentication.getName());
+        log.info("Performing group creation by creator with email={}", authentication.getName());
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(this.groupService.createGroup(createGroupRequest, authentication.getName()));
@@ -45,7 +48,7 @@ public class GroupController {
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping(GROUP_ID_URL)
     public ResponseEntity<GroupDetailsDTO> getGroupDetails(
-            @PathVariable("id") @Valid @Positive(message = "Id must be greater than 0") long groupId,
+            @PathVariable @Positive(message = "Id must be greater than 0") long groupId,
             Authentication authentication
     ) {
         return ResponseEntity.ok(this.groupService.getGroupDetails(groupId, authentication.getName()));
@@ -60,21 +63,21 @@ public class GroupController {
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(GROUP_ID_URL)
     public ResponseEntity<GroupNameTakenResponse> updateGroup(
-            @PathVariable("id") @Valid @Positive(message = "Id must be greater than 0") long groupId,
+            @PathVariable @Positive(message = "Id must be greater than 0") long groupId,
             @RequestBody @Valid UpdateGroupRequest updateGroupRequest,
             Authentication authentication
     ) {
-        log.info("Performing group update by user with email={}", authentication.getName());
+        log.info("Performing group update by creator with email={}", authentication.getName());
         return ResponseEntity.ok(this.groupService.updateGroup(groupId, updateGroupRequest, authentication.getName()));
     }
 
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping(GROUP_ID_URL)
     public ResponseEntity<Void> deleteGroup(
-            @PathVariable("id") @Valid @Positive(message = "Id must be greater than 0") long groupId,
+            @PathVariable @Positive(message = "Id must be greater than 0") long groupId,
             Authentication authentication
     ) {
-        log.info("Performing group deletion by user for email={}", authentication.getName());
+        log.info("Performing group deletion by creator for email={}", authentication.getName());
         this.groupService.deleteGroup(groupId, authentication.getName());
 
         return ResponseEntity.ok().build();
@@ -83,12 +86,12 @@ public class GroupController {
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping(GROUP_ID_USERS_URL)
     public ResponseEntity<Void> addUserToGroup(
-            @PathVariable("id") @Valid @Positive(message = "Id must be greater than 0") long groupId,
+            @PathVariable @Positive(message = "Id must be greater than 0") long groupId,
             @RequestBody @Valid AddUserToGroupRequest addUserToGroupRequest,
             Authentication authentication
     ) {
         log.info(
-                "Performing user addition with username={} to group with id={} by user with email={}",
+                "Performing creator addition with username={} to group with id={} by creator with email={}",
                 addUserToGroupRequest.usernameToAdd(),
                 groupId,
                 authentication.getName()
@@ -101,12 +104,12 @@ public class GroupController {
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping(GROUP_ID_USERS_URL)
     public ResponseEntity<Void> removeUserFromGroup(
-            @PathVariable("id") @Valid @Positive(message = "Id must be greater than 0") long groupId,
-            @RequestParam @Valid @Positive(message = "Id must be greater than 0") long userToRemoveId,
+            @PathVariable @Positive(message = "Group id must be greater than 0") long groupId,
+            @RequestParam @Positive(message = "User Id must be greater than 0") long userToRemoveId,
             Authentication authentication
     ) {
         log.info(
-                "Performing user removal with id={} from group with id={} by user with email={}",
+                "Performing creator removal with id={} from group with id={} by creator with email={}",
                 userToRemoveId,
                 groupId,
                 authentication.getName()
@@ -119,12 +122,12 @@ public class GroupController {
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping(GROUP_ID_AUTHORITIES_URL)
     public ResponseEntity<AssignAuthoritiesToUserResponse> assignAuthoritiesToUser(
-            @PathVariable("id") @Valid @Positive(message = "Id must be greater than 0") long groupId,
+            @PathVariable @Positive(message = "Group id must be greater than 0") long groupId,
             @RequestBody @Valid UserWithAuthoritiesRequest request,
             Authentication authentication
     ) {
         log.info(
-                "Performing authorities assignment for user with id={} from group with id={} by user with email={}",
+                "Performing authorities assignment for creator with id={} from group with id={} by creator with email={}",
                 request.userId(),
                 groupId,
                 authentication.getName()
@@ -135,12 +138,12 @@ public class GroupController {
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(GROUP_ID_AUTHORITIES_URL)
     public ResponseEntity<Void> removeAuthoritiesFromUser(
-            @PathVariable("id") @Valid @Positive(message = "Id must be greater than 0") long groupId,
+            @PathVariable @Positive(message = "Group id must be greater than 0") long groupId,
             @RequestBody @Valid UserWithAuthoritiesRequest request,
             Authentication authentication
     ) {
         log.info(
-                "Performing authorities removal from user with id={} from group with id={} by user with email={}",
+                "Performing authorities removal from creator with id={} from group with id={} by creator with email={}",
                 request.userId(),
                 groupId,
                 authentication.getName()

@@ -52,7 +52,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "creator", cascade = CascadeType.REMOVE)
     private Set<Authority> authorities;
 
     @ManyToMany(mappedBy = "users")

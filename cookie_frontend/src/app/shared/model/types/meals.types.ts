@@ -5,7 +5,7 @@ import { UserDTO } from './user-types';
 export type MealDTO = {
   id: number;
   mealDate: Date;
-  user: UserDTO;
+  username: String;
   group: GroupDTO;
   recipe: RecipeDTO;
 };

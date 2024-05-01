@@ -41,11 +41,11 @@ class MealServiceImplTest {
     final String email = "email@email.com";
     final Long id = 1L;
 
-    UserMapperDTO userMapperDTO = new UserMapperDTO(new AuthorityMapperDTO());
     @Spy
-    MealMapperDTO mealMapperDTO = new MealMapperDTO(userMapperDTO, new GroupMapperDTO(userMapperDTO), new RecipeMapperDTO());
+    AuthorityMapper authorityMapper = new AuthorityMapperImpl();
+    UserMapper userMapper = new UserMapperImpl(authorityMapper);
     @Spy
-    AuthorityMapperDTO authorityMapperDTO;
+    MealMapper mealMapperDTO = new MealMapperImpl(new GroupMapperImpl(userMapper), new RecipeMapperImpl());
     @Mock
     UserRepository userRepository;
     @Mock
@@ -121,8 +121,7 @@ class MealServiceImplTest {
         assertEquals(group.getMeals().size(), response.size());
         assertEquals(group.getMeals().get(0).getId(), response.get(0).id());
         assertEquals(group.getMeals().get(0).getMealDate(), response.get(0).mealDate());
-        assertEquals(group.getMeals().get(0).getUser().getId(), response.get(0).user().id());
-        assertEquals(group.getMeals().get(0).getUser().getUsername(), response.get(0).user().username());
+        assertEquals(group.getMeals().get(0).getUser().getUsername(), response.get(0).username());
         assertEquals(group.getMeals().get(0).getGroup().getId(), response.get(0).group().id());
         assertEquals(group.getMeals().get(0).getGroup().getGroupName(), response.get(0).group().groupName());
         assertEquals(group.getMeals().get(0).getRecipe().getId(), response.get(0).group().id());
@@ -142,7 +141,7 @@ class MealServiceImplTest {
         List<MealDTO> response = this.service.getMealsForUser(dateAfter, dateBefore, email);
 
         assertEquals(0, response.size());
-        verify(mealMapperDTO, times(0)).apply(any(Meal.class));
+        verify(mealMapperDTO, times(0)).mapToDto(any(Meal.class));
     }
 
     @Test
@@ -172,8 +171,7 @@ class MealServiceImplTest {
         verify(recipeService, times(0)).getRecipeProductsNotInPantry(group, recipe);
         verify(recipeService).addRecipeProductsToShoppingList(user, id, recipe.getRecipeProducts());
         assertEquals(request.mealDate(), response.mealDate());
-        assertEquals(user.getId(), response.user().id());
-        assertEquals(user.getUsername(), response.user().username());
+        assertEquals(user.getUsername(), response.username());
         assertEquals(group.getId(), response.group().id());
         assertEquals(group.getGroupName(), response.group().groupName());
         assertEquals(recipe.getId(), response.group().id());
@@ -197,8 +195,32 @@ class MealServiceImplTest {
                 .reserveRecipeProductsInPantry(user, recipe, group.getPantry().getId());
         verify(recipeService).addRecipeProductsToShoppingList(user, id, recipe.getRecipeProducts());
         assertEquals(request.mealDate(), response.mealDate());
-        assertEquals(user.getId(), response.user().id());
-        assertEquals(user.getUsername(), response.user().username());
+        assertEquals(user.getUsername(), response.username());
+        assertEquals(group.getId(), response.group().id());
+        assertEquals(group.getGroupName(), response.group().groupName());
+        assertEquals(recipe.getId(), response.group().id());
+        assertEquals(recipe.getRecipeName(), response.recipe().recipeName());
+        assertEquals(recipe.getRecipeProducts().size(), response.recipe().nrOfProducts());
+        assertEquals(recipe.getMealType(), response.recipe().mealType());
+    }
+
+    @Test
+    void test_addMealSuccessfulWithAddingToShoppingWithoutGroupPantry() {
+        group.setPantry(null);
+        final AddMealRequest request = new AddMealRequest(Timestamp.from(Instant.now()), id, id);
+
+        doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
+        doReturn(Optional.of(recipe)).when(recipeRepository).findById(request.recipeId());
+        MealDTO response = this.service.addMeal(request, email, false, id);
+
+        verify(mealRepository).save(any(Meal.class));
+        verify(recipeService, times(0))
+                .reserveRecipeProductsInPantry(eq(user), eq(recipe), anyLong());
+        verify(recipeService, times(0))
+                .getRecipeProductsNotInPantry(group, recipe);
+        verify(recipeService).addRecipeProductsToShoppingList(user, id, recipe.getRecipeProducts());
+        assertEquals(request.mealDate(), response.mealDate());
+        assertEquals(user.getUsername(), response.username());
         assertEquals(group.getId(), response.group().id());
         assertEquals(group.getGroupName(), response.group().groupName());
         assertEquals(recipe.getId(), response.group().id());
@@ -222,8 +244,7 @@ class MealServiceImplTest {
         verify(recipeService, times(0))
                 .addRecipeProductsToShoppingList(user, id, recipe.getRecipeProducts());
         assertEquals(request.mealDate(), response.mealDate());
-        assertEquals(user.getId(), response.user().id());
-        assertEquals(user.getUsername(), response.user().username());
+        assertEquals(user.getUsername(), response.username());
         assertEquals(group.getId(), response.group().id());
         assertEquals(group.getGroupName(), response.group().groupName());
         assertEquals(recipe.getId(), response.group().id());
@@ -233,7 +254,7 @@ class MealServiceImplTest {
     }
 
     @Test
-    void test_addMealSuccessfulGroupNotFound() {
+    void test_addMealGroupNotFound() {
         user.setGroups(Collections.emptyList());
         final AddMealRequest request = new AddMealRequest(Timestamp.from(Instant.now()), id, id);
 
@@ -250,7 +271,7 @@ class MealServiceImplTest {
     }
 
     @Test
-    void test_addMealSuccessfulRecipeNotFound() {
+    void test_addMealRecipeNotFound() {
         final AddMealRequest request = new AddMealRequest(Timestamp.from(Instant.now()), id, id);
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
@@ -266,7 +287,7 @@ class MealServiceImplTest {
     }
 
     @Test
-    void test_addMealSuccessfulNoRequiredAuthority() {
+    void test_addMealNoRequiredAuthority() {
         authority.setAuthorityName(AuthorityEnum.ADD);
         final AddMealRequest request = new AddMealRequest(Timestamp.from(Instant.now()), id, id);
 
@@ -329,8 +350,7 @@ class MealServiceImplTest {
 
         verify(mealRepository).save(meal);
         assertEquals(request.mealDate(), response.mealDate());
-        assertEquals(user.getId(), response.user().id());
-        assertEquals(user.getUsername(), response.user().username());
+        assertEquals(user.getUsername(), response.username());
         assertEquals(group.getId(), response.group().id());
         assertEquals(group.getGroupName(), response.group().groupName());
         assertEquals(group.getId(), response.group().id());
@@ -351,8 +371,7 @@ class MealServiceImplTest {
         verify(mealRepository, times(0)).save(meal);
         verify(recipeRepository, times(0)).findById(request.recipeId());
         assertEquals(request.mealDate(), response.mealDate());
-        assertEquals(user.getId(), response.user().id());
-        assertEquals(user.getUsername(), response.user().username());
+        assertEquals(user.getUsername(), response.username());
         assertEquals(group.getId(), response.group().id());
         assertEquals(group.getGroupName(), response.group().groupName());
         assertEquals(group.getId(), response.group().id());

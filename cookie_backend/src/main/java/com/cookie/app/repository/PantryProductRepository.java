@@ -13,9 +13,7 @@ import java.util.List;
 public interface PantryProductRepository extends CrudRepository<PantryProduct, Long> {
     void deleteByIdIn(List<Long> ids);
 
-    @Query(value = "SELECT DISTINCT pp.* FROM pantry_product pp JOIN product p ON p.id = pp.product_id " +
-            "where pp.pantry_id = ?1", nativeQuery = true)
-    Page<PantryProduct> findProductsInPantry(long id, PageRequest pageable);
+    Page<PantryProduct> findPantryProductByPantryId(long id, PageRequest pageable);
 
     @Query(value = "SELECT DISTINCT pp.* FROM pantry_product pp JOIN product p ON p.id = pp.product_id " +
             "WHERE pp.pantry_id = ?1 AND (LOWER(pp.placement) LIKE LOWER(CONCAT('%', ?2, '%')) OR " +

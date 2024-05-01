@@ -19,6 +19,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,37 +32,37 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
+
 @RequiredArgsConstructor
 @Slf4j
-@Validated
 @RequestMapping(value = "/api/v1/recipes", produces = { MediaType.APPLICATION_JSON_VALUE })
+@Validated
 @RestController
 public class RecipeController {
-    private static final String RECIPES_ID_URL = "/{recipe-id}";
+    private static final String RECIPES_ID_URL = "/{recipeId}";
     private static final String GET_RECIPES_URL = "/page/{page}";
-    private static final String GET_USER_RECIPES_URL = "/user-recipes/{page}";
+    private static final String GET_USER_RECIPES_URL = "/creator-recipes/{page}";
+
     private final RecipeService recipeService;
+    private final ObjectMapper objectMapper;
 
     @GetMapping(GET_RECIPES_URL)
     public ResponseEntity<PageResult<RecipeDTO>> getRecipes(
-            @PathVariable(value = "page") @Valid @Positive(message = "Page nr must be greater than 0") int page,
-            @RequestParam(required = false) @Valid @Min(value = 5, message = "Preparation time must be at least 5 minutes")
+            @PathVariable @Positive(message = "Page nr must be greater than 0") int page,
+            @RequestParam(required = false) @Min(value = 5, message = "Preparation time must be at least 5 minutes")
             @Max(value = 2880, message = "Preparation time must be lower or equals 2880 minutes") Integer prepTime,
-            @RequestParam(required = false) @Valid @Positive(message = "Number of portions must be at least 1")
+            @RequestParam(required = false) @Positive(message = "Number of portions must be at least 1")
             @Max(value = 12, message = "Number of portions must be lower or equals 12") Integer portions,
             @RequestParam(required = false) List<MealType> mealTypes,
-            @RequestParam(required = false) @Valid @Pattern(
+            @RequestParam(required = false) @Pattern(
                     regexp = RegexConstants.FILTER_VALUE_REGEX,
                     message = "Filter value can only contains letters, digits, whitespaces, dashes and its length must be greater than 0"
             ) String filterValue,
-            @RequestParam(required = false) @Valid @Pattern(
+            @RequestParam(required = false) @Pattern(
                     regexp = RegexConstants.SORT_COL_REGEX,
                     message = "Filter value can only contains letters, underscores and its length must be greater than 0"
             ) String sortColName,
-            @RequestParam(required = false) @Valid @Pattern(
-                    regexp = RegexConstants.SORT_DIRECTION_REGEX,
-                    message = "Sort direction must be 'DESC' or 'ASC'"
-            ) String sortDirection
+            @RequestParam(required = false) Sort.Direction sortDirection
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 this.recipeService.getRecipes(page, prepTime, portions, mealTypes, filterValue, sortColName, sortDirection)
@@ -71,24 +72,21 @@ public class RecipeController {
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping(GET_USER_RECIPES_URL)
     public ResponseEntity<PageResult<RecipeDTO>> getUserRecipes(
-            @PathVariable(value = "page") @Valid @Positive(message = "Page nr must be greater than 0") int page,
-            @RequestParam(required = false) @Valid @Min(value = 5, message = "Preparation time must be at least 5 minutes")
+            @PathVariable @Positive(message = "Page nr must be greater than 0") int page,
+            @RequestParam(required = false) @Min(value = 5, message = "Preparation time must be at least 5 minutes")
             @Max(value = 2880, message = "Preparation time must be lower or equals 2880 minutes") Integer prepTime,
-            @RequestParam(required = false) @Valid @Positive(message = "Number of portions must be at least 1")
+            @RequestParam(required = false) @Positive(message = "Number of portions must be at least 1")
             @Max(value = 12, message = "Number of portions must be lower or equals 12") Integer portions,
             @RequestParam(required = false) List<MealType> mealTypes,
-            @RequestParam(required = false) @Valid @Pattern(
+            @RequestParam(required = false) @Pattern(
                     regexp = RegexConstants.FILTER_VALUE_REGEX,
                     message = "Filter value can only contains letters, digits, whitespaces, dashes and its length must be greater than 0"
             ) String filterValue,
-            @RequestParam(required = false) @Valid @Pattern(
+            @RequestParam(required = false) @Pattern(
                     regexp = RegexConstants.SORT_COL_REGEX,
                     message = "Filter value can only contains letters, underscores and its length must be greater than 0"
             ) String sortColName,
-            @RequestParam(required = false) @Valid @Pattern(
-                    regexp = RegexConstants.SORT_DIRECTION_REGEX,
-                    message = "Sort direction must be 'DESC' or 'ASC'"
-            ) String sortDirection,
+            @RequestParam(required = false) Sort.Direction sortDirection,
             Authentication authentication
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(
@@ -102,7 +100,7 @@ public class RecipeController {
 
     @GetMapping(RECIPES_ID_URL)
     public ResponseEntity<RecipeDetailsDTO> getRecipeDetails(
-            @PathVariable("recipe-id") @Valid @Positive(message = "Recipe id must be greater than 0") long recipeId
+            @PathVariable@Positive(message = "Recipe id must be greater than 0") long recipeId
     ) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(this.recipeService.getRecipeDetails(recipeId));
@@ -116,12 +114,11 @@ public class RecipeController {
             Authentication authentication
     ) {
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-        log.info("Performing recipe creation by user with email={}", authentication.getName());
+        log.info("Performing recipe creation by creator with email={}", authentication.getName());
         CreateRecipeRequest recipe;
 
         try {
-            ObjectMapper objMapper = new ObjectMapper();
-            recipe = objMapper.readValue(recipeJson, CreateRecipeRequest.class);
+            recipe = this.objectMapper.readValue(recipeJson, CreateRecipeRequest.class);
         } catch (IOException exception) {
             throw new MappingJsonToObjectException("An error occured during request body reading. Its structure is probably incorrect");
         }
@@ -139,13 +136,13 @@ public class RecipeController {
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping(RECIPES_ID_URL)
     public ResponseEntity<Void> deleteRecipe(
-            @PathVariable("recipe-id") @Valid @Positive(message = "Recipe id must be greater than 0") long recipeId,
+            @PathVariable @Positive(message = "Recipe id must be greater than 0") long recipeId,
             Authentication authentication
     ) {
-        log.info("Performing recipe deletion by user with email={}", authentication.getName());
+        log.info("Performing recipe deletion by creator with email={}", authentication.getName());
         this.recipeService.deleteRecipe(authentication.getName(), recipeId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @SecurityRequirement(name = "bearerAuth")
@@ -156,12 +153,11 @@ public class RecipeController {
             Authentication authentication
     ) {
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-        log.info("Performing recipe update by user with email={}", authentication.getName());
+        log.info("Performing recipe update by creator with email={}", authentication.getName());
         UpdateRecipeRequest recipe;
 
         try {
-            ObjectMapper objMapper = new ObjectMapper();
-            recipe = objMapper.readValue(recipeJson, UpdateRecipeRequest.class);
+            recipe = this.objectMapper.readValue(recipeJson, UpdateRecipeRequest.class);
         } catch (IOException exception) {
             throw new MappingJsonToObjectException("An error occured during request body reading. Its structure is probably incorrect");
         }

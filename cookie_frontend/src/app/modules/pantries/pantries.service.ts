@@ -21,8 +21,8 @@ import { environment } from 'src/environments/environment';
 @Injectable({ providedIn: 'root' })
 export class PantriesService {
   private readonly url = environment.backendUrl;
-  private readonly pantry_path = 'pantry';
-  private readonly pantry_id_path = 'pantry/{id}';
+  private readonly pantry_path = 'pantries';
+  private readonly pantry_id_path = 'pantries/{id}';
   private readonly products_path = 'products';
   private readonly pantry_products_path = '/products';
   private readonly group_id_url = 'groups/{id}';

@@ -1,8 +1,8 @@
 spring:
   config:
-    import: ./env/env-docker.yaml
+    import: ./env/env-test.yaml
     activate:
-      on-profile: docker
+      on-profile: test
   datasource:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
@@ -16,3 +16,7 @@ frontend:
 
 jwt:
   secret: ${JWT_SECRET}
+
+ignore:
+  matchers: >
+    /api/v1/user

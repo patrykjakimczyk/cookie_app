@@ -1,5 +1,5 @@
 package com.cookie.app.exception;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
-public record ExceptionMessage(String message, Instant time) {}
+public record ExceptionMessage(String message, LocalDateTime time) {}

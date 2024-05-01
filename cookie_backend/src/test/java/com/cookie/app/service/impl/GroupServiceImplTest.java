@@ -17,7 +17,6 @@ import com.cookie.app.repository.AuthorityRepository;
 import com.cookie.app.repository.GroupRepository;
 import com.cookie.app.repository.ProductRepository;
 import com.cookie.app.repository.UserRepository;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,14 +36,14 @@ class GroupServiceImplTest {
     final long id = 1L;
 
     @Spy
-    GroupMapperDTO groupMapperDTO = new GroupMapperDTO(new UserMapperDTO(new AuthorityMapperDTO()));
+    AuthorityMapper authorityMapper = new AuthorityMapperImpl();
+    UserMapper userMapper = new UserMapperImpl(authorityMapper);
     @Spy
-    GroupDetailsMapperDTO groupDetailsMapperDTO = new GroupDetailsMapperDTO(
-            new UserMapperDTO(new AuthorityMapperDTO()),
-            new GroupDetailsShoppingListMapperDTO()
-    );
+    GroupDetailsShoppingListMapper groupDetailsShoppingListMapper = new GroupDetailsShoppingListMapperImpl();
     @Spy
-    AuthorityMapperDTO authorityMapperDTO;
+    GroupDetailsMapper groupDetailsMapper = new GroupDetailsMapperImpl(userMapper, groupDetailsShoppingListMapper);
+    @Spy
+    GroupMapper groupMapper = new GroupMapperImpl(userMapper);
     @Mock
     UserRepository userRepository;
     @Mock
@@ -110,7 +109,7 @@ class GroupServiceImplTest {
         assertNull(group.getMeals());
         assertNull(group.getShoppingLists());
         List<Authority> authorities = this.authoritiesListArgCaptor.getValue();
-        assertEquals(AuthorityEnum.ALL_AUTHORITIES.size(), authorities.size());
+        assertEquals(AuthorityEnum.values().length, authorities.size());
     }
 
     @Test
@@ -383,7 +382,7 @@ class GroupServiceImplTest {
 
         Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () ->
                 this.service.removeUserFromGroup(groupId, userIdToRemove, email));
-        assertEquals("User tried to remove non existing user from group", ex.getMessage());
+        assertEquals("User tried to remove non existing creator from group", ex.getMessage());
         verify(groupRepository, times(0)).save(group);
         verify(authorityRepository, times(0)).deleteByUserAndGroup(any(User.class), eq(group));
     }
@@ -401,7 +400,7 @@ class GroupServiceImplTest {
 
         Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () ->
                 this.service.removeUserFromGroup(groupId, userIdToRemove, email));
-        assertEquals("You tried to remove user which is not in the group", ex.getMessage());
+        assertEquals("You tried to remove creator which is not in the group", ex.getMessage());
         verify(groupRepository, times(0)).save(group);
         verify(authorityRepository, times(0)).deleteByUserAndGroup(any(User.class), eq(group));
     }
@@ -472,7 +471,7 @@ class GroupServiceImplTest {
 
         Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () ->
                 this.service.assignAuthoritiesToUser(groupId, request, email));
-        assertEquals("You tried to assign authorities to non existing user", ex.getMessage());
+        assertEquals("You tried to assign authorities to non existing creator", ex.getMessage());
         verify(authorityRepository, times(0)).saveAll(anyList());
     }
 
@@ -491,7 +490,7 @@ class GroupServiceImplTest {
 
         Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () ->
                 this.service.assignAuthoritiesToUser(groupId, request, email));
-        assertEquals("You tried to assign authorities to user which is not in the group", ex.getMessage());
+        assertEquals("You tried to assign authorities to creator which is not in the group", ex.getMessage());
         verify(authorityRepository, times(0)).saveAll(anyList());
     }
 
@@ -577,7 +576,7 @@ class GroupServiceImplTest {
 
         Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () ->
                 this.service.removeAuthoritiesFromUser(groupId, request, email));
-        assertEquals("You tried to take away authorities from non existing user", ex.getMessage());
+        assertEquals("You tried to take away authorities from non existing creator", ex.getMessage());
         verify(authorityRepository, times(0)).deleteAll(anyList());
     }
 
@@ -600,7 +599,7 @@ class GroupServiceImplTest {
 
         Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () ->
                 this.service.removeAuthoritiesFromUser(groupId, request, email));
-        assertEquals("You tried to take away authorities from user which is not in the group", ex.getMessage());
+        assertEquals("You tried to take away authorities from creator which is not in the group", ex.getMessage());
         verify(authorityRepository, times(0)).deleteAll(anyList());
     }
 }

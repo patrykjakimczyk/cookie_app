@@ -24,6 +24,7 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,18 +45,19 @@ class RecipeServiceImplTest {
     final String productName = "productName";
     final String filter = "filter";
     final String col = "col";
-    final String direction = "DESC";
+    final Sort.Direction direction = Sort.Direction.DESC;
     final Long id = 1L;
 
     @Captor
     ArgumentCaptor<Recipe> recipeArgumentCaptor;
 
+    RecipeProductMapper recipeProductMapper = new RecipeProductMapperImpl(new ProductMapperImpl());
     @Spy
-    RecipeDetailsMapperDTO recipeDetailsMapperDTO = new RecipeDetailsMapperDTO(new RecipeProductMapperDTO(new ProductMapperDTO()));
+    RecipeDetailsMapper recipeDetailsMapperDTO = new RecipeDetailsMapperImpl(recipeProductMapper);
     @Spy
-    RecipeMapperDTO recipeMapperDTO;
+    RecipeMapper recipeMapper = new RecipeMapperImpl();
     @Spy
-    AuthorityMapperDTO authorityMapperDTO;
+    AuthorityMapper authorityMapper = new AuthorityMapperImpl();
     @Mock
     UserRepository userRepository;
     @Mock

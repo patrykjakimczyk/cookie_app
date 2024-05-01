@@ -10,6 +10,7 @@ It's a web app used for managing pantry as well as supporting shopping and food 
 - Mockito
 - Maven
 - OpenAPI
+- MapStruct
 - Angular 16.2.8
 - Typescript
 - SCSS

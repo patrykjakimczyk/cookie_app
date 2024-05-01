@@ -1,4 +1,4 @@
-package com.cookie.app.config.filter;
+package com.cookie.app.config.security;
 
 import com.cookie.app.config.JwtConstants;
 import io.jsonwebtoken.Jwts;

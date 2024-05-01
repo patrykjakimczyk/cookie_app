@@ -1,4 +1,4 @@
-package com.cookie.app.config.filter;
+package com.cookie.app.config.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -15,7 +15,7 @@ public class CsrfCookieFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         CsrfToken csrfToken = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
-        if(null != csrfToken.getHeaderName()){
+        if (null != csrfToken.getHeaderName()) {
             response.setHeader(csrfToken.getHeaderName(), csrfToken.getToken());
         }
         filterChain.doFilter(request, response);

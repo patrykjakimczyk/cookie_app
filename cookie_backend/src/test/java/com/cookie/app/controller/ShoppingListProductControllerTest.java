@@ -36,8 +36,8 @@ class ShoppingListProductControllerTest extends AbstractControllerTest {
         final List<ShoppingListProductDTO> shoppingListProductDTOS = Collections.singletonList(createShoppingListProduct());
         final PageResult<ShoppingListProductDTO> pageResponse = new PageResult<>(shoppingListProductDTOS, shoppingListProductDTOS.size(), 1, 0);
 
-        doReturn(pageResponse).when(shoppingListProductService).getShoppingListProducts(this.listId, pageNr, "", "", "", authentication.getName());
-        ResponseEntity<PageResult<ShoppingListProductDTO>> response = this.controller.getShoppingListProducts(this.listId, pageNr, "", "", "", authentication);
+        doReturn(pageResponse).when(shoppingListProductService).getShoppingListProducts(this.listId, pageNr, "", "", null, authentication.getName());
+        ResponseEntity<PageResult<ShoppingListProductDTO>> response = this.controller.getShoppingListProducts(this.listId, pageNr, "", "", null, authentication);
 
         assertEquals(shoppingListProductDTOS.size(), response.getBody().totalElements());
         assertEquals(HttpStatus.OK, response.getStatusCode());

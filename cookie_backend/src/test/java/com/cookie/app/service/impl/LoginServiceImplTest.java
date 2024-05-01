@@ -24,12 +24,11 @@ import static org.mockito.Mockito.doReturn;
 class LoginServiceImplTest {
     final String email = "email@email.com";
     final String username = "username";
+
     @Mock
     UserRepository userRepository;
-
     @Mock
     PasswordEncoder passwordEncoder;
-
     @InjectMocks
     LoginServiceImpl service;
 

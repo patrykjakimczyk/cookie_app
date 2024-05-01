@@ -3,7 +3,8 @@ package com.cookie.app.service.impl;
 import com.cookie.app.model.dto.ProductDTO;
 import com.cookie.app.model.entity.Product;
 import com.cookie.app.model.enums.Category;
-import com.cookie.app.model.mapper.ProductMapperDTO;
+import com.cookie.app.model.mapper.ProductMapper;
+import com.cookie.app.model.mapper.ProductMapperImpl;
 import com.cookie.app.repository.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.doReturn;
 @ExtendWith(MockitoExtension.class)
 class ProductServiceImplTest {
     @Spy
-    ProductMapperDTO productDTOMapper;
+    ProductMapper productMapper = new ProductMapperImpl();
     @Mock
     ProductRepository productRepository;
     @InjectMocks

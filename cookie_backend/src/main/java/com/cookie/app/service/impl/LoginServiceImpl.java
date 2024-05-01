@@ -1,7 +1,7 @@
 package com.cookie.app.service.impl;
 
 import com.cookie.app.model.enums.Role;
-import com.cookie.app.model.mapper.AuthorityMapperDTO;
+import com.cookie.app.model.mapper.AuthorityMapper;
 import com.cookie.app.model.request.RegistrationRequest;
 import com.cookie.app.model.entity.User;
 import com.cookie.app.model.response.LoginResponse;
@@ -25,9 +25,9 @@ public non-sealed class LoginServiceImpl extends AbstractCookieService implement
 
     public LoginServiceImpl(UserRepository userRepository,
                             ProductRepository productRepository,
-                            AuthorityMapperDTO authorityMapperDTO,
+                            AuthorityMapper authorityMapper,
                             PasswordEncoder passwordEncoder) {
-        super(userRepository, productRepository, authorityMapperDTO);
+        super(userRepository, productRepository, authorityMapper);
         this.passwordEncoder = passwordEncoder;
     }
 

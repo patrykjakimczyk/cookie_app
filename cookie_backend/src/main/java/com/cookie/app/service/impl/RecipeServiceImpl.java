@@ -4,9 +4,9 @@ import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.model.dto.*;
 import com.cookie.app.model.entity.*;
 import com.cookie.app.model.enums.MealType;
-import com.cookie.app.model.mapper.AuthorityMapperDTO;
-import com.cookie.app.model.mapper.RecipeDetailsMapperDTO;
-import com.cookie.app.model.mapper.RecipeMapperDTO;
+import com.cookie.app.model.mapper.AuthorityMapper;
+import com.cookie.app.model.mapper.RecipeDetailsMapper;
+import com.cookie.app.model.mapper.RecipeMapper;
 import com.cookie.app.model.request.CreateRecipeRequest;
 import com.cookie.app.model.request.UpdateRecipeRequest;
 import com.cookie.app.model.response.CreateRecipeResponse;
@@ -21,6 +21,7 @@ import com.cookie.app.util.ImageUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,25 +38,25 @@ public non-sealed class RecipeServiceImpl extends AbstractCookieService implemen
     private final RecipeProductRepository recipeProductRepository;
     private final PantryProductService pantryProductService;
     private final ShoppingListProductService shoppingListProductService;
-    private final RecipeMapperDTO recipeMapperDTO;
-    private final RecipeDetailsMapperDTO recipeDetailsMapperDTO;
+    private final RecipeMapper recipeMapper;
+    private final RecipeDetailsMapper recipeDetailsMapper;
 
     public RecipeServiceImpl(UserRepository userRepository,
                              ProductRepository productRepository,
-                             AuthorityMapperDTO authorityMapperDTO,
+                             AuthorityMapper authorityMapper,
                              RecipeRepository recipeRepository,
                              RecipeProductRepository recipeProductRepository,
                              PantryProductService pantryProductService,
                              ShoppingListProductService shoppingListProductService,
-                             RecipeMapperDTO recipeMapperDTO,
-                             RecipeDetailsMapperDTO recipeDetailsMapperDTO) {
-        super(userRepository, productRepository, authorityMapperDTO);
+                             RecipeMapper recipeMapper,
+                             RecipeDetailsMapper recipeDetailsMapper) {
+        super(userRepository, productRepository, authorityMapper);
         this.recipeRepository = recipeRepository;
         this.recipeProductRepository = recipeProductRepository;
         this.pantryProductService = pantryProductService;
         this.shoppingListProductService = shoppingListProductService;
-        this.recipeMapperDTO = recipeMapperDTO;
-        this.recipeDetailsMapperDTO = recipeDetailsMapperDTO;
+        this.recipeMapper = recipeMapper;
+        this.recipeDetailsMapper = recipeDetailsMapper;
     }
 
     @Override
@@ -65,7 +66,7 @@ public non-sealed class RecipeServiceImpl extends AbstractCookieService implemen
                                       List<MealType> mealTypes,
                                       String filterValue,
                                       String sortColName,
-                                      String sortDirection) {
+                                      Sort.Direction sortDirection) {
         PageRequest pageRequest = super.createPageRequest(page - 1, sortColName, sortDirection);
         Set<String> selectedMealTypes = getMealTypesAsStrings(mealTypes);
         prepTime = prepTime == null ? 0 : prepTime;
@@ -74,12 +75,12 @@ public non-sealed class RecipeServiceImpl extends AbstractCookieService implemen
         if (StringUtils.isBlank(filterValue)) {
             return new PageResult<>(this.recipeRepository
                     .findRecipes(prepTime, portions, selectedMealTypes, pageRequest)
-                    .map(recipeMapperDTO::apply));
+                    .map(recipeMapper::mapToDto));
         }
 
         return new PageResult<>(this.recipeRepository
                 .findRecipesByFilter(filterValue, prepTime, portions, selectedMealTypes, pageRequest)
-                .map(recipeMapperDTO::apply));
+                .map(recipeMapper::mapToDto));
     }
 
     @Override
@@ -90,7 +91,7 @@ public non-sealed class RecipeServiceImpl extends AbstractCookieService implemen
                                           List<MealType> mealTypes,
                                           String filterValue,
                                           String sortColName,
-                                          String sortDirection) {
+                                          Sort.Direction sortDirection) {
         User user = super.getUserByEmail(userEmail);
         PageRequest pageRequest = super.createPageRequest(page - 1, sortColName, sortDirection);
         Set<String> selectedMealTypes = getMealTypesAsStrings(mealTypes);
@@ -100,12 +101,12 @@ public non-sealed class RecipeServiceImpl extends AbstractCookieService implemen
         if (StringUtils.isBlank(filterValue)) {
             return new PageResult<>(this.recipeRepository
                     .findCreatorRecipes(user.getId(), prepTime, portions, selectedMealTypes, pageRequest)
-                    .map(recipeMapperDTO::apply));
+                    .map(recipeMapper::mapToDto));
         }
 
         return new PageResult<>(this.recipeRepository
                 .findCreatorRecipesByFilter(user.getId(), filterValue, prepTime, portions, selectedMealTypes, pageRequest)
-                .map(recipeMapperDTO::apply));
+                .map(recipeMapper::mapToDto));
     }
 
 
@@ -113,7 +114,7 @@ public non-sealed class RecipeServiceImpl extends AbstractCookieService implemen
     public RecipeDetailsDTO getRecipeDetails(long recipeId) {
         Optional<Recipe> recipeOptional = this.recipeRepository.findById(recipeId);
 
-        return recipeOptional.map(this.recipeDetailsMapperDTO::apply)
+        return recipeOptional.map(this.recipeDetailsMapper::mapToDto)
                 .orElseGet(() -> new RecipeDetailsDTO(0, null, null, 0, null, null,0, null, null, null));
     }
 
@@ -193,24 +194,12 @@ public non-sealed class RecipeServiceImpl extends AbstractCookieService implemen
     }
 
     private void updateRecipe(Recipe recipe, UpdateRecipeRequest recipeDetailsDTO, MultipartFile recipeImage) {
-        if (!recipe.getRecipeName().equals(recipeDetailsDTO.recipeName())) {
-            recipe.setRecipeName(recipeDetailsDTO.recipeName());
-        }
-        if (!recipe.getPreparation().equals(recipeDetailsDTO.preparation())) {
-            recipe.setPreparation(recipeDetailsDTO.preparation());
-        }
-        if (recipe.getPreparationTime() != recipeDetailsDTO.preparationTime()) {
-            recipe.setPreparationTime(recipeDetailsDTO.preparationTime());
-        }
-        if (!Objects.equals(recipe.getCuisine(), recipeDetailsDTO.cuisine())) {
-            recipe.setCuisine(recipeDetailsDTO.cuisine());
-        }
-        if (recipe.getPortions() != recipeDetailsDTO.portions()) {
-            recipe.setPortions(recipeDetailsDTO.portions());
-        }
-        if (recipe.getMealType() != recipeDetailsDTO.mealType()) {
-            recipe.setMealType(recipeDetailsDTO.mealType());
-        }
+        recipe.setRecipeName(recipeDetailsDTO.recipeName());
+        recipe.setPreparation(recipeDetailsDTO.preparation());
+        recipe.setPreparationTime(recipeDetailsDTO.preparationTime());
+        recipe.setCuisine(recipeDetailsDTO.cuisine());
+        recipe.setPortions(recipeDetailsDTO.portions());
+        recipe.setMealType(recipeDetailsDTO.mealType());
 
         if (recipeDetailsDTO.updateImage()) {
             byte[] newImage = new byte[0];
@@ -246,12 +235,8 @@ public non-sealed class RecipeServiceImpl extends AbstractCookieService implemen
             }
 
             RecipeProductDTO modifiedProduct = recipeProductDTOMap.get(recipeProduct.getId());
-            if (recipeProduct.getQuantity() != modifiedProduct.quantity()) {
-                recipeProduct.setQuantity(modifiedProduct.quantity());
-            }
-            if (recipeProduct.getUnit() != modifiedProduct.unit()) {
-                recipeProduct.setUnit(modifiedProduct.unit());
-            }
+            recipeProduct.setQuantity(modifiedProduct.quantity());
+            recipeProduct.setUnit(modifiedProduct.unit());
 
             recipeProductDTOMap.remove(recipeProduct.getId());
         }

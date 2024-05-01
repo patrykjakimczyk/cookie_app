@@ -9,39 +9,40 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/pantry/{pantry-id}/products", produces = { MediaType.APPLICATION_JSON_VALUE })
+@RequestMapping(value = "/api/v1/pantries/{pantryId}/products", produces = { MediaType.APPLICATION_JSON_VALUE })
+@Validated
 @RestController
 public class PantryProductController {
     private static final String GET_PANTRY_PRODUCTS_URL = "/{page}";
-    private static final String PANTRY_PRODUCT_URL = "/{product-id}";
+    private static final String PANTRY_PRODUCT_URL = "/{productId}";
+
     private final PantryProductService pantryProductService;
 
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping(GET_PANTRY_PRODUCTS_URL)
     public ResponseEntity<PageResult<PantryProductDTO>> getPantryProducts(
-            @PathVariable(value = "pantry-id") @Valid @Positive(message = "Pantry id must be greater than 0") long pantryId,
-            @PathVariable(value = "page") @Valid @Positive(message = "Page nr must be be greater than 0") int page,
-            @RequestParam(required = false) @Valid @Pattern(
+            @PathVariable @Positive(message = "Pantry id must be greater than 0") long pantryId,
+            @PathVariable @Positive(message = "Page nr must be be greater than 0") int page,
+            @RequestParam(required = false) @Pattern(
                     regexp = RegexConstants.FILTER_VALUE_REGEX,
                     message = "Filter value can only contains letters, digits, whitespaces, dashes and its length must be greater than 0"
             ) String filterValue,
-            @RequestParam(required = false) @Valid @Pattern(
+            @RequestParam(required = false) @Pattern(
                     regexp = RegexConstants.SORT_COL_REGEX,
                     message = "Filter value can only contains letters, underscores and its length must be greater than 0"
             ) String sortColName,
-            @RequestParam(required = false) @Valid @Pattern(
-                    regexp = RegexConstants.SORT_DIRECTION_REGEX,
-                    message = "Sort direction must be 'DESC' or 'ASC'"
-            ) String sortDirection,
+            @RequestParam(required = false) Sort.Direction sortDirection,
             Authentication authentication
     ) {
         return ResponseEntity
@@ -54,7 +55,7 @@ public class PantryProductController {
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping
     public ResponseEntity<Void> addProductsToPantry(
-            @PathVariable(value = "pantry-id") @Valid @Positive(message = "Pantry id must be greater than 0") long pantryId,
+            @PathVariable @Positive(message = "Pantry id must be greater than 0") long pantryId,
             @Valid @NotEmpty(message = "List of products cannot be empty") @RequestBody List<@Valid PantryProductDTO> products,
             Authentication authentication
     ) {
@@ -65,7 +66,7 @@ public class PantryProductController {
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping
     public ResponseEntity<Void> removeProductsFromPantry(
-            @PathVariable(value = "pantry-id") @Valid @Positive(message = "Pantry id must be greater than 0") long pantryId,
+            @PathVariable @Positive(message = "Pantry id must be greater than 0") long pantryId,
             @Valid @NotEmpty(message = "List of products ids cannot be empty")
             @RequestBody List<@Positive(message = "Product id must be greater than 0") Long> productIds,
             Authentication authentication
@@ -77,8 +78,8 @@ public class PantryProductController {
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping
     public ResponseEntity<Void> updatePantryProduct(
-            @PathVariable(value = "pantry-id") @Valid @Positive(message = "Pantry id must be greater than 0") long pantryId,
-            @Valid @RequestBody PantryProductDTO pantryProductDTO,
+            @PathVariable @Positive(message = "Pantry id must be greater than 0") long pantryId,
+            @RequestBody @Valid PantryProductDTO pantryProductDTO,
             Authentication authentication
     ) {
         this.pantryProductService.updatePantryProduct(pantryId, pantryProductDTO, authentication.getName());
@@ -88,9 +89,8 @@ public class PantryProductController {
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(PANTRY_PRODUCT_URL)
     public ResponseEntity<PantryProductDTO> reservePantryProduct(
-            @PathVariable(value = "pantry-id") @Valid @Positive(message = "Pantry id must be greater than 0") long pantryId,
-            @PathVariable(value = "product-id") @Valid
-            @Positive(message = "Pantry product id must be greater than 0") long pantryProductId,
+            @PathVariable @Positive(message = "Pantry id must be greater than 0") long pantryId,
+            @PathVariable @Positive(message = "Pantry product id must be greater than 0") long pantryProductId,
             @RequestBody @Valid ReservePantryProductRequest reserveBody,
             Authentication authentication
     ) {

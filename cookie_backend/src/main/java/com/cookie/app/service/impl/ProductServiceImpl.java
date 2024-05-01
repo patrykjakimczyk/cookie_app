@@ -2,7 +2,7 @@ package com.cookie.app.service.impl;
 
 import com.cookie.app.model.dto.ProductDTO;
 import com.cookie.app.model.entity.Product;
-import com.cookie.app.model.mapper.ProductMapperDTO;
+import com.cookie.app.model.mapper.ProductMapper;
 import com.cookie.app.repository.ProductRepository;
 import com.cookie.app.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class ProductServiceImpl implements ProductService {
     private static final int PAGE_SIZE = 10;
 
     private final ProductRepository productRepository;
-    private final ProductMapperDTO productDTOMapper;
+    private final ProductMapper productMapper;
 
     @Override
     public List<ProductDTO> getProductsWithFilter(String filterValue) {
@@ -29,7 +29,7 @@ public class ProductServiceImpl implements ProductService {
 
         Page<Product> productsPage = this.productRepository.findProductsWithFilter(filterValue, pageRequest);
         return productsPage.get()
-                        .map(productDTOMapper::apply)
+                        .map(productMapper::mapToDto)
                         .toList();
     }
 }

@@ -1,4 +1,4 @@
-package com.cookie.app.config.filter;
+package com.cookie.app.config.security;
 
 import com.cookie.app.config.JwtConstants;
 import io.jsonwebtoken.Claims;
@@ -26,9 +26,6 @@ public class JwtValidatorFilter extends OncePerRequestFilter {
     private static final String NOT_FILTER_PATH = "/api/v1/user";
     @Value("${jwt.secret}")
     private String secret;
-
-    @Value("${frontend.address}")
-    private String frontendAddress;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

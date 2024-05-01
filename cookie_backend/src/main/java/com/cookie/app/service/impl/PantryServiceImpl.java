@@ -5,8 +5,8 @@ import com.cookie.app.model.entity.Group;
 import com.cookie.app.model.entity.Pantry;
 import com.cookie.app.model.entity.User;
 import com.cookie.app.model.enums.AuthorityEnum;
-import com.cookie.app.model.mapper.AuthorityMapperDTO;
-import com.cookie.app.model.mapper.PantryMapperDTO;
+import com.cookie.app.model.mapper.AuthorityMapper;
+import com.cookie.app.model.mapper.PantryMapper;
 import com.cookie.app.model.request.CreatePantryRequest;
 import com.cookie.app.model.request.UpdatePantryRequest;
 import com.cookie.app.model.response.DeletePantryResponse;
@@ -26,16 +26,16 @@ import java.util.Optional;
 @Service
 public non-sealed class PantryServiceImpl extends AbstractPantryService implements PantryService {
     private final PantryRepository pantryRepository;
-    private final PantryMapperDTO pantryMapperDTO;
+    private final PantryMapper pantryMapper;
 
     public PantryServiceImpl(UserRepository userRepository,
                              ProductRepository productRepository,
-                             AuthorityMapperDTO authorityMapperDTO,
+                             AuthorityMapper authorityMapper,
                              PantryRepository pantryRepository,
-                             PantryMapperDTO pantryMapperDTO) {
-        super(userRepository, productRepository, authorityMapperDTO);
+                             PantryMapper pantryMapper) {
+        super(userRepository, productRepository, authorityMapper);
         this.pantryRepository = pantryRepository;
-        this.pantryMapperDTO = pantryMapperDTO;
+        this.pantryMapper = pantryMapper;
     }
 
     @Transactional
@@ -86,7 +86,7 @@ public non-sealed class PantryServiceImpl extends AbstractPantryService implemen
                 user.getGroups()
                         .stream()
                         .filter(group -> group.getPantry() != null)
-                        .map(group -> this.pantryMapperDTO.apply(group.getPantry()))
+                        .map(group -> this.pantryMapper.mapToDto(group.getPantry()))
                         .toList()
         );
     }

@@ -5,6 +5,7 @@ import com.cookie.app.model.dto.PantryProductDTO;
 import com.cookie.app.model.entity.Pantry;
 import com.cookie.app.model.entity.RecipeProduct;
 import com.cookie.app.model.entity.User;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ public interface PantryProductService {
             int page,
             String filterValue,
             String sortColName,
-            String sortDirection,
+            Sort.Direction sortDirection,
             String userEmail
     );
     void addProductsToPantry(long pantryId, List<PantryProductDTO> pantryProducts, String userEmail);

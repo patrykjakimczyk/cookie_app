@@ -5,7 +5,7 @@ import com.cookie.app.model.dto.AuthorityDTO;
 import com.cookie.app.model.dto.ProductDTO;
 import com.cookie.app.model.entity.*;
 import com.cookie.app.model.enums.AuthorityEnum;
-import com.cookie.app.model.mapper.AuthorityMapperDTO;
+import com.cookie.app.model.mapper.AuthorityMapper;
 import com.cookie.app.repository.ProductRepository;
 import com.cookie.app.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +14,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -26,14 +25,14 @@ public abstract sealed class AbstractCookieService permits
     private static final int PRODUCTS_PAGE_SIZE = 20;
     final UserRepository userRepository;
     final ProductRepository productRepository;
-    final AuthorityMapperDTO authorityMapperDTO;
+    final AuthorityMapper authorityMapper;
 
     AbstractCookieService(UserRepository userRepository,
-                                    ProductRepository productRepository,
-                                    AuthorityMapperDTO authorityMapperDTO) {
+                          ProductRepository productRepository,
+                          AuthorityMapper authorityMapper) {
         this.userRepository = userRepository;
         this.productRepository = productRepository;
-        this.authorityMapperDTO = authorityMapperDTO;
+        this.authorityMapper = authorityMapper;
     }
 
     User getUserByEmail(String userEmail) {
@@ -62,11 +61,11 @@ public abstract sealed class AbstractCookieService permits
         return user.getAuthorities()
                 .stream()
                 .filter(authority -> authority.getGroup().getId() == userGroup.getId())
-                .map(authorityMapperDTO::apply)
+                .map(this.authorityMapper::mapToDto)
                 .collect(Collectors.toSet());
     }
 
-    PageRequest createPageRequest(int page, String sortColName, String sortDirection) {
+    PageRequest createPageRequest(int page, String sortColName, Sort.Direction sortDirection) {
         PageRequest pageRequest = PageRequest.of(page, PRODUCTS_PAGE_SIZE);
         Sort idSort = Sort.by(Sort.Direction.DESC, "id");
         Sort sort = null;
@@ -75,7 +74,7 @@ public abstract sealed class AbstractCookieService permits
             return pageRequest.withSort(idSort);
         }
 
-        if (Objects.equals(sortDirection, "DESC")) {
+        if (sortDirection == Sort.Direction.DESC) {
             sort = Sort.by(Sort.Direction.DESC, sortColName);
         } else {
             sort = Sort.by(Sort.Direction.ASC, sortColName);

@@ -40,9 +40,9 @@ class PantryProductControllerTest extends AbstractControllerTest {
         final PageResult<PantryProductDTO> pageResponse = new PageResult<>(pantryProductDTOS, pantryProductDTOS.size(), 1, 0);
 
         doReturn(pageResponse).when(pantryProductService)
-                .getPantryProducts(this.pantryId, pageNr, "", "", "", authentication.getName());
+                .getPantryProducts(this.pantryId, pageNr, "", "", null, authentication.getName());
         ResponseEntity<PageResult<PantryProductDTO>> response =
-                this.controller.getPantryProducts(pantryId, pageNr, "", "", "", authentication);
+                this.controller.getPantryProducts(pantryId, pageNr, "", "", null, authentication);
 
         assertEquals(pantryProductDTOS.size(), response.getBody().totalElements());
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -53,10 +53,10 @@ class PantryProductControllerTest extends AbstractControllerTest {
         final int pageNr = 1;
 
         doThrow(new UserPerformedForbiddenActionException("Pantry not found"))
-                .when(pantryProductService).getPantryProducts(pantryId, pageNr, "", "", "", authentication.getName());
+                .when(pantryProductService).getPantryProducts(pantryId, pageNr, "", "", null, authentication.getName());
 
         assertThrows(UserPerformedForbiddenActionException.class, () ->
-                this.controller.getPantryProducts(pantryId, 1, "", "", "", authentication));
+                this.controller.getPantryProducts(pantryId, 1, "", "", null, authentication));
     }
 
     @Test

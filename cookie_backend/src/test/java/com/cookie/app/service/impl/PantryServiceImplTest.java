@@ -5,8 +5,7 @@ import com.cookie.app.exception.UserWasNotFoundAfterAuthException;
 import com.cookie.app.model.dto.AuthorityDTO;
 import com.cookie.app.model.entity.*;
 import com.cookie.app.model.enums.AuthorityEnum;
-import com.cookie.app.model.mapper.AuthorityMapperDTO;
-import com.cookie.app.model.mapper.PantryMapperDTO;
+import com.cookie.app.model.mapper.*;
 import com.cookie.app.model.request.CreatePantryRequest;
 import com.cookie.app.model.request.UpdatePantryRequest;
 import com.cookie.app.model.response.DeletePantryResponse;
@@ -38,9 +37,9 @@ class PantryServiceImplTest {
     final Long id = 1L;
 
     @Spy
-    PantryMapperDTO pantryMapperDTO;
+    PantryMapper pantryMapper = new PantryMapperImpl();
     @Spy
-    AuthorityMapperDTO authorityMapperDTO;
+    AuthorityMapper authorityMapper = new AuthorityMapperImpl();
     @Mock
     UserRepository userRepository;
     @Mock

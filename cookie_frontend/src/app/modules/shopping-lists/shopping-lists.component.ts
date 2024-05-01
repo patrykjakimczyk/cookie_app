@@ -32,6 +32,7 @@ export class ShoppingListsComponent implements OnInit {
           }
         }
         this.userListsGroups = [...this.userLists.keys()];
+        console.log(this.userListsGroups);
       });
   }
 

@@ -3,6 +3,7 @@ package com.cookie.app.model.dto;
 import com.cookie.app.model.enums.Unit;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 
 public record ShoppingListProductDTO (
@@ -13,7 +14,7 @@ public record ShoppingListProductDTO (
         @Valid
         ProductDTO product,
         @NotNull(message = "Quantity must be present")
-        @PositiveOrZero(message = "Quantity must be equal or greater than 1")
+        @Positive(message = "Quantity must be equal or greater than 1")
         Integer quantity,
         @NotNull(message = "Unit must be present")
         Unit unit,

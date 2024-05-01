@@ -9,9 +9,7 @@ import com.cookie.app.model.entity.*;
 import com.cookie.app.model.enums.AuthorityEnum;
 import com.cookie.app.model.enums.Category;
 import com.cookie.app.model.enums.Unit;
-import com.cookie.app.model.mapper.AuthorityMapperDTO;
-import com.cookie.app.model.mapper.PantryProductMapperDTO;
-import com.cookie.app.model.mapper.ProductMapperDTO;
+import com.cookie.app.model.mapper.*;
 import com.cookie.app.repository.PantryProductRepository;
 import com.cookie.app.repository.ProductRepository;
 import com.cookie.app.repository.UserRepository;
@@ -40,9 +38,9 @@ class PantryProductServiceImplTest {
     final Long id = 1L;
 
     @Spy
-    AuthorityMapperDTO authorityMapperDTO;
+    AuthorityMapper authorityMapper = new AuthorityMapperImpl();
     @Spy
-    PantryProductMapperDTO pantryProductMapper = new PantryProductMapperDTO(new ProductMapperDTO());
+    PantryProductMapper pantryProductMapper = new PantryProductMapperImpl(new ProductMapperImpl());
     @Mock
     UserRepository userRepository;
     @Mock
@@ -107,14 +105,14 @@ class PantryProductServiceImplTest {
         final PageImpl<PantryProduct> pageResponse = new PageImpl<>(List.of(pantryProduct));
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
-        doReturn(pageResponse).when(pantryProductRepository).findProductsInPantry(
+        doReturn(pageResponse).when(pantryProductRepository).findPantryProductByPantryId(
                 eq(id),
                 this.pageRequestArgCaptor.capture()
         );
-        PageResult<PantryProductDTO> result = this.service.getPantryProducts(id, 1, null, col, "ASC", email);
+        PageResult<PantryProductDTO> result = this.service.getPantryProducts(id, 1, null, col, Sort.Direction.ASC, email);
         PageRequest pageRequest = this.pageRequestArgCaptor.getValue();
 
-        verify(pantryProductRepository).findProductsInPantry(eq(id), any(PageRequest.class));
+        verify(pantryProductRepository).findPantryProductByPantryId(eq(id), any(PageRequest.class));
         assertEquals(pageResponse.getTotalElements(), result.totalElements());
         assertEquals(pageResponse.getContent().get(0).getProduct().getProductName(), result.content().get(0).product().productName());
         assertEquals(pageResponse.getContent().get(0).getId(), result.content().get(0).id());
@@ -134,7 +132,7 @@ class PantryProductServiceImplTest {
                 this.pageRequestArgCaptor.capture()
         );
 
-        PageResult<PantryProductDTO> result = this.service.getPantryProducts(id, 1, filter, col, "DESC", email);
+        PageResult<PantryProductDTO> result = this.service.getPantryProducts(id, 1, filter, col, Sort.Direction.DESC, email);
         PageRequest pageRequest = this.pageRequestArgCaptor.getValue();
 
         verify(pantryProductRepository).findProductsInPantryWithFilter(eq(id), eq(filter), any(PageRequest.class));

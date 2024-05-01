@@ -4,8 +4,8 @@ import com.cookie.app.exception.*;
 import com.cookie.app.model.dto.PageResult;
 import com.cookie.app.model.entity.*;
 import com.cookie.app.model.enums.AuthorityEnum;
-import com.cookie.app.model.mapper.AuthorityMapperDTO;
-import com.cookie.app.model.mapper.PantryProductMapperDTO;
+import com.cookie.app.model.mapper.AuthorityMapper;
+import com.cookie.app.model.mapper.PantryProductMapper;
 import com.cookie.app.model.dto.PantryProductDTO;
 import com.cookie.app.repository.PantryProductRepository;
 import com.cookie.app.repository.ProductRepository;
@@ -14,6 +14,7 @@ import com.cookie.app.service.PantryProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,16 +24,16 @@ import java.util.*;
 @Service
 public non-sealed class PantryProductServiceImpl extends AbstractPantryService implements PantryProductService {
     private final PantryProductRepository pantryProductRepository;
-    private final PantryProductMapperDTO pantryProductMapper;
+    private final PantryProductMapper pantryProductMapper;
 
     public PantryProductServiceImpl(
             UserRepository userRepository,
-            AuthorityMapperDTO authorityMapperDTO,
+            AuthorityMapper authorityMapper,
             PantryProductRepository pantryProductRepository,
             ProductRepository productRepository,
-            PantryProductMapperDTO pantryProductMapper
+            PantryProductMapper pantryProductMapper
     ) {
-        super(userRepository, productRepository, authorityMapperDTO);
+        super(userRepository, productRepository, authorityMapper);
         this.pantryProductRepository = pantryProductRepository;
         this.pantryProductMapper = pantryProductMapper;
     }
@@ -43,7 +44,7 @@ public non-sealed class PantryProductServiceImpl extends AbstractPantryService i
             int page,
             String filterValue,
             String sortColName,
-            String sortDirection,
+            Sort.Direction sortDirection,
             String userEmail
     ) {
         Pantry pantry = super.getPantryIfUserHasAuthority(pantryId, userEmail, null);
@@ -52,11 +53,11 @@ public non-sealed class PantryProductServiceImpl extends AbstractPantryService i
         if (filterValue != null && !StringUtils.isBlank(filterValue.trim())) {
             return new PageResult<>(this.pantryProductRepository
                     .findProductsInPantryWithFilter(pantry.getId(), filterValue, pageRequest)
-                    .map(pantryProductMapper));
+                    .map(pantryProductMapper::mapToDto));
         }
         return new PageResult<>(this.pantryProductRepository
-                .findProductsInPantry(pantry.getId(), pageRequest)
-                .map(pantryProductMapper));
+                .findPantryProductByPantryId(pantry.getId(), pageRequest)
+                .map(pantryProductMapper::mapToDto));
     }
 
     @Transactional
@@ -126,7 +127,7 @@ public non-sealed class PantryProductServiceImpl extends AbstractPantryService i
     @Transactional
     @Override
     public PantryProductDTO reservePantryProduct(long pantryId, long pantryProductId, int reserved, String userEmail) {
-        //if this method doesn't throw any exception, user can access this pantry
+        //if this method doesn't throw any exception, creator can access this pantry
         super.getPantryIfUserHasAuthority(pantryId, userEmail, AuthorityEnum.RESERVE);
         PantryProduct pantryProduct = getPantryProductById(pantryId, pantryProductId, userEmail, "reserve");
 
@@ -138,7 +139,7 @@ public non-sealed class PantryProductServiceImpl extends AbstractPantryService i
         pantryProduct.setQuantity(pantryProduct.getQuantity() - reserved);
         this.pantryProductRepository.save(pantryProduct);
 
-        return this.pantryProductMapper.apply(pantryProduct);
+        return this.pantryProductMapper.mapToDto(pantryProduct);
     }
 
     @Transactional

@@ -10,9 +10,7 @@ import com.cookie.app.model.entity.*;
 import com.cookie.app.model.enums.AuthorityEnum;
 import com.cookie.app.model.enums.Category;
 import com.cookie.app.model.enums.Unit;
-import com.cookie.app.model.mapper.AuthorityMapperDTO;
-import com.cookie.app.model.mapper.ProductMapperDTO;
-import com.cookie.app.model.mapper.ShoppingListProductMapperDTO;
+import com.cookie.app.model.mapper.*;
 import com.cookie.app.repository.ProductRepository;
 import com.cookie.app.repository.ShoppingListProductRepository;
 import com.cookie.app.repository.UserRepository;
@@ -59,9 +57,9 @@ class ShoppingListProductServiceImplTest {
     ArgumentCaptor<ShoppingListProduct> listProductArgCaptor;
 
     @Spy
-    AuthorityMapperDTO authorityMapperDTO;
+    AuthorityMapper authorityMapper = new AuthorityMapperImpl();
     @Spy
-    ShoppingListProductMapperDTO shoppingListProductMapper = new ShoppingListProductMapperDTO(new ProductMapperDTO());
+    ShoppingListProductMapper shoppingListProductMapper = new ShoppingListProductMapperImpl(new ProductMapperImpl());
     @Mock
     UserRepository userRepository;
     @Mock
@@ -122,14 +120,14 @@ class ShoppingListProductServiceImplTest {
         final PageImpl<ShoppingListProduct> pageResponse = new PageImpl<>(List.of(shoppingListProduct));
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
-        doReturn(pageResponse).when(shoppingListProductRepository).findProductsInShoppingList(
+        doReturn(pageResponse).when(shoppingListProductRepository).findShoppingListProductByShoppingListId(
                 eq(id),
                 this.pageRequestArgCaptor.capture()
         );
-        PageResult<ShoppingListProductDTO> result = this.service.getShoppingListProducts(id, 1, null, col, "ASC", email);
+        PageResult<ShoppingListProductDTO> result = this.service.getShoppingListProducts(id, 1, null, col, Sort.Direction.ASC, email);
         PageRequest pageRequest = this.pageRequestArgCaptor.getValue();
 
-        verify(shoppingListProductRepository).findProductsInShoppingList(eq(id), any(PageRequest.class));
+        verify(shoppingListProductRepository).findShoppingListProductByShoppingListId(eq(id), any(PageRequest.class));
         assertEquals(pageResponse.getTotalElements(), result.totalElements());
         assertEquals(pageResponse.getContent().get(0).getProduct().getProductName(), result.content().get(0).product().productName());
         assertEquals(pageResponse.getContent().get(0).getId(), result.content().get(0).id());
@@ -149,7 +147,7 @@ class ShoppingListProductServiceImplTest {
                 this.pageRequestArgCaptor.capture()
         );
 
-        PageResult<ShoppingListProductDTO> result = this.service.getShoppingListProducts(id, 1, filter, col, "DESC", email);
+        PageResult<ShoppingListProductDTO> result = this.service.getShoppingListProducts(id, 1, filter, col, Sort.Direction.DESC, email);
         PageRequest pageRequest = this.pageRequestArgCaptor.getValue();
 
         verify(shoppingListProductRepository).findProductsInShoppingListWithFilter(eq(id), eq(filter), any(PageRequest.class));

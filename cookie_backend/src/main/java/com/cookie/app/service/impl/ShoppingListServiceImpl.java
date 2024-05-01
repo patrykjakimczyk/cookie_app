@@ -5,8 +5,8 @@ import com.cookie.app.model.entity.Group;
 import com.cookie.app.model.entity.ShoppingList;
 import com.cookie.app.model.entity.User;
 import com.cookie.app.model.enums.AuthorityEnum;
-import com.cookie.app.model.mapper.AuthorityMapperDTO;
-import com.cookie.app.model.mapper.ShoppingListMapperDTO;
+import com.cookie.app.model.mapper.AuthorityMapper;
+import com.cookie.app.model.mapper.ShoppingListMapper;
 import com.cookie.app.model.request.CreateShoppingListRequest;
 import com.cookie.app.model.request.UpdateShoppingListRequest;
 import com.cookie.app.model.response.DeleteShoppingListResponse;
@@ -29,16 +29,16 @@ import java.util.Optional;
 @Service
 public non-sealed class ShoppingListServiceImpl extends AbstractShoppingListService implements ShoppingListService {
     private final ShoppingListRepository shoppingListRepository;
-    private final ShoppingListMapperDTO shoppingListMapperDTO;
+    private final ShoppingListMapper shoppingListMapper;
 
     public ShoppingListServiceImpl(UserRepository userRepository,
                                       ProductRepository productRepository,
-                                      AuthorityMapperDTO authorityMapperDTO,
+                                      AuthorityMapper authorityMapper,
                                       ShoppingListRepository shoppingListRepository,
-                                      ShoppingListMapperDTO shoppingListMapperDTO) {
-        super(userRepository, productRepository, authorityMapperDTO);
+                                      ShoppingListMapper shoppingListMapper) {
+        super(userRepository, productRepository, authorityMapper);
         this.shoppingListRepository = shoppingListRepository;
-        this.shoppingListMapperDTO = shoppingListMapperDTO;
+        this.shoppingListMapper = shoppingListMapper;
     }
 
     @Override
@@ -90,7 +90,7 @@ public non-sealed class ShoppingListServiceImpl extends AbstractShoppingListServ
                         .filter(group -> group.getShoppingLists() != null && !group.getShoppingLists().isEmpty())
                         .map(group -> group.getShoppingLists()
                                 .stream()
-                                .map(this.shoppingListMapperDTO::apply)
+                                .map(this.shoppingListMapper::mapToDto)
                                 .toList()
                         )
                         .flatMap(List::stream)

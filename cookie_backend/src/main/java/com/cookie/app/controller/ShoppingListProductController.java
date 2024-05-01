@@ -11,6 +11,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +22,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequiredArgsConstructor
-@Validated
 @Slf4j
-@RequestMapping(value = "/api/v1/shopping-lists/{shopping-list-id}/products", produces = { MediaType.APPLICATION_JSON_VALUE })
+@RequestMapping(value = "/api/v1/shopping-lists/{listId}/products", produces = { MediaType.APPLICATION_JSON_VALUE })
+@Validated
 @RestController
 public class ShoppingListProductController {
     private static final String LIST_PRODUCTS_TRANSFER_URL = "/transfer";
@@ -35,21 +36,17 @@ public class ShoppingListProductController {
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping(LIST_PRODUCTS_PAGE_URL)
     public ResponseEntity<PageResult<ShoppingListProductDTO>> getShoppingListProducts(
-            @PathVariable(value = "shopping-list-id") @Valid
-            @Positive(message = "Shopping list id must be greater than 0") long listId,
-            @PathVariable(value = "page") @Valid @Positive(message = "Page nr must be at least 0") int page,
-            @RequestParam(required = false) @Valid @Pattern(
+            @PathVariable @Positive(message = "Shopping list id must be greater than 0") long listId,
+            @PathVariable @Positive(message = "Page nr must be at least 0") int page,
+            @RequestParam(required = false) @Pattern(
                     regexp = RegexConstants.FILTER_VALUE_REGEX,
                     message = "Filter value can only contains letters, digits, whitespaces, dashes and its length must be greater than 0"
             ) String filterValue,
-            @RequestParam(required = false) @Valid @Pattern(
+            @RequestParam(required = false) @Pattern(
                     regexp = RegexConstants.SORT_COL_REGEX,
                     message = "Filter value can only contains letters, underscores and its length must be greater than 0"
             ) String sortColName,
-            @RequestParam(required = false) @Valid @Pattern(
-                    regexp = RegexConstants.SORT_DIRECTION_REGEX,
-                    message = "Sort direction must be 'DESC' or 'ASC'"
-            ) String sortDirection,
+            @RequestParam(required = false) Sort.Direction sortDirection,
             Authentication authentication
     ) {
         return ResponseEntity.ok(this.shoppingListProductService.getShoppingListProducts(
@@ -66,8 +63,7 @@ public class ShoppingListProductController {
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping
     public ResponseEntity<Void> addProductsToShoppingList(
-            @PathVariable(value = "shopping-list-id") @Valid
-            @Positive(message = "Shopping list id must be greater than 0") long listId,
+            @PathVariable @Positive(message = "Shopping list id must be greater than 0") long listId,
             @Valid @NotEmpty(message = "List of products cannot be empty")
             @RequestBody List<@Valid ShoppingListProductDTO> products,
             Authentication authentication
@@ -79,8 +75,7 @@ public class ShoppingListProductController {
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping
     public ResponseEntity<Void> removeProductsFromShoppingList(
-            @PathVariable(value = "shopping-list-id") @Valid
-            @Positive(message = "Shopping list id must be greater than 0") long listId,
+            @PathVariable @Positive(message = "Shopping list id must be greater than 0") long listId,
             @Valid @NotEmpty(message = "List of ids cannot be empty")
             @RequestBody List<@Positive(message = "Product id must be greater than 0") Long> productIds,
             Authentication authentication
@@ -92,8 +87,7 @@ public class ShoppingListProductController {
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping
     public ResponseEntity<Void> updateShoppingListProduct(
-            @PathVariable(value = "shopping-list-id") @Valid
-            @Positive(message = "Shopping list id must be greater than 0") long listId,
+            @PathVariable @Positive(message = "Shopping list id must be greater than 0") long listId,
             @Valid @RequestBody ShoppingListProductDTO shoppingListProductDTO,
             Authentication authentication
     ) {
@@ -104,8 +98,7 @@ public class ShoppingListProductController {
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(LIST_PRODUCTS_PURCHASE_URL)
     public ResponseEntity<Void> changePurchaseStatusForProducts(
-            @PathVariable(value = "shopping-list-id") @Valid
-            @Positive(message = "Shopping list id must be greater than 0") long listId,
+            @PathVariable @Positive(message = "Shopping list id must be greater than 0") long listId,
             @Valid @NotEmpty(message = "List of ids cannot be empty")
             @RequestBody List<@Positive(message = "Product id must be greater than 0") Long> productIds,
             Authentication authentication
@@ -117,8 +110,7 @@ public class ShoppingListProductController {
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping(LIST_PRODUCTS_TRANSFER_URL)
     public ResponseEntity<Void> transferProductsToPantry(
-            @PathVariable(value = "shopping-list-id") @Valid
-            @Positive(message = "Shopping list id must be greater than 0") long listId,
+            @PathVariable @Positive(message = "Shopping list id must be greater than 0") long listId,
             Authentication authentication
     ) {
         log.info("User with email={} is transfering products from shopping list with id={} to pantry", authentication.getName(), listId);
@@ -127,3 +119,5 @@ public class ShoppingListProductController {
         return ResponseEntity.ok().build();
     }
 }
+
+

@@ -5,8 +5,7 @@ import com.cookie.app.exception.UserWasNotFoundAfterAuthException;
 import com.cookie.app.model.dto.AuthorityDTO;
 import com.cookie.app.model.entity.*;
 import com.cookie.app.model.enums.AuthorityEnum;
-import com.cookie.app.model.mapper.AuthorityMapperDTO;
-import com.cookie.app.model.mapper.ShoppingListMapperDTO;
+import com.cookie.app.model.mapper.*;
 import com.cookie.app.model.request.CreateShoppingListRequest;
 import com.cookie.app.model.request.UpdateShoppingListRequest;
 import com.cookie.app.model.response.DeleteShoppingListResponse;
@@ -36,9 +35,9 @@ class ShoppingListServiceImplTest {
     final Long id = 1L;
 
     @Spy
-    ShoppingListMapperDTO shoppingListMapperDTO;
+    ShoppingListMapper shoppingListMapper = new ShoppingListMapperImpl();
     @Spy
-    AuthorityMapperDTO authorityMapperDTO;
+    AuthorityMapper authorityMapper = new AuthorityMapperImpl();
     @Mock
     UserRepository userRepository;
     @Mock

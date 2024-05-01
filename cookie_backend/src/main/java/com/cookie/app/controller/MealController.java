@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
@@ -19,9 +20,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping("/api/v1/meals")
+@Validated
 @RestController
 public class MealController {
-    private static final String MEALS_ID_URL = "/{id}";
+    private static final String MEALS_ID_URL = "/{mealId}";
+
     private final MealService mealService;
 
     @SecurityRequirement(name = "bearerAuth")
@@ -37,8 +40,8 @@ public class MealController {
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping
     public ResponseEntity<MealDTO> addMeal(
-            @RequestParam("reserve") boolean reserve,
-            @RequestParam(value = "listId", required = false) @Valid @Positive(message = "List id must be greater than 0") Long listId,
+            @RequestParam boolean reserve,
+            @RequestParam(required = false) @Positive(message = "List id must be greater than 0") Long listId,
             @RequestBody @Valid AddMealRequest request,
             Authentication authentication
     ) {
@@ -51,7 +54,7 @@ public class MealController {
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping(MEALS_ID_URL)
     public ResponseEntity<Void> deleteMeal(
-            @PathVariable("id") @Valid @Positive(message = "Id must be greater than 0") long mealId,
+            @PathVariable @Positive(message = "Meal id must be greater than 0") long mealId,
             Authentication authentication
     ) {
         log.info("User with email={} is deleting meal with id={}", authentication.getName(), mealId);
@@ -63,7 +66,7 @@ public class MealController {
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(MEALS_ID_URL)
     public ResponseEntity<MealDTO> updateMeal(
-            @PathVariable("id") @Valid @Positive(message = "Id must be greater than 0") long mealId,
+            @PathVariable @Positive(message = "Meal id must be greater than 0") long mealId,
             @RequestBody @Valid AddMealRequest request,
             Authentication authentication
     ) {

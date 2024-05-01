@@ -66,7 +66,6 @@ export class PantryProductsListComponent {
       [Validators.required, Validators.min(1), Validators.pattern('[0-9]+')],
     ],
     unit: ['', [Validators.required]],
-    reserved: [0],
     purchaseDate: [''],
     expirationDate: [''],
     placement: ['', [Validators.pattern(RegexConstants.placementRegex)]],
@@ -184,11 +183,12 @@ export class PantryProductsListComponent {
       },
       quantity: +this.addForm.controls.quantity.value!,
       unit: this.addForm.controls.unit.value as Unit,
-      reserved: this.addForm.controls.reserved.value!,
-      purchaseDate: this.addForm.controls.purchaseDate.value!,
-      expirationDate: this.addForm.controls.expirationDate.value!,
-      placement: this.addForm.controls.placement.value!,
+      reserved: 0,
+      purchaseDate: this.addForm.controls.purchaseDate.value || '',
+      expirationDate: this.addForm.controls.expirationDate.value || '',
+      placement: this.addForm.controls.placement.value || '',
     });
+
     form.resetForm(); // this combination of two resets allows to reset form without displaying form fields as invalid
     this.addForm.reset();
     this.displayProductsToAddPage(0);

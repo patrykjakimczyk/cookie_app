@@ -30,7 +30,7 @@ public class LoginController {
 
     @PostMapping
     public ResponseEntity<RegistrationResponse> registerUser(@Valid @RequestBody RegistrationRequest request) {
-        log.info("Performing user registration for email={}", request.email());
+        log.info("Performing creator registration for email={}", request.email());
         RegistrationResponse response = this.loginService.userRegistration(request);
 
         if (response.duplicates().isEmpty()) {

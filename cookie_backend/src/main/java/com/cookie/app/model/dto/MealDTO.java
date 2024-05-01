@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 public record MealDTO(
         long id,
         Timestamp mealDate,
-        UserDTO user,
+        String username,
         GroupDTO group,
         RecipeDTO recipe
 ) {}

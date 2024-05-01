@@ -9,13 +9,14 @@ import com.cookie.app.model.enums.MealType;
 import com.cookie.app.model.request.CreateRecipeRequest;
 import com.cookie.app.model.request.UpdateRecipeRequest;
 import com.cookie.app.model.response.CreateRecipeResponse;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface RecipeService {
-    PageResult<RecipeDTO> getRecipes(int page, Integer prepTime, Integer portions, List<MealType> mealTypes, String filterValue, String sortColName, String sortDirection);
-    PageResult<RecipeDTO> getUserRecipes(String userEmail, int page, Integer prepTime, Integer portions, List<MealType> mealTypes, String filterValue, String sortColName, String sortDirection);
+    PageResult<RecipeDTO> getRecipes(int page, Integer prepTime, Integer portions, List<MealType> mealTypes, String filterValue, String sortColName, Sort.Direction sortDirection);
+    PageResult<RecipeDTO> getUserRecipes(String userEmail, int page, Integer prepTime, Integer portions, List<MealType> mealTypes, String filterValue, String sortColName, Sort.Direction sortDirection);
     RecipeDetailsDTO getRecipeDetails(long recipeId);
     CreateRecipeResponse createRecipe(String userEmail, CreateRecipeRequest recipeDetailsDTO, MultipartFile recipeImage);
     void deleteRecipe(String userEmail, long recipeId);

@@ -8,8 +8,8 @@ import com.cookie.app.model.dto.ProductDTO;
 import com.cookie.app.model.dto.ShoppingListProductDTO;
 import com.cookie.app.model.entity.*;
 import com.cookie.app.model.enums.AuthorityEnum;
-import com.cookie.app.model.mapper.AuthorityMapperDTO;
-import com.cookie.app.model.mapper.ShoppingListProductMapperDTO;
+import com.cookie.app.model.mapper.AuthorityMapper;
+import com.cookie.app.model.mapper.ShoppingListProductMapper;
 import com.cookie.app.repository.ProductRepository;
 import com.cookie.app.repository.ShoppingListProductRepository;
 import com.cookie.app.repository.UserRepository;
@@ -18,6 +18,7 @@ import com.cookie.app.service.ShoppingListProductService;
 import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,15 +34,15 @@ import java.util.Optional;
 public non-sealed class ShoppingListProductServiceImpl extends AbstractShoppingListService implements ShoppingListProductService {
     private final ShoppingListProductRepository shoppingListProductRepository;
     private final PantryProductService pantryProductService;
-    private final ShoppingListProductMapperDTO shoppingListProductMapper;
+    private final ShoppingListProductMapper shoppingListProductMapper;
 
     public ShoppingListProductServiceImpl(UserRepository userRepository,
                                           ProductRepository productRepository,
-                                          AuthorityMapperDTO authorityMapperDTO,
+                                          AuthorityMapper authorityMapper,
                                           ShoppingListProductRepository shoppingListProductRepository,
                                           PantryProductService pantryProductService,
-                                          ShoppingListProductMapperDTO shoppingListProductMapper) {
-        super(userRepository, productRepository, authorityMapperDTO);
+                                          ShoppingListProductMapper shoppingListProductMapper) {
+        super(userRepository, productRepository, authorityMapper);
         this.shoppingListProductRepository = shoppingListProductRepository;
         this.pantryProductService = pantryProductService;
         this.shoppingListProductMapper = shoppingListProductMapper;
@@ -53,7 +54,7 @@ public non-sealed class ShoppingListProductServiceImpl extends AbstractShoppingL
             int page,
             String filterValue,
             String sortColName,
-            String sortDirection,
+            Sort.Direction sortDirection,
             String userEmail
     ) {
         ShoppingList shoppingList = super.getShoppingListIfUserHasAuthority(listId, userEmail, null);
@@ -61,13 +62,13 @@ public non-sealed class ShoppingListProductServiceImpl extends AbstractShoppingL
 
         if(StringUtils.isBlank(filterValue)) {
             return new PageResult<>(this.shoppingListProductRepository
-                    .findProductsInShoppingList(shoppingList.getId(), pageRequest)
-                    .map(shoppingListProductMapper));
+                    .findShoppingListProductByShoppingListId(shoppingList.getId(), pageRequest)
+                    .map(shoppingListProductMapper::mapToDto));
         }
 
         return new PageResult<>(this.shoppingListProductRepository
                 .findProductsInShoppingListWithFilter(shoppingList.getId(), filterValue, pageRequest)
-                .map(shoppingListProductMapper));
+                .map(shoppingListProductMapper::mapToDto));
     }
 
     @Transactional

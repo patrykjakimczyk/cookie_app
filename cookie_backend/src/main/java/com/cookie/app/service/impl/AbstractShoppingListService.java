@@ -4,7 +4,7 @@ import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.model.entity.ShoppingList;
 import com.cookie.app.model.entity.User;
 import com.cookie.app.model.enums.AuthorityEnum;
-import com.cookie.app.model.mapper.AuthorityMapperDTO;
+import com.cookie.app.model.mapper.AuthorityMapper;
 import com.cookie.app.repository.ProductRepository;
 import com.cookie.app.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +16,8 @@ public abstract sealed class AbstractShoppingListService extends AbstractCookieS
 
     AbstractShoppingListService(UserRepository userRepository,
                                 ProductRepository productRepository,
-                                AuthorityMapperDTO authorityMapperDTO) {
-        super(userRepository, productRepository, authorityMapperDTO);
+                                AuthorityMapper authorityMapper) {
+        super(userRepository, productRepository, authorityMapper);
     }
 
     ShoppingList getShoppingListIfUserHasAuthority(long shoppingListId, String userEmail, AuthorityEnum requiredAuthority) {

@@ -5,8 +5,8 @@ import com.cookie.app.exception.ValidationException;
 import com.cookie.app.model.dto.MealDTO;
 import com.cookie.app.model.entity.*;
 import com.cookie.app.model.enums.AuthorityEnum;
-import com.cookie.app.model.mapper.AuthorityMapperDTO;
-import com.cookie.app.model.mapper.MealMapperDTO;
+import com.cookie.app.model.mapper.AuthorityMapper;
+import com.cookie.app.model.mapper.MealMapper;
 import com.cookie.app.model.request.AddMealRequest;
 import com.cookie.app.repository.MealRepository;
 import com.cookie.app.repository.ProductRepository;
@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -32,20 +31,20 @@ public non-sealed class MealServiceImpl extends AbstractCookieService implements
     private final MealRepository mealRepository;
     private final RecipeRepository recipeRepository;
     private final RecipeService recipeService;
-    private final MealMapperDTO mealMapperDTO;
+    private final MealMapper mealMapper;
 
     public MealServiceImpl(UserRepository userRepository,
                            ProductRepository productRepository,
-                           AuthorityMapperDTO authorityMapperDTO,
+                           AuthorityMapper authorityMapper,
                            MealRepository mealRepository,
                            RecipeRepository recipeRepository,
                            RecipeService recipeService,
-                           MealMapperDTO mealMapperDTO) {
-        super(userRepository, productRepository, authorityMapperDTO);
+                           MealMapper mealMapper) {
+        super(userRepository, productRepository, authorityMapper);
         this.mealRepository = mealRepository;
         this.recipeRepository = recipeRepository;
         this.recipeService = recipeService;
-        this.mealMapperDTO = mealMapperDTO;
+        this.mealMapper = mealMapper;
     }
 
     @Override
@@ -62,13 +61,9 @@ public non-sealed class MealServiceImpl extends AbstractCookieService implements
         PageRequest pageRequest = PageRequest.of(0, 1000, Sort.by(Sort.Direction.ASC, MEAL_DATE_COLUMN));
         List<Meal> userMeals = this.mealRepository.findMealsForGroupsAndWithDateBetween(userGroups, dateAfter, dateBefore, pageRequest);
 
-        if (userMeals.isEmpty()) {
-            return Collections.emptyList();
-        }
-
         return userMeals
                 .stream()
-                .map(mealMapperDTO::apply)
+                .map(mealMapper::mapToDto)
                 .toList();
     }
 
@@ -93,26 +88,24 @@ public non-sealed class MealServiceImpl extends AbstractCookieService implements
         Meal meal = mapToMeal(request.mealDate(), user, group, recipe);
         this.mealRepository.save(meal);
 
-        if (reserve && listId == null) {
-            this.recipeService.reserveRecipeProductsInPantry(
-                    user,
-                    meal.getRecipe(),
-                    group.getPantry().getId()
-            );
-        } else if (listId != null) {
-            List<RecipeProduct> productsToShoppingList = new ArrayList<>(reserve ?
-                    this.recipeService.reserveRecipeProductsInPantry(
-                            user,
-                            meal.getRecipe(),
-                            group.getPantry().getId()
-                    ) :
-                    this.recipeService.getRecipeProductsNotInPantry(group, recipe)
-            );
+        if (group.getPantry() != null) {
+            if (reserve && listId == null) {
+                this.recipeService.reserveRecipeProductsInPantry(user, meal.getRecipe(), group.getPantry().getId());
+            } else if (listId != null) {
+                List<RecipeProduct> productsToShoppingList = new ArrayList<>(reserve ?
+                        this.recipeService.reserveRecipeProductsInPantry(
+                                user, meal.getRecipe(), group.getPantry().getId()
+                        ) :
+                        this.recipeService.getRecipeProductsNotInPantry(group, recipe)
+                );
 
-            this.recipeService.addRecipeProductsToShoppingList(user, listId, productsToShoppingList);
+                this.recipeService.addRecipeProductsToShoppingList(user, listId, productsToShoppingList);
+            }
+        } else if (listId != null) {
+            this.recipeService.addRecipeProductsToShoppingList(user, listId, recipe.getRecipeProducts());
         }
 
-        return this.mealMapperDTO.apply(meal);
+        return this.mealMapper.mapToDto(meal);
     }
 
     @Transactional
@@ -129,11 +122,11 @@ public non-sealed class MealServiceImpl extends AbstractCookieService implements
     public MealDTO updateMeal(long mealId, AddMealRequest request, String userEmail) {
         MealAndUser mealAndUser = findMealAndUserIfUserHasModifyAuthority(userEmail, mealId, "update");
 
-        if (updateMeal(mealAndUser.meal, mealAndUser.user, request)) {
-            this.mealRepository.save(mealAndUser.meal);
+        if (updateMeal(mealAndUser.meal(), mealAndUser.user(), request)) {
+            this.mealRepository.save(mealAndUser.meal());
         }
 
-        return this.mealMapperDTO.apply(mealAndUser.meal);
+        return this.mealMapper.mapToDto(mealAndUser.meal());
     }
 
     private boolean updateMeal(Meal meal, User user, AddMealRequest request) {

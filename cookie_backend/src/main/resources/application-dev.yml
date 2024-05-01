@@ -22,3 +22,18 @@ logging:
     org:
       springframework:
         security: TRACE
+
+ignore:
+  matchers: >
+    /api/v1/user,
+    /api/v1/pantries,
+    /api/v1/pantries/**,
+    /api/v1/products,
+    /api/v1/groups,
+    /api/v1/groups/**,
+    /api/v1/shopping-lists,
+    /api/v1/shopping-lists/**,
+    /api/v1/recipes,
+    /api/v1/recipes/**,
+    /api/v1/meals,
+    /api/v1/meals/**
