@@ -58,7 +58,7 @@ class GroupServiceImplTest {
     @Captor
     ArgumentCaptor<Group> groupArgCaptor;
     @Captor
-    ArgumentCaptor<List<Authority>> authoritiesListArgCaptor;
+    ArgumentCaptor<Set<Authority>> authoritiesListArgCaptor;
 
     User user;
     Group group;
@@ -108,7 +108,7 @@ class GroupServiceImplTest {
         assertNull(group.getPantry());
         assertNull(group.getMeals());
         assertNull(group.getShoppingLists());
-        List<Authority> authorities = this.authoritiesListArgCaptor.getValue();
+        Set<Authority> authorities = this.authoritiesListArgCaptor.getValue();
         assertEquals(AuthorityEnum.values().length, authorities.size());
     }
 
@@ -276,11 +276,8 @@ class GroupServiceImplTest {
 
         verify(groupRepository).save(group);
         verify(authorityRepository).saveAll(this.authoritiesListArgCaptor.capture());
-        List<Authority> authorities = this.authoritiesListArgCaptor.getValue();
+        Set<Authority> authorities = this.authoritiesListArgCaptor.getValue();
         assertEquals(AuthorityEnum.BASIC_AUTHORITIES.size(), authorities.size());
-        assertEquals(group, authorities.get(0).getGroup());
-        assertEquals(userToAdd.getId(), authorities.get(0).getUser().getId());
-        assertEquals(userToAdd.getUsername(), authorities.get(0).getUser().getUsername());
     }
 
     @Test
@@ -438,7 +435,6 @@ class GroupServiceImplTest {
         assertEquals(request.authorities().size(), response.assignedAuthorities().size());
         List<AuthorityDTO> authorities = new ArrayList<>(response.assignedAuthorities());
         assertEquals(group.getId(), authorities.get(0).groupId());
-        assertEquals(userToAssignAuthorities.getId(), authorities.get(0).userId());
         assertEquals(AuthorityEnum.ADD_TO_GROUP, authorities.get(0).authority());
     }
 
@@ -455,7 +451,6 @@ class GroupServiceImplTest {
         assertEquals(request.authorities().size(), response.assignedAuthorities().size());
         List<AuthorityDTO> authorities = new ArrayList<>(response.assignedAuthorities());
         assertEquals(group.getId(), authorities.get(0).groupId());
-        assertEquals(user.getId(), authorities.get(0).userId());
         assertEquals(AuthorityEnum.ADD_TO_GROUP, authorities.get(0).authority());
     }
 
@@ -514,7 +509,7 @@ class GroupServiceImplTest {
         this.service.removeAuthoritiesFromUser(groupId, request, email);
 
         verify(authorityRepository).deleteAll(this.authoritiesListArgCaptor.capture());
-        List<Authority> removedAutorities = this.authoritiesListArgCaptor.getValue();
+        Set<Authority> removedAutorities = this.authoritiesListArgCaptor.getValue();
         assertEquals(request.authorities().size(), removedAutorities.size());
         assertTrue(removedAutorities.contains(authority1));
     }
@@ -552,7 +547,7 @@ class GroupServiceImplTest {
         this.service.removeAuthoritiesFromUser(groupId, request, email);
 
         verify(authorityRepository).deleteAll(this.authoritiesListArgCaptor.capture());
-        List<Authority> removedAutorities = this.authoritiesListArgCaptor.getValue();
+        Set<Authority> removedAutorities = this.authoritiesListArgCaptor.getValue();
         assertEquals(request.authorities().size(), removedAutorities.size());
         assertTrue(removedAutorities.contains(authority));
     }

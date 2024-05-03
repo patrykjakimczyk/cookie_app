@@ -15,8 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.sql.Timestamp;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,12 +35,12 @@ class MealControllerTest extends AbstractControllerTest {
 
     @Test
     void test_getMealsForUserSuccessful() {
-        final Timestamp dateAfter = Timestamp.from(Instant.now().minusSeconds(604800));
-        final Timestamp dateBefore = Timestamp.from(Instant.now());
+        final LocalDateTime dateAfter = LocalDateTime.now().minusSeconds(604800);
+        final LocalDateTime dateBefore = LocalDateTime.now();
         final UserDTO userDTO = new UserDTO(id, username, Collections.emptySet());
         final GroupDTO groupDTO = new GroupDTO(id, username, userDTO, 1, id);
         final RecipeDTO recipeDTO = new RecipeDTO(id, username, 15, MealType.APPETIZER, null, 1, new byte[0], userDTO.username(), 2);
-        final MealDTO mealDTO = new MealDTO(id, Timestamp.from(Instant.now().minusSeconds(3600 )), username, groupDTO, recipeDTO);
+        final MealDTO mealDTO = new MealDTO(id, LocalDateTime.now().minusSeconds(3600), username, groupDTO, recipeDTO);
         final List<MealDTO> meals = Collections.singletonList(mealDTO);
 
         doReturn(meals).when(mealService).getMealsForUser(dateAfter, dateBefore, authentication.getName());
@@ -58,12 +57,12 @@ class MealControllerTest extends AbstractControllerTest {
 
     @Test
     void test_addMealSuccessful() {
-        final AddMealRequest request = new AddMealRequest(Timestamp.from(Instant.now()), id, id);
+        final AddMealRequest request = new AddMealRequest(LocalDateTime.now(), id, id);
         final UserDTO userDTO = new UserDTO(id, username, Collections.emptySet());
         final GroupDTO groupDTO = new GroupDTO(id, username, userDTO, 1, id);
         final RecipeDTO recipeDTO = new RecipeDTO(id, username, 15, MealType.APPETIZER,
                 null, 1, new byte[0], userDTO.username(), 2);
-        final MealDTO mealDTO = new MealDTO(id, Timestamp.from(Instant.now().minusSeconds(3600 )), username, groupDTO, recipeDTO);
+        final MealDTO mealDTO = new MealDTO(id, LocalDateTime.now().minusSeconds(3600), username, groupDTO, recipeDTO);
 
         doReturn(mealDTO).when(mealService).addMeal(request, authentication.getName(), false, id);
         ResponseEntity<MealDTO> response = this.controller.addMeal(false, id, request, authentication);
@@ -87,11 +86,11 @@ class MealControllerTest extends AbstractControllerTest {
 
     @Test
     void test_updateMealSuccessful() {
-        final AddMealRequest request = new AddMealRequest(Timestamp.from(Instant.now()), id, id);
+        final AddMealRequest request = new AddMealRequest(LocalDateTime.now(), id, id);
         final UserDTO userDTO = new UserDTO(id, username, Collections.emptySet());
         final GroupDTO groupDTO = new GroupDTO(id, username, userDTO, 1, id);
         final RecipeDTO recipeDTO = new RecipeDTO(id, username, 15, MealType.APPETIZER, null, 1, new byte[0], userDTO.username(), 2);
-        final MealDTO mealDTO = new MealDTO(id, Timestamp.from(Instant.now().minusSeconds(3600 )), username, groupDTO, recipeDTO);
+        final MealDTO mealDTO = new MealDTO(id, LocalDateTime.now().minusSeconds(3600), username, groupDTO, recipeDTO);
 
         doReturn(mealDTO).when(mealService).updateMeal(id, request, authentication.getName());
         ResponseEntity<MealDTO> response = this.controller.updateMeal(id, request, authentication);

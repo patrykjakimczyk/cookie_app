@@ -30,7 +30,7 @@ export type RecipeDetailsDTO = {
   cuisine: string;
   portions: number;
   recipeImage: Blob;
-  creatorName: string;
+  creatorUserName: string;
   products: RecipeProductDTO[];
 };
 

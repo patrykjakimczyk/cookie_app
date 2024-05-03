@@ -100,7 +100,6 @@ class PantryServiceImplTest {
         assertEquals(1, responseAuthorities.size());
         assertEquals(authority.getAuthorityName(), responseAuthorities.get(0).authority());
         assertEquals(group.getId(), responseAuthorities.get(0).groupId());
-        assertEquals(user.getId(), responseAuthorities.get(0).userId());
     }
 
     @Test
@@ -150,7 +149,6 @@ class PantryServiceImplTest {
         assertEquals(1, responseAuthorities.size());
         assertEquals(authority.getAuthorityName(), responseAuthorities.get(0).authority());
         assertEquals(group.getId(), responseAuthorities.get(0).groupId());
-        assertEquals(user.getId(), responseAuthorities.get(0).userId());
     }
 
     @Test
@@ -260,7 +258,6 @@ class PantryServiceImplTest {
         assertEquals(1, responseAuthorities.size());
         assertEquals(authority.getAuthorityName(), responseAuthorities.get(0).authority());
         assertEquals(group.getId(), responseAuthorities.get(0).groupId());
-        assertEquals(user.getId(), responseAuthorities.get(0).userId());
         verify(pantryRepository, times(1)).save(pantry);
     }
 

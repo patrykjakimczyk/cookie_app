@@ -23,8 +23,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 
-import java.sql.Timestamp;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -94,10 +93,9 @@ class MealServiceImplTest {
                 .mealType(MealType.APPETIZER)
                 .creator(user)
                 .build();
-        recipeProduct.setRecipe(recipe);
         meal = Meal.builder()
                 .id(id)
-                .mealDate(Timestamp.from(Instant.now().minusSeconds(504800)))
+                .mealDate(LocalDateTime.now().minusSeconds(504800))
                 .group(group)
                 .recipe(recipe)
                 .user(user)
@@ -110,8 +108,8 @@ class MealServiceImplTest {
 
     @Test
     void test_getMealsForUserSuccessful() {
-        final Timestamp dateAfter = Timestamp.from(Instant.now().minusSeconds(604800));
-        final Timestamp dateBefore = Timestamp.from(Instant.now());
+        final LocalDateTime dateAfter = LocalDateTime.now().minusSeconds(604800);
+        final LocalDateTime dateBefore = LocalDateTime.now();
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(group.getMeals()).when(mealRepository)
@@ -132,8 +130,8 @@ class MealServiceImplTest {
 
     @Test
     void test_getMealsForUserSuccessfulNoMealsFound() {
-        final Timestamp dateAfter = Timestamp.from(Instant.now().minusSeconds(604800));
-        final Timestamp dateBefore = Timestamp.from(Instant.now());
+        final LocalDateTime dateAfter = LocalDateTime.now().minusSeconds(604800);
+        final LocalDateTime dateBefore = LocalDateTime.now();
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Collections.emptyList()).when(mealRepository)
@@ -146,19 +144,19 @@ class MealServiceImplTest {
 
     @Test
     void test_getMealsForUserDateAfterIsLaterThanDateBefore() {
-        final Timestamp dateAfter = Timestamp.from(Instant.now().plusSeconds(604800));
-        final Timestamp dateBefore = Timestamp.from(Instant.now());
+        final LocalDateTime dateAfter = LocalDateTime.now().plusSeconds(604800);
+        final LocalDateTime dateBefore = LocalDateTime.now();
 
 
         assertThrows(ValidationException.class, () -> this.service.getMealsForUser(dateAfter, dateBefore, email));
         verify(userRepository, times(0)).findByEmail(email);
         verify(mealRepository, times(0))
-                .findMealsForGroupsAndWithDateBetween(anyList(), any(Timestamp.class), any(Timestamp.class), any(PageRequest.class));
+                .findMealsForGroupsAndWithDateBetween(anyList(), any(LocalDateTime.class), any(LocalDateTime.class), any(PageRequest.class));
     }
 
     @Test
     void test_addMealSuccessfulWithAddingToShoppingListAndReserving() {
-        final AddMealRequest request = new AddMealRequest(Timestamp.from(Instant.now()), id, id);
+        final AddMealRequest request = new AddMealRequest(LocalDateTime.now(), id, id);
         
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(recipe)).when(recipeRepository).findById(request.recipeId());
@@ -182,7 +180,7 @@ class MealServiceImplTest {
 
     @Test
     void test_addMealSuccessfulWithAddingToShoppingListAndWithoutReserving() {
-        final AddMealRequest request = new AddMealRequest(Timestamp.from(Instant.now()), id, id);
+        final AddMealRequest request = new AddMealRequest(LocalDateTime.now(), id, id);
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(recipe)).when(recipeRepository).findById(request.recipeId());
@@ -207,7 +205,7 @@ class MealServiceImplTest {
     @Test
     void test_addMealSuccessfulWithAddingToShoppingWithoutGroupPantry() {
         group.setPantry(null);
-        final AddMealRequest request = new AddMealRequest(Timestamp.from(Instant.now()), id, id);
+        final AddMealRequest request = new AddMealRequest(LocalDateTime.now(), id, id);
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(recipe)).when(recipeRepository).findById(request.recipeId());
@@ -231,7 +229,7 @@ class MealServiceImplTest {
 
     @Test
     void test_addMealSuccessfulWithReservingAndWithoutAddingToShopping() {
-        final AddMealRequest request = new AddMealRequest(Timestamp.from(Instant.now()), id, id);
+        final AddMealRequest request = new AddMealRequest(LocalDateTime.now(), id, id);
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(recipe)).when(recipeRepository).findById(request.recipeId());
@@ -256,7 +254,7 @@ class MealServiceImplTest {
     @Test
     void test_addMealGroupNotFound() {
         user.setGroups(Collections.emptyList());
-        final AddMealRequest request = new AddMealRequest(Timestamp.from(Instant.now()), id, id);
+        final AddMealRequest request = new AddMealRequest(LocalDateTime.now(), id, id);
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
@@ -272,7 +270,7 @@ class MealServiceImplTest {
 
     @Test
     void test_addMealRecipeNotFound() {
-        final AddMealRequest request = new AddMealRequest(Timestamp.from(Instant.now()), id, id);
+        final AddMealRequest request = new AddMealRequest(LocalDateTime.now(), id, id);
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.empty()).when(recipeRepository).findById(request.recipeId());
@@ -289,7 +287,7 @@ class MealServiceImplTest {
     @Test
     void test_addMealNoRequiredAuthority() {
         authority.setAuthorityName(AuthorityEnum.ADD);
-        final AddMealRequest request = new AddMealRequest(Timestamp.from(Instant.now()), id, id);
+        final AddMealRequest request = new AddMealRequest(LocalDateTime.now(), id, id);
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(recipe)).when(recipeRepository).findById(request.recipeId());
@@ -340,7 +338,7 @@ class MealServiceImplTest {
 
     @Test
     void test_updateMealSuccessful() {
-        final AddMealRequest request = new AddMealRequest(Timestamp.from(Instant.now().plusSeconds(3600)), id, 2L);
+        final AddMealRequest request = new AddMealRequest(LocalDateTime.now().plusSeconds(3600), id, 2L);
         final Recipe newRecipe = Recipe.builder().id(2L).recipeProducts(Collections.emptyList()).creator(user).build();
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
@@ -383,7 +381,7 @@ class MealServiceImplTest {
 
     @Test
     void test_updateMealRecipeNotFound() {
-        final AddMealRequest request = new AddMealRequest(Timestamp.from(Instant.now().plusSeconds(3600)), id, 2L);
+        final AddMealRequest request = new AddMealRequest(LocalDateTime.now().plusSeconds(3600), id, 2L);
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(meal)).when(mealRepository).findById(id);

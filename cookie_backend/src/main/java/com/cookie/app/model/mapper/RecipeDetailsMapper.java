@@ -16,6 +16,7 @@ import org.mapstruct.Named;
 public interface RecipeDetailsMapper {
 
     @Mapping(source = "entity", target = "recipeImage", qualifiedByName = "decompressedImage")
+    @Mapping(source = "entity.creator.username", target = "creatorUserName")
     @Mapping(source = "entity.recipeProducts", target = "products")
     RecipeDetailsDTO mapToDto(Recipe entity);
 

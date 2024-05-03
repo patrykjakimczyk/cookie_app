@@ -20,8 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,7 +54,6 @@ public non-sealed class ShoppingListServiceImpl extends AbstractShoppingListServ
         ShoppingList shoppingList = ShoppingList.builder()
                 .listName(request.shoppingListName())
                 .creator(user)
-                .creationDate(Timestamp.from(Instant.now()))
                 .group(userGroup)
                 .build();
 

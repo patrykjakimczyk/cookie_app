@@ -14,19 +14,19 @@ import java.util.Optional;
 @Slf4j
 public abstract sealed class AbstractShoppingListService extends AbstractCookieService permits ShoppingListServiceImpl, ShoppingListProductServiceImpl {
 
-    AbstractShoppingListService(UserRepository userRepository,
+    protected AbstractShoppingListService(UserRepository userRepository,
                                 ProductRepository productRepository,
                                 AuthorityMapper authorityMapper) {
         super(userRepository, productRepository, authorityMapper);
     }
 
-    ShoppingList getShoppingListIfUserHasAuthority(long shoppingListId, String userEmail, AuthorityEnum requiredAuthority) {
+    protected ShoppingList getShoppingListIfUserHasAuthority(long shoppingListId, String userEmail, AuthorityEnum requiredAuthority) {
         User user = super.getUserByEmail(userEmail);
 
         return getShoppingListIfUserHasAuthority(shoppingListId, user, requiredAuthority);
     }
 
-    ShoppingList getShoppingListIfUserHasAuthority(long shoppingListId, User user, AuthorityEnum requiredAuthority) {
+    protected ShoppingList getShoppingListIfUserHasAuthority(long shoppingListId, User user, AuthorityEnum requiredAuthority) {
         ShoppingList shoppingList = this.findShoppingListInUserGroups(shoppingListId, user).orElseThrow(
                 () -> {
                     log.info("User: {} tried to access shopping list without being a member of the shopping list's group", user.getEmail());
@@ -42,7 +42,7 @@ public abstract sealed class AbstractShoppingListService extends AbstractCookieS
         return shoppingList;
     }
 
-    Optional<ShoppingList> findShoppingListInUserGroups(long listId, User user) {
+    protected Optional<ShoppingList> findShoppingListInUserGroups(long listId, User user) {
         return user.getGroups().stream()
                 .flatMap(group -> group.getShoppingLists().stream())
                 .filter(shoppingList -> shoppingList.getId() == listId)

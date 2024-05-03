@@ -312,7 +312,6 @@ public non-sealed class RecipeServiceImpl extends AbstractCookieService implemen
                 .product(super.checkIfProductExists(recipeProductDTO.product()))
                 .quantity(recipeProductDTO.quantity())
                 .unit(recipeProductDTO.unit())
-                .recipe(recipe)
                 .build();
     }
 }

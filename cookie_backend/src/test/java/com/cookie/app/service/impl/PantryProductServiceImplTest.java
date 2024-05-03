@@ -543,7 +543,7 @@ class PantryProductServiceImplTest {
         final int reservedQuantityBeforeReserving = pantryProduct.getReserved();
         final int quantityBeforeReserving = pantryProduct.getQuantity();
         authority.setAuthorityName(AuthorityEnum.RESERVE);
-        final RecipeProduct recipeProduct = new RecipeProduct(id, product, 100, Unit.GRAMS, null);
+        final RecipeProduct recipeProduct = new RecipeProduct(id, product, 100, Unit.GRAMS);
         final List<RecipeProduct> recipeProducts = List.of(recipeProduct);
 
         List<RecipeProduct> unreservedProducts = this.service.reservePantryProductsFromRecipe(id, user, recipeProducts);
@@ -557,7 +557,7 @@ class PantryProductServiceImplTest {
     @Test
     void test_reservePantryProductsFromRecipeNoProductsFound() {
         authority.setAuthorityName(AuthorityEnum.RESERVE);
-        final RecipeProduct recipeProduct = new RecipeProduct(id, product, 100, Unit.PIECES, null);
+        final RecipeProduct recipeProduct = new RecipeProduct(id, product, 100, Unit.PIECES);
         final List<RecipeProduct> recipeProducts = List.of(recipeProduct);
 
         List<RecipeProduct> unreservedProducts = this.service.reservePantryProductsFromRecipe(id, user, recipeProducts);
@@ -569,7 +569,7 @@ class PantryProductServiceImplTest {
 
     @Test
     void test_getRecipeProductsNotInPantryReturnsMissingProduct() {
-        final RecipeProduct recipeProduct = new RecipeProduct(id, product, 100, Unit.PIECES, null);
+        final RecipeProduct recipeProduct = new RecipeProduct(id, product, 100, Unit.PIECES);
         final List<RecipeProduct> recipeProducts = List.of(recipeProduct);
 
         List<RecipeProduct> missingProducts = this.service.getRecipeProductsNotInPantry(pantry, recipeProducts);
@@ -580,7 +580,7 @@ class PantryProductServiceImplTest {
 
     @Test
     void test_getRecipeProductsNotInPantryReturnsEmptyList() {
-        final RecipeProduct recipeProduct = new RecipeProduct(id, product, 100, Unit.GRAMS, null);
+        final RecipeProduct recipeProduct = new RecipeProduct(id, product, 100, Unit.GRAMS);
         final List<RecipeProduct> recipeProducts = List.of(recipeProduct);
 
         List<RecipeProduct> missingProducts = this.service.getRecipeProductsNotInPantry(pantry, recipeProducts);
@@ -590,7 +590,7 @@ class PantryProductServiceImplTest {
 
     @Test
     void test_getRecipeProductsNotInPantryReturnsSameRecipeList() {
-        final RecipeProduct recipeProduct = new RecipeProduct(id, product, 100, Unit.GRAMS, null);
+        final RecipeProduct recipeProduct = new RecipeProduct(id, product, 100, Unit.GRAMS);
         final List<RecipeProduct> recipeProducts = List.of(recipeProduct);
 
         List<RecipeProduct> missingProducts = this.service.getRecipeProductsNotInPantry(null, recipeProducts);

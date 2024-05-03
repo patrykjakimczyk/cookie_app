@@ -256,7 +256,7 @@ class RecipeServiceImplTest {
             assertEquals(recipe.getPortions(), response.portions());
             assertEquals(recipe.getPreparationTime(), response.preparationTime());
             assertEquals(recipe.getPreparation(), response.preparation());
-            assertEquals(recipe.getCreator().getUsername(), response.creatorName());
+            assertEquals(recipe.getCreator().getUsername(), response.creatorUserName());
             assertEquals(recipe.getRecipeProducts().size(), response.products().size());
             assertEquals(recipe.getRecipeProducts().get(0).getId(), response.products().get(0).id());
             assertEquals(recipe.getRecipeProducts().get(0).getUnit(), response.products().get(0).unit());
@@ -279,7 +279,7 @@ class RecipeServiceImplTest {
         assertEquals(0, response.portions());
         assertEquals(0, response.preparationTime());
         assertNull(response.preparation());
-        assertNull(response.creatorName());
+        assertNull(response.creatorUserName());
         assertNull(response.products());
         assertNull(response.recipeImage());
         assertNull(response.cuisine());

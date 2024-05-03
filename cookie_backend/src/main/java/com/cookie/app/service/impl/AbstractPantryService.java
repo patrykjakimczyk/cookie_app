@@ -15,19 +15,19 @@ import java.util.Optional;
 @Slf4j
 public abstract sealed class AbstractPantryService extends AbstractCookieService permits PantryServiceImpl, PantryProductServiceImpl {
 
-    AbstractPantryService(UserRepository userRepository,
+    protected AbstractPantryService(UserRepository userRepository,
                           ProductRepository productRepository,
                           AuthorityMapper authorityMapper) {
         super(userRepository, productRepository, authorityMapper);
     }
 
-    Pantry getPantryIfUserHasAuthority(long pantryId, String userEmail, AuthorityEnum requiredAuthority) {
+    protected Pantry getPantryIfUserHasAuthority(long pantryId, String userEmail, AuthorityEnum requiredAuthority) {
         User user = super.getUserByEmail(userEmail);
 
         return getPantryIfUserHasAuthority(pantryId, user, requiredAuthority);
     }
 
-    Pantry getPantryIfUserHasAuthority(long pantryId, User user, AuthorityEnum requiredAuthority) {
+    protected Pantry getPantryIfUserHasAuthority(long pantryId, User user, AuthorityEnum requiredAuthority) {
         Pantry pantry = findPantryInUserGroups(pantryId, user).orElseThrow(
                 () -> {
                     log.info("User={} tried to access pantry without being a member of the pantry's group", user.getEmail());
@@ -43,7 +43,7 @@ public abstract sealed class AbstractPantryService extends AbstractCookieService
         return pantry;
     }
 
-    Optional<Pantry> findPantryInUserGroups(long pantryId, User user) {
+    protected Optional<Pantry> findPantryInUserGroups(long pantryId, User user) {
         return user.getGroups()
                 .stream()
                 .map(Group::getPantry)

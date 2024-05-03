@@ -5,11 +5,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 
 @Transactional
+@Repository
 public interface RecipeRepository extends CrudRepository<Recipe, Long> {
     @Query(value = "SELECT DISTINCT r.* FROM recipe r " +
             "WHERE r.preparation_time <= (CASE WHEN ?1 >= 5 THEN ?1 ELSE 2880 END) AND " +
@@ -39,3 +41,4 @@ public interface RecipeRepository extends CrudRepository<Recipe, Long> {
             "r.meal_type IN ?5", nativeQuery = true)
     Page<Recipe> findCreatorRecipesByFilter(Long creatorId, String filterValue, int preparationTime, int portions, Set<String> mealTypes, PageRequest pageable);
 }
+

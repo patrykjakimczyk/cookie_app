@@ -113,7 +113,7 @@ export class CreateRecipeComponent implements OnInit {
       this.recipesService
         .getRecipeDetails(+id)
         .subscribe((recipeDetails: RecipeDetailsDTO) => {
-          if (recipeDetails.creatorName !== this.getUserName()) {
+          if (recipeDetails.creatorUserName !== this.getUserName()) {
             this.router.navigate(['/']);
           }
           this.edit = true;

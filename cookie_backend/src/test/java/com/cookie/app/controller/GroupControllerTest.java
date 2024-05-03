@@ -121,7 +121,7 @@ class GroupControllerTest extends AbstractControllerTest {
     void test_assignAuthoritiesToUserSuccessful() {
         final Set<AuthorityEnum> authorities = Collections.singleton(AuthorityEnum.MODIFY);
         final UserWithAuthoritiesRequest request = new UserWithAuthoritiesRequest(1L, authorities);
-        final AuthorityDTO authorityDTO = new AuthorityDTO(AuthorityEnum.MODIFY, 1L, groupId);
+        final AuthorityDTO authorityDTO = new AuthorityDTO(AuthorityEnum.MODIFY, groupId);
         final AssignAuthoritiesToUserResponse serviceResponse = new AssignAuthoritiesToUserResponse(Collections.singleton(authorityDTO));
 
         doReturn(serviceResponse).when(groupService).assignAuthoritiesToUser(groupId, request, authentication.getName());

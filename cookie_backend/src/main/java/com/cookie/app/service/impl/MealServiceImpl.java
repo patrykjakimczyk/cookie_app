@@ -20,7 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,9 +47,10 @@ public non-sealed class MealServiceImpl extends AbstractCookieService implements
         this.mealMapper = mealMapper;
     }
 
+    @Transactional
     @Override
-    public List<MealDTO> getMealsForUser(Timestamp dateAfter, Timestamp dateBefore, String userEmail) {
-        if (dateAfter.after(dateBefore)) {
+    public List<MealDTO> getMealsForUser(LocalDateTime dateAfter, LocalDateTime dateBefore, String userEmail) {
+        if (dateAfter.isAfter(dateBefore)) {
             throw new ValidationException("Date before must be after date after.");
         }
 
@@ -172,7 +173,7 @@ public non-sealed class MealServiceImpl extends AbstractCookieService implements
         return new MealAndUser(meal, user);
     }
 
-    private Meal mapToMeal(Timestamp mealDate, User user, Group group, Recipe recipe) {
+    private Meal mapToMeal(LocalDateTime mealDate, User user, Group group, Recipe recipe) {
         return Meal
                 .builder()
                 .mealDate(mealDate)

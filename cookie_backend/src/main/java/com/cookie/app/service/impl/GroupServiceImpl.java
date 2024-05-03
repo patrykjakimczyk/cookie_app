@@ -24,8 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -63,11 +62,11 @@ public non-sealed class GroupServiceImpl extends AbstractCookieService implement
         Group group = Group.builder()
                 .groupName(request.groupName())
                 .creator(user)
-                .creationDate(Timestamp.from(Instant.now()))
+                .creationDate(LocalDateTime.now())
                 .users(List.of(user))
                 .build();
 
-        List<Authority> authorities = createAuthoritiesList(user, group, Set.of(AuthorityEnum.values()));
+        Set<Authority> authorities = createAuthoritiesList(user, group, Set.of(AuthorityEnum.values()));
 
         this.groupRepository.save(group);
         this.authorityRepository.saveAll(authorities);
@@ -144,7 +143,7 @@ public non-sealed class GroupServiceImpl extends AbstractCookieService implement
         }
 
         group.getUsers().add(userToAdd);
-        List<Authority> authoritiesForAddedUser = createAuthoritiesList(
+        Set<Authority> authoritiesForAddedUser = createAuthoritiesList(
                 userToAdd, group, AuthorityEnum.BASIC_AUTHORITIES);
 
         this.groupRepository.save(group);
@@ -208,11 +207,11 @@ public non-sealed class GroupServiceImpl extends AbstractCookieService implement
             throw new UserPerformedForbiddenActionException("You tried to assign authorities to creator which is not in the group");
         }
 
-        List<Authority> authoritiesToAssign = createAuthoritiesList(userToAssignAuthorities, group, request.authorities());
+        Set<Authority> authoritiesToAssign = createAuthoritiesList(userToAssignAuthorities, group, request.authorities());
         authoritiesToAssign = authoritiesToAssign
                 .stream()
                 .filter(authority -> !userToAssignAuthorities.getAuthorities().contains(authority))
-                .toList();
+                .collect(Collectors.toSet());
 
         this.authorityRepository.saveAll(authoritiesToAssign);
 
@@ -246,12 +245,12 @@ public non-sealed class GroupServiceImpl extends AbstractCookieService implement
             throw new UserPerformedForbiddenActionException("You tried to take away authorities from creator which is not in the group");
         }
 
-        List<Authority> authoritiesToTakeAway =
+        Set<Authority> authoritiesToTakeAway =
                 userToTakeAwayAuthorities.getAuthorities()
                 .stream()
                 .filter(authority -> request.authorities().contains(authority.getAuthorityName()) &&
                         authority.getGroup().equals(group))
-                .toList();
+                .collect(Collectors.toSet());
 
         if (authoritiesToTakeAway.isEmpty()) {
             return;
@@ -260,8 +259,8 @@ public non-sealed class GroupServiceImpl extends AbstractCookieService implement
         this.authorityRepository.deleteAll(authoritiesToTakeAway);
     }
 
-    private List<Authority> createAuthoritiesList(User user, Group group, Set<AuthorityEnum> authoritiesSet) {
-        List<Authority> authorities = new ArrayList<>();
+    private Set<Authority> createAuthoritiesList(User user, Group group, Set<AuthorityEnum> authoritiesSet) {
+        Set<Authority> authorities = new HashSet<>();
 
         for (AuthorityEnum authorityEnum : authoritiesSet) {
             Authority authority = Authority
@@ -287,7 +286,7 @@ public non-sealed class GroupServiceImpl extends AbstractCookieService implement
 
     private GroupUserAndAuthorities getGroupUserAndHisAuthorities(long groupId, String userEmail) {
         GroupUserAndAuthorities groupUserAndAuthorities = getGroupAndUser(groupId, userEmail);
-        List<Authority> userAuthoritiesForGroup = this.authorityRepository
+        Set<Authority> userAuthoritiesForGroup = this.authorityRepository
                 .findAuthoritiesByUserAndGroup(groupUserAndAuthorities.user(), groupUserAndAuthorities.group());
         Set<AuthorityEnum> authorities = userAuthoritiesForGroup
                 .stream()

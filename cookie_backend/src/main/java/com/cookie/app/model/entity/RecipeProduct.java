@@ -34,8 +34,4 @@ public class RecipeProduct {
     @Column(length = 20, updatable = false, nullable = false)
     @Enumerated(EnumType.STRING)
     private Unit unit;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recipe_id", referencedColumnName = "id")
-    private Recipe recipe;
 }

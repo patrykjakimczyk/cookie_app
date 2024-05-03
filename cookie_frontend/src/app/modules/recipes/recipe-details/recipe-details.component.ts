@@ -76,7 +76,7 @@ export class RecipeDetailsComponent implements OnInit {
   canUserModifyRecipe() {
     return (
       this.userService.user.getValue().username ===
-      this.recipeDetails?.creatorName
+      this.recipeDetails?.creatorUserName
     );
   }
 

@@ -13,6 +13,6 @@ public record RecipeDetailsDTO(
         String cuisine,
         int portions,
         byte[] recipeImage,
-        String creatorName,
+        String creatorUserName,
         List<RecipeProductDTO> products
 ) {}

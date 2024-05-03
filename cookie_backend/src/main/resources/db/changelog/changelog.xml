@@ -226,4 +226,11 @@
         <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="shopping_list_product" constraintName="fkrhysluuh22blgh883dkxfow2f" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="product" validate="true"/>
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="user_in_group" constraintName="fkrknu9an98einniqbxcbrxjqjd" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="group_table" validate="true"/>
     </changeSet>
+
+    <changeSet author="patrykjakimczyk" id="2">
+        <dropColumn columnName="creation_date"
+                    tableName="shopping_list">
+            <column name="creation_date"/>
+        </dropColumn>
+    </changeSet>
 </databaseChangeLog>

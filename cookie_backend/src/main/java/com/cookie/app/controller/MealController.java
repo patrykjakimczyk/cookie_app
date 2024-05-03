@@ -14,7 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -30,8 +30,8 @@ public class MealController {
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping
     public ResponseEntity<List<MealDTO>> getMealsForUser(
-            @RequestParam Timestamp dateAfter,
-            @RequestParam Timestamp dateBefore,
+            @RequestParam LocalDateTime dateAfter,
+            @RequestParam LocalDateTime dateBefore,
             Authentication authentication
     ) {
         return ResponseEntity.ok(this.mealService.getMealsForUser(dateAfter, dateBefore, authentication.getName()));

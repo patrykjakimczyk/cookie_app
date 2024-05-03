@@ -5,11 +5,11 @@ import com.cookie.app.model.entity.Group;
 import com.cookie.app.model.entity.User;
 import org.springframework.data.repository.CrudRepository;
 
-import java.util.List;
+import java.util.Set;
 
 public interface AuthorityRepository extends CrudRepository<Authority, Long> {
 
-    List<Authority> findAuthoritiesByUserAndGroup(User user, Group group);
+    Set<Authority> findAuthoritiesByUserAndGroup(User user, Group group);
     void deleteByUserAndGroup(User user, Group group);
     void deleteByGroup(Group group);
 }

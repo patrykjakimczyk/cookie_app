@@ -41,7 +41,7 @@ import java.util.Set;
 public class RecipeController {
     private static final String RECIPES_ID_URL = "/{recipeId}";
     private static final String GET_RECIPES_URL = "/page/{page}";
-    private static final String GET_USER_RECIPES_URL = "/creator-recipes/{page}";
+    private static final String GET_USER_RECIPES_URL = "/user-recipes/{page}";
 
     private final RecipeService recipeService;
     private final ObjectMapper objectMapper;

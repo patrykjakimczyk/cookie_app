@@ -3,7 +3,7 @@ package com.cookie.app.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -32,7 +32,7 @@ public class Group {
     private User creator;
 
     @Column(nullable = false)
-    private Timestamp creationDate;
+    private LocalDateTime creationDate;
 
     @ManyToMany
     @JoinTable(

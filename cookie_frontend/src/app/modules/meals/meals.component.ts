@@ -81,7 +81,7 @@ export class MealsComponent implements AfterViewInit {
   }
 
   private formatISOString(isoString: string) {
-    return isoString.replace('T', ' ').replace('Z', '');
+    return isoString.replace('Z', '');
   }
 
   private mapToEventObject(meal: MealDTO) {

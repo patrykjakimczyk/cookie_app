@@ -14,8 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
@@ -63,7 +62,7 @@ public non-sealed class LoginServiceImpl extends AbstractCookieService implement
                 .username(request.username())
                 .email(request.email())
                 .password(this.passwordEncoder.encode(request.password()))
-                .creationDate(Timestamp.from(Instant.now()))
+                .creationDate(LocalDateTime.now())
                 .birthDate(request.birthDate())
                 .gender(request.gender())
                 .build();
