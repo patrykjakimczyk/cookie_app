@@ -9,7 +9,7 @@ import {
 } from 'src/app/shared/model/requests/groups-requests';
 import {
   AssignAuthoritiesToUserResponse,
-  GroupNameTakenResponse,
+  GetGroupResponse,
   GetUserGroupsResponse,
 } from 'src/app/shared/model/responses/group-response';
 import { GroupDetailsDTO } from 'src/app/shared/model/types/group-types';
@@ -26,10 +26,7 @@ export class GroupService {
   constructor(private http: HttpClient) {}
 
   createGroup(request: CreateGroupRequest) {
-    return this.http.post<GroupNameTakenResponse>(
-      this.url + this.group_url,
-      request
-    );
+    return this.http.post<GetGroupResponse>(this.url + this.group_url, request);
   }
 
   getUserGroups() {
@@ -43,7 +40,7 @@ export class GroupService {
   }
 
   updateGroup(groupId: number, body: UpdateGroupRequest) {
-    return this.http.patch<GroupNameTakenResponse>(
+    return this.http.patch<GetGroupResponse>(
       this.url + this.group_id_url.replace('{id}', groupId.toString()),
       body
     );

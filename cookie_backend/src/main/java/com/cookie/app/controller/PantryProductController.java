@@ -3,12 +3,19 @@ package com.cookie.app.controller;
 import com.cookie.app.model.RegexConstants;
 import com.cookie.app.model.dto.PageResult;
 import com.cookie.app.model.dto.PantryProductDTO;
+import com.cookie.app.model.request.FilterRequest;
 import com.cookie.app.model.request.ReservePantryProductRequest;
+import com.cookie.app.model.response.GetPantryResponse;
 import com.cookie.app.service.PantryProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/pantries/{pantryId}/products", produces = { MediaType.APPLICATION_JSON_VALUE })
+@RequestMapping(value = "/api/v1/pantries/{groupId}/products", produces = { MediaType.APPLICATION_JSON_VALUE })
 @Validated
 @RestController
 public class PantryProductController {
@@ -29,29 +36,27 @@ public class PantryProductController {
 
     private final PantryProductService pantryProductService;
 
+    @Operation(summary = "Get pantry products")
+    @ApiResponse(responseCode = "200", description = "Pantry products returned",
+            content = { @Content(mediaType = "application/json") })
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping(GET_PANTRY_PRODUCTS_URL)
     public ResponseEntity<PageResult<PantryProductDTO>> getPantryProducts(
             @PathVariable @Positive(message = "Pantry id must be greater than 0") long pantryId,
             @PathVariable @Positive(message = "Page nr must be be greater than 0") int page,
-            @RequestParam(required = false) @Pattern(
-                    regexp = RegexConstants.FILTER_VALUE_REGEX,
-                    message = "Filter value can only contains letters, digits, whitespaces, dashes and its length must be greater than 0"
-            ) String filterValue,
-            @RequestParam(required = false) @Pattern(
-                    regexp = RegexConstants.SORT_COL_REGEX,
-                    message = "Filter value can only contains letters, underscores and its length must be greater than 0"
-            ) String sortColName,
-            @RequestParam(required = false) Sort.Direction sortDirection,
+            @ParameterObject FilterRequest filterRequest,
             Authentication authentication
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(this.pantryProductService.getPantryProducts(
-                        pantryId, page, filterValue, sortColName, sortDirection, authentication.getName())
+                        pantryId, page, filterRequest, authentication.getName())
                 );
     }
 
+    @Operation(summary = "Add products to pantry")
+    @ApiResponse(responseCode = "201", description = "Products added to pantry",
+            content = { @Content(mediaType = "application/json") })
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping
     public ResponseEntity<Void> addProductsToPantry(
@@ -63,6 +68,9 @@ public class PantryProductController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @Operation(summary = "Remove products from pantry")
+    @ApiResponse(responseCode = "200", description = "Products removed from pantry",
+            content = { @Content(mediaType = "application/json") })
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping
     public ResponseEntity<Void> removeProductsFromPantry(
@@ -75,6 +83,9 @@ public class PantryProductController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Update pantry product")
+    @ApiResponse(responseCode = "200", description = "Pantry product updated",
+            content = { @Content(mediaType = "application/json") })
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping
     public ResponseEntity<Void> updatePantryProduct(
@@ -86,6 +97,10 @@ public class PantryProductController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Reserve pantry product")
+    @ApiResponse(responseCode = "200", description = "Pantry product reserved",
+            content = { @Content(mediaType = "application/json",
+                schema = @Schema(implementation = PantryProductDTO.class)) })
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(PANTRY_PRODUCT_URL)
     public ResponseEntity<PantryProductDTO> reservePantryProduct(

@@ -6,6 +6,7 @@ import com.cookie.app.model.enums.Category;
 import com.cookie.app.model.enums.MealType;
 import com.cookie.app.model.enums.Unit;
 import com.cookie.app.model.request.CreateRecipeRequest;
+import com.cookie.app.model.request.RecipeFilterRequest;
 import com.cookie.app.model.request.UpdateRecipeRequest;
 import com.cookie.app.model.response.CreateRecipeResponse;
 import com.cookie.app.service.RecipeService;
@@ -44,14 +45,15 @@ class RecipeControllerTest extends AbstractControllerTest {
 
     @Test
     void test_getRecipesSuccessful() {
+        final RecipeFilterRequest filterRequest = new RecipeFilterRequest(null, null, null, 5, 1, mealTypes);
         final RecipeDTO recipeDTO = new RecipeDTO(id, recipeName, 5, MealType.APPETIZER, null, 1, null, username, 1);
         final List<RecipeDTO> foundRecipes = Collections.singletonList(recipeDTO);
         final PageResult<RecipeDTO> pageResponse = new PageResult<>(foundRecipes, foundRecipes.size(), 1, 0);
 
         doReturn(pageResponse).when(recipeService)
-                .getRecipes(1, 5, 1, mealTypes, null, null, null);
+                .getRecipes(1, filterRequest);
         ResponseEntity<PageResult<RecipeDTO>> response = this.controller
-                .getRecipes(1, 5, 1, mealTypes, null, null, null);
+                .getRecipes(1, filterRequest);
 
         assertEquals(foundRecipes.size(), response.getBody().totalElements());
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -59,14 +61,15 @@ class RecipeControllerTest extends AbstractControllerTest {
 
     @Test
     void test_getUserRecipesSuccessful() {
+        final RecipeFilterRequest filterRequest = new RecipeFilterRequest(null, null, null, 5, 1, mealTypes);
         final RecipeDTO recipeDTO = new RecipeDTO(id, recipeName, 5, MealType.APPETIZER, null, 1, null, username, 1);
         final List<RecipeDTO> foundRecipes = Collections.singletonList(recipeDTO);
         final PageResult<RecipeDTO> pageResponse = new PageResult<>(foundRecipes, foundRecipes.size(), 1, 0);
 
         doReturn(pageResponse).when(recipeService)
-                .getUserRecipes(authentication.getName(), 1, 5, 1, mealTypes, null, null, null);
+                .getUserRecipes(authentication.getName(), 1, filterRequest);
         ResponseEntity<PageResult<RecipeDTO>> response = this.controller
-                .getUserRecipes(1, 5, 1, mealTypes, null, null, null, authentication);
+                .getUserRecipes(1, filterRequest, authentication);
 
         assertEquals(foundRecipes.size(), response.getBody().totalElements());
         assertEquals(HttpStatus.OK, response.getStatusCode());

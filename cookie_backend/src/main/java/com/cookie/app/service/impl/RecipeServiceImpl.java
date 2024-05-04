@@ -1,5 +1,6 @@
 package com.cookie.app.service.impl;
 
+import com.cookie.app.exception.ResourceNotFoundException;
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.model.dto.*;
 import com.cookie.app.model.entity.*;
@@ -8,6 +9,7 @@ import com.cookie.app.model.mapper.AuthorityMapper;
 import com.cookie.app.model.mapper.RecipeDetailsMapper;
 import com.cookie.app.model.mapper.RecipeMapper;
 import com.cookie.app.model.request.CreateRecipeRequest;
+import com.cookie.app.model.request.RecipeFilterRequest;
 import com.cookie.app.model.request.UpdateRecipeRequest;
 import com.cookie.app.model.response.CreateRecipeResponse;
 import com.cookie.app.repository.ProductRepository;
@@ -21,7 +23,6 @@ import com.cookie.app.util.ImageUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -60,52 +61,43 @@ public non-sealed class RecipeServiceImpl extends AbstractCookieService implemen
     }
 
     @Override
-    public PageResult<RecipeDTO> getRecipes(int page,
-                                      Integer prepTime,
-                                      Integer portions,
-                                      List<MealType> mealTypes,
-                                      String filterValue,
-                                      String sortColName,
-                                      Sort.Direction sortDirection) {
-        PageRequest pageRequest = super.createPageRequest(page - 1, sortColName, sortDirection);
-        Set<String> selectedMealTypes = getMealTypesAsStrings(mealTypes);
-        prepTime = prepTime == null ? 0 : prepTime;
-        portions = portions == null ? 0 : portions;
+    public PageResult<RecipeDTO> getRecipes(int page, RecipeFilterRequest filterRequest) {
+        PageRequest pageRequest = super
+                .createPageRequest(page - 1, filterRequest.getSortColName(), filterRequest.getSortDirection());
+        Set<String> selectedMealTypes = getMealTypesAsStrings(filterRequest.getMealTypes());
+        int prepTime = filterRequest.getPrepTime() == null ? 0 : filterRequest.getPrepTime();
+        int portions = filterRequest.getPortions() == null ? 0 : filterRequest.getPortions();
 
-        if (StringUtils.isBlank(filterValue)) {
+        if (StringUtils.isBlank(filterRequest.getFilterValue())) {
             return new PageResult<>(this.recipeRepository
                     .findRecipes(prepTime, portions, selectedMealTypes, pageRequest)
                     .map(recipeMapper::mapToDto));
         }
 
         return new PageResult<>(this.recipeRepository
-                .findRecipesByFilter(filterValue, prepTime, portions, selectedMealTypes, pageRequest)
+                .findRecipesByFilter(filterRequest.getFilterValue(), prepTime, portions, selectedMealTypes, pageRequest)
                 .map(recipeMapper::mapToDto));
     }
 
     @Override
-    public PageResult<RecipeDTO> getUserRecipes(String userEmail,
-                                          int page,
-                                          Integer prepTime,
-                                          Integer portions,
-                                          List<MealType> mealTypes,
-                                          String filterValue,
-                                          String sortColName,
-                                          Sort.Direction sortDirection) {
+    public PageResult<RecipeDTO> getUserRecipes(String userEmail, int page, RecipeFilterRequest filterRequest) {
         User user = super.getUserByEmail(userEmail);
-        PageRequest pageRequest = super.createPageRequest(page - 1, sortColName, sortDirection);
-        Set<String> selectedMealTypes = getMealTypesAsStrings(mealTypes);
-        prepTime = prepTime == null ? 0 : prepTime;
-        portions = portions == null ? 0 : portions;
+        PageRequest pageRequest = super
+                .createPageRequest(page - 1, filterRequest.getSortColName(), filterRequest.getSortDirection());
+        Set<String> selectedMealTypes = getMealTypesAsStrings(filterRequest.getMealTypes());
+        int prepTime = filterRequest.getPrepTime() == null ? 0 : filterRequest.getPrepTime();
+        int portions = filterRequest.getPortions() == null ? 0 : filterRequest.getPortions();
 
-        if (StringUtils.isBlank(filterValue)) {
+        if (StringUtils.isBlank(filterRequest.getFilterValue())) {
             return new PageResult<>(this.recipeRepository
-                    .findCreatorRecipes(user.getId(), prepTime, portions, selectedMealTypes, pageRequest)
+                    .findUserRecipes(user.getId(), prepTime, portions, selectedMealTypes, pageRequest)
                     .map(recipeMapper::mapToDto));
         }
 
         return new PageResult<>(this.recipeRepository
-                .findCreatorRecipesByFilter(user.getId(), filterValue, prepTime, portions, selectedMealTypes, pageRequest)
+                .findUserRecipesByFilter(
+                        user.getId(), filterRequest.getFilterValue(), prepTime, portions, selectedMealTypes, pageRequest
+                )
                 .map(recipeMapper::mapToDto));
     }
 
@@ -114,8 +106,8 @@ public non-sealed class RecipeServiceImpl extends AbstractCookieService implemen
     public RecipeDetailsDTO getRecipeDetails(long recipeId) {
         Optional<Recipe> recipeOptional = this.recipeRepository.findById(recipeId);
 
-        return recipeOptional.map(this.recipeDetailsMapper::mapToDto)
-                .orElseGet(() -> new RecipeDetailsDTO(0, null, null, 0, null, null,0, null, null, null));
+        return recipeOptional.map(this.recipeDetailsMapper::mapToDto).orElseGet(() ->
+                new RecipeDetailsDTO(0, null, null, 0, null, null,0, null, null, null));
     }
 
     @Override
@@ -262,7 +254,7 @@ public non-sealed class RecipeServiceImpl extends AbstractCookieService implemen
 
         return recipeOptional.orElseThrow(() -> {
             log.info("User={} tried to access recipe which does not exists", userEmail);
-            return new UserPerformedForbiddenActionException("Recipe does not exists");
+            return new ResourceNotFoundException("Recipe does not exists");
         });
     }
 

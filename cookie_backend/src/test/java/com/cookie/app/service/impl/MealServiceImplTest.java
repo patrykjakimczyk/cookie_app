@@ -1,5 +1,6 @@
 package com.cookie.app.service.impl;
 
+import com.cookie.app.exception.ResourceNotFoundException;
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.exception.ValidationException;
 import com.cookie.app.model.dto.MealDTO;
@@ -258,7 +259,7 @@ class MealServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () ->
+        Exception ex = assertThrows(ResourceNotFoundException.class, () ->
                 this.service.addMeal(request, email, true, id));
         assertEquals("You tried to add a meal to a group which does not exist", ex.getMessage());
         verify(recipeRepository, times(0)).findById(request.recipeId());
@@ -275,7 +276,7 @@ class MealServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.empty()).when(recipeRepository).findById(request.recipeId());
 
-        Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () ->
+        Exception ex = assertThrows(ResourceNotFoundException.class, () ->
                 this.service.addMeal(request, email, true, id));
         assertEquals("You tried to add a meal based on non existing recipe", ex.getMessage());
         verify(mealRepository, times(0)).save(any(Meal.class));
@@ -317,7 +318,7 @@ class MealServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.empty()).when(mealRepository).findById(id);
 
-        Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () ->
+        Exception ex = assertThrows(ResourceNotFoundException.class, () ->
                 this.service.deleteMeal(id, email));
         assertEquals("You tried to delete a meal which does not exist", ex.getMessage());
         verify(mealRepository, times(0)).deleteById(id);
@@ -387,7 +388,7 @@ class MealServiceImplTest {
         doReturn(Optional.of(meal)).when(mealRepository).findById(id);
         doReturn(Optional.empty()).when(recipeRepository).findById(request.recipeId());
 
-        Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () ->
+        Exception ex = assertThrows(ResourceNotFoundException.class, () ->
                 this.service.updateMeal(id, request, email));
         assertEquals("You tried to update a meal based on non existing recipe", ex.getMessage());
         verify(mealRepository, times(0)).save(meal);

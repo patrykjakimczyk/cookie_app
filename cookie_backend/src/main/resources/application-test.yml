@@ -11,12 +11,8 @@ spring:
 server:
   port: 8080
 
-frontend:
-  address: http://cookie-frontend:80
-
-jwt:
-  secret: ${JWT_SECRET}
-
-ignore:
-  matchers: >
+config:
+  frontendAddress: http://cookie-frontend:80
+  jwtSecret: ${JWT_SECRET}
+  ignoreMatchers: >
     /api/v1/user

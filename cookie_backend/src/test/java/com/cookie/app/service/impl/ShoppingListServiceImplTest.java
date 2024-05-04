@@ -1,5 +1,6 @@
 package com.cookie.app.service.impl;
 
+import com.cookie.app.exception.ResourceNotFoundException;
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.exception.UserWasNotFoundAfterAuthException;
 import com.cookie.app.model.dto.AuthorityDTO;
@@ -117,7 +118,7 @@ class ShoppingListServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () -> service.createShoppingList(request, email));
+        Exception ex = assertThrows(ResourceNotFoundException.class, () -> service.createShoppingList(request, email));
         assertEquals("You tried to create shopping list for non existing group", ex.getMessage());
         verify(shoppingListRepository, times(0)).save(any(ShoppingList.class));
     }
@@ -229,8 +230,8 @@ class ShoppingListServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () -> service.deleteShoppingList(2L, email));
-        assertEquals("You cannot access the shopping list because you are not member of its group", ex.getMessage());
+        Exception ex = assertThrows(ResourceNotFoundException.class, () -> service.deleteShoppingList(2L, email));
+        assertEquals("You cannot access the shopping list because it could not be found in your groups", ex.getMessage());
         verify(shoppingListRepository, times(0)).delete(shoppingList);
     }
 
@@ -283,8 +284,8 @@ class ShoppingListServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () -> service.updateShoppingList(2L, request, email));
-        assertEquals("You cannot access the shopping list because you are not member of its group", ex.getMessage());
+        Exception ex = assertThrows(ResourceNotFoundException.class, () -> service.updateShoppingList(2L, request, email));
+        assertEquals("You cannot access the shopping list because it could not be found in your groups", ex.getMessage());
         verify(shoppingListRepository, times(0)).save(shoppingList);
     }
 

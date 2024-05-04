@@ -1,5 +1,6 @@
 package com.cookie.app.service.impl;
 
+import com.cookie.app.exception.ResourceNotFoundException;
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.exception.UserWasNotFoundAfterAuthException;
 import com.cookie.app.model.dto.AuthorityDTO;
@@ -117,7 +118,7 @@ class PantryServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> service.createPantry(request, email));
+        assertThrows(ResourceNotFoundException.class, () -> service.createPantry(request, email));
         verify(pantryRepository, times(0)).save(any(Pantry.class));
     }
 
@@ -227,7 +228,7 @@ class PantryServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> service.deletePantry(2L, email));
+        assertThrows(ResourceNotFoundException.class, () -> service.deletePantry(2L, email));
         verify(pantryRepository, times(0)).delete(pantry);
     }
 
@@ -277,7 +278,7 @@ class PantryServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> service.updatePantry(2L, request, email));
+        assertThrows(ResourceNotFoundException.class, () -> service.updatePantry(2L, request, email));
         verify(pantryRepository, times(0)).save(pantry);
     }
 

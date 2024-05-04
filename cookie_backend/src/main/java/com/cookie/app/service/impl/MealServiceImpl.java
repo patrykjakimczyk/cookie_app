@@ -1,5 +1,6 @@
 package com.cookie.app.service.impl;
 
+import com.cookie.app.exception.ResourceNotFoundException;
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.exception.ValidationException;
 import com.cookie.app.model.dto.MealDTO;
@@ -74,11 +75,11 @@ public non-sealed class MealServiceImpl extends AbstractCookieService implements
         User user = super.getUserByEmail(userEmail);
         Group group = super.findUserGroupById(user, request.groupId()).orElseThrow(() -> {
             log.info("User={} tried to add a meal to a group which he does not belong", userEmail);
-            return new UserPerformedForbiddenActionException("You tried to add a meal to a group which does not exist");
+            return new ResourceNotFoundException("You tried to add a meal to a group which does not exist");
         });
         Recipe recipe = this.recipeRepository.findById(request.recipeId()).orElseThrow(() -> {
             log.info("User={} tried to add a meal based on non existing recipe", userEmail);
-            return new UserPerformedForbiddenActionException("You tried to add a meal based on non existing recipe");
+            return new ResourceNotFoundException("You tried to add a meal based on non existing recipe");
         });
 
         if (!super.userHasAuthority(user, group.getId(), AuthorityEnum.ADD_MEALS)) {
@@ -141,7 +142,7 @@ public non-sealed class MealServiceImpl extends AbstractCookieService implements
         if (meal.getRecipe().getId() != request.recipeId()) {
             Recipe recipe = this.recipeRepository.findById(request.recipeId()).orElseThrow(() -> {
                 log.info("User: {} tried to add a meal based on non existing recipe", user.getEmail());
-                return new UserPerformedForbiddenActionException("You tried to update a meal based on non existing recipe");
+                return new ResourceNotFoundException("You tried to update a meal based on non existing recipe");
             });
             meal.setRecipe(recipe);
             mealUpdated = true;
@@ -154,7 +155,7 @@ public non-sealed class MealServiceImpl extends AbstractCookieService implements
         User user = super.getUserByEmail(userEmail);
         Meal meal = this.mealRepository.findById(mealId).orElseThrow(() -> {
             log.info("User={} tried to {} a meal which does not exist", userEmail, action);
-            return new UserPerformedForbiddenActionException(
+            return new ResourceNotFoundException(
                     String.format("You tried to %s a meal which does not exist", action)
             );
         });

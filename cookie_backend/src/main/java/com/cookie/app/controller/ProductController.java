@@ -1,8 +1,17 @@
 package com.cookie.app.controller;
 
+import com.cookie.app.model.RegexConstants;
+import com.cookie.app.model.dto.MealDTO;
+import com.cookie.app.model.dto.PantryProductDTO;
 import com.cookie.app.model.dto.ProductDTO;
 import com.cookie.app.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,10 +31,18 @@ import java.util.List;
 public class ProductController {
     private final ProductService productService;
 
+    @Operation(summary = "Find products by filter")
+    @ApiResponse(responseCode = "200", description = "Found products returned",
+            content = { @Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = ProductDTO.class))) })
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping
     public ResponseEntity<List<ProductDTO>> getProductsWithFilter(
-            @RequestParam String filterValue
+            @RequestParam
+            @Pattern(
+                    regexp = RegexConstants.FILTER_VALUE_REGEX,
+                    message = "Filter value can only contains letters, digits, whitespaces, dashes and its length must be greater than 0"
+            ) String filterValue
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)

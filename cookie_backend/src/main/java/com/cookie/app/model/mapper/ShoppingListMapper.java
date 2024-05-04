@@ -16,7 +16,7 @@ public interface ShoppingListMapper {
     @Mapping(source = "entity", target = "nrOfPurchasedProducts", qualifiedByName = "nrOfPurchasedProducts")
     @Mapping(source = "entity.group.id", target = "groupId")
     @Mapping(source = "entity.group.groupName", target = "groupName")
-    @Mapping(source = "entity.creator.username", target = "creatorName")
+    @Mapping(source = "entity.creator.username", target = "userName")
     ShoppingListDTO mapToDto(ShoppingList entity);
 
     @Named("nrOfProducts")

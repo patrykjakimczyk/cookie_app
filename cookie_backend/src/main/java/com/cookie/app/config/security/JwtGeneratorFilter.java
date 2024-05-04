@@ -1,5 +1,6 @@
 package com.cookie.app.config.security;
 
+import com.cookie.app.config.ConfigProperties;
 import com.cookie.app.config.JwtConstants;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -8,6 +9,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,12 +25,12 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+@RequiredArgsConstructor
 @Component
 public class JwtGeneratorFilter extends OncePerRequestFilter {
     private static final String NOT_FILTER_PATH = "/api/v1/user";
 
-    @Value("${jwt.secret}")
-    private String secret;
+    private final ConfigProperties configProperties;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -49,7 +51,7 @@ public class JwtGeneratorFilter extends OncePerRequestFilter {
     }
 
     private String buildJwtToken(Authentication authentication) {
-        SecretKey key = Keys.hmacShaKeyFor(this.secret.getBytes(StandardCharsets.UTF_8));
+        SecretKey key = Keys.hmacShaKeyFor(this.configProperties.jwtSecret().getBytes(StandardCharsets.UTF_8));
         return Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("role", transformAuthoritiesToString(authentication.getAuthorities()))

@@ -34,11 +34,7 @@ public class SecurityConfig {
     private static final String ROLE_PREFIX = "ROLE_";
 
     private final UserRepository userRepository;
-
-    @Value("${frontend.address}")
-    private String frontendAddress;
-    @Value("${ignore.matchers}")
-    private String[] ignoreMatchers;
+    private final ConfigProperties configProperties;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http,
@@ -52,7 +48,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors(corsConfigurer -> corsConfigurer.configurationSource(request -> {
                     CorsConfiguration configuration = new CorsConfiguration();
-                    configuration.setAllowedOrigins(List.of(this.frontendAddress));
+                    configuration.setAllowedOrigins(List.of(this.configProperties.frontendAddress()));
                     configuration.setAllowedMethods(Collections.singletonList("*"));
                     configuration.setAllowCredentials(true);
                     configuration.setAllowedHeaders(Collections.singletonList("*"));
@@ -62,7 +58,7 @@ public class SecurityConfig {
                 }))
                 .csrf(csrfConfigurer -> csrfConfigurer
                                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                                .ignoringRequestMatchers(ignoreMatchers)
+                                .ignoringRequestMatchers(this.configProperties.ignoreMatchers())
                                 .csrfTokenRequestHandler(requestHandler)
                 )
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)

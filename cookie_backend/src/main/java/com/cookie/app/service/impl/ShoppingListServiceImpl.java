@@ -1,5 +1,6 @@
 package com.cookie.app.service.impl;
 
+import com.cookie.app.exception.ResourceNotFoundException;
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.model.entity.Group;
 import com.cookie.app.model.entity.ShoppingList;
@@ -43,7 +44,7 @@ public non-sealed class ShoppingListServiceImpl extends AbstractShoppingListServ
     public GetShoppingListResponse createShoppingList(CreateShoppingListRequest request, String userEmail) {
         User user = super.getUserByEmail(userEmail);
         Group userGroup = super.findUserGroupById(user, request.groupId()).orElseThrow(
-                () -> new UserPerformedForbiddenActionException("You tried to create shopping list for non existing group")
+                () -> new ResourceNotFoundException("You tried to create shopping list for non existing group")
         );
 
         if (!super.userHasAuthority(user, userGroup.getId(), AuthorityEnum.CREATE_SHOPPING_LIST)) {

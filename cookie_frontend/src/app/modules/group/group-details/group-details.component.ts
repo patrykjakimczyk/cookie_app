@@ -15,7 +15,7 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 import { AuthorityEnum } from 'src/app/shared/model/enums/authority.enum';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UserService } from 'src/app/shared/services/user-service';
-import { GroupNameTakenResponse } from 'src/app/shared/model/responses/group-response';
+import { GetGroupResponse } from 'src/app/shared/model/responses/group-response';
 import { EMPTY, catchError } from 'rxjs';
 
 @Component({
@@ -159,8 +159,8 @@ export class GroupDetailsComponent implements OnInit {
     changeGroupNamePopup.afterClosed().subscribe((newGroupName: string) => {
       this.groupService
         .updateGroup(this.groupId, { newGroupName: newGroupName })
-        .subscribe((response: GroupNameTakenResponse) => {
-          if (response.groupNameTaken) {
+        .subscribe((response: GetGroupResponse) => {
+          if (!response.groupId) {
             this.groupNameTaken = true;
             this.openChangeGroupNamePopup();
           } else if (this.group) {

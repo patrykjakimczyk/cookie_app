@@ -31,7 +31,7 @@ public interface RecipeRepository extends CrudRepository<Recipe, Long> {
             "WHERE r.creator_id = ?1 AND r.preparation_time <= (CASE WHEN ?2 >= 5 THEN ?2 ELSE 2880 END) AND " +
             "r.portions <= (CASE WHEN ?3 >= 1 THEN ?3 ELSE 12 END) AND " +
             "r.meal_type IN ?4", nativeQuery = true)
-    Page<Recipe> findCreatorRecipes(Long creatorId, int preparationTime, int portions, Set<String> mealTypes, PageRequest pageable);
+    Page<Recipe> findUserRecipes(Long creatorId, int preparationTime, int portions, Set<String> mealTypes, PageRequest pageable);
 
     @Query(value = "SELECT DISTINCT r.* FROM recipe r " +
             "WHERE r.creator_id = ?1 AND (LOWER(r.recipe_name) LIKE LOWER(CONCAT('%', ?2, '%')) OR " +
@@ -39,6 +39,6 @@ public interface RecipeRepository extends CrudRepository<Recipe, Long> {
             "r.preparation_time <= (CASE WHEN ?3 >= 5 THEN ?3 ELSE 2880 END) AND " +
             "r.portions <= (CASE WHEN ?4 >= 1 THEN ?4 ELSE 12 END) AND " +
             "r.meal_type IN ?5", nativeQuery = true)
-    Page<Recipe> findCreatorRecipesByFilter(Long creatorId, String filterValue, int preparationTime, int portions, Set<String> mealTypes, PageRequest pageable);
+    Page<Recipe> findUserRecipesByFilter(Long creatorId, String filterValue, int preparationTime, int portions, Set<String> mealTypes, PageRequest pageable);
 }
 

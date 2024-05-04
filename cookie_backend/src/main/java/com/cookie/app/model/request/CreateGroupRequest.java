@@ -1,10 +1,12 @@
 package com.cookie.app.model.request;
 
 import com.cookie.app.model.RegexConstants;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 public record CreateGroupRequest(
+        @Schema(example = "groupname")
         @NotNull(message = "Group name must be present")
         @Pattern(
             regexp = RegexConstants.GROUP_NAME_REGEX,

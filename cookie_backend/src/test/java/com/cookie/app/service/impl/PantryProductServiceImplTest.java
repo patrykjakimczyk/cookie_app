@@ -1,5 +1,6 @@
 package com.cookie.app.service.impl;
 
+import com.cookie.app.exception.ResourceNotFoundException;
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.exception.ValidationException;
 import com.cookie.app.model.dto.PageResult;
@@ -10,6 +11,7 @@ import com.cookie.app.model.enums.AuthorityEnum;
 import com.cookie.app.model.enums.Category;
 import com.cookie.app.model.enums.Unit;
 import com.cookie.app.model.mapper.*;
+import com.cookie.app.model.request.FilterRequest;
 import com.cookie.app.repository.PantryProductRepository;
 import com.cookie.app.repository.ProductRepository;
 import com.cookie.app.repository.UserRepository;
@@ -102,6 +104,7 @@ class PantryProductServiceImplTest {
 
     @Test
     void test_getPantryProductsSuccessfulWithAscSort() {
+        final FilterRequest filterRequest = new FilterRequest(null, col, Sort.Direction.ASC);
         final PageImpl<PantryProduct> pageResponse = new PageImpl<>(List.of(pantryProduct));
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
@@ -109,7 +112,7 @@ class PantryProductServiceImplTest {
                 eq(id),
                 this.pageRequestArgCaptor.capture()
         );
-        PageResult<PantryProductDTO> result = this.service.getPantryProducts(id, 1, null, col, Sort.Direction.ASC, email);
+        PageResult<PantryProductDTO> result = this.service.getPantryProducts(id, 1, filterRequest, email);
         PageRequest pageRequest = this.pageRequestArgCaptor.getValue();
 
         verify(pantryProductRepository).findPantryProductByPantryId(eq(id), any(PageRequest.class));
@@ -123,6 +126,7 @@ class PantryProductServiceImplTest {
 
     @Test
     void test_getPantryProductsSuccessfulWithFilterAndDescSort() {
+        final FilterRequest filterRequest = new FilterRequest(filter, col, Sort.Direction.DESC);
         final PageImpl<PantryProduct> pageResponse = new PageImpl<>(List.of(pantryProduct));
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
@@ -132,7 +136,7 @@ class PantryProductServiceImplTest {
                 this.pageRequestArgCaptor.capture()
         );
 
-        PageResult<PantryProductDTO> result = this.service.getPantryProducts(id, 1, filter, col, Sort.Direction.DESC, email);
+        PageResult<PantryProductDTO> result = this.service.getPantryProducts(id, 1, filterRequest, email);
         PageRequest pageRequest = this.pageRequestArgCaptor.getValue();
 
         verify(pantryProductRepository).findProductsInPantryWithFilter(eq(id), eq(filter), any(PageRequest.class));
@@ -148,6 +152,7 @@ class PantryProductServiceImplTest {
 
     @Test
     void test_getPantryProductsSuccessfulWithoutSort() {
+        final FilterRequest filterRequest = new FilterRequest(filter, null, null);
         final PageImpl<PantryProduct> pageResponse = new PageImpl<>(List.of(pantryProduct));
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
@@ -157,7 +162,7 @@ class PantryProductServiceImplTest {
                 this.pageRequestArgCaptor.capture()
         );
 
-        PageResult<PantryProductDTO> result = this.service.getPantryProducts(id, 1, filter, null, null, email);
+        PageResult<PantryProductDTO> result = this.service.getPantryProducts(id, 1, filterRequest, email);
         PageRequest pageRequest = this.pageRequestArgCaptor.getValue();
 
         verify(pantryProductRepository).findProductsInPantryWithFilter(eq(id), eq(filter), any(PageRequest.class));
@@ -430,7 +435,7 @@ class PantryProductServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.empty()).when(pantryProductRepository).findById(pantryProductDTO.id());
 
-        Exception exception = assertThrows(UserPerformedForbiddenActionException.class, () -> this.service.updatePantryProduct(id, pantryProductDTO, email));
+        Exception exception = assertThrows(ResourceNotFoundException.class, () -> this.service.updatePantryProduct(id, pantryProductDTO, email));
         assertEquals("Pantry product was not found", exception.getMessage());
         verify(pantryProductRepository, times(0)).save(pantryProduct);
         verify(pantryProductRepository, times(0)).deleteById(pantryProductDTO.id());

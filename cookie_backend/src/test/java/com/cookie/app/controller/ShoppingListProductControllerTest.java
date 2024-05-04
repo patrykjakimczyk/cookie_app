@@ -5,6 +5,7 @@ import com.cookie.app.model.dto.ProductDTO;
 import com.cookie.app.model.dto.ShoppingListProductDTO;
 import com.cookie.app.model.enums.Category;
 import com.cookie.app.model.enums.Unit;
+import com.cookie.app.model.request.FilterRequest;
 import com.cookie.app.service.ShoppingListProductService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,12 +33,13 @@ class ShoppingListProductControllerTest extends AbstractControllerTest {
 
     @Test
     void test_getShoppingListProductsSuccessful() {
+        final FilterRequest filterRequest = new FilterRequest("", "", null);
         final int pageNr = 1;
         final List<ShoppingListProductDTO> shoppingListProductDTOS = Collections.singletonList(createShoppingListProduct());
         final PageResult<ShoppingListProductDTO> pageResponse = new PageResult<>(shoppingListProductDTOS, shoppingListProductDTOS.size(), 1, 0);
 
-        doReturn(pageResponse).when(shoppingListProductService).getShoppingListProducts(this.listId, pageNr, "", "", null, authentication.getName());
-        ResponseEntity<PageResult<ShoppingListProductDTO>> response = this.controller.getShoppingListProducts(this.listId, pageNr, "", "", null, authentication);
+        doReturn(pageResponse).when(shoppingListProductService).getShoppingListProducts(this.listId, pageNr, filterRequest, authentication.getName());
+        ResponseEntity<PageResult<ShoppingListProductDTO>> response = this.controller.getShoppingListProducts(this.listId, pageNr, filterRequest, authentication);
 
         assertEquals(shoppingListProductDTOS.size(), response.getBody().totalElements());
         assertEquals(HttpStatus.OK, response.getStatusCode());

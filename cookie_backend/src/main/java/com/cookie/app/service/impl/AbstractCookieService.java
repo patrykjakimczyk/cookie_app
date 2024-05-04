@@ -28,8 +28,8 @@ public abstract sealed class AbstractCookieService permits
     final AuthorityMapper authorityMapper;
 
     protected AbstractCookieService(UserRepository userRepository,
-                          ProductRepository productRepository,
-                          AuthorityMapper authorityMapper) {
+                                    ProductRepository productRepository,
+                                    AuthorityMapper authorityMapper) {
         this.userRepository = userRepository;
         this.productRepository = productRepository;
         this.authorityMapper = authorityMapper;
@@ -53,7 +53,7 @@ public abstract sealed class AbstractCookieService permits
         return user.getAuthorities()
                 .stream()
                 .anyMatch(authority ->
-                            authority.getGroup().getId() == groupId &&
+                        authority.getGroup().getId() == groupId &&
                                 authority.getAuthorityName() == authorityEnum);
     }
 

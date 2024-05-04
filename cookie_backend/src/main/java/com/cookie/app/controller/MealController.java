@@ -2,7 +2,13 @@ package com.cookie.app.controller;
 
 import com.cookie.app.model.dto.MealDTO;
 import com.cookie.app.model.request.AddMealRequest;
+import com.cookie.app.model.response.RegistrationResponse;
 import com.cookie.app.service.MealService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
@@ -27,6 +33,10 @@ public class MealController {
 
     private final MealService mealService;
 
+    @Operation(summary = "Get all planned meals from all user's groups")
+    @ApiResponse(responseCode = "200", description = "All planned meals returned",
+            content = { @Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = MealDTO.class))) })
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping
     public ResponseEntity<List<MealDTO>> getMealsForUser(
@@ -37,6 +47,10 @@ public class MealController {
         return ResponseEntity.ok(this.mealService.getMealsForUser(dateAfter, dateBefore, authentication.getName()));
     }
 
+    @Operation(summary = "Add meal to calendar")
+    @ApiResponse(responseCode = "201", description = "Meal added to calendar",
+            content = { @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = MealDTO.class)) })
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping
     public ResponseEntity<MealDTO> addMeal(
@@ -51,6 +65,9 @@ public class MealController {
                 .body(this.mealService.addMeal(request, authentication.getName(), reserve, listId));
     }
 
+    @Operation(summary = "Remove meal from calendar")
+    @ApiResponse(responseCode = "200", description = "Meal removed from calendar",
+            content = { @Content(mediaType = "application/json") })
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping(MEALS_ID_URL)
     public ResponseEntity<Void> deleteMeal(
@@ -63,6 +80,10 @@ public class MealController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Update meal in calendar")
+    @ApiResponse(responseCode = "200", description = "Meal updated in calendar",
+            content = { @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = MealDTO.class)) })
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(MEALS_ID_URL)
     public ResponseEntity<MealDTO> updateMeal(

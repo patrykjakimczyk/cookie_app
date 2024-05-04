@@ -10,7 +10,7 @@ import com.cookie.app.model.request.UpdateGroupRequest;
 import com.cookie.app.model.request.UserWithAuthoritiesRequest;
 import com.cookie.app.model.response.AssignAuthoritiesToUserResponse;
 import com.cookie.app.model.response.GetUserGroupsResponse;
-import com.cookie.app.model.response.GroupNameTakenResponse;
+import com.cookie.app.model.response.GetGroupResponse;
 import com.cookie.app.service.impl.GroupServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,13 +40,13 @@ class GroupControllerTest extends AbstractControllerTest {
     @Test
     void test_createGroupSuccessful() {
         final CreateGroupRequest createGroupRequest = new CreateGroupRequest(groupName);
-        final GroupNameTakenResponse serviceResponse = new GroupNameTakenResponse(false);
+        final GetGroupResponse serviceResponse = new GetGroupResponse(groupId);
 
         doReturn(serviceResponse).when(groupService).createGroup(createGroupRequest, authentication.getName());
-        ResponseEntity<GroupNameTakenResponse> response = this.controller.createGroup(createGroupRequest, authentication);
+        ResponseEntity<GetGroupResponse> response = this.controller.createGroup(createGroupRequest, authentication);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(serviceResponse.groupNameTaken(), response.getBody().groupNameTaken());
+        assertEquals(serviceResponse.groupId(), response.getBody().groupId());
     }
 
     @Test
@@ -78,13 +78,13 @@ class GroupControllerTest extends AbstractControllerTest {
     @Test
     void test_updateGroupSuccessful() {
         final UpdateGroupRequest updateGroupRequest = new UpdateGroupRequest(groupName);
-        final GroupNameTakenResponse serviceResponse = new GroupNameTakenResponse(false);
+        final GetGroupResponse serviceResponse = new GetGroupResponse(groupId);
 
         doReturn(serviceResponse).when(groupService).updateGroup(groupId, updateGroupRequest, authentication.getName());
-        ResponseEntity<GroupNameTakenResponse> response = this.controller.updateGroup(groupId, updateGroupRequest, authentication);
+        ResponseEntity<GetGroupResponse> response = this.controller.updateGroup(groupId, updateGroupRequest, authentication);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(serviceResponse.groupNameTaken(), response.getBody().groupNameTaken());
+        assertEquals(serviceResponse.groupId(), response.getBody().groupId());
     }
 
     @Test
@@ -121,7 +121,7 @@ class GroupControllerTest extends AbstractControllerTest {
     void test_assignAuthoritiesToUserSuccessful() {
         final Set<AuthorityEnum> authorities = Collections.singleton(AuthorityEnum.MODIFY);
         final UserWithAuthoritiesRequest request = new UserWithAuthoritiesRequest(1L, authorities);
-        final AuthorityDTO authorityDTO = new AuthorityDTO(AuthorityEnum.MODIFY, groupId);
+        final AuthorityDTO authorityDTO = new AuthorityDTO(AuthorityEnum.MODIFY, 1L, groupId);
         final AssignAuthoritiesToUserResponse serviceResponse = new AssignAuthoritiesToUserResponse(Collections.singleton(authorityDTO));
 
         doReturn(serviceResponse).when(groupService).assignAuthoritiesToUser(groupId, request, authentication.getName());

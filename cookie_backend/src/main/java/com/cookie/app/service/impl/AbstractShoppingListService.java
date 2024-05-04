@@ -1,5 +1,6 @@
 package com.cookie.app.service.impl;
 
+import com.cookie.app.exception.ResourceNotFoundException;
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.model.entity.ShoppingList;
 import com.cookie.app.model.entity.User;
@@ -30,7 +31,7 @@ public abstract sealed class AbstractShoppingListService extends AbstractCookieS
         ShoppingList shoppingList = this.findShoppingListInUserGroups(shoppingListId, user).orElseThrow(
                 () -> {
                     log.info("User: {} tried to access shopping list without being a member of the shopping list's group", user.getEmail());
-                    return new UserPerformedForbiddenActionException("You cannot access the shopping list because you are not member of its group");
+                    return new ResourceNotFoundException("You cannot access the shopping list because it could not be found in your groups");
                 }
         );
 

@@ -1,11 +1,16 @@
 package com.cookie.app.controller;
 
+import com.cookie.app.model.dto.PantryProductDTO;
 import com.cookie.app.model.request.CreateShoppingListRequest;
 import com.cookie.app.model.request.UpdateShoppingListRequest;
 import com.cookie.app.model.response.DeleteShoppingListResponse;
 import com.cookie.app.model.response.GetShoppingListResponse;
 import com.cookie.app.model.response.GetUserShoppingListsResponse;
 import com.cookie.app.service.ShoppingListService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
@@ -28,6 +33,11 @@ public class ShoppingListController {
 
     private final ShoppingListService shoppingListService;
 
+
+    @Operation(summary = "Create shopping list")
+    @ApiResponse(responseCode = "201", description = "Shopping list created",
+            content = { @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = GetShoppingListResponse.class)) })
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping
     public ResponseEntity<GetShoppingListResponse> createShoppingList(
@@ -39,6 +49,10 @@ public class ShoppingListController {
                 .body(this.shoppingListService.createShoppingList(request, authentication.getName()));
     }
 
+    @Operation(summary = "Get shopping list")
+    @ApiResponse(responseCode = "200", description = "Shopping list returned",
+            content = { @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = GetShoppingListResponse.class)) })
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping(SHOPPING_LIST_ID_URL)
     public ResponseEntity<GetShoppingListResponse> getShoppingList(
@@ -48,6 +62,11 @@ public class ShoppingListController {
         return ResponseEntity.ok(this.shoppingListService.getShoppingList(listId, authentication.getName()));
     }
 
+
+    @Operation(summary = "Get all user's shopping lists")
+    @ApiResponse(responseCode = "200", description = "All user's shopping lists returned",
+            content = { @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = GetUserShoppingListsResponse.class)) })
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping
     public ResponseEntity<GetUserShoppingListsResponse> getAllUserShoppingLists(
@@ -56,6 +75,11 @@ public class ShoppingListController {
         return ResponseEntity.ok(this.shoppingListService.getUserShoppingLists(authentication.getName()));
     }
 
+
+    @Operation(summary = "Delete shopping list")
+    @ApiResponse(responseCode = "200", description = "Shopping list deleted",
+            content = { @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = DeleteShoppingListResponse.class)) })
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping(SHOPPING_LIST_ID_URL)
     public ResponseEntity<DeleteShoppingListResponse> deleteShoppingList(
@@ -66,6 +90,11 @@ public class ShoppingListController {
         return ResponseEntity.ok(this.shoppingListService.deleteShoppingList(listId, authentication.getName()));
     }
 
+
+    @Operation(summary = "Update shopping list")
+    @ApiResponse(responseCode = "200", description = "Shopping list updated",
+            content = { @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = GetShoppingListResponse.class)) })
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(SHOPPING_LIST_ID_URL)
     public ResponseEntity<GetShoppingListResponse> updateShoppingList(

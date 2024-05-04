@@ -1,5 +1,6 @@
 package com.cookie.app.service.impl;
 
+import com.cookie.app.exception.ResourceNotFoundException;
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.exception.ValidationException;
 import com.cookie.app.model.dto.PageResult;
@@ -10,6 +11,7 @@ import com.cookie.app.model.entity.*;
 import com.cookie.app.model.enums.AuthorityEnum;
 import com.cookie.app.model.mapper.AuthorityMapper;
 import com.cookie.app.model.mapper.ShoppingListProductMapper;
+import com.cookie.app.model.request.FilterRequest;
 import com.cookie.app.repository.ProductRepository;
 import com.cookie.app.repository.ShoppingListProductRepository;
 import com.cookie.app.repository.UserRepository;
@@ -17,6 +19,7 @@ import com.cookie.app.service.PantryProductService;
 import com.cookie.app.service.ShoppingListProductService;
 import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -52,22 +55,21 @@ public non-sealed class ShoppingListProductServiceImpl extends AbstractShoppingL
     public PageResult<ShoppingListProductDTO> getShoppingListProducts(
             long listId,
             int page,
-            String filterValue,
-            String sortColName,
-            Sort.Direction sortDirection,
+            FilterRequest filterRequest,
             String userEmail
     ) {
         ShoppingList shoppingList = super.getShoppingListIfUserHasAuthority(listId, userEmail, null);
-        PageRequest pageRequest = super.createPageRequest(page - 1, sortColName, sortDirection);
+        PageRequest pageRequest = super
+                .createPageRequest(page - 1, filterRequest.getSortColName(), filterRequest.getSortDirection());
 
-        if(StringUtils.isBlank(filterValue)) {
+        if(StringUtils.isBlank(filterRequest.getFilterValue())) {
             return new PageResult<>(this.shoppingListProductRepository
                     .findShoppingListProductByShoppingListId(shoppingList.getId(), pageRequest)
                     .map(shoppingListProductMapper::mapToDto));
         }
 
         return new PageResult<>(this.shoppingListProductRepository
-                .findProductsInShoppingListWithFilter(shoppingList.getId(), filterValue, pageRequest)
+                .findProductsInShoppingListWithFilter(shoppingList.getId(), filterRequest.getFilterValue(), pageRequest)
                 .map(shoppingListProductMapper::mapToDto));
     }
 
@@ -126,7 +128,7 @@ public non-sealed class ShoppingListProductServiceImpl extends AbstractShoppingL
                 .findById(listProductDTO.id())
                 .orElseThrow(() -> {
                     log.info("User with email={} tried to update product which does not exists", userEmail);
-                    return new UserPerformedForbiddenActionException("Shopping list product was not found");
+                    return new ResourceNotFoundException("Shopping list product was not found");
                 });
 
         if (shoppingListProduct.getShoppingList().getId() != listId) {

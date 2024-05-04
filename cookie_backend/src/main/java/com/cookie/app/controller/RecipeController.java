@@ -3,14 +3,21 @@ package com.cookie.app.controller;
 import com.cookie.app.exception.MappingJsonToObjectException;
 import com.cookie.app.model.RegexConstants;
 import com.cookie.app.model.dto.PageResult;
+import com.cookie.app.model.dto.PantryProductDTO;
 import com.cookie.app.model.dto.RecipeDTO;
 import com.cookie.app.model.dto.RecipeDetailsDTO;
 import com.cookie.app.model.enums.MealType;
 import com.cookie.app.model.request.CreateRecipeRequest;
+import com.cookie.app.model.request.FilterRequest;
+import com.cookie.app.model.request.RecipeFilterRequest;
 import com.cookie.app.model.request.UpdateRecipeRequest;
 import com.cookie.app.model.response.CreateRecipeResponse;
 import com.cookie.app.service.RecipeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.*;
 import jakarta.validation.constraints.Max;
@@ -19,6 +26,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -46,58 +54,36 @@ public class RecipeController {
     private final RecipeService recipeService;
     private final ObjectMapper objectMapper;
 
+    @Operation(summary = "Get recipes")
+    @ApiResponse(responseCode = "200", description = "Recipes returned",
+            content = { @Content(mediaType = "application/json") })
     @GetMapping(GET_RECIPES_URL)
     public ResponseEntity<PageResult<RecipeDTO>> getRecipes(
             @PathVariable @Positive(message = "Page nr must be greater than 0") int page,
-            @RequestParam(required = false) @Min(value = 5, message = "Preparation time must be at least 5 minutes")
-            @Max(value = 2880, message = "Preparation time must be lower or equals 2880 minutes") Integer prepTime,
-            @RequestParam(required = false) @Positive(message = "Number of portions must be at least 1")
-            @Max(value = 12, message = "Number of portions must be lower or equals 12") Integer portions,
-            @RequestParam(required = false) List<MealType> mealTypes,
-            @RequestParam(required = false) @Pattern(
-                    regexp = RegexConstants.FILTER_VALUE_REGEX,
-                    message = "Filter value can only contains letters, digits, whitespaces, dashes and its length must be greater than 0"
-            ) String filterValue,
-            @RequestParam(required = false) @Pattern(
-                    regexp = RegexConstants.SORT_COL_REGEX,
-                    message = "Filter value can only contains letters, underscores and its length must be greater than 0"
-            ) String sortColName,
-            @RequestParam(required = false) Sort.Direction sortDirection
+            @ParameterObject RecipeFilterRequest filterRequest
     ) {
-        return ResponseEntity.status(HttpStatus.OK).body(
-                this.recipeService.getRecipes(page, prepTime, portions, mealTypes, filterValue, sortColName, sortDirection)
-        );
+        return ResponseEntity.status(HttpStatus.OK).body(this.recipeService.getRecipes(page, filterRequest));
     }
 
+    @Operation(summary = "Get user's recipes")
+    @ApiResponse(responseCode = "200", description = "User's recipes returned",
+            content = { @Content(mediaType = "application/json") })
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping(GET_USER_RECIPES_URL)
     public ResponseEntity<PageResult<RecipeDTO>> getUserRecipes(
             @PathVariable @Positive(message = "Page nr must be greater than 0") int page,
-            @RequestParam(required = false) @Min(value = 5, message = "Preparation time must be at least 5 minutes")
-            @Max(value = 2880, message = "Preparation time must be lower or equals 2880 minutes") Integer prepTime,
-            @RequestParam(required = false) @Positive(message = "Number of portions must be at least 1")
-            @Max(value = 12, message = "Number of portions must be lower or equals 12") Integer portions,
-            @RequestParam(required = false) List<MealType> mealTypes,
-            @RequestParam(required = false) @Pattern(
-                    regexp = RegexConstants.FILTER_VALUE_REGEX,
-                    message = "Filter value can only contains letters, digits, whitespaces, dashes and its length must be greater than 0"
-            ) String filterValue,
-            @RequestParam(required = false) @Pattern(
-                    regexp = RegexConstants.SORT_COL_REGEX,
-                    message = "Filter value can only contains letters, underscores and its length must be greater than 0"
-            ) String sortColName,
-            @RequestParam(required = false) Sort.Direction sortDirection,
+            @ParameterObject RecipeFilterRequest filterRequest,
             Authentication authentication
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(
-                this.recipeService.getUserRecipes(
-                        authentication.getName(),
-                        page, prepTime, portions,
-                        mealTypes, filterValue, sortColName, sortDirection
-                )
+                this.recipeService.getUserRecipes(authentication.getName(), page, filterRequest)
         );
     }
 
+    @Operation(summary = "Get recipe details")
+    @ApiResponse(responseCode = "200", description = "Recipe details returned",
+            content = { @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = RecipeDetailsDTO.class)) })
     @GetMapping(RECIPES_ID_URL)
     public ResponseEntity<RecipeDetailsDTO> getRecipeDetails(
             @PathVariable@Positive(message = "Recipe id must be greater than 0") long recipeId
@@ -106,6 +92,10 @@ public class RecipeController {
                 .body(this.recipeService.getRecipeDetails(recipeId));
     }
 
+    @Operation(summary = "Create recipe")
+    @ApiResponse(responseCode = "201", description = "Recipe created",
+            content = { @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = CreateRecipeResponse.class)) })
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CreateRecipeResponse> createRecipe(
@@ -114,7 +104,7 @@ public class RecipeController {
             Authentication authentication
     ) {
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-        log.info("Performing recipe creation by creator with email={}", authentication.getName());
+        log.info("Performing recipe creation by user with email={}", authentication.getName());
         CreateRecipeRequest recipe;
 
         try {
@@ -133,18 +123,25 @@ public class RecipeController {
                 .body(this.recipeService.createRecipe(authentication.getName(), recipe, recipeImage));
     }
 
+    @Operation(summary = "Delete recipe")
+    @ApiResponse(responseCode = "200", description = "Recipe deleted",
+            content = { @Content(mediaType = "application/json") })
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping(RECIPES_ID_URL)
     public ResponseEntity<Void> deleteRecipe(
             @PathVariable @Positive(message = "Recipe id must be greater than 0") long recipeId,
             Authentication authentication
     ) {
-        log.info("Performing recipe deletion by creator with email={}", authentication.getName());
+        log.info("Performing recipe deletion by user with email={}", authentication.getName());
         this.recipeService.deleteRecipe(authentication.getName(), recipeId);
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    @Operation(summary = "Update recipe")
+    @ApiResponse(responseCode = "200", description = "Recipe updated",
+            content = { @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = CreateRecipeResponse.class)) })
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CreateRecipeResponse> updateRecipe(
@@ -153,7 +150,7 @@ public class RecipeController {
             Authentication authentication
     ) {
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-        log.info("Performing recipe update by creator with email={}", authentication.getName());
+        log.info("Performing recipe update by user with email={}", authentication.getName());
         UpdateRecipeRequest recipe;
 
         try {

@@ -1,11 +1,16 @@
 package com.cookie.app.controller;
 
+import com.cookie.app.model.dto.MealDTO;
 import com.cookie.app.model.request.CreatePantryRequest;
 import com.cookie.app.model.request.UpdatePantryRequest;
 import com.cookie.app.model.response.DeletePantryResponse;
 import com.cookie.app.model.response.GetPantryResponse;
 import com.cookie.app.model.response.GetUserPantriesResponse;
 import com.cookie.app.service.PantryService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
@@ -24,10 +29,14 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 @RestController
 public class PantryController {
-    private static final String PANTRY_ID_URL = "/{pantryId}";
+    private static final String PANTRY_ID_URL = "/{groupId}";
 
     private final PantryService pantryService;
 
+    @Operation(summary = "Create pantry")
+    @ApiResponse(responseCode = "201", description = "Pantry created",
+            content = { @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = GetPantryResponse.class)) })
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping
     public ResponseEntity<GetPantryResponse> createPantry(
@@ -39,6 +48,10 @@ public class PantryController {
                 .body(this.pantryService.createPantry(request, authentication.getName()));
     }
 
+    @Operation(summary = "Get pantry")
+    @ApiResponse(responseCode = "200", description = "Pantry returned",
+            content = { @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = GetPantryResponse.class)) })
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping(PANTRY_ID_URL)
     public ResponseEntity<GetPantryResponse> getPantry(
@@ -48,12 +61,20 @@ public class PantryController {
         return ResponseEntity.ok(this.pantryService.getPantry(pantryId, authentication.getName()));
     }
 
+    @Operation(summary = "Get all user's pantries")
+    @ApiResponse(responseCode = "200", description = "All user's pantries returned",
+            content = { @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = GetUserPantriesResponse.class)) })
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping
     public ResponseEntity<GetUserPantriesResponse> getAllUserPantries(Authentication authentication) {
         return ResponseEntity.ok(this.pantryService.getAllUserPantries(authentication.getName()));
     }
 
+    @Operation(summary = "Delete pantry")
+    @ApiResponse(responseCode = "200", description = "Pantry deleted",
+            content = { @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = DeletePantryResponse.class)) })
     @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping(PANTRY_ID_URL)
     public ResponseEntity<DeletePantryResponse> deletePantry(
@@ -64,6 +85,10 @@ public class PantryController {
         return ResponseEntity.ok(this.pantryService.deletePantry(pantryId, authentication.getName()));
     }
 
+    @Operation(summary = "Update pantry")
+    @ApiResponse(responseCode = "200", description = "Pantry updated",
+            content = { @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = GetPantryResponse.class)) })
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping(PANTRY_ID_URL)
     public ResponseEntity<GetPantryResponse> updatePantry(

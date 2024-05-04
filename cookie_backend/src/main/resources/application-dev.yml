@@ -11,20 +11,16 @@ spring:
 server:
   port: 8081
 
-frontend:
-  address: http://localhost:4200
-
-jwt:
-  secret: ${JWT_SECRET}
-
 logging:
   level:
     org:
       springframework:
         security: TRACE
 
-ignore:
-  matchers: >
+config:
+  frontendAddress: http://localhost:4200
+  jwtSecret: ${JWT_SECRET}
+  ignoreMatchers: >
     /api/v1/user,
     /api/v1/pantries,
     /api/v1/pantries/**,
@@ -37,3 +33,24 @@ ignore:
     /api/v1/recipes/**,
     /api/v1/meals,
     /api/v1/meals/**
+
+#frontend:
+#  address: http://localhost:4200
+#
+#jwt:
+#  secret: ${JWT_SECRET}
+#
+#ignore:
+#  matchers: >
+#    /api/v1/user,
+#    /api/v1/pantries,
+#    /api/v1/pantries/**,
+#    /api/v1/products,
+#    /api/v1/groups,
+#    /api/v1/groups/**,
+#    /api/v1/shopping-lists,
+#    /api/v1/shopping-lists/**,
+#    /api/v1/recipes,
+#    /api/v1/recipes/**,
+#    /api/v1/meals,
+#    /api/v1/meals/**

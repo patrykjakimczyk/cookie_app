@@ -1,5 +1,6 @@
 package com.cookie.app.config.security;
 
+import com.cookie.app.config.ConfigProperties;
 import com.cookie.app.config.JwtConstants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -8,7 +9,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,11 +22,12 @@ import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+@RequiredArgsConstructor
 @Component
 public class JwtValidatorFilter extends OncePerRequestFilter {
     private static final String NOT_FILTER_PATH = "/api/v1/user";
-    @Value("${jwt.secret}")
-    private String secret;
+
+    private final ConfigProperties configProperties;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -33,7 +35,7 @@ public class JwtValidatorFilter extends OncePerRequestFilter {
         String jwt = request.getHeader(JwtConstants.HEADER);
 
         if (null != jwt && jwt.startsWith("Bearer ")) {
-            final SecretKey key = Keys.hmacShaKeyFor(this.secret.getBytes(StandardCharsets.UTF_8));
+            final SecretKey key = Keys.hmacShaKeyFor(this.configProperties.jwtSecret().getBytes(StandardCharsets.UTF_8));
             final Claims claims;
 
             jwt = jwt.substring("Bearer ".length());

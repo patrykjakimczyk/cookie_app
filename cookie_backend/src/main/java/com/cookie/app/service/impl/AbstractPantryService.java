@@ -1,5 +1,6 @@
 package com.cookie.app.service.impl;
 
+import com.cookie.app.exception.ResourceNotFoundException;
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.model.entity.Group;
 import com.cookie.app.model.entity.Pantry;
@@ -31,7 +32,7 @@ public abstract sealed class AbstractPantryService extends AbstractCookieService
         Pantry pantry = findPantryInUserGroups(pantryId, user).orElseThrow(
                 () -> {
                     log.info("User={} tried to access pantry without being a member of the pantry's group", user.getEmail());
-                    return new UserPerformedForbiddenActionException("You cannot access the pantry because you are not member of its group");
+                    return new ResourceNotFoundException("You cannot access the pantry because it could not be found in your groups");
                 }
         );
 

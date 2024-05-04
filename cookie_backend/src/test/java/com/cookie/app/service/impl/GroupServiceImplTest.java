@@ -1,5 +1,6 @@
 package com.cookie.app.service.impl;
 
+import com.cookie.app.exception.ResourceNotFoundException;
 import com.cookie.app.exception.UserAlreadyAddedToGroupException;
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.model.dto.AuthorityDTO;
@@ -12,7 +13,7 @@ import com.cookie.app.model.request.UpdateGroupRequest;
 import com.cookie.app.model.request.UserWithAuthoritiesRequest;
 import com.cookie.app.model.response.AssignAuthoritiesToUserResponse;
 import com.cookie.app.model.response.GetUserGroupsResponse;
-import com.cookie.app.model.response.GroupNameTakenResponse;
+import com.cookie.app.model.response.GetGroupResponse;
 import com.cookie.app.repository.AuthorityRepository;
 import com.cookie.app.repository.GroupRepository;
 import com.cookie.app.repository.ProductRepository;
@@ -95,11 +96,11 @@ class GroupServiceImplTest {
 
         doReturn(Optional.empty()).when(groupRepository).findByGroupName(groupName);
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
-        GroupNameTakenResponse response = this.service.createGroup(createGroupRequest, email);
+        this.service.createGroup(createGroupRequest, email);
 
         verify(groupRepository).save(this.groupArgCaptor.capture());
         verify(authorityRepository).saveAll(this.authoritiesListArgCaptor.capture());
-        assertFalse(response.groupNameTaken());
+
 
         Group group = this.groupArgCaptor.getValue();
         assertEquals(groupName, group.getGroupName());
@@ -117,12 +118,12 @@ class GroupServiceImplTest {
         final CreateGroupRequest createGroupRequest = new CreateGroupRequest(groupName);
 
         doReturn(Optional.of(group)).when(groupRepository).findByGroupName(groupName);
-        GroupNameTakenResponse response = this.service.createGroup(createGroupRequest, email);
+        GetGroupResponse response = this.service.createGroup(createGroupRequest, email);
 
         verify(groupRepository, times(0)).save(any(Group.class));
         verify(authorityRepository, times(0)).saveAll(anyList());
         verify(userRepository, times(0)).findByEmail(email);
-        assertTrue(response.groupNameTaken());
+        assertEquals(0, response.groupId());
     }
 
     @Test
@@ -163,7 +164,7 @@ class GroupServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.empty()).when(groupRepository).findById(groupId);
 
-       assertThrows(UserPerformedForbiddenActionException.class, () -> this.service.getGroupDetails(groupId, email));
+       assertThrows(ResourceNotFoundException.class, () -> this.service.getGroupDetails(groupId, email));
     }
 
     @Test
@@ -198,11 +199,10 @@ class GroupServiceImplTest {
         doReturn(Optional.empty()).when(groupRepository).findByGroupName(groupName);
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(group)).when(groupRepository).findById(groupId);
-        doReturn(List.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
-        GroupNameTakenResponse response = this.service.updateGroup(groupId, updateGroupRequest, email);
+        doReturn(Set.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
+        this.service.updateGroup(groupId, updateGroupRequest, email);
 
         verify(groupRepository).save(this.groupArgCaptor.capture());
-        assertFalse(response.groupNameTaken());
 
         Group group = this.groupArgCaptor.getValue();
         assertEquals(updateGroupRequest.newGroupName(), group.getGroupName());
@@ -215,13 +215,13 @@ class GroupServiceImplTest {
         final UpdateGroupRequest updateGroupRequest = new UpdateGroupRequest(groupName);
 
         doReturn(Optional.of(group)).when(groupRepository).findByGroupName(groupName);
-        GroupNameTakenResponse response = this.service.updateGroup(groupId, updateGroupRequest, email);
+        GetGroupResponse response = this.service.updateGroup(groupId, updateGroupRequest, email);
 
         verify(groupRepository, times(0)).save(any(Group.class));
         verify(userRepository, times(0)).findByEmail(email);
         verify(groupRepository, times(0)).findById(groupId);
         verify(authorityRepository, times(0)).findAuthoritiesByUserAndGroup(user, group);
-        assertTrue(response.groupNameTaken());
+        assertEquals(0, response.groupId());
     }
 
     @Test
@@ -232,7 +232,7 @@ class GroupServiceImplTest {
         doReturn(Optional.empty()).when(groupRepository).findByGroupName(groupName);
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(group)).when(groupRepository).findById(groupId);
-        doReturn(List.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
+        doReturn(Set.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
 
         assertThrows(UserPerformedForbiddenActionException.class, () -> this.service.updateGroup(groupId, updateGroupRequest, email));
     }
@@ -242,7 +242,7 @@ class GroupServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(group)).when(groupRepository).findById(groupId);
-        doReturn(List.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
+        doReturn(Set.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
         this.service.deleteGroup(groupId, email);
 
         verify(authorityRepository).deleteByGroup(this.groupArgCaptor.capture());
@@ -257,7 +257,7 @@ class GroupServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(group)).when(groupRepository).findById(groupId);
-        doReturn(List.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
+        doReturn(Set.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
 
         assertThrows(UserPerformedForbiddenActionException.class, () -> this.service.deleteGroup(groupId, email));
     }
@@ -270,7 +270,7 @@ class GroupServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(group)).when(groupRepository).findById(groupId);
-        doReturn(List.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
+        doReturn(Set.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
         doReturn(Optional.of(userToAdd)).when(userRepository).findByUsername(usernameToAdd);
         this.service.addUserToGroup(groupId, usernameToAdd, email);
 
@@ -287,10 +287,10 @@ class GroupServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(group)).when(groupRepository).findById(groupId);
-        doReturn(List.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
+        doReturn(Set.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
         doReturn(Optional.empty()).when(userRepository).findByUsername(usernameToAdd);
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> this.service.addUserToGroup(groupId, usernameToAdd, email));
+        assertThrows(ResourceNotFoundException.class, () -> this.service.addUserToGroup(groupId, usernameToAdd, email));
         verify(groupRepository, times(0)).save(group);
         verify(authorityRepository, times(0)).saveAll(this.authoritiesListArgCaptor.capture());
     }
@@ -304,7 +304,7 @@ class GroupServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(group)).when(groupRepository).findById(groupId);
-        doReturn(List.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
+        doReturn(Set.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
         doReturn(Optional.of(userToAdd)).when(userRepository).findByUsername(usernameToAdd);
 
         assertThrows(UserAlreadyAddedToGroupException.class, () -> this.service.addUserToGroup(groupId, usernameToAdd, email));
@@ -321,7 +321,7 @@ class GroupServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(group)).when(groupRepository).findById(groupId);
-        doReturn(List.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
+        doReturn(Set.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
         doReturn(Optional.of(userToRemove)).when(userRepository).findById(userIdToRemove);
         this.service.removeUserFromGroup(groupId, userIdToRemove, email);
 
@@ -340,7 +340,7 @@ class GroupServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(group)).when(groupRepository).findById(groupId);
-        doReturn(List.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
+        doReturn(Set.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
         this.service.removeUserFromGroup(groupId, id, email);
 
         verify(groupRepository).save(group);
@@ -358,7 +358,7 @@ class GroupServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(group)).when(groupRepository).findById(groupId);
-        doReturn(List.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
+        doReturn(Set.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
 
         Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () ->
                 this.service.removeUserFromGroup(groupId, userIdToRemove, email));
@@ -374,12 +374,12 @@ class GroupServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(group)).when(groupRepository).findById(groupId);
-        doReturn(List.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
+        doReturn(Set.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
         doReturn(Optional.empty()).when(userRepository).findById(userIdToRemove);
 
-        Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () ->
+        Exception ex = assertThrows(ResourceNotFoundException.class, () ->
                 this.service.removeUserFromGroup(groupId, userIdToRemove, email));
-        assertEquals("User tried to remove non existing creator from group", ex.getMessage());
+        assertEquals("User tried to remove non existing user from group", ex.getMessage());
         verify(groupRepository, times(0)).save(group);
         verify(authorityRepository, times(0)).deleteByUserAndGroup(any(User.class), eq(group));
     }
@@ -392,12 +392,12 @@ class GroupServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(group)).when(groupRepository).findById(groupId);
-        doReturn(List.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
+        doReturn(Set.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
         doReturn(Optional.of(userToRemove)).when(userRepository).findById(userIdToRemove);
 
         Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () ->
                 this.service.removeUserFromGroup(groupId, userIdToRemove, email));
-        assertEquals("You tried to remove creator which is not in the group", ex.getMessage());
+        assertEquals("You tried to remove user which is not in the group", ex.getMessage());
         verify(groupRepository, times(0)).save(group);
         verify(authorityRepository, times(0)).deleteByUserAndGroup(any(User.class), eq(group));
     }
@@ -407,7 +407,7 @@ class GroupServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(group)).when(groupRepository).findById(groupId);
-        doReturn(List.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
+        doReturn(Set.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
 
         Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () ->
                 this.service.removeUserFromGroup(groupId, id, email));
@@ -427,11 +427,11 @@ class GroupServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(group)).when(groupRepository).findById(groupId);
-        doReturn(List.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
+        doReturn(Set.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
         doReturn(Optional.of(userToAssignAuthorities)).when(userRepository).findById(userIdToAssignAuthorities);
         AssignAuthoritiesToUserResponse response = this.service.assignAuthoritiesToUser(groupId, request, email);
 
-        verify(authorityRepository).saveAll(anyList());
+        verify(authorityRepository).saveAll(any());
         assertEquals(request.authorities().size(), response.assignedAuthorities().size());
         List<AuthorityDTO> authorities = new ArrayList<>(response.assignedAuthorities());
         assertEquals(group.getId(), authorities.get(0).groupId());
@@ -444,10 +444,10 @@ class GroupServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(group)).when(groupRepository).findById(groupId);
-        doReturn(List.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
+        doReturn(Set.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
         AssignAuthoritiesToUserResponse response = this.service.assignAuthoritiesToUser(groupId, request, email);
 
-        verify(authorityRepository).saveAll(anyList());
+        verify(authorityRepository).saveAll(any());
         assertEquals(request.authorities().size(), response.assignedAuthorities().size());
         List<AuthorityDTO> authorities = new ArrayList<>(response.assignedAuthorities());
         assertEquals(group.getId(), authorities.get(0).groupId());
@@ -461,12 +461,12 @@ class GroupServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(group)).when(groupRepository).findById(groupId);
-        doReturn(List.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
+        doReturn(Set.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
         doReturn(Optional.empty()).when(userRepository).findById(userIdToAssignAuthorities);
 
-        Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () ->
+        Exception ex = assertThrows(ResourceNotFoundException.class, () ->
                 this.service.assignAuthoritiesToUser(groupId, request, email));
-        assertEquals("You tried to assign authorities to non existing creator", ex.getMessage());
+        assertEquals("You tried to assign authorities to non existing user", ex.getMessage());
         verify(authorityRepository, times(0)).saveAll(anyList());
     }
 
@@ -480,12 +480,12 @@ class GroupServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(group)).when(groupRepository).findById(groupId);
-        doReturn(List.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
+        doReturn(Set.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
         doReturn(Optional.of(userToAssignAuthorities)).when(userRepository).findById(userIdToAssignAuthorities);
 
         Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () ->
                 this.service.assignAuthoritiesToUser(groupId, request, email));
-        assertEquals("You tried to assign authorities to creator which is not in the group", ex.getMessage());
+        assertEquals("You tried to assign authorities to user which is not in the group", ex.getMessage());
         verify(authorityRepository, times(0)).saveAll(anyList());
     }
 
@@ -504,7 +504,7 @@ class GroupServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(group)).when(groupRepository).findById(groupId);
-        doReturn(List.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
+        doReturn(Set.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
         doReturn(Optional.of(userToRemoveAuthorities)).when(userRepository).findById(userIdToRemoveAuthorities);
         this.service.removeAuthoritiesFromUser(groupId, request, email);
 
@@ -529,7 +529,7 @@ class GroupServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(group)).when(groupRepository).findById(groupId);
-        doReturn(List.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
+        doReturn(Set.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
         doReturn(Optional.of(userToRemoveAuthorities)).when(userRepository).findById(userIdToRemoveAuthorities);
         this.service.removeAuthoritiesFromUser(groupId, request, email);
 
@@ -543,7 +543,7 @@ class GroupServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(group)).when(groupRepository).findById(groupId);
-        doReturn(List.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
+        doReturn(Set.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
         this.service.removeAuthoritiesFromUser(groupId, request, email);
 
         verify(authorityRepository).deleteAll(this.authoritiesListArgCaptor.capture());
@@ -566,12 +566,12 @@ class GroupServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(group)).when(groupRepository).findById(groupId);
-        doReturn(List.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
+        doReturn(Set.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
         doReturn(Optional.empty()).when(userRepository).findById(userIdToRemoveAuthorities);
 
-        Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () ->
+        Exception ex = assertThrows(ResourceNotFoundException.class, () ->
                 this.service.removeAuthoritiesFromUser(groupId, request, email));
-        assertEquals("You tried to take away authorities from non existing creator", ex.getMessage());
+        assertEquals("You tried to take away authorities from non existing user", ex.getMessage());
         verify(authorityRepository, times(0)).deleteAll(anyList());
     }
 
@@ -589,12 +589,12 @@ class GroupServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(group)).when(groupRepository).findById(groupId);
-        doReturn(List.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
+        doReturn(Set.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
         doReturn(Optional.of(userToRemoveAuthorities)).when(userRepository).findById(userIdToRemoveAuthorities);
 
         Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () ->
                 this.service.removeAuthoritiesFromUser(groupId, request, email));
-        assertEquals("You tried to take away authorities from creator which is not in the group", ex.getMessage());
+        assertEquals("You tried to take away authorities from user which is not in the group", ex.getMessage());
         verify(authorityRepository, times(0)).deleteAll(anyList());
     }
 }

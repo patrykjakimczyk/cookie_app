@@ -1,5 +1,6 @@
 package com.cookie.app.service.impl;
 
+import com.cookie.app.exception.ResourceNotFoundException;
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.model.dto.*;
 import com.cookie.app.model.entity.*;
@@ -9,6 +10,7 @@ import com.cookie.app.model.enums.MealType;
 import com.cookie.app.model.enums.Unit;
 import com.cookie.app.model.mapper.*;
 import com.cookie.app.model.request.CreateRecipeRequest;
+import com.cookie.app.model.request.RecipeFilterRequest;
 import com.cookie.app.model.request.UpdateRecipeRequest;
 import com.cookie.app.repository.ProductRepository;
 import com.cookie.app.repository.RecipeProductRepository;
@@ -111,6 +113,7 @@ class RecipeServiceImplTest {
 
     @Test
     void test_getRecipesSuccessful() {
+        final RecipeFilterRequest filterRequest = new RecipeFilterRequest(filter, col, direction, 15, 1, List.of(MealType.APPETIZER));
         final PageImpl<Recipe> pageResponse = new PageImpl<>(List.of(recipe));
 
         doReturn(pageResponse).when(recipeRepository)
@@ -119,7 +122,7 @@ class RecipeServiceImplTest {
         try (MockedStatic<ImageUtil> imageUtilMockedStatic = mockStatic(ImageUtil.class)) {
             imageUtilMockedStatic.when(() -> ImageUtil.decompressImage(any()))
                     .thenReturn(new byte[0]);
-            PageResult<RecipeDTO> response = this.service.getRecipes(1, 15, 1, List.of(MealType.APPETIZER), filter, col, direction);
+            PageResult<RecipeDTO> response = this.service.getRecipes(1, filterRequest);
 
             verify(recipeRepository, times(0)).findRecipes(anyInt(), anyInt(), anySet(), any(PageRequest.class));
             assertEquals(0 ,response.pageNr());
@@ -131,6 +134,7 @@ class RecipeServiceImplTest {
 
     @Test
     void test_getRecipesSuccessfulWithNullMealTypesPrepTimeAndPortions() {
+        final RecipeFilterRequest filterRequest = new RecipeFilterRequest(filter, col, direction, null, null, null);
         final PageImpl<Recipe> pageResponse = new PageImpl<>(List.of(recipe));
         final Set<String> mealTypesStrings = MealType.ALL_MEAL_TYPES
                 .stream()
@@ -143,7 +147,7 @@ class RecipeServiceImplTest {
         try (MockedStatic<ImageUtil> imageUtilMockedStatic = mockStatic(ImageUtil.class)) {
             imageUtilMockedStatic.when(() -> ImageUtil.decompressImage(any()))
                     .thenReturn(new byte[0]);
-            PageResult<RecipeDTO> response = this.service.getRecipes(1, null, null, null, filter, col, direction);
+            PageResult<RecipeDTO> response = this.service.getRecipes(1, filterRequest);
 
             verify(recipeRepository, times(0)).findRecipes(anyInt(), anyInt(), anySet(), any(PageRequest.class));
             assertEquals(0 ,response.pageNr());
@@ -155,6 +159,7 @@ class RecipeServiceImplTest {
 
     @Test
     void test_getRecipesSuccessfulWithoutFilter() {
+        final RecipeFilterRequest filterRequest = new RecipeFilterRequest(null, col, direction, 15, 1, List.of(MealType.APPETIZER));
         final PageImpl<Recipe> pageResponse = new PageImpl<>(List.of(recipe));
 
         doReturn(pageResponse).when(recipeRepository)
@@ -163,7 +168,7 @@ class RecipeServiceImplTest {
         try (MockedStatic<ImageUtil> imageUtilMockedStatic = mockStatic(ImageUtil.class)) {
             imageUtilMockedStatic.when(() -> ImageUtil.decompressImage(any()))
                     .thenReturn(new byte[0]);
-            PageResult<RecipeDTO> response = this.service.getRecipes(1, 15, 1, List.of(MealType.APPETIZER), null, col, direction);
+            PageResult<RecipeDTO> response = this.service.getRecipes(1, filterRequest);
 
             verify(recipeRepository, times(0)).findRecipesByFilter(anyString(), anyInt(), anyInt(), anySet(), any(PageRequest.class));
             assertEquals(0 ,response.pageNr());
@@ -175,18 +180,19 @@ class RecipeServiceImplTest {
 
     @Test
     void test_getUserRecipesSuccessful() {
+        final RecipeFilterRequest filterRequest = new RecipeFilterRequest(filter, col, direction, 15, 1, List.of(MealType.APPETIZER));
         final PageImpl<Recipe> pageResponse = new PageImpl<>(List.of(recipe));
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(pageResponse).when(recipeRepository)
-                .findCreatorRecipesByFilter(eq(user.getId()), eq(filter), eq(15), eq(1), eq(Set.of("APPETIZER")), any(PageRequest.class));
+                .findUserRecipesByFilter(eq(user.getId()), eq(filter), eq(15), eq(1), eq(Set.of("APPETIZER")), any(PageRequest.class));
 
         try (MockedStatic<ImageUtil> imageUtilMockedStatic = mockStatic(ImageUtil.class)) {
             imageUtilMockedStatic.when(() -> ImageUtil.decompressImage(any()))
                     .thenReturn(new byte[0]);
-            PageResult<RecipeDTO> response = this.service.getUserRecipes(email, 1, 15, 1, List.of(MealType.APPETIZER), filter, col, direction);
+            PageResult<RecipeDTO> response = this.service.getUserRecipes(email, 1, filterRequest);
 
-            verify(recipeRepository, times(0)).findCreatorRecipes(anyLong(), anyInt(), anyInt(), anySet(), any(PageRequest.class));
+            verify(recipeRepository, times(0)).findUserRecipes(anyLong(), anyInt(), anyInt(), anySet(), any(PageRequest.class));
             assertEquals(0 ,response.pageNr());
             assertEquals(pageResponse.getTotalElements() ,response.totalElements());
             assertEquals(pageResponse.getContent().get(0).getId(), response.content().get(0).id());
@@ -196,6 +202,7 @@ class RecipeServiceImplTest {
 
     @Test
     void test_getUserRecipesSuccessfulWithNullMealTypesPrepTimeAndPortions() {
+        final RecipeFilterRequest filterRequest = new RecipeFilterRequest(filter, null, null, null, null, null);
         final PageImpl<Recipe> pageResponse = new PageImpl<>(List.of(recipe));
         final Set<String> mealTypesStrings = MealType.ALL_MEAL_TYPES
                 .stream()
@@ -204,14 +211,14 @@ class RecipeServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(pageResponse).when(recipeRepository)
-                .findCreatorRecipesByFilter(eq(user.getId()), eq(filter), eq(0), eq(0), eq(mealTypesStrings), any(PageRequest.class));
+                .findUserRecipesByFilter(eq(user.getId()), eq(filter), eq(0), eq(0), eq(mealTypesStrings), any(PageRequest.class));
 
         try (MockedStatic<ImageUtil> imageUtilMockedStatic = mockStatic(ImageUtil.class)) {
             imageUtilMockedStatic.when(() -> ImageUtil.decompressImage(any()))
                     .thenReturn(new byte[0]);
-            PageResult<RecipeDTO> response = this.service.getUserRecipes(email, 1, null, null, null, filter, col, direction);
+            PageResult<RecipeDTO> response = this.service.getUserRecipes(email, 1, filterRequest);
 
-            verify(recipeRepository, times(0)).findCreatorRecipes(anyLong(), anyInt(), anyInt(), anySet(), any(PageRequest.class));
+            verify(recipeRepository, times(0)).findUserRecipes(anyLong(), anyInt(), anyInt(), anySet(), any(PageRequest.class));
             assertEquals(0 ,response.pageNr());
             assertEquals(pageResponse.getTotalElements() ,response.totalElements());
             assertEquals(pageResponse.getContent().get(0).getId(), response.content().get(0).id());
@@ -221,18 +228,19 @@ class RecipeServiceImplTest {
 
     @Test
     void test_getUserRecipesSuccessfulWithoutFilter() {
+        final RecipeFilterRequest filterRequest = new RecipeFilterRequest(null, col, direction, 15, 1, List.of(MealType.APPETIZER));
         final PageImpl<Recipe> pageResponse = new PageImpl<>(List.of(recipe));
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(pageResponse).when(recipeRepository)
-                .findCreatorRecipes(eq(user.getId()), eq(15), eq(1), eq(Set.of("APPETIZER")), any(PageRequest.class));
+                .findUserRecipes(eq(user.getId()), eq(15), eq(1), eq(Set.of("APPETIZER")), any(PageRequest.class));
 
         try (MockedStatic<ImageUtil> imageUtilMockedStatic = mockStatic(ImageUtil.class)) {
             imageUtilMockedStatic.when(() -> ImageUtil.decompressImage(any()))
                     .thenReturn(new byte[0]);
-            PageResult<RecipeDTO> response = this.service.getUserRecipes(email, 1, 15, 1, List.of(MealType.APPETIZER), null, col, direction);
+            PageResult<RecipeDTO> response = this.service.getUserRecipes(email, 1, filterRequest);
 
-            verify(recipeRepository, times(0)).findCreatorRecipesByFilter(anyLong(), anyString(), anyInt(), anyInt(), anySet(), any(PageRequest.class));
+            verify(recipeRepository, times(0)).findUserRecipesByFilter(anyLong(), anyString(), anyInt(), anyInt(), anySet(), any(PageRequest.class));
             assertEquals(0 ,response.pageNr());
             assertEquals(pageResponse.getTotalElements() ,response.totalElements());
             assertEquals(pageResponse.getContent().get(0).getId(), response.content().get(0).id());
@@ -400,7 +408,7 @@ class RecipeServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.empty()).when(recipeRepository).findById(id);
 
-        Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () -> this.service.deleteRecipe(email, id));
+        Exception ex = assertThrows(ResourceNotFoundException.class, () -> this.service.deleteRecipe(email, id));
         assertEquals("Recipe does not exists", ex.getMessage());
         verify(recipeRepository, times(0)).delete(any(Recipe.class));
     }

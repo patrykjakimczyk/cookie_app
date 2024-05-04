@@ -7,6 +7,7 @@ import com.cookie.app.model.enums.AuthorityEnum;
 import com.cookie.app.model.mapper.AuthorityMapper;
 import com.cookie.app.model.mapper.PantryProductMapper;
 import com.cookie.app.model.dto.PantryProductDTO;
+import com.cookie.app.model.request.FilterRequest;
 import com.cookie.app.repository.PantryProductRepository;
 import com.cookie.app.repository.ProductRepository;
 import com.cookie.app.repository.UserRepository;
@@ -42,17 +43,15 @@ public non-sealed class PantryProductServiceImpl extends AbstractPantryService i
     public PageResult<PantryProductDTO> getPantryProducts(
             long pantryId,
             int page,
-            String filterValue,
-            String sortColName,
-            Sort.Direction sortDirection,
+            FilterRequest filterRequest,
             String userEmail
     ) {
         Pantry pantry = super.getPantryIfUserHasAuthority(pantryId, userEmail, null);
-        PageRequest pageRequest = super.createPageRequest(page - 1, sortColName, sortDirection);
+        PageRequest pageRequest = super.createPageRequest(page - 1, filterRequest.getSortColName(), filterRequest.getSortDirection());
 
-        if (filterValue != null && !StringUtils.isBlank(filterValue.trim())) {
+        if (filterRequest.getFilterValue() != null && !StringUtils.isBlank(filterRequest.getFilterValue().trim())) {
             return new PageResult<>(this.pantryProductRepository
-                    .findProductsInPantryWithFilter(pantry.getId(), filterValue, pageRequest)
+                    .findProductsInPantryWithFilter(pantry.getId(), filterRequest.getFilterValue(), pageRequest)
                     .map(pantryProductMapper::mapToDto));
         }
         return new PageResult<>(this.pantryProductRepository
@@ -193,7 +192,7 @@ public non-sealed class PantryProductServiceImpl extends AbstractPantryService i
     private PantryProduct getPantryProductById(long pantryId, long pantryProductId, String userEmail, String action) {
         PantryProduct pantryProduct = this.pantryProductRepository.findById(pantryProductId).orElseThrow(() -> {
             log.info("User with email={} tried to {} product which does not exists", userEmail, action);
-            return new UserPerformedForbiddenActionException("Pantry product was not found");
+            return new ResourceNotFoundException("Pantry product was not found");
         });
 
         if (pantryProduct.getPantry().getId() != pantryId) {

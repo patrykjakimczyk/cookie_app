@@ -6,6 +6,7 @@ import com.cookie.app.model.dto.PantryProductDTO;
 import com.cookie.app.model.dto.ProductDTO;
 import com.cookie.app.model.enums.Category;
 import com.cookie.app.model.enums.Unit;
+import com.cookie.app.model.request.FilterRequest;
 import com.cookie.app.model.request.ReservePantryProductRequest;
 import com.cookie.app.service.PantryProductService;
 import org.junit.jupiter.api.Test;
@@ -35,14 +36,15 @@ class PantryProductControllerTest extends AbstractControllerTest {
 
     @Test
     void test_getPantryProductsSuccessful() {
+        final FilterRequest filterRequest = new FilterRequest("", "", null);
         final int pageNr = 1;
         final List<PantryProductDTO> pantryProductDTOS = Collections.singletonList(createPantryProduct());
         final PageResult<PantryProductDTO> pageResponse = new PageResult<>(pantryProductDTOS, pantryProductDTOS.size(), 1, 0);
 
         doReturn(pageResponse).when(pantryProductService)
-                .getPantryProducts(this.pantryId, pageNr, "", "", null, authentication.getName());
+                .getPantryProducts(this.pantryId, pageNr, filterRequest, authentication.getName());
         ResponseEntity<PageResult<PantryProductDTO>> response =
-                this.controller.getPantryProducts(pantryId, pageNr, "", "", null, authentication);
+                this.controller.getPantryProducts(pantryId, pageNr, filterRequest, authentication);
 
         assertEquals(pantryProductDTOS.size(), response.getBody().totalElements());
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -50,13 +52,14 @@ class PantryProductControllerTest extends AbstractControllerTest {
 
     @Test
     void test_getPantryProductsPantryNotFound() {
+        final FilterRequest filterRequest = new FilterRequest("", "", null);
         final int pageNr = 1;
 
         doThrow(new UserPerformedForbiddenActionException("Pantry not found"))
-                .when(pantryProductService).getPantryProducts(pantryId, pageNr, "", "", null, authentication.getName());
+                .when(pantryProductService).getPantryProducts(pantryId, pageNr, filterRequest, authentication.getName());
 
         assertThrows(UserPerformedForbiddenActionException.class, () ->
-                this.controller.getPantryProducts(pantryId, 1, "", "", null, authentication));
+                this.controller.getPantryProducts(pantryId, 1, filterRequest, authentication));
     }
 
     @Test

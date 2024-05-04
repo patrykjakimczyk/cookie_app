@@ -1,5 +1,6 @@
 package com.cookie.app.service.impl;
 
+import com.cookie.app.exception.ResourceNotFoundException;
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.exception.ValidationException;
 import com.cookie.app.model.dto.PageResult;
@@ -11,6 +12,7 @@ import com.cookie.app.model.enums.AuthorityEnum;
 import com.cookie.app.model.enums.Category;
 import com.cookie.app.model.enums.Unit;
 import com.cookie.app.model.mapper.*;
+import com.cookie.app.model.request.FilterRequest;
 import com.cookie.app.repository.ProductRepository;
 import com.cookie.app.repository.ShoppingListProductRepository;
 import com.cookie.app.repository.UserRepository;
@@ -117,6 +119,7 @@ class ShoppingListProductServiceImplTest {
 
     @Test
     void test_getShoppingListProductsWithAscSort() {
+        final FilterRequest filterRequest = new FilterRequest(null, col, Sort.Direction.ASC);
         final PageImpl<ShoppingListProduct> pageResponse = new PageImpl<>(List.of(shoppingListProduct));
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
@@ -124,7 +127,7 @@ class ShoppingListProductServiceImplTest {
                 eq(id),
                 this.pageRequestArgCaptor.capture()
         );
-        PageResult<ShoppingListProductDTO> result = this.service.getShoppingListProducts(id, 1, null, col, Sort.Direction.ASC, email);
+        PageResult<ShoppingListProductDTO> result = this.service.getShoppingListProducts(id, 1, filterRequest, email);
         PageRequest pageRequest = this.pageRequestArgCaptor.getValue();
 
         verify(shoppingListProductRepository).findShoppingListProductByShoppingListId(eq(id), any(PageRequest.class));
@@ -138,6 +141,7 @@ class ShoppingListProductServiceImplTest {
 
     @Test
     void test_getShoppingListProductsSuccessfulWithFilterAndDescSort() {
+        final FilterRequest filterRequest = new FilterRequest(filter, col, Sort.Direction.DESC);
         final PageImpl<ShoppingListProduct> pageResponse = new PageImpl<>(List.of(shoppingListProduct));
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
@@ -147,7 +151,7 @@ class ShoppingListProductServiceImplTest {
                 this.pageRequestArgCaptor.capture()
         );
 
-        PageResult<ShoppingListProductDTO> result = this.service.getShoppingListProducts(id, 1, filter, col, Sort.Direction.DESC, email);
+        PageResult<ShoppingListProductDTO> result = this.service.getShoppingListProducts(id, 1, filterRequest, email);
         PageRequest pageRequest = this.pageRequestArgCaptor.getValue();
 
         verify(shoppingListProductRepository).findProductsInShoppingListWithFilter(eq(id), eq(filter), any(PageRequest.class));
@@ -163,6 +167,7 @@ class ShoppingListProductServiceImplTest {
 
     @Test
     void test_getShoppingListProductsSuccessfulWithoutSort() {
+        final FilterRequest filterRequest = new FilterRequest(filter, null, null);
         final PageImpl<ShoppingListProduct> pageResponse = new PageImpl<>(List.of(shoppingListProduct));
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
@@ -172,7 +177,7 @@ class ShoppingListProductServiceImplTest {
                 this.pageRequestArgCaptor.capture()
         );
 
-        PageResult<ShoppingListProductDTO> result = this.service.getShoppingListProducts(id, 1, filter, null, null, email);
+        PageResult<ShoppingListProductDTO> result = this.service.getShoppingListProducts(id, 1, filterRequest, email);
         PageRequest pageRequest = this.pageRequestArgCaptor.getValue();
 
         verify(shoppingListProductRepository).findProductsInShoppingListWithFilter(eq(id), eq(filter), any(PageRequest.class));
@@ -399,7 +404,7 @@ class ShoppingListProductServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.empty()).when(shoppingListProductRepository).findById(shoppingListProductDTO.id());
 
-        Exception exception = assertThrows(UserPerformedForbiddenActionException.class, () ->
+        Exception exception = assertThrows(ResourceNotFoundException.class, () ->
                 this.service.updateShoppingListProduct(id, shoppingListProductDTO, email));
         assertEquals("Shopping list product was not found", exception.getMessage());
         verify(shoppingListProductRepository, times(0)).save(shoppingListProduct);
