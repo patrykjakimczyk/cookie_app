@@ -19,9 +19,9 @@ public interface RecipeService {
     PageResult<RecipeDTO> getRecipes(int page, RecipeFilterRequest filterRequest);
     PageResult<RecipeDTO> getUserRecipes(String userEmail, int page, RecipeFilterRequest filterRequest);
     RecipeDetailsDTO getRecipeDetails(long recipeId);
-    CreateRecipeResponse createRecipe(String userEmail, CreateRecipeRequest recipeDetailsDTO, MultipartFile recipeImage);
+    CreateRecipeResponse createRecipe(String userEmail, CreateRecipeRequest createRecipeRequest, MultipartFile recipeImage);
     void deleteRecipe(String userEmail, long recipeId);
-    CreateRecipeResponse updateRecipe(String userEmail, UpdateRecipeRequest recipeDetailsDTO, MultipartFile recipeImage);
+    CreateRecipeResponse updateRecipe(String userEmail, UpdateRecipeRequest updateRecipeRequest, MultipartFile recipeImage);
     List<RecipeProduct> reserveRecipeProductsInPantry(User user, Recipe recipe, long pantryId);
     public List<RecipeProduct> getRecipeProductsNotInPantry(Group group, Recipe recipe);
     void addRecipeProductsToShoppingList(User user, long listId, List<RecipeProduct> productsToAdd);

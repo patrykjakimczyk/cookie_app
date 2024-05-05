@@ -26,9 +26,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDate;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -497,7 +495,7 @@ class ShoppingListProductServiceImplTest {
         assertEquals(shoppingList.getProductsList().get(0).getProduct().getCategory(), transferedProducts.get(0).product().category());
         assertEquals(shoppingList.getProductsList().get(0).getQuantity(), transferedProducts.get(0).quantity());
         assertEquals(shoppingList.getProductsList().get(0).getUnit(), transferedProducts.get(0).unit());
-        assertEquals(Timestamp.from(Instant.now().truncatedTo(ChronoUnit.DAYS)), transferedProducts.get(0).purchaseDate());
+        assertEquals(LocalDate.now(), transferedProducts.get(0).purchaseDate());
     }
 
     @Test

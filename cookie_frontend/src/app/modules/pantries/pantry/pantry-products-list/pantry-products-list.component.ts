@@ -184,8 +184,16 @@ export class PantryProductsListComponent {
       quantity: +this.addForm.controls.quantity.value!,
       unit: this.addForm.controls.unit.value as Unit,
       reserved: 0,
-      purchaseDate: this.addForm.controls.purchaseDate.value || '',
-      expirationDate: this.addForm.controls.expirationDate.value || '',
+      purchaseDate: this.addForm.controls.purchaseDate.value
+        ? new Date(this.addForm.controls.purchaseDate.value).toLocaleDateString(
+            'en-GB'
+          )
+        : '',
+      expirationDate: this.addForm.controls.expirationDate.value
+        ? new Date(
+            this.addForm.controls.expirationDate.value
+          ).toLocaleDateString('en-GB')
+        : '',
       placement: this.addForm.controls.placement.value || '',
     });
 

@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.cookie</groupId>
 	<artifactId>app</artifactId>
-	<version>1.0</version>
+	<version>1.1</version>
 	<name>app</name>
 	<description>Backend part of Cookie app!</description>
 	<properties>

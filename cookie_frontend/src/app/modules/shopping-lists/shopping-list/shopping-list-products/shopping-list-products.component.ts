@@ -74,7 +74,6 @@ export class ShoppingListProductsComponent implements OnInit {
       [Validators.required, Validators.min(1), Validators.pattern('[0-9]+')],
     ],
     unit: ['', [Validators.required]],
-    purchased: [false],
   });
 
   constructor(
@@ -293,7 +292,7 @@ export class ShoppingListProductsComponent implements OnInit {
           : this.addForm.controls.unit.value === Unit.MILLILITERS
           ? Unit.MILLILITERS
           : Unit.PIECES,
-      purchased: this.addForm.controls.purchased.value!,
+      purchased: false,
     });
     form.resetForm();
     this.addForm.reset();

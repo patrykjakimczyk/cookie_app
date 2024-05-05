@@ -2,13 +2,14 @@ package com.cookie.app.model.dto;
 
 import com.cookie.app.model.RegexConstants;
 import com.cookie.app.model.enums.Unit;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
 
 public record PantryProductDTO (
         @Schema(example = "1")
@@ -19,8 +20,14 @@ public record PantryProductDTO (
         @NotNull(message = "Product must be present")
         @Valid
         ProductDTO product,
-        Timestamp purchaseDate,
-        Timestamp expirationDate,
+
+        @Schema(example = "05/10/2005")
+        @JsonFormat(pattern = "dd/MM/yyyy")
+        LocalDate purchaseDate,
+
+        @Schema(example = "05/10/2005")
+        @JsonFormat(pattern = "dd/MM/yyyy")
+        LocalDate expirationDate,
 
         @Schema(example = "100")
         @NotNull(message = "Quantity must be present")

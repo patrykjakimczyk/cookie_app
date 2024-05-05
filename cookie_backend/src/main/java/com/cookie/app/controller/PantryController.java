@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 @RestController
 public class PantryController {
-    private static final String PANTRY_ID_URL = "/{groupId}";
+    private static final String PANTRY_ID_URL = "/{pantryId}";
 
     private final PantryService pantryService;
 

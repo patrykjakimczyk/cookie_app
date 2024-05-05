@@ -36,7 +36,7 @@ public abstract sealed class AbstractPantryService extends AbstractCookieService
                 }
         );
 
-        if (requiredAuthority!= null && !super.userHasAuthority(user, pantry.getGroup().getId(), requiredAuthority)) {
+        if (requiredAuthority != null && !super.userHasAuthority(user, pantry.getGroup().getId(), requiredAuthority)) {
             log.info("User={} tried to perform action in pantry without required permission", user.getEmail());
             throw new UserPerformedForbiddenActionException("You have not permissions to do that");
         }

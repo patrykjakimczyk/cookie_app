@@ -19,15 +19,11 @@ import com.cookie.app.service.PantryProductService;
 import com.cookie.app.service.ShoppingListProductService;
 import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -253,7 +249,7 @@ public non-sealed class ShoppingListProductServiceImpl extends AbstractShoppingL
 
     private List<PantryProductDTO> mapListProductsToPantryProducts(List<ShoppingListProduct> purchasedProducts) {
         List<PantryProductDTO> newPantryProducts = new ArrayList<>();
-        Timestamp currentTimestamp = Timestamp.from(Instant.now().truncatedTo(ChronoUnit.DAYS));
+        LocalDate currentDate = LocalDate.now();
 
         for (ShoppingListProduct purchasedProduct : purchasedProducts) {
             PantryProductDTO pantryProduct = new PantryProductDTO(
@@ -263,7 +259,7 @@ public non-sealed class ShoppingListProductServiceImpl extends AbstractShoppingL
                             purchasedProduct.getProduct().getProductName(),
                             purchasedProduct.getProduct().getCategory()
                     ),
-                    currentTimestamp,
+                    currentDate,
                     null,
                     purchasedProduct.getQuantity(),
                     purchasedProduct.getUnit(),

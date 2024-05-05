@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/pantries/{groupId}/products", produces = { MediaType.APPLICATION_JSON_VALUE })
+@RequestMapping(value = "/api/v1/pantries/{pantryId}/products", produces = { MediaType.APPLICATION_JSON_VALUE })
 @Validated
 @RestController
 public class PantryProductController {

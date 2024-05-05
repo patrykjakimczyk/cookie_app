@@ -3,10 +3,11 @@ package com.cookie.app.model.request;
 import com.cookie.app.model.enums.Gender;
 import com.cookie.app.model.RegexConstants;
 import com.cookie.app.validation.AgeValidation;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
 
 public record RegistrationRequest(
         @Schema(example = "username")
@@ -30,9 +31,12 @@ public record RegistrationRequest(
                 message = "Password has to contain those symbols at least one time for each one: (a-z, A-Z, 0-9, '@$!%*?&') and its length has to be between 8 and 128"
         )
         String password,
+
+        @Schema(example = "05/10/2005")
+        @JsonFormat(pattern = "dd/MM/yyyy")
         @NotNull(message = "Birth date must be present")
         @AgeValidation
-        Timestamp birthDate,
+        LocalDate birthDate,
         @Schema(example = "FEMALE")
         Gender gender
 ) {}

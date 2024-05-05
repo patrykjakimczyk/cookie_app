@@ -111,8 +111,6 @@ export class ScheduleMealComponent implements OnInit {
   }
 
   async submitMealForm(form: FormGroupDirective) {
-    console.log(this.getCorrectDate(this.mealForm.controls.mealDate.value!));
-
     if (!this.mealForm.valid) {
       if (!this.chosenRecipe) {
         this.showUnselectedRecipe = true;

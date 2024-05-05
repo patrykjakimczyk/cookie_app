@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
         info = @Info(
                 title = "cookie_app",
                 description = "Documentation for cookie_app",
-                version = "1.0"
+                version = "1.1"
         ),
         servers =  {
                 @Server(url = "http://localhost:8081"),
