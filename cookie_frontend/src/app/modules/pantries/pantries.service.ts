@@ -6,6 +6,7 @@ import {
   CreatePantryRequest,
   UpdatePantryRequest,
 } from 'src/app/shared/model/requests/pantry-requests';
+import { PageResult } from 'src/app/shared/model/responses/page-result-response';
 import {
   DeletePantryResponse,
   GetPantryResponse,
@@ -13,14 +14,15 @@ import {
 } from 'src/app/shared/model/responses/pantry-response';
 import { GroupDetailsDTO } from 'src/app/shared/model/types/group-types';
 import { PantryProductDTO } from 'src/app/shared/model/types/pantry-types';
+import { ProductDTO } from 'src/app/shared/model/types/product-types';
 import { ShoppingListProductDTO } from 'src/app/shared/model/types/shopping-lists-types';
 import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class PantriesService {
   private readonly url = environment.backendUrl;
-  private readonly pantry_path = 'pantry';
-  private readonly pantry_id_path = 'pantry/{id}';
+  private readonly pantry_path = 'pantries';
+  private readonly pantry_id_path = 'pantries/{id}';
   private readonly products_path = 'products';
   private readonly pantry_products_path = '/products';
   private readonly group_id_url = 'groups/{id}';
@@ -67,18 +69,23 @@ export class PantriesService {
   getPantryProducts(
     pantryId: number,
     page: number,
-    filterValue: string,
-    sortColName: string,
-    sortDirection: string
-  ): Observable<any> {
+    filterValue: string | null,
+    sortColName: string | null,
+    sortDirection: string | null
+  ): Observable<PageResult<PantryProductDTO>> {
     let params = new HttpParams();
 
-    params = params
-      .append('filterValue', filterValue)
-      .append('sortColName', sortColName)
-      .append('sortDirection', sortDirection);
+    if (filterValue) {
+      params = params.append('filterValue', filterValue);
+    }
+    if (sortColName) {
+      params = params.append('sortColName', sortColName);
+    }
+    if (sortDirection) {
+      params = params.append('sortDirection', sortDirection);
+    }
 
-    return this.http.get<any>(
+    return this.http.get<PageResult<PantryProductDTO>>(
       `${this.url}${this.pantry_path}/${pantryId}${this.pantry_products_path}/${page}`,
       { params: params }
     );
@@ -125,12 +132,12 @@ export class PantriesService {
     );
   }
 
-  getProductsWithFilter(filterValue: string): Observable<any> {
+  getProductsWithFilter(filterValue: string): Observable<ProductDTO[]> {
     let params = new HttpParams();
 
     params = params.append('filterValue', filterValue);
 
-    return this.http.get<any>(`${this.url}${this.products_path}`, {
+    return this.http.get<ProductDTO[]>(`${this.url}${this.products_path}`, {
       params: params,
     });
   }

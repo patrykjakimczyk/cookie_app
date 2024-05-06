@@ -3,7 +3,7 @@ package com.cookie.app.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -32,7 +32,7 @@ public class Group {
     private User creator;
 
     @Column(nullable = false)
-    private Timestamp creationDate;
+    private LocalDateTime creationDate;
 
     @ManyToMany
     @JoinTable(
@@ -40,12 +40,14 @@ public class Group {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "group_id")
     )
+    @OrderBy("username ASC")
     private List<User> users;
 
     @OneToOne(mappedBy = "group", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private Pantry pantry;
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.REMOVE)
+    @OrderBy("id ASC")
     private List<ShoppingList> shoppingLists;
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)

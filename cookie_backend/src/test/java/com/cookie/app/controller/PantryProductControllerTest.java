@@ -1,25 +1,21 @@
 package com.cookie.app.controller;
 
 import com.cookie.app.exception.*;
+import com.cookie.app.model.dto.PageResult;
 import com.cookie.app.model.dto.PantryProductDTO;
 import com.cookie.app.model.dto.ProductDTO;
 import com.cookie.app.model.enums.Category;
 import com.cookie.app.model.enums.Unit;
+import com.cookie.app.model.request.FilterRequest;
 import com.cookie.app.model.request.ReservePantryProductRequest;
 import com.cookie.app.service.PantryProductService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,128 +24,120 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class PantryProductControllerTest {
+class PantryProductControllerTest extends AbstractControllerTest {
+    final long pantryProductId = 1L;
+    final long pantryId = 1L;
+    final int reserved = 1;
+
     @Mock
     private PantryProductService pantryProductService;
     @InjectMocks
-    private PantryProductController pantryProductController;
-
-    private Authentication authentication;
-
-    @BeforeEach
-    void init() {
-        this.authentication = new UsernamePasswordAuthenticationToken("username", "password", Collections.emptyList());
-    }
+    private PantryProductController controller;
 
     @Test
-    void test_getPantryProductsSuccess() {
-        ProductDTO productDTO = new ProductDTO(0L, "name", Category.CEREAL);
-        PantryProductDTO pantryProductDTO = new PantryProductDTO(1L, productDTO, null, null, 1, Unit.GRAMS, 0, null);
-        List<PantryProductDTO> pantryProductDTOS = Collections.singletonList(pantryProductDTO);
-        PageImpl<PantryProductDTO> pageResponse = new PageImpl<>(pantryProductDTOS);
+    void test_getPantryProductsSuccessful() {
+        final FilterRequest filterRequest = new FilterRequest("", "", null);
+        final int pageNr = 1;
+        final List<PantryProductDTO> pantryProductDTOS = Collections.singletonList(createPantryProduct());
+        final PageResult<PantryProductDTO> pageResponse = new PageResult<>(pantryProductDTOS, pantryProductDTOS.size(), 1, 0);
 
-        doReturn(pageResponse).when(pantryProductService).getPantryProducts(Mockito.anyLong(), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
-        ResponseEntity<Page<PantryProductDTO>> response = this.pantryProductController.getPantryProducts(1L, 0, "", "", "", authentication);
+        doReturn(pageResponse).when(pantryProductService)
+                .getPantryProducts(this.pantryId, pageNr, filterRequest, authentication.getName());
+        ResponseEntity<PageResult<PantryProductDTO>> response =
+                this.controller.getPantryProducts(pantryId, pageNr, filterRequest, authentication);
 
-        assertEquals(pantryProductDTOS.size(), response.getBody().getTotalElements());
+        assertEquals(pantryProductDTOS.size(), response.getBody().totalElements());
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
     void test_getPantryProductsPantryNotFound() {
-        doThrow(new UserPerformedForbiddenActionException("Pantry not found"))
-                .when(pantryProductService).getPantryProducts(Mockito.anyLong(), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
+        final FilterRequest filterRequest = new FilterRequest("", "", null);
+        final int pageNr = 1;
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> this.pantryProductController.getPantryProducts(1L, 0, "", "", "", authentication));
+        doThrow(new UserPerformedForbiddenActionException("Pantry not found"))
+                .when(pantryProductService).getPantryProducts(pantryId, pageNr, filterRequest, authentication.getName());
+
+        assertThrows(UserPerformedForbiddenActionException.class, () ->
+                this.controller.getPantryProducts(pantryId, 1, filterRequest, authentication));
     }
 
     @Test
-    void test_addProductsToPantrySuccess() {
-        ProductDTO productDTO = new ProductDTO(0L, "name", Category.CEREAL);
-        PantryProductDTO pantryProductDTO = new PantryProductDTO(0L, productDTO, null, null, 1, Unit.GRAMS, 0, null);
-        List<PantryProductDTO> pantryProductDTOS = Collections.singletonList(pantryProductDTO);
+    void test_addProductsToPantrySuccessful() {
+        final List<PantryProductDTO> pantryProductDTOS = Collections.singletonList(createPantryProduct());
 
-        doNothing().when(pantryProductService).addProductsToPantry(Mockito.anyLong(), Mockito.anyList(), Mockito.anyString());
-        ResponseEntity<Void> response = this.pantryProductController.addProductsToPantry(1L, pantryProductDTOS, authentication);
+        ResponseEntity<Void> response = this.controller.addProductsToPantry(pantryId, pantryProductDTOS, authentication);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 
     @Test
     void test_addProductsToPantryPantryNotFound() {
-        ProductDTO productDTO = new ProductDTO(0L, "name", Category.CEREAL);
-        PantryProductDTO pantryProductDTO = new PantryProductDTO(0L, productDTO, null, null, 1, Unit.GRAMS, 0, null);
-        List<PantryProductDTO> pantryProductDTOS = Collections.singletonList(pantryProductDTO);
+        final List<PantryProductDTO> pantryProductDTOS = Collections.singletonList(createPantryProduct());
 
         doThrow(new UserPerformedForbiddenActionException("Pantry not found"))
-                .when(pantryProductService).addProductsToPantry(Mockito.anyLong(), Mockito.anyList(), Mockito.anyString());
+                .when(pantryProductService).addProductsToPantry(pantryId, pantryProductDTOS, authentication.getName());
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> this.pantryProductController.addProductsToPantry(1L, pantryProductDTOS, authentication));
+        assertThrows(UserPerformedForbiddenActionException.class, () -> this.controller.addProductsToPantry(pantryId, pantryProductDTOS, authentication));
     }
 
     @Test
     void test_addProductsToPantryInvalidData() {
-        ProductDTO productDTO = new ProductDTO(0L, "name", Category.CEREAL);
-        PantryProductDTO pantryProductDTO = new PantryProductDTO(0L, productDTO, null, null, 1, Unit.GRAMS, 0, null);
-        List<PantryProductDTO> pantryProductDTOS = Collections.singletonList(pantryProductDTO);
+        final List<PantryProductDTO> pantryProductDTOS = Collections.singletonList(createPantryProduct());
 
         doThrow(new ValidationException("Invalid data"))
-                .when(pantryProductService).addProductsToPantry(Mockito.anyLong(), Mockito.anyList(), Mockito.anyString());
+                .when(pantryProductService).addProductsToPantry(pantryId, pantryProductDTOS, authentication.getName());
 
-        assertThrows(ValidationException.class, () -> this.pantryProductController.addProductsToPantry(1L, pantryProductDTOS, authentication));
+        assertThrows(ValidationException.class, () -> this.controller.addProductsToPantry(pantryId, pantryProductDTOS, authentication));
     }
 
     @Test
-    void test_removeProductsFromPantrySuccess() {
-        List<Long> pantryProductsIds = Collections.singletonList(1L);
+    void test_removeProductsFromPantrySuccessful() {
+        final List<Long> pantryProductsIds = Collections.singletonList(pantryProductId);
 
-        doNothing().when(pantryProductService).removeProductsFromPantry(Mockito.anyLong(), Mockito.anyList(), Mockito.anyString());
-        ResponseEntity<Void> response = this.pantryProductController.removeProductsFromPantry(1L, pantryProductsIds, authentication);
+        ResponseEntity<Void> response = this.controller.removeProductsFromPantry(pantryId, pantryProductsIds, authentication);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
     void test_removeProductsFromPantryModifyingDifferentPantry() {
-        List<Long> pantryProductsIds = Collections.singletonList(1L);
+        final List<Long> pantryProductsIds = Collections.singletonList(pantryProductId);
 
         doThrow(new UserPerformedForbiddenActionException("User tried to access wrong pantry"))
-                .when(pantryProductService).removeProductsFromPantry(Mockito.anyLong(), Mockito.anyList(), Mockito.anyString());
+                .when(pantryProductService).removeProductsFromPantry(pantryId, pantryProductsIds, authentication.getName());
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> this.pantryProductController.removeProductsFromPantry(1L, pantryProductsIds, authentication));
+        assertThrows(UserPerformedForbiddenActionException.class, () ->
+                this.controller.removeProductsFromPantry(pantryId, pantryProductsIds, authentication));
     }
 
     @Test
-    void test_modifyPantryProductSuccess() {
-        ProductDTO productDTO = new ProductDTO(0L, "name", Category.CEREAL);
-        PantryProductDTO pantryProductDTO = new PantryProductDTO(0L, productDTO, null, null, 1, Unit.GRAMS, 0, null);
+    void test_updatePantryProductSuccessful() {
+        final PantryProductDTO pantryProductDTO = createPantryProduct();
 
-        doNothing().when(pantryProductService).modifyPantryProduct(Mockito.anyLong(), Mockito.any(PantryProductDTO.class), Mockito.anyString());
-        ResponseEntity<Void> response = this.pantryProductController.modifyPantryProduct(1L, pantryProductDTO, authentication);
+        ResponseEntity<Void> response = this.controller.updatePantryProduct(pantryId, pantryProductDTO, authentication);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
-    void test_modifyPantryProductModifyingDifferentPantry() {
-        ProductDTO productDTO = new ProductDTO(0L, "name", Category.CEREAL);
-        PantryProductDTO pantryProductDTO = new PantryProductDTO(0L, productDTO, null, null, 1, Unit.GRAMS, 0, null);
+    void test_updatePantryProductUpdatingDifferentPantry() {
+        final PantryProductDTO pantryProductDTO = createPantryProduct();
 
         doThrow(new UserPerformedForbiddenActionException("User tried to access wrong pantry"))
-                .when(pantryProductService).modifyPantryProduct(Mockito.anyLong(), Mockito.any(PantryProductDTO.class), Mockito.anyString());
+                .when(pantryProductService).updatePantryProduct(pantryId, pantryProductDTO, authentication.getName());
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> this.pantryProductController.modifyPantryProduct(1L, pantryProductDTO, authentication));
+        assertThrows(UserPerformedForbiddenActionException.class, () ->
+                this.controller.updatePantryProduct(pantryId, pantryProductDTO, authentication));
     }
 
     @Test
-    void test_reservePantryProductSuccess() {
-        long pantryProductId = 1L;
-        ReservePantryProductRequest request = new ReservePantryProductRequest(1);
-        ProductDTO productDTO = new ProductDTO(0L, "name", Category.CEREAL);
-        PantryProductDTO pantryProductDTO = new PantryProductDTO(1L, productDTO, null, null, 1, Unit.GRAMS, 0, null);
+    void test_reservePantryProductSuccessful() {
+        final ReservePantryProductRequest request = new ReservePantryProductRequest(reserved);
+        final PantryProductDTO pantryProductDTO = createPantryProduct();
 
-        doReturn(pantryProductDTO).when(pantryProductService).reservePantryProduct(Mockito.anyLong(), Mockito.anyLong(), Mockito.anyInt(), Mockito.anyString());
-        ResponseEntity<PantryProductDTO> response = this.pantryProductController.reservePantryProduct(1L, pantryProductId, request, authentication);
+        doReturn(pantryProductDTO).when(pantryProductService).reservePantryProduct(pantryId, pantryProductId, request.reserved(), authentication.getName());
+        ResponseEntity<PantryProductDTO> response = this.controller.reservePantryProduct(pantryId, pantryProductId, request, authentication);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(1L, pantryProductDTO.id());
@@ -157,35 +145,49 @@ class PantryProductControllerTest {
 
     @Test
     void test_reservePantryProductModifyingDifferentPantry() {
-        long pantryProductId = 1L;
-        ReservePantryProductRequest request = new ReservePantryProductRequest(1);
+        final ReservePantryProductRequest request = new ReservePantryProductRequest(reserved);
 
         doThrow(new UserPerformedForbiddenActionException("User tried to access wrong pantry"))
-                .when(pantryProductService).reservePantryProduct(Mockito.anyLong(), Mockito.anyLong(), Mockito.anyInt(), Mockito.anyString());
+                .when(pantryProductService).reservePantryProduct(pantryId, pantryProductId, request.reserved(), authentication.getName());
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> this.pantryProductController.reservePantryProduct(1L, pantryProductId, request, authentication));
+        assertThrows(UserPerformedForbiddenActionException.class, () ->
+                this.controller.reservePantryProduct(pantryId, pantryProductId, request, authentication));
     }
 
     @Test
     void test_reservePantryProductPantryProductNotFound() {
-        long pantryProductId = 1L;
-        ReservePantryProductRequest request = new ReservePantryProductRequest(1);
+        final ReservePantryProductRequest request = new ReservePantryProductRequest(this.reserved);
 
         doThrow(new UserPerformedForbiddenActionException("Pantry product not found"))
-                .when(pantryProductService).reservePantryProduct(Mockito.anyLong(), Mockito.anyLong(), Mockito.anyInt(), Mockito.anyString());
+                .when(pantryProductService).reservePantryProduct(pantryId, pantryProductId, request.reserved(), authentication.getName());
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> this.pantryProductController.reservePantryProduct(1L, pantryProductId, request, authentication));
+        assertThrows(UserPerformedForbiddenActionException.class, () ->
+                this.controller.reservePantryProduct(pantryId, pantryProductId, request, authentication));
     }
 
     @Test
     void test_reservePantryProductReturnsNullBody() {
-        long pantryProductId = 1L;
-        ReservePantryProductRequest request = new ReservePantryProductRequest(1);
+        final ReservePantryProductRequest request = new ReservePantryProductRequest(reserved);
 
-        doReturn(null).when(pantryProductService).reservePantryProduct(Mockito.anyLong(), Mockito.anyLong(), Mockito.anyInt(), Mockito.anyString());
-        ResponseEntity<PantryProductDTO> response = this.pantryProductController.reservePantryProduct(1L, pantryProductId, request, authentication);
+        doReturn(null).when(pantryProductService).reservePantryProduct(pantryId, pantryProductId, request.reserved(), authentication.getName());
+        ResponseEntity<PantryProductDTO> response = this.controller.reservePantryProduct(pantryId, pantryProductId, request, authentication);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNull(response.getBody());
+    }
+
+    private PantryProductDTO createPantryProduct() {
+        final ProductDTO productDTO = new ProductDTO(0L, "name", Category.CEREAL);
+
+        return new PantryProductDTO(
+                pantryProductId,
+                productDTO,
+                null,
+                null,
+                1,
+                Unit.GRAMS,
+                0,
+                null
+        );
     }
 }

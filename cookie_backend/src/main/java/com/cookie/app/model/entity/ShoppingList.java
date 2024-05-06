@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 @Data
@@ -33,10 +32,8 @@ public class ShoppingList {
     @JoinColumn(name = "creator_id", referencedColumnName = "id", nullable = false)
     private User creator;
 
-    @Column(name = "creation_date", nullable = false)
-    private Timestamp creationDate;
-
     @OneToMany(mappedBy = "shoppingList", cascade = CascadeType.REMOVE)
+    @OrderBy("id ASC")
     private List<ShoppingListProduct> productsList;
 
     @ManyToOne(fetch = FetchType.LAZY)

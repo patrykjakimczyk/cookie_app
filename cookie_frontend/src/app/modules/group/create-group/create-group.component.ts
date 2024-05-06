@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 import { RegexConstants } from 'src/app/shared/model/constants/regex-constants';
 import { GroupService } from '../group.service';
-import { GroupNameTakenResponse } from 'src/app/shared/model/responses/group-response';
+import { GetGroupResponse } from 'src/app/shared/model/responses/group-response';
 
 @Component({
   selector: 'app-create-group',
@@ -19,8 +19,8 @@ export class CreateGroupComponent {
   createGroup(name: string) {
     this.groupService
       .createGroup({ groupName: name })
-      .subscribe((response: GroupNameTakenResponse) => {
-        if (response.groupNameTaken) {
+      .subscribe((response: GetGroupResponse) => {
+        if (!response.groupId) {
           this.groupNameTaken = true;
         } else {
           this.groupNameTaken = false;

@@ -87,6 +87,12 @@ export class RegistrationFormComponent {
       return;
     }
 
+    if (this.form.controls.birthDate.value) {
+      this.form.controls.birthDate.setValue(
+        new Date(this.form.controls.birthDate.value).toLocaleDateString('en-GB')
+      );
+    }
+
     this.service.register(this.form.value).subscribe((response) => {
       if (response.length === 0) {
         this.registrationSucceded = true;

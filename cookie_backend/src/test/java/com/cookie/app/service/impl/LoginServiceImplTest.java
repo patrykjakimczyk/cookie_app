@@ -2,6 +2,7 @@ package com.cookie.app.service.impl;
 
 import com.cookie.app.exception.UserWasNotFoundAfterAuthException;
 import com.cookie.app.model.entity.User;
+import com.cookie.app.model.enums.Gender;
 import com.cookie.app.model.request.RegistrationRequest;
 import com.cookie.app.model.response.LoginResponse;
 import com.cookie.app.model.response.RegistrationResponse;
@@ -10,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -24,22 +24,21 @@ import static org.mockito.Mockito.doReturn;
 class LoginServiceImplTest {
     final String email = "email@email.com";
     final String username = "username";
+
     @Mock
     UserRepository userRepository;
-
     @Mock
     PasswordEncoder passwordEncoder;
-
     @InjectMocks
-    LoginServiceImpl loginService;
+    LoginServiceImpl service;
 
     @Test
     void test_userRegistrationUnSuccessfulUsernameTaken() {
-        RegistrationRequest userToRegister = new RegistrationRequest(username, email, null, null, null);
-        User user = User.builder().username(username).email("email2").build();
+        final RegistrationRequest userToRegister = new RegistrationRequest(username, email, null, null, null);
+        final User user = User.builder().username(username).email("email2").build();
 
-        doReturn(Optional.of(user)).when(userRepository).findByUsername(Mockito.anyString());
-        RegistrationResponse response = this.loginService.userRegistration(userToRegister);
+        doReturn(Optional.of(user)).when(userRepository).findByUsername(userToRegister.username());
+        RegistrationResponse response = this.service.userRegistration(userToRegister);
 
         assertEquals(1, response.duplicates().size());
         assertEquals("username", response.duplicates().get(0));
@@ -47,11 +46,11 @@ class LoginServiceImplTest {
 
     @Test
     void test_userRegistrationUnSuccessfulEmailTaken() {
-        RegistrationRequest userToRegister = new RegistrationRequest(username, email, null, null, null);
-        User user = User.builder().username("username2").email(email).build();
+        final RegistrationRequest userToRegister = new RegistrationRequest(username, email, null, null, null);
+        final User user = User.builder().username("username2").email(email).build();
 
-        doReturn(Optional.of(user)).when(userRepository).findByEmail(Mockito.anyString());
-        RegistrationResponse response = this.loginService.userRegistration(userToRegister);
+        doReturn(Optional.of(user)).when(userRepository).findByEmail(userToRegister.email());
+        RegistrationResponse response = this.service.userRegistration(userToRegister);
 
         assertEquals(1, response.duplicates().size());
         assertEquals("email", response.duplicates().get(0));
@@ -59,29 +58,29 @@ class LoginServiceImplTest {
 
     @Test
     void test_userRegistrationSuccessful() {
-        RegistrationRequest userToRegister = new RegistrationRequest(username, email, null, null, null);
+        final RegistrationRequest userToRegister = new RegistrationRequest(username, email, null, null, Gender.MALE);
 
-        doReturn(Optional.empty()).when(userRepository).findByUsername(Mockito.anyString());
-        RegistrationResponse response = this.loginService.userRegistration(userToRegister);
+        doReturn(Optional.empty()).when(userRepository).findByUsername(userToRegister.username());
+        RegistrationResponse response = this.service.userRegistration(userToRegister);
 
         assertEquals(0, response.duplicates().size());
     }
 
     @Test
     void test_getUsernameSuccessful() {
-        User user = User.builder().username(username).email(email).build();
+        final User user = User.builder().username(username).email(email).build();
 
-        doReturn(Optional.of(user)).when(userRepository).findByEmail(Mockito.anyString());
-        LoginResponse response = this.loginService.getLoginInfo(email);
+        doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
+        LoginResponse response = this.service.getLoginInfo(email);
 
         assertEquals("username", response.username());
     }
 
     @Test
-    void test_getUsernameThrowsError() {
+    void test_getUsernameThrowsException() {
 
-        doReturn(Optional.empty()).when(userRepository).findByEmail(Mockito.anyString());
+        doReturn(Optional.empty()).when(userRepository).findByEmail(email);
 
-        assertThrows(UserWasNotFoundAfterAuthException.class, () -> this.loginService.getLoginInfo(email));
+        assertThrows(UserWasNotFoundAfterAuthException.class, () -> this.service.getLoginInfo(email));
     }
 }

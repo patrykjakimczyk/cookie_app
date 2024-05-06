@@ -1,6 +1,5 @@
 package com.cookie.app.repository;
 
-import com.cookie.app.model.entity.PantryProduct;
 import com.cookie.app.model.entity.ShoppingListProduct;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,9 +13,7 @@ import java.util.List;
 public interface ShoppingListProductRepository extends CrudRepository<ShoppingListProduct, Long> {
     void deleteByIdIn(List<Long> ids);
 
-    @Query(value = "SELECT DISTINCT slp.* FROM shopping_list_product slp JOIN product p ON p.id = slp.product_id " +
-            "where slp.shopping_list_id = ?1", nativeQuery = true)
-    Page<ShoppingListProduct> findProductsInShoppingList(long id, PageRequest pageable);
+    Page<ShoppingListProduct> findShoppingListProductByShoppingListId(long id, PageRequest pageable);
 
     @Query(value = "SELECT DISTINCT slp.* FROM shopping_list_product slp JOIN product p ON p.id = slp.product_id " +
             "WHERE slp.shopping_list_id = ?1 AND (LOWER(p.product_name) LIKE LOWER(CONCAT('%', ?2, '%')) OR " +

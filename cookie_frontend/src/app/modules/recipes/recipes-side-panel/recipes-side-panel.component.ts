@@ -53,12 +53,12 @@ export class RecipesSidePanelComponent implements AfterViewInit {
 
   formSubmitted() {
     const params: GetRecipesParams = {
-      filterValue: this.filterForm.controls['filterValue'].value!,
-      mealTypes: this.filterForm.controls['mealTypes'].value!,
-      prepTime: this.filterForm.controls['prepTime'].value!,
-      portions: this.filterForm.controls['portions'].value!,
-      sortColName: this.filterForm.controls['sortColName'].value!,
-      sortDirection: this.filterForm.controls['SortDirection'].value!,
+      filterValue: this.filterForm.controls['filterValue'].value,
+      mealTypes: this.filterForm.controls['mealTypes'].value,
+      prepTime: this.filterForm.controls['prepTime'].value,
+      portions: this.filterForm.controls['portions'].value,
+      sortColName: this.filterForm.controls['sortColName'].value,
+      sortDirection: this.filterForm.controls['SortDirection'].value,
     };
 
     this.filterRequest.emit(params);

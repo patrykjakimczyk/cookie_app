@@ -1,32 +1,37 @@
 package com.cookie.app.service.impl;
 
+import com.cookie.app.exception.ResourceNotFoundException;
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
-import com.cookie.app.model.entity.Group;
 import com.cookie.app.model.entity.ShoppingList;
 import com.cookie.app.model.entity.User;
 import com.cookie.app.model.enums.AuthorityEnum;
-import com.cookie.app.model.mapper.AuthorityMapperDTO;
+import com.cookie.app.model.mapper.AuthorityMapper;
 import com.cookie.app.repository.ProductRepository;
 import com.cookie.app.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Slf4j
-public abstract class AbstractShoppingListService extends AbstractCookieService {
+public abstract sealed class AbstractShoppingListService extends AbstractCookieService permits ShoppingListServiceImpl, ShoppingListProductServiceImpl {
 
-    AbstractShoppingListService(UserRepository userRepository,
+    protected AbstractShoppingListService(UserRepository userRepository,
                                 ProductRepository productRepository,
-                                AuthorityMapperDTO authorityMapperDTO) {
-        super(userRepository, productRepository, authorityMapperDTO);
+                                AuthorityMapper authorityMapper) {
+        super(userRepository, productRepository, authorityMapper);
     }
 
-    ShoppingList getShoppingListIfUserHasAuthority(long shoppingListId, User user, AuthorityEnum requiredAuthority) {
+    protected ShoppingList getShoppingListIfUserHasAuthority(long shoppingListId, String userEmail, AuthorityEnum requiredAuthority) {
+        User user = super.getUserByEmail(userEmail);
+
+        return getShoppingListIfUserHasAuthority(shoppingListId, user, requiredAuthority);
+    }
+
+    protected ShoppingList getShoppingListIfUserHasAuthority(long shoppingListId, User user, AuthorityEnum requiredAuthority) {
         ShoppingList shoppingList = this.findShoppingListInUserGroups(shoppingListId, user).orElseThrow(
                 () -> {
                     log.info("User: {} tried to access shopping list without being a member of the shopping list's group", user.getEmail());
-                    return new UserPerformedForbiddenActionException("You cannot access the shopping list because you are not member of it");
+                    return new ResourceNotFoundException("You cannot access the shopping list because it could not be found in your groups");
                 }
         );
 
@@ -38,7 +43,7 @@ public abstract class AbstractShoppingListService extends AbstractCookieService 
         return shoppingList;
     }
 
-    Optional<ShoppingList> findShoppingListInUserGroups(long listId, User user) {
+    protected Optional<ShoppingList> findShoppingListInUserGroups(long listId, User user) {
         return user.getGroups().stream()
                 .flatMap(group -> group.getShoppingLists().stream())
                 .filter(shoppingList -> shoppingList.getId() == listId)

@@ -28,7 +28,7 @@ public class ShoppingListProduct {
     @JoinColumn(name = "shopping_list_id", referencedColumnName = "id")
     private ShoppingList shoppingList;
 
-    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
 
@@ -43,11 +43,9 @@ public class ShoppingListProduct {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof ShoppingListProduct)) {
+        if (!(o instanceof ShoppingListProduct shoppingListProduct)) {
             return false;
         }
-
-        ShoppingListProduct shoppingListProduct = (ShoppingListProduct) o;
 
         return this.getId() == shoppingListProduct.getId() && this.getProduct().equals(shoppingListProduct.getProduct());
     }

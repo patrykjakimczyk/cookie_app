@@ -27,6 +27,7 @@ public class Pantry {
     private String pantryName;
 
     @OneToMany(mappedBy = "pantry", cascade = CascadeType.REMOVE)
+    @OrderBy("id ASC")
     private List<PantryProduct> pantryProducts;
 
     @OneToOne

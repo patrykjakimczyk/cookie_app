@@ -1,15 +1,17 @@
 package com.cookie.app.service.impl;
 
+import com.cookie.app.exception.ResourceNotFoundException;
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.exception.ValidationException;
+import com.cookie.app.model.dto.PageResult;
 import com.cookie.app.model.dto.PantryProductDTO;
 import com.cookie.app.model.dto.ProductDTO;
 import com.cookie.app.model.dto.ShoppingListProductDTO;
 import com.cookie.app.model.entity.*;
 import com.cookie.app.model.enums.AuthorityEnum;
-import com.cookie.app.model.mapper.AuthorityMapperDTO;
-import com.cookie.app.model.mapper.ShoppingListProductMapperDTO;
-import com.cookie.app.repository.PantryProductRepository;
+import com.cookie.app.model.mapper.AuthorityMapper;
+import com.cookie.app.model.mapper.ShoppingListProductMapper;
+import com.cookie.app.model.request.FilterRequest;
 import com.cookie.app.repository.ProductRepository;
 import com.cookie.app.repository.ShoppingListProductRepository;
 import com.cookie.app.repository.UserRepository;
@@ -17,74 +19,63 @@ import com.cookie.app.service.PantryProductService;
 import com.cookie.app.service.ShoppingListProductService;
 import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Slf4j
-@Transactional
 @Service
-public class ShoppingListProductServiceImpl extends AbstractShoppingListService implements ShoppingListProductService {
+public non-sealed class ShoppingListProductServiceImpl extends AbstractShoppingListService implements ShoppingListProductService {
     private final ShoppingListProductRepository shoppingListProductRepository;
     private final PantryProductService pantryProductService;
-    private final ShoppingListProductMapperDTO shoppingListProductMapper;
+    private final ShoppingListProductMapper shoppingListProductMapper;
 
     public ShoppingListProductServiceImpl(UserRepository userRepository,
                                           ProductRepository productRepository,
-                                          AuthorityMapperDTO authorityMapperDTO,
+                                          AuthorityMapper authorityMapper,
                                           ShoppingListProductRepository shoppingListProductRepository,
                                           PantryProductService pantryProductService,
-                                          ShoppingListProductMapperDTO shoppingListProductMapper) {
-        super(userRepository, productRepository, authorityMapperDTO);
+                                          ShoppingListProductMapper shoppingListProductMapper) {
+        super(userRepository, productRepository, authorityMapper);
         this.shoppingListProductRepository = shoppingListProductRepository;
         this.pantryProductService = pantryProductService;
         this.shoppingListProductMapper = shoppingListProductMapper;
     }
 
     @Override
-    public Page<ShoppingListProductDTO> getShoppingListProducts(
+    public PageResult<ShoppingListProductDTO> getShoppingListProducts(
             long listId,
             int page,
-            String filterValue,
-            String sortColName,
-            String sortDirection,
+            FilterRequest filterRequest,
             String userEmail
     ) {
-        User user = this.getUserByEmail(userEmail);
-        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(listId, user, null);
+        ShoppingList shoppingList = super.getShoppingListIfUserHasAuthority(listId, userEmail, null);
+        PageRequest pageRequest = super
+                .createPageRequest(page - 1, filterRequest.getSortColName(), filterRequest.getSortDirection());
 
-        PageRequest pageRequest = this.createPageRequest(page, sortColName, sortDirection);
-
-        if(StringUtils.isBlank(filterValue)) {
-            return this.shoppingListProductRepository
-                    .findProductsInShoppingList(shoppingList.getId(), pageRequest)
-                    .map(shoppingListProductMapper);
+        if(StringUtils.isBlank(filterRequest.getFilterValue())) {
+            return new PageResult<>(this.shoppingListProductRepository
+                    .findShoppingListProductByShoppingListId(shoppingList.getId(), pageRequest)
+                    .map(shoppingListProductMapper::mapToDto));
         }
 
-        return this.shoppingListProductRepository
-                .findProductsInShoppingListWithFilter(shoppingList.getId(), filterValue, pageRequest)
-                .map(shoppingListProductMapper);
+        return new PageResult<>(this.shoppingListProductRepository
+                .findProductsInShoppingListWithFilter(shoppingList.getId(), filterRequest.getFilterValue(), pageRequest)
+                .map(shoppingListProductMapper::mapToDto));
     }
 
+    @Transactional
     @Override
     public void addProductsToShoppingList(long listId, List<ShoppingListProductDTO> listProductDTOList, String userEmail) {
-        User user = this.getUserByEmail(userEmail);
-        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(listId, user, AuthorityEnum.ADD_TO_SHOPPING_LIST);
-
+        ShoppingList shoppingList = super.getShoppingListIfUserHasAuthority(listId, userEmail, AuthorityEnum.ADD_TO_SHOPPING_LIST);
         List<ShoppingListProduct> newShoppingListProducts = new ArrayList<>();
 
-        listProductDTOList.forEach(listProductDTO -> {
+        for (ShoppingListProductDTO listProductDTO : listProductDTOList) {
             if (listProductDTO.id() > 0) {
                 throw new ValidationException(
                         "Shopping list product id must be not set while inserting it to shopping list");
@@ -93,100 +84,91 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
                         "Shopping list product cannot be purchased while inserting it to shopping list");
             }
 
-            ShoppingListProduct shoppingListProduct = mapToShoppingListProduct(listProductDTO, shoppingList, null);
-            shoppingList.getProductsList().add(shoppingListProduct);
-            newShoppingListProducts.add(shoppingListProduct);
-        });
+            ShoppingListProduct shoppingListProduct = mapToShoppingListProduct(listProductDTO, shoppingList);
 
-        log.info("User with email {} added {} products to shopping list with id {}",
+            if (shoppingListProduct.getId() == 0L) {
+                shoppingList.getProductsList().add(shoppingListProduct);
+            }
+            newShoppingListProducts.add(shoppingListProduct);
+        }
+
+        log.info("User with email={} added={} products to shopping list with id={}",
                 userEmail,
                 newShoppingListProducts.size(),
                 shoppingList.getId());
         this.shoppingListProductRepository.saveAll(newShoppingListProducts);
     }
 
+    @Transactional
     @Override
     public void removeProductsFromShoppingList(long listId, List<Long> listProductIds, String userEmail) {
-        listProductIds.stream()
-                .filter(id -> id == null || id == 0)
-                .findAny()
-                .ifPresent(id -> {
-                    throw new UserPerformedForbiddenActionException("Cannot remove products because list of ids is incorrect");
-                });
+        ShoppingList shoppingList = checkIfAllProductIdsAreOnList(listId, listProductIds, userEmail);
 
-        User user = this.getUserByEmail(userEmail);
-        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(listId, user, AuthorityEnum.MODIFY_SHOPPING_LIST);
-
-        if (this.isAnyProductNotOnList(shoppingList, listProductIds)) {
-            log.info("User with email={} tried to remove products from different shopping list", userEmail);
-            throw new UserPerformedForbiddenActionException("Cannot remove products from different shopping list");
-        }
-
+        this.shoppingListProductRepository.deleteByIdIn(listProductIds);
         log.info("User with email {} removed {} products from shopping list with id {}",
                 userEmail,
                 listProductIds.size(),
                 shoppingList.getId());
-        this.shoppingListProductRepository.deleteByIdIn(listProductIds);
     }
 
+    @Transactional
     @Override
-    public void modifyShoppingListProduct(long listId, ShoppingListProductDTO listProductDTO, String userEmail) {
+    public void updateShoppingListProduct(long listId, ShoppingListProductDTO listProductDTO, String userEmail) {
         if (listProductDTO.id() == 0) {
             log.info("User with email={} tried to modify product which is not saved in database", userEmail);
             throw new ValidationException("Cannot modify product because it doesn't exist");
         }
 
-        User user = this.getUserByEmail(userEmail);
-        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(listId, user, AuthorityEnum.MODIFY_SHOPPING_LIST);
-
-        ShoppingListProduct productToModify = ShoppingListProduct
-                .builder()
-                .id(listProductDTO.id())
-                .product(Product
-                        .builder()
-                        .id(listProductDTO.product().productId())
-                        .productName(listProductDTO.product().productName())
-                        .category(listProductDTO.product().category())
-                        .build()
-                )
-                .build();
-
-        if (this.isAnyProductNotOnList(shoppingList.getProductsList(), List.of(productToModify))) {
-            log.info("User with email={} tried to modify product from different shopping list", userEmail);
-            throw new UserPerformedForbiddenActionException("Cannot modify product from different shopping list");
-        }
-
-        this.shoppingListProductRepository.save(
-                mapToShoppingListProduct(listProductDTO, shoppingList, productToModify.getProduct())
-        );
-    }
-
-    @Override
-    public void changePurchaseStatusForProducts(long listId, List<Long> listProductIds, String userEmail) {
-        listProductIds.stream()
-                .filter(id -> id == null || id == 0)
-                .findAny()
-                .ifPresent(id -> {
-                    throw new UserPerformedForbiddenActionException("Cannot remove products because list of ids is incorrect");
+        ShoppingList shoppingList = super.getShoppingListIfUserHasAuthority(listId, userEmail, AuthorityEnum.MODIFY_SHOPPING_LIST);
+        ShoppingListProduct shoppingListProduct = this.shoppingListProductRepository
+                .findById(listProductDTO.id())
+                .orElseThrow(() -> {
+                    log.info("User with email={} tried to update product which does not exists", userEmail);
+                    return new ResourceNotFoundException("Shopping list product was not found");
                 });
 
-        User user = this.getUserByEmail(userEmail);
-        ShoppingList shoppingList = this.getShoppingListIfUserHasAuthority(listId, user, AuthorityEnum.MODIFY_SHOPPING_LIST);
-
-        if (this.isAnyProductNotOnList(shoppingList, listProductIds)) {
-            log.info("User with email={} tried to modify products from different shopping list", userEmail);
-            throw new UserPerformedForbiddenActionException("Cannot modify products from different shopping list");
+        if (shoppingListProduct.getShoppingList().getId() != listId) {
+            log.info("User with email={} tried to update product from different shopping list", userEmail);
+            throw new UserPerformedForbiddenActionException("Cannot update products from different shopping list");
         }
 
-        List<ShoppingListProduct> shoppingListProducts = shoppingList.getProductsList()
-                .stream()
-                .filter(shoppingListProduct -> listProductIds.contains(shoppingListProduct.getId()))
-                .peek(shoppingListProduct -> shoppingListProduct.setPurchased(!shoppingListProduct.isPurchased()))
-                .toList();
+        Product productToModify = Product.builder()
+                .id(listProductDTO.product().productId())
+                .productName(listProductDTO.product().productName())
+                .category(listProductDTO.product().category())
+                .build();
 
-        this.shoppingListProductRepository.saveAll(shoppingListProducts);
+        ShoppingListProduct modifiedProduct = findProductInShoppingList(shoppingList, listProductDTO, productToModify);
+
+        if (modifiedProduct == null) {
+            log.info("User with email={} tried to modify invalid shopping list product", userEmail);
+            throw new UserPerformedForbiddenActionException("Cannot modify invalid shopping list product");
+        }
+
+        this.shoppingListProductRepository.save(modifiedProduct);
     }
 
+    @Transactional
+    @Override
+    public void changePurchaseStatusForProducts(long listId, List<Long> listProductIds, String userEmail) {
+        ShoppingList shoppingList =
+                super.getShoppingListIfUserHasAuthority(listId, userEmail, AuthorityEnum.MODIFY_SHOPPING_LIST);
+        List<ShoppingListProduct> listProductsToChange = shoppingList.getProductsList()
+                .stream()
+                .filter(shoppingListProduct -> listProductIds.contains(shoppingListProduct.getId()))
+                .toList();
+
+        if (listProductsToChange.size() != listProductIds.size()) {
+            log.info("User with email={} tried to change purchase status for products which are not on shopping list", userEmail);
+            throw new UserPerformedForbiddenActionException("Cannot modify purchase status for products which are not on shopping list");
+        }
+
+        listProductsToChange.forEach(listProduct -> listProduct.setPurchased(!listProduct.isPurchased()));
+
+        this.shoppingListProductRepository.saveAll(listProductsToChange);
+    }
+
+    @Transactional
     @Override
     public void transferProductsToPantry(long listId, String userEmail) {
         User user = super.getUserByEmail(userEmail);
@@ -195,11 +177,11 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
 
         if (pantry == null) {
             log.info("User with email={} tried to transfer shopping list for group with not assigned pantry", userEmail);
-            throw new UserPerformedForbiddenActionException("User cannot transfer products because his group does not have assigned pantry");
+            throw new UserPerformedForbiddenActionException("Cannot transfer products because your group does not have assigned pantry");
         }
 
         if (!super.userHasAuthority(user, pantry.getGroup().getId(), AuthorityEnum.ADD)) {
-            log.info("User: {} tried to perform action in pantry without required permission", user.getEmail());
+            log.info("User={} tried to perform action in pantry without required permission", user.getEmail());
             throw new UserPerformedForbiddenActionException("You have not permissions to do that");
         }
 
@@ -213,16 +195,17 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
             throw new UserPerformedForbiddenActionException("Cannot transfer unpurchased shopping list products");
         }
 
-        List<PantryProductDTO> newPantryProducts = mapListProductsToPantryProducts(purchasedProducts, pantry);
-
-        log.info("User with email {} transfered {} products to shopping list with id {}",
-                userEmail,
-                newPantryProducts.size(),
-                shoppingList.getId()
-        );
+        List<PantryProductDTO> newPantryProducts = mapListProductsToPantryProducts(purchasedProducts);
 
         this.shoppingListProductRepository.deleteAll(purchasedProducts);
-        this.pantryProductService.addProductsToPantryFromList(pantry, newPantryProducts, user);
+        this.pantryProductService.addProductsToPantryFromList(pantry, newPantryProducts);
+
+        log.info("User with email={} transfered={} products from shopping list with id={} to pantry with id={}",
+                userEmail,
+                newPantryProducts.size(),
+                shoppingList.getId(),
+                pantry.getId()
+        );
     }
 
     @Override
@@ -254,7 +237,9 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
             this.shoppingListProductRepository.save(shoppingListProduct);
         }
 
-        this.shoppingListProductRepository.saveAll(addedProducts);
+        if (!addedProducts.isEmpty()) {
+            this.shoppingListProductRepository.saveAll(addedProducts);
+        }
     }
 
     private boolean areRecipeAndListProductEquals(RecipeProduct recipeProduct, ShoppingListProduct listProduct) {
@@ -262,9 +247,9 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
                 recipeProduct.getUnit() == listProduct.getUnit();
     }
 
-    private List<PantryProductDTO> mapListProductsToPantryProducts(List<ShoppingListProduct> purchasedProducts, Pantry pantry) {
+    private List<PantryProductDTO> mapListProductsToPantryProducts(List<ShoppingListProduct> purchasedProducts) {
         List<PantryProductDTO> newPantryProducts = new ArrayList<>();
-        Timestamp currentTimestamp = Timestamp.from(Instant.now().truncatedTo(ChronoUnit.DAYS));
+        LocalDate currentDate = LocalDate.now();
 
         for (ShoppingListProduct purchasedProduct : purchasedProducts) {
             PantryProductDTO pantryProduct = new PantryProductDTO(
@@ -274,12 +259,12 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
                             purchasedProduct.getProduct().getProductName(),
                             purchasedProduct.getProduct().getCategory()
                     ),
-                    currentTimestamp,
+                    currentDate,
                     null,
                     purchasedProduct.getQuantity(),
                     purchasedProduct.getUnit(),
                     0,
-                    ""
+                    null
             );
 
             newPantryProducts.add(pantryProduct);
@@ -288,18 +273,29 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
         return newPantryProducts;
     }
 
-    private boolean isAnyProductNotOnList(ShoppingList shoppingList, List<Long> productIds) {
-        List<Long> shoppingListProductsIds = shoppingList.getProductsList().stream().map(ShoppingListProduct::getId).toList();
-        return this.isAnyProductNotOnList(shoppingListProductsIds, productIds);
+    private ShoppingList checkIfAllProductIdsAreOnList(long listId, List<Long> listProductIds, String userEmail) {
+        ShoppingList shoppingList = super.getShoppingListIfUserHasAuthority(listId, userEmail, AuthorityEnum.MODIFY_SHOPPING_LIST);
+
+        if (this.isAnyProductNotOnList(shoppingList, listProductIds)) {
+            log.info("User with email={} tried to remove products from different shopping list", userEmail);
+            throw new UserPerformedForbiddenActionException("Cannot remove products from different shopping list");
+        }
+
+        return shoppingList;
     }
 
-    private ShoppingListProduct mapToShoppingListProduct(ShoppingListProductDTO listProductDTO, ShoppingList shoppingList, Product existingProduct) {
-        Product product = existingProduct != null ? existingProduct : this.checkIfProductExists(listProductDTO.product());
-        ShoppingListProduct foundShoppingListProduct = null;
-        // if product id > 0 then there is a chance that we have that product in our pantry, because product is in database
-        if (product.getId() > 0) {
-            foundShoppingListProduct = this.findProductInShoppingList(shoppingList, listProductDTO, product);
-        }
+    private boolean isAnyProductNotOnList(ShoppingList shoppingList, List<Long> productIds) {
+        List<Long> shoppingListProductsIds = shoppingList.getProductsList()
+                .stream()
+                .map(ShoppingListProduct::getId)
+                .toList();
+
+        return super.isAnyProductNotOnList(shoppingListProductsIds, productIds);
+    }
+
+    private ShoppingListProduct mapToShoppingListProduct(ShoppingListProductDTO listProductDTO, ShoppingList shoppingList) {
+        Product product = super.checkIfProductExists(listProductDTO.product());
+        ShoppingListProduct foundShoppingListProduct = findProductInShoppingList(shoppingList, listProductDTO, product);
 
         if (foundShoppingListProduct != null) {
             return foundShoppingListProduct;
@@ -349,6 +345,7 @@ public class ShoppingListProductServiceImpl extends AbstractShoppingListService 
             Product product
     ) {
         return shoppingListProduct.getProduct().equals(product) &&
-                shoppingListProduct.getUnit() == listProductDTO.unit();
+                shoppingListProduct.getUnit() == listProductDTO.unit() &&
+                shoppingListProduct.isPurchased() == listProductDTO.purchased();
     }
 }

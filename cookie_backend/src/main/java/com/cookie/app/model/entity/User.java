@@ -8,7 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -43,10 +44,10 @@ public class User {
     private String password;
 
     @Column(nullable = false)
-    private Timestamp creationDate;
+    private LocalDateTime creationDate;
 
     @Column(nullable = false)
-    private Timestamp birthDate;
+    private LocalDate birthDate;
 
     @Column(length = 6, updatable = false)
     @Enumerated(EnumType.STRING)
@@ -60,12 +61,9 @@ public class User {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof User)) {
+        if (!(o instanceof User user)) {
             return false;
         }
-
-        User user = (User) o;
-
         return this.getId() == user.getId();
     }
 }

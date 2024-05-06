@@ -1,4 +1,5 @@
 export const maxPrepTimes = [
+  { name: '5 minutes', value: 5 },
   { name: '15 minutes', value: 15 },
   { name: '30 minutes', value: 30 },
   { name: '45 minutes', value: 45 },

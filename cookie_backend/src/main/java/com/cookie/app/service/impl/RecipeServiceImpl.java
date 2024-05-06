@@ -1,14 +1,16 @@
 package com.cookie.app.service.impl;
 
+import com.cookie.app.exception.ResourceNotFoundException;
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
-import com.cookie.app.exception.ValidationException;
 import com.cookie.app.model.dto.*;
 import com.cookie.app.model.entity.*;
 import com.cookie.app.model.enums.MealType;
-import com.cookie.app.model.mapper.AuthorityMapperDTO;
-import com.cookie.app.model.mapper.RecipeDetailsMapperDTO;
-import com.cookie.app.model.mapper.RecipeMapperDTO;
+import com.cookie.app.model.mapper.AuthorityMapper;
+import com.cookie.app.model.mapper.RecipeDetailsMapper;
+import com.cookie.app.model.mapper.RecipeMapper;
 import com.cookie.app.model.request.CreateRecipeRequest;
+import com.cookie.app.model.request.RecipeFilterRequest;
+import com.cookie.app.model.request.UpdateRecipeRequest;
 import com.cookie.app.model.response.CreateRecipeResponse;
 import com.cookie.app.repository.ProductRepository;
 import com.cookie.app.repository.RecipeProductRepository;
@@ -20,89 +22,83 @@ import com.cookie.app.service.ShoppingListProductService;
 import com.cookie.app.util.ImageUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class RecipeServiceImpl extends AbstractCookieService implements RecipeService {
+public non-sealed class RecipeServiceImpl extends AbstractCookieService implements RecipeService {
     private final RecipeRepository recipeRepository;
     private final RecipeProductRepository recipeProductRepository;
     private final PantryProductService pantryProductService;
     private final ShoppingListProductService shoppingListProductService;
-    private final RecipeMapperDTO recipeMapperDTO;
-    private final RecipeDetailsMapperDTO recipeDetailsMapperDTO;
+    private final RecipeMapper recipeMapper;
+    private final RecipeDetailsMapper recipeDetailsMapper;
 
-    protected RecipeServiceImpl(UserRepository userRepository,
-                                ProductRepository productRepository,
-                                AuthorityMapperDTO authorityMapperDTO,
-                                RecipeRepository recipeRepository,
-                                RecipeProductRepository recipeProductRepository,
-                                PantryProductService pantryProductService,
-                                ShoppingListProductService shoppingListProductService,
-                                RecipeMapperDTO recipeMapperDTO,
-                                RecipeDetailsMapperDTO recipeDetailsMapperDTO) {
-        super(userRepository, productRepository, authorityMapperDTO);
+    public RecipeServiceImpl(UserRepository userRepository,
+                             ProductRepository productRepository,
+                             AuthorityMapper authorityMapper,
+                             RecipeRepository recipeRepository,
+                             RecipeProductRepository recipeProductRepository,
+                             PantryProductService pantryProductService,
+                             ShoppingListProductService shoppingListProductService,
+                             RecipeMapper recipeMapper,
+                             RecipeDetailsMapper recipeDetailsMapper) {
+        super(userRepository, productRepository, authorityMapper);
         this.recipeRepository = recipeRepository;
         this.recipeProductRepository = recipeProductRepository;
         this.pantryProductService = pantryProductService;
         this.shoppingListProductService = shoppingListProductService;
-        this.recipeMapperDTO = recipeMapperDTO;
-        this.recipeDetailsMapperDTO = recipeDetailsMapperDTO;
+        this.recipeMapper = recipeMapper;
+        this.recipeDetailsMapper = recipeDetailsMapper;
     }
 
     @Override
-    public Page<RecipeDTO> getRecipes(int page,
-                                      String filterValue,
-                                      int prepTime,
-                                      int portions,
-                                      List<MealType> mealTypes,
-                                      String sortColName,
-                                      String sortDirection) {
-        PageRequest pageRequest = super.createPageRequest(page, sortColName, sortDirection);
-        Set<String> selectedMealTypes = getMealTypesAsStrings(mealTypes);
+    public PageResult<RecipeDTO> getRecipes(int page, RecipeFilterRequest filterRequest) {
+        PageRequest pageRequest = super
+                .createPageRequest(page - 1, filterRequest.getSortColName(), filterRequest.getSortDirection());
+        Set<String> selectedMealTypes = getMealTypesAsStrings(filterRequest.getMealTypes());
+        int prepTime = filterRequest.getPrepTime() == null ? 0 : filterRequest.getPrepTime();
+        int portions = filterRequest.getPortions() == null ? 0 : filterRequest.getPortions();
 
-        if (StringUtils.isBlank(filterValue)) {
-            return this.recipeRepository
+        if (StringUtils.isBlank(filterRequest.getFilterValue())) {
+            return new PageResult<>(this.recipeRepository
                     .findRecipes(prepTime, portions, selectedMealTypes, pageRequest)
-                    .map(recipeMapperDTO::apply);
+                    .map(recipeMapper::mapToDto));
         }
 
-        return this.recipeRepository
-                .findRecipesByFilter(filterValue, prepTime, portions, selectedMealTypes, pageRequest)
-                .map(recipeMapperDTO::apply);
+        return new PageResult<>(this.recipeRepository
+                .findRecipesByFilter(filterRequest.getFilterValue(), prepTime, portions, selectedMealTypes, pageRequest)
+                .map(recipeMapper::mapToDto));
     }
 
     @Override
-    public Page<RecipeDTO> getUserRecipes(String userEmail,
-                                          int page,
-                                          String filterValue,
-                                          int prepTime,
-                                          int portions,
-                                          List<MealType> mealTypes,
-                                          String sortColName,
-                                          String sortDirection) {
+    public PageResult<RecipeDTO> getUserRecipes(String userEmail, int page, RecipeFilterRequest filterRequest) {
         User user = super.getUserByEmail(userEmail);
-        PageRequest pageRequest = super.createPageRequest(page, sortColName, sortDirection);
-        Set<String> selectedMealTypes = getMealTypesAsStrings(mealTypes);
+        PageRequest pageRequest = super
+                .createPageRequest(page - 1, filterRequest.getSortColName(), filterRequest.getSortDirection());
+        Set<String> selectedMealTypes = getMealTypesAsStrings(filterRequest.getMealTypes());
+        int prepTime = filterRequest.getPrepTime() == null ? 0 : filterRequest.getPrepTime();
+        int portions = filterRequest.getPortions() == null ? 0 : filterRequest.getPortions();
 
-        if (StringUtils.isBlank(filterValue)) {
-            return this.recipeRepository
-                    .findCreatorRecipes(user.getId(), prepTime, portions, selectedMealTypes, pageRequest)
-                    .map(recipeMapperDTO::apply);
+        if (StringUtils.isBlank(filterRequest.getFilterValue())) {
+            return new PageResult<>(this.recipeRepository
+                    .findUserRecipes(user.getId(), prepTime, portions, selectedMealTypes, pageRequest)
+                    .map(recipeMapper::mapToDto));
         }
 
-        return this.recipeRepository
-                .findCreatorRecipesByFilter(user.getId(), filterValue, prepTime, portions, selectedMealTypes, pageRequest)
-                .map(recipeMapperDTO::apply);
+        return new PageResult<>(this.recipeRepository
+                .findUserRecipesByFilter(
+                        user.getId(), filterRequest.getFilterValue(), prepTime, portions, selectedMealTypes, pageRequest
+                )
+                .map(recipeMapper::mapToDto));
     }
 
 
@@ -110,52 +106,34 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
     public RecipeDetailsDTO getRecipeDetails(long recipeId) {
         Optional<Recipe> recipeOptional = this.recipeRepository.findById(recipeId);
 
-        if (recipeOptional.isEmpty()) {
-            return new RecipeDetailsDTO(0, null, null, 0, null, null,0, null, null, null);
-        }
-
-        return this.recipeDetailsMapperDTO.apply(recipeOptional.get());
+        return recipeOptional.map(this.recipeDetailsMapper::mapToDto).orElseGet(() ->
+                new RecipeDetailsDTO(0, null, null, 0, null, null,0, null, null, null));
     }
 
     @Override
-    public CreateRecipeResponse createRecipe(String userEmail, CreateRecipeRequest recipeDetailsDTO, MultipartFile recipeImage) {
+    public CreateRecipeResponse createRecipe(String userEmail, CreateRecipeRequest createRecipeRequest, MultipartFile recipeImage) {
         User user = super.getUserByEmail(userEmail);
 
-        if (recipeDetailsDTO.id() != 0) {
-            log.info("User: {} tried to create recipe with id set to {}", userEmail, recipeDetailsDTO.id());
-            throw new ValidationException("Recipe id must be 0 while creating it");
-        }
-
-        Recipe recipe = mapRecipeDetailsToRecipe(user, recipeDetailsDTO, recipeImage);
+        Recipe recipe = mapRecipeRequestToRecipe(user, createRecipeRequest, recipeImage);
         this.recipeRepository.save(recipe);
 
         return new CreateRecipeResponse(recipe.getId());
     }
 
+    @Transactional
     @Override
     public void deleteRecipe(String userEmail, long recipeId) {
-        User user = super.getUserByEmail(userEmail);
-        Recipe recipe = getRecipeById(recipeId, userEmail);
-
-        if (recipe.getCreator().getId() != user.getId()) {
-            log.info("User: {} tried to delete recipe which they did not created", userEmail);
-            throw new UserPerformedForbiddenActionException("You did not create this recipe so you cannot delete it");
-        }
+        Recipe recipe = findRecipeIfUserIsCreator(userEmail, recipeId, "delete");
 
         this.recipeRepository.delete(recipe);
     }
 
+    @Transactional
     @Override
-    public CreateRecipeResponse modifyRecipe(String userEmail, CreateRecipeRequest recipeDetailsDTO, MultipartFile recipeImage) {
-        User user = super.getUserByEmail(userEmail);
-        Recipe recipe = getRecipeById(recipeDetailsDTO.id(), userEmail);
+    public CreateRecipeResponse updateRecipe(String userEmail, UpdateRecipeRequest updateRecipeRequest, MultipartFile recipeImage) {
+        Recipe recipe = findRecipeIfUserIsCreator(userEmail, updateRecipeRequest.id(), "update");
 
-        if (recipe.getCreator().getId() != user.getId()) {
-            log.info("User: {} tried to modify recipe which they did not created", userEmail);
-            throw new UserPerformedForbiddenActionException("You did not create this recipe so you cannot delete it");
-        }
-
-        modifyRecipe(recipe, recipeDetailsDTO, recipeImage);
+        updateRecipe(recipe, updateRecipeRequest, recipeImage);
         this.recipeRepository.save(recipe);
 
         return new CreateRecipeResponse(recipe.getId());
@@ -179,8 +157,22 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
         this.shoppingListProductService.addRecipeProductsToShoppingList(listId, user, productsToAdd);
     }
 
+    private Recipe findRecipeIfUserIsCreator(String userEmail, long recipeId, String action) {
+        User user = super.getUserByEmail(userEmail);
+        Recipe recipe = getRecipeById(recipeId, userEmail);
+
+        if (recipe.getCreator().getId() != user.getId()) {
+            log.info("User={} tried to {} recipe which they did not created", userEmail, action);
+            throw new UserPerformedForbiddenActionException(
+                    String.format("You did not create this recipe so you cannot %s it", action)
+            );
+        }
+
+        return recipe;
+    }
+
     private Set<String> getMealTypesAsStrings(List<MealType> mealTypes) {
-        if (mealTypes.isEmpty()) {
+        if (mealTypes == null || mealTypes.isEmpty()) {
             return MealType.ALL_MEAL_TYPES
                     .stream()
                     .map(Enum::name)
@@ -189,25 +181,17 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
 
         return mealTypes
                 .stream()
-                .map(Enum::name).collect(Collectors.toSet());
+                .map(Enum::name)
+                .collect(Collectors.toSet());
     }
 
-    private void modifyRecipe(Recipe recipe, CreateRecipeRequest recipeDetailsDTO, MultipartFile recipeImage) {
-        if (!recipe.getRecipeName().equals(recipeDetailsDTO.recipeName())) {
-            recipe.setRecipeName(recipeDetailsDTO.recipeName());
-        }
-        if (!recipe.getPreparation().equals(recipeDetailsDTO.preparation())) {
-            recipe.setPreparation(recipeDetailsDTO.preparation());
-        }
-        if (recipe.getPreparationTime() != recipeDetailsDTO.preparationTime()) {
-            recipe.setPreparationTime(recipeDetailsDTO.preparationTime());
-        }
-        if (!recipe.getCuisine().equals(recipeDetailsDTO.cuisine())) {
-            recipe.setCuisine(recipeDetailsDTO.cuisine());
-        }
-        if (recipe.getPortions() != recipeDetailsDTO.portions()) {
-            recipe.setPortions(recipeDetailsDTO.portions());
-        }
+    private void updateRecipe(Recipe recipe, UpdateRecipeRequest recipeDetailsDTO, MultipartFile recipeImage) {
+        recipe.setRecipeName(recipeDetailsDTO.recipeName());
+        recipe.setPreparation(recipeDetailsDTO.preparation());
+        recipe.setPreparationTime(recipeDetailsDTO.preparationTime());
+        recipe.setCuisine(recipeDetailsDTO.cuisine());
+        recipe.setPortions(recipeDetailsDTO.portions());
+        recipe.setMealType(recipeDetailsDTO.mealType());
 
         if (recipeDetailsDTO.updateImage()) {
             byte[] newImage = new byte[0];
@@ -221,9 +205,7 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
 
                 String contentType = recipeImage.getContentType();
 
-                if (contentType != null && !contentType.equals("image/jpeg") &&
-                        !contentType.equals("image/png") && newImage.length == 0
-                ) {
+                if (contentType != null && !contentType.equals("image/jpeg") && !contentType.equals("image/png")) {
                     throw new UserPerformedForbiddenActionException("You tried to save file in forbidden format");
                 }
             }
@@ -235,33 +217,18 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
                 .stream()
                 .filter(recipeProductDTO -> recipeProductDTO.id() > 0)
                 .collect(Collectors.toMap(RecipeProductDTO::id, Function.identity()));
+        List<RecipeProduct> productsToRemove = new ArrayList<>();
 
         for (RecipeProduct recipeProduct : new ArrayList<>(recipe.getRecipeProducts())) {
             if (!recipeProductDTOMap.containsKey(recipeProduct.getId())) {
                 recipe.getRecipeProducts().remove(recipeProduct);
-                recipeProductDTOMap.remove(recipeProduct.getId());
-                this.recipeProductRepository.delete(recipeProduct);
+                productsToRemove.add(recipeProduct);
                 continue;
             }
 
             RecipeProductDTO modifiedProduct = recipeProductDTOMap.get(recipeProduct.getId());
-            Optional<Product> productOptional = this.productRepository.findById(modifiedProduct.product().productId());
-            Product product = productOptional.orElse(
-                    Product.builder()
-                            .productName(modifiedProduct.product().productName())
-                            .category(modifiedProduct.product().category())
-                            .build()
-            );
-
-            if (!recipeProduct.getProduct().equals(product)) {
-                recipeProduct.setProduct(product);
-            }
-            if (recipeProduct.getQuantity() != modifiedProduct.quantity()) {
-                recipeProduct.setQuantity(modifiedProduct.quantity());
-            }
-            if (recipeProduct.getUnit() != modifiedProduct.unit()) {
-                recipeProduct.setUnit(recipeProduct.getUnit());
-            }
+            recipeProduct.setQuantity(modifiedProduct.quantity());
+            recipeProduct.setUnit(modifiedProduct.unit());
 
             recipeProductDTOMap.remove(recipeProduct.getId());
         }
@@ -270,6 +237,8 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
             log.info("User tried to modify recipe product from different recipe");
             throw new UserPerformedForbiddenActionException("You tried to modify recipe product from different recipe");
         }
+
+        this.recipeProductRepository.deleteAll(productsToRemove);
 
         List<RecipeProduct> addedProducts = recipeDetailsDTO.products()
                 .stream()
@@ -281,23 +250,16 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
     }
 
     private Recipe getRecipeById(long recipeId, String userEmail) {
-        if (recipeId == 0) {
-            log.info("User: {} tried to access recipe which does not exists", userEmail);
-            throw new UserPerformedForbiddenActionException("Recipe does not exists");
-        }
-
         Optional<Recipe> recipeOptional = this.recipeRepository.findById(recipeId);
 
-        if (recipeOptional.isEmpty()) {
-            log.info("User: {} tried to access recipe which does not exists", userEmail);
-            throw new UserPerformedForbiddenActionException("Recipe does not exists");
-        }
-
-        return recipeOptional.get();
+        return recipeOptional.orElseThrow(() -> {
+            log.info("User={} tried to access recipe which does not exists", userEmail);
+            return new ResourceNotFoundException("Recipe does not exists");
+        });
     }
 
 
-    private Recipe mapRecipeDetailsToRecipe(User creator, CreateRecipeRequest createRecipeRequest, MultipartFile recipeImage) {
+    private Recipe mapRecipeRequestToRecipe(User creator, CreateRecipeRequest createRecipeRequest, MultipartFile recipeImage) {
         byte[] recipeImg = null;
 
         if (recipeImage != null) {
@@ -342,7 +304,6 @@ public class RecipeServiceImpl extends AbstractCookieService implements RecipeSe
                 .product(super.checkIfProductExists(recipeProductDTO.product()))
                 .quantity(recipeProductDTO.quantity())
                 .unit(recipeProductDTO.unit())
-                .recipe(recipe)
                 .build();
     }
 }

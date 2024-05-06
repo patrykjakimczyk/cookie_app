@@ -1,6 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { PageResult } from 'src/app/shared/model/responses/page-result-response';
+import { ProductDTO } from 'src/app/shared/model/types/product-types';
 import {
   CreateShoppingListRequest,
   DeleteShoppingListResponse,
@@ -64,18 +66,23 @@ export class ShoppingListsService {
   getShoppingListsProducts(
     listId: number,
     page: number,
-    filterValue: string,
-    sortColName: string,
-    sortDirection: string
-  ): Observable<any> {
+    filterValue: string | null,
+    sortColName: string | null,
+    sortDirection: string | null
+  ): Observable<PageResult<ShoppingListProductDTO>> {
     let params = new HttpParams();
 
-    params = params
-      .append('filterValue', filterValue)
-      .append('sortColName', sortColName)
-      .append('sortDirection', sortDirection);
+    if (filterValue) {
+      params = params.append('filterValue', filterValue);
+    }
+    if (sortColName) {
+      params = params.append('sortColName', sortColName);
+    }
+    if (sortDirection) {
+      params = params.append('sortDirection', sortDirection);
+    }
 
-    return this.http.get<any>(
+    return this.http.get<PageResult<ShoppingListProductDTO>>(
       `${this.url}${this.shopping_list_id_path.replace(
         '{id}',
         listId.toString()
@@ -141,12 +148,12 @@ export class ShoppingListsService {
     );
   }
 
-  getProductsWithFilter(filterValue: string): Observable<any> {
+  getProductsWithFilter(filterValue: string): Observable<ProductDTO[]> {
     let params = new HttpParams();
 
     params = params.append('filterValue', filterValue);
 
-    return this.http.get<any>(`${this.url}${this.products_path}`, {
+    return this.http.get<ProductDTO[]>(`${this.url}${this.products_path}`, {
       params: params,
     });
   }

@@ -1,12 +1,12 @@
 package com.cookie.app.service.impl;
 
+import com.cookie.app.exception.ResourceNotFoundException;
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.exception.UserWasNotFoundAfterAuthException;
 import com.cookie.app.model.dto.AuthorityDTO;
 import com.cookie.app.model.entity.*;
 import com.cookie.app.model.enums.AuthorityEnum;
-import com.cookie.app.model.mapper.AuthorityMapperDTO;
-import com.cookie.app.model.mapper.PantryMapperDTO;
+import com.cookie.app.model.mapper.*;
 import com.cookie.app.model.request.CreatePantryRequest;
 import com.cookie.app.model.request.UpdatePantryRequest;
 import com.cookie.app.model.response.DeletePantryResponse;
@@ -38,9 +38,9 @@ class PantryServiceImplTest {
     final Long id = 1L;
 
     @Spy
-    PantryMapperDTO pantryMapperDTO;
+    PantryMapper pantryMapper = new PantryMapperImpl();
     @Spy
-    AuthorityMapperDTO authorityMapperDTO;
+    AuthorityMapper authorityMapper = new AuthorityMapperImpl();
     @Mock
     UserRepository userRepository;
     @Mock
@@ -88,10 +88,9 @@ class PantryServiceImplTest {
         final CreatePantryRequest request = new CreatePantryRequest(pantryName, id);
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
-
         GetPantryResponse response = service.createPantry(request, email);
-        verify(pantryRepository).save(any(Pantry.class));
 
+        verify(pantryRepository).save(any(Pantry.class));
         assertEquals(request.pantryName(), response.pantryName());
         assertFalse(response.authorities().isEmpty());
 
@@ -102,7 +101,6 @@ class PantryServiceImplTest {
         assertEquals(1, responseAuthorities.size());
         assertEquals(authority.getAuthorityName(), responseAuthorities.get(0).authority());
         assertEquals(group.getId(), responseAuthorities.get(0).groupId());
-        assertEquals(user.getId(), responseAuthorities.get(0).userId());
     }
 
     @Test
@@ -115,17 +113,17 @@ class PantryServiceImplTest {
     }
 
     @Test
-    void test_createPantryThrowsErrorOnWrongGroupId() {
+    void test_createPantryWrongGroupId() {
         final CreatePantryRequest request = new CreatePantryRequest(pantryName, 2L);
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> service.createPantry(request, email));
+        assertThrows(ResourceNotFoundException.class, () -> service.createPantry(request, email));
         verify(pantryRepository, times(0)).save(any(Pantry.class));
     }
 
     @Test
-    void test_createPantryThrowsErrorOnNoRequiredAuthority() {
+    void test_createPantryNoRequiredAuthority() {
         authority.setAuthorityName(AuthorityEnum.MODIFY);
         final CreatePantryRequest request = new CreatePantryRequest(pantryName, id);
 
@@ -139,8 +137,8 @@ class PantryServiceImplTest {
     void test_getPantrySuccessful() {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
-
         GetPantryResponse response = service.getPantry(id, email);
+
         assertEquals(pantry.getId(), response.pantryId());
         assertEquals(pantry.getPantryName(), response.pantryName());
         assertFalse(response.authorities().isEmpty());
@@ -152,7 +150,6 @@ class PantryServiceImplTest {
         assertEquals(1, responseAuthorities.size());
         assertEquals(authority.getAuthorityName(), responseAuthorities.get(0).authority());
         assertEquals(group.getId(), responseAuthorities.get(0).groupId());
-        assertEquals(user.getId(), responseAuthorities.get(0).userId());
     }
 
     @Test
@@ -168,8 +165,8 @@ class PantryServiceImplTest {
         group.setPantry(null);
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
-
         GetPantryResponse response = service.getPantry(id, email);
+
         assertEquals(0, response.pantryId());
         assertNull(response.pantryName());
         assertNull(response.authorities());
@@ -179,8 +176,8 @@ class PantryServiceImplTest {
     void test_getAllUserPantriesSuccessful() {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
-
         GetUserPantriesResponse response = service.getAllUserPantries(email);
+
         assertFalse(response.pantries().isEmpty());
         assertEquals(pantry.getId(), response.pantries().get(0).pantryId());
         assertEquals(pantry.getPantryName(), response.pantries().get(0).pantryName());
@@ -211,10 +208,10 @@ class PantryServiceImplTest {
     void test_deletePantrySuccessful() {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
-
         DeletePantryResponse response = service.deletePantry(id, email);
+
         assertEquals(pantry.getPantryName(), response.deletedPantryName());
-        verify(pantryRepository, times(1)).delete(any(Pantry.class));
+        verify(pantryRepository, times(1)).delete(pantry);
     }
 
     @Test
@@ -223,7 +220,7 @@ class PantryServiceImplTest {
         doReturn(Optional.empty()).when(userRepository).findByEmail(email);
 
         assertThrows(UserWasNotFoundAfterAuthException.class, () -> service.deletePantry(id, email));
-        verify(pantryRepository, times(0)).delete(any(Pantry.class));
+        verify(pantryRepository, times(0)).delete(pantry);
     }
 
     @Test
@@ -231,27 +228,27 @@ class PantryServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> service.deletePantry(2L, email));
-        verify(pantryRepository, times(0)).delete(any(Pantry.class));
+        assertThrows(ResourceNotFoundException.class, () -> service.deletePantry(2L, email));
+        verify(pantryRepository, times(0)).delete(pantry);
     }
 
     @Test
-    void test_deletePantryUserHasNotRequiredAuthority() {
+    void test_deletePantryNotRequiredAuthority() {
         authority.setAuthorityName(AuthorityEnum.MODIFY);
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
         assertThrows(UserPerformedForbiddenActionException.class, () -> service.deletePantry(id, email));
-        verify(pantryRepository, times(0)).delete(any(Pantry.class));
+        verify(pantryRepository, times(0)).delete(pantry);
     }
 
     @Test
     void test_updatePantrySuccessful() {
-        UpdatePantryRequest request = new UpdatePantryRequest("newPantryName");
+        final UpdatePantryRequest request = new UpdatePantryRequest("newPantryName");
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
-
         GetPantryResponse response = service.updatePantry(id, request, email);
+
         assertEquals(request.pantryName(), response.pantryName());
         assertFalse(response.authorities().isEmpty());
 
@@ -262,38 +259,37 @@ class PantryServiceImplTest {
         assertEquals(1, responseAuthorities.size());
         assertEquals(authority.getAuthorityName(), responseAuthorities.get(0).authority());
         assertEquals(group.getId(), responseAuthorities.get(0).groupId());
-        assertEquals(user.getId(), responseAuthorities.get(0).userId());
-        verify(pantryRepository, times(1)).save(any(Pantry.class));
+        verify(pantryRepository, times(1)).save(pantry);
     }
 
     @Test
     void test_updatePantryUserNotFound() {
-        UpdatePantryRequest request = new UpdatePantryRequest("newPantryName");
+        final UpdatePantryRequest request = new UpdatePantryRequest("newPantryName");
 
         doReturn(Optional.empty()).when(userRepository).findByEmail(email);
 
         assertThrows(UserWasNotFoundAfterAuthException.class, () -> service.updatePantry(id, request, email));
-        verify(pantryRepository, times(0)).save(any(Pantry.class));
+        verify(pantryRepository, times(0)).save(pantry);
     }
 
     @Test
     void test_updatePantryPantryNotFound() {
-        UpdatePantryRequest request = new UpdatePantryRequest("newPantryName");
+        final UpdatePantryRequest request = new UpdatePantryRequest("newPantryName");
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> service.updatePantry(2L, request, email));
-        verify(pantryRepository, times(0)).save(any(Pantry.class));
+        assertThrows(ResourceNotFoundException.class, () -> service.updatePantry(2L, request, email));
+        verify(pantryRepository, times(0)).save(pantry);
     }
 
     @Test
-    void test_updatePantryUserHasNotRequiredAuthority() {
+    void test_updatePantryRequiredAuthority() {
         authority.setAuthorityName(AuthorityEnum.MODIFY);
-        UpdatePantryRequest request = new UpdatePantryRequest("newPantryName");
+        final UpdatePantryRequest request = new UpdatePantryRequest("newPantryName");
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
         assertThrows(UserPerformedForbiddenActionException.class, () -> service.updatePantry(id, request, email));
-        verify(pantryRepository, times(0)).save(any(Pantry.class));
+        verify(pantryRepository, times(0)).save(pantry);
     }
 }

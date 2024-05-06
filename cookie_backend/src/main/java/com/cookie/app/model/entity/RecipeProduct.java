@@ -24,7 +24,7 @@ public class RecipeProduct {
     @Column(insertable = false, updatable = false, unique = true, nullable = false)
     private long id;
 
-    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
 
@@ -34,8 +34,4 @@ public class RecipeProduct {
     @Column(length = 20, updatable = false, nullable = false)
     @Enumerated(EnumType.STRING)
     private Unit unit;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recipe_id", referencedColumnName = "id")
-    private Recipe recipe;
 }

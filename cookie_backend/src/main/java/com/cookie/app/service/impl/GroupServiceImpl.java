@@ -1,5 +1,6 @@
 package com.cookie.app.service.impl;
 
+import com.cookie.app.exception.ResourceNotFoundException;
 import com.cookie.app.exception.UserAlreadyAddedToGroupException;
 import com.cookie.app.exception.UserPerformedForbiddenActionException;
 import com.cookie.app.model.dto.GroupDTO;
@@ -8,14 +9,12 @@ import com.cookie.app.model.entity.Authority;
 import com.cookie.app.model.entity.Group;
 import com.cookie.app.model.entity.User;
 import com.cookie.app.model.enums.AuthorityEnum;
-import com.cookie.app.model.mapper.AuthorityMapperDTO;
-import com.cookie.app.model.mapper.GroupDetailsMapperDTO;
-import com.cookie.app.model.mapper.GroupMapperDTO;
+import com.cookie.app.model.mapper.*;
 import com.cookie.app.model.request.UserWithAuthoritiesRequest;
 import com.cookie.app.model.request.CreateGroupRequest;
 import com.cookie.app.model.request.UpdateGroupRequest;
 import com.cookie.app.model.response.AssignAuthoritiesToUserResponse;
-import com.cookie.app.model.response.GroupNameTakenResponse;
+import com.cookie.app.model.response.GetGroupResponse;
 import com.cookie.app.model.response.GetUserGroupsResponse;
 import com.cookie.app.repository.AuthorityRepository;
 import com.cookie.app.repository.GroupRepository;
@@ -26,203 +25,158 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Transactional
 @Service
-public class GroupServiceImpl extends AbstractCookieService implements GroupService {
+public non-sealed class GroupServiceImpl extends AbstractCookieService implements GroupService {
     private final GroupRepository groupRepository;
     private final AuthorityRepository authorityRepository;
-    private final GroupMapperDTO groupMapperDTO;
-    private final GroupDetailsMapperDTO groupDetailsMapperDTO;
+    private final GroupMapper groupMapper;
+    private final GroupDetailsMapper groupDetailsMapper;
 
     public GroupServiceImpl(UserRepository userRepository,
                             ProductRepository productRepository,
                             AuthorityRepository authorityRepository,
                             GroupRepository groupRepository,
-                            GroupMapperDTO groupMapperDTO,
-                            GroupDetailsMapperDTO groupDetailsMapperDTO,
-                            AuthorityMapperDTO authorityMapperDTO) {
-        super(userRepository, productRepository, authorityMapperDTO);
+                            GroupMapper groupMapper,
+                            GroupDetailsMapper groupDetailsMapper,
+                            AuthorityMapper authorityMapper) {
+        super(userRepository, productRepository, authorityMapper);
         this.groupRepository = groupRepository;
         this.authorityRepository = authorityRepository;
-        this.groupMapperDTO = groupMapperDTO;
-        this.groupDetailsMapperDTO = groupDetailsMapperDTO;
+        this.groupMapper = groupMapper;
+        this.groupDetailsMapper = groupDetailsMapper;
     }
 
+    @Transactional
     @Override
-    public GroupNameTakenResponse createGroup(CreateGroupRequest request, String userEmail) {
-        User user = this.getUserByEmail(userEmail);
-
+    public GetGroupResponse createGroup(CreateGroupRequest request, String userEmail) {
         if (this.groupRepository.findByGroupName(request.groupName()).isPresent()) {
-            return new GroupNameTakenResponse(true);
+            return new GetGroupResponse(0);
         }
+
+        User user = super.getUserByEmail(userEmail);
 
         Group group = Group.builder()
                 .groupName(request.groupName())
                 .creator(user)
-                .creationDate(Timestamp.from(Instant.now()))
+                .creationDate(LocalDateTime.now())
                 .users(List.of(user))
                 .build();
 
-        List<Authority> authorities = this.createAuthoritiesList(user, group, AuthorityEnum.ALL_AUTHORITIES);
+        Set<Authority> authorities = createAuthoritiesList(user, group, Set.of(AuthorityEnum.values()));
 
         this.groupRepository.save(group);
         this.authorityRepository.saveAll(authorities);
-        return new GroupNameTakenResponse(false);
+        return new GetGroupResponse(group.getId());
     }
 
     @Override
     public GroupDetailsDTO getGroupDetails(Long groupId, String userEmail) {
-        User user = this.getUserByEmail(userEmail);
-        Optional<Group> groupOptional = this.groupRepository.findById(groupId);
-
-        if (groupOptional.isEmpty()) {
-            log.info(String.format("User: %s tried to access group which does not exists", userEmail));
-            throw new UserPerformedForbiddenActionException("Group does not exists");
-        }
-
-        Group group = groupOptional.get();
+        GroupUserAndAuthorities groupAndUser = getGroupAndUser(groupId, userEmail);
+        Group group = groupAndUser.group();
+        User user = groupAndUser.user();
 
         if (!group.getUsers().contains(user)) {
-            log.info(String.format("User: %s tried to access group he does not belong to", userEmail));
-            throw new UserPerformedForbiddenActionException("Group does not exists");
+            log.info("User={} tried to access group he does not belong to", userEmail);
+            throw new UserPerformedForbiddenActionException("Group does not exist");
         }
 
-        return this.groupDetailsMapperDTO.apply(group);
+        return this.groupDetailsMapper.mapToDto(group);
     }
 
     @Override
     public GetUserGroupsResponse getUserGroups(String userEmail) {
-        User user = this.getUserByEmail(userEmail);
+        User user = super.getUserByEmail(userEmail);
         List<GroupDTO> userGroups = user.getGroups()
                 .stream()
-                .map(groupMapperDTO::apply)
+                .map(groupMapper::mapToDto)
                 .toList();
 
         return new GetUserGroupsResponse(userGroups);
     }
 
+    @Transactional
     @Override
-    public GroupNameTakenResponse updateGroup(Long groupId, UpdateGroupRequest request, String userEmail) {
-        User user = this.getUserByEmail(userEmail);
-
+    public GetGroupResponse updateGroup(Long groupId, UpdateGroupRequest request, String userEmail) {
         if (this.groupRepository.findByGroupName(request.newGroupName()).isPresent()) {
-            return new GroupNameTakenResponse(true);
+            return new GetGroupResponse(0);
         }
 
-        Optional<Group> groupOptional = this.groupRepository.findById(groupId);
-
-        if (groupOptional.isEmpty()) {
-            log.info(String.format("User: %s tried to modify group which does not exists", userEmail));
-            throw new UserPerformedForbiddenActionException("Group does not exists");
-        }
-
-        Group group = groupOptional.get();
-        List<Authority> userAuthoritiesForGroup = this.authorityRepository.findAuthoritiesByUserAndGroup(user, group);
-        Set<AuthorityEnum> authorities = userAuthoritiesForGroup
-                .stream()
-                .map(Authority::getAuthorityName)
-                .collect(Collectors.toSet());
-
-        if (!authorities.contains(AuthorityEnum.MODIFY_GROUP)) {
-            log.info(String.format("User: %s tried to modify group without permissions", userEmail));
-            throw new UserPerformedForbiddenActionException("You have no permissions to do that");
-        }
+        GroupUserAndAuthorities groupAndAuthorities = getGroupUserAndHisAuthorities(
+                groupId, userEmail, AuthorityEnum.MODIFY_GROUP, "modify group"
+        );
+        Group group = groupAndAuthorities.group();
 
         group.setGroupName(request.newGroupName());
         this.groupRepository.save(group);
-        return new GroupNameTakenResponse(false);
+        return new GetGroupResponse(group.getId());
     }
 
+    @Transactional
     @Override
     public void deleteGroup(Long groupId, String userEmail) {
-        User user = this.getUserByEmail(userEmail);
-        Optional<Group> groupOptional = this.groupRepository.findById(groupId);
-
-        if (groupOptional.isEmpty()) {
-            log.info(String.format("User: %s tried to delete group which does not exists", userEmail));
-            throw new UserPerformedForbiddenActionException("Group does not exists");
-        }
-
-        Group group = groupOptional.get();
-        List<Authority> userAuthoritiesForGroup = this.authorityRepository.findAuthoritiesByUserAndGroup(user, group);
-        Set<AuthorityEnum> authorities = userAuthoritiesForGroup
-                .stream()
-                .map(Authority::getAuthorityName)
-                .collect(Collectors.toSet());
-
-        if (!authorities.contains(AuthorityEnum.MODIFY_GROUP)) {
-            log.info(String.format("User: %s tried to delete group without permissions", userEmail));
-            throw new UserPerformedForbiddenActionException("You have no permissions to do that");
-        }
+        GroupUserAndAuthorities groupAndAuthorities = getGroupUserAndHisAuthorities(
+                groupId, userEmail, AuthorityEnum.MODIFY_GROUP, "delete group"
+        );
+        Group group = groupAndAuthorities.group();
 
         this.authorityRepository.deleteByGroup(group);
         this.groupRepository.delete(group);
     }
 
+    @Transactional
     @Override
     public void addUserToGroup(Long groupId, String usernameToAdd, String userEmail) {
-        GroupUserAndAuthorities groupAndAuthorities = this.getGroupUserAndHisAuthorities(groupId, userEmail);
-        Group group = groupAndAuthorities.group;
-        Set<AuthorityEnum> authorities = groupAndAuthorities.authorities;
-
-        if (!authorities.contains(AuthorityEnum.ADD_TO_GROUP)) {
-            log.info(String.format("User: %s tried to add another user to group without permissions", userEmail));
-            throw new UserPerformedForbiddenActionException("You have no permissions to do that");
-        }
-
-        Optional<User> userToAddOptional = this.userRepository.findByUsername(usernameToAdd);
-
-        if (userToAddOptional.isEmpty()) {
-            throw new UserPerformedForbiddenActionException("User tried to add non existing user to group");
-        }
-
-        User userToAdd = userToAddOptional.get();
+        GroupUserAndAuthorities groupAndAuthorities = getGroupUserAndHisAuthorities(
+                groupId, userEmail, AuthorityEnum.ADD_TO_GROUP, "add another user to group"
+        );
+        Group group = groupAndAuthorities.group();
+        User userToAdd = this.userRepository.findByUsername(usernameToAdd).orElseThrow(() ->
+                new ResourceNotFoundException("You tried to add non existing user to group"));
 
         if (group.getUsers().contains(userToAdd)) {
-            log.info(String.format("User: %s tried to add user which is already added to group", userEmail));
+            log.info("User={} tried to add user which is already added to group", userEmail);
             throw new UserAlreadyAddedToGroupException("You tried to add user which is already added to group");
         }
 
         group.getUsers().add(userToAdd);
-        List<Authority> authoritiesForAddedUser = this.createAuthoritiesList(
+        Set<Authority> authoritiesForAddedUser = createAuthoritiesList(
                 userToAdd, group, AuthorityEnum.BASIC_AUTHORITIES);
 
         this.groupRepository.save(group);
         this.authorityRepository.saveAll(authoritiesForAddedUser);
     }
 
+    @Transactional
     @Override
     public void removeUserFromGroup(Long groupId, Long userToRemoveId, String userEmail) {
-        GroupUserAndAuthorities groupUserAndAuthorities = this.getGroupUserAndHisAuthorities(groupId, userEmail);
-        Group group = groupUserAndAuthorities.group;
-        Set<AuthorityEnum> authorities = groupUserAndAuthorities.authorities;
-        User user = groupUserAndAuthorities.user;
-        Optional<User> userToRemoveOptional = this.userRepository.findById(userToRemoveId);
+        GroupUserAndAuthorities groupUserAndAuthorities = getGroupUserAndHisAuthorities(groupId, userEmail);
+        Group group = groupUserAndAuthorities.group();
+        Set<AuthorityEnum> authorities = groupUserAndAuthorities.authorities();
+        User user = groupUserAndAuthorities.user();
+        User userToRemove;
 
-        if (userToRemoveOptional.isEmpty()) {
-            throw new UserPerformedForbiddenActionException("User tried to remove non existing user from group");
-        }
-
-        User userToRemove = userToRemoveOptional.get();
-
-        if (!authorities.contains(AuthorityEnum.MODIFY_GROUP) && userToRemove.getId() != user.getId()) {
-            log.info(String.format("User: %s tried to remove another user from group without permissions", userEmail));
+        if (user.getId() == userToRemoveId) {
+            userToRemove = user;
+        } else if (!authorities.contains(AuthorityEnum.MODIFY_GROUP)) {
+            log.info("User={} tried to remove another user from group without permissions", userEmail);
             throw new UserPerformedForbiddenActionException("You have no permissions to do that");
+        } else {
+            userToRemove = this.userRepository.findById(userToRemoveId).orElseThrow(() ->
+                    new ResourceNotFoundException("User tried to remove non existing user from group"));
         }
 
         if (!group.getUsers().contains(userToRemove)) {
-            log.info(String.format("User: %s tried to remove user which is not in the group", userEmail));
+            log.info("User={} tried to remove user which is not in the group", userEmail);
             throw new UserPerformedForbiddenActionException("You tried to remove user which is not in the group");
         }
 
         if (group.getCreator().getId() == userToRemove.getId()) {
-            log.info(String.format("User: %s tried to remove group's creator from the group", userEmail));
+            log.info("User={} tried to remove group's creator from the group", userEmail);
             throw new UserPerformedForbiddenActionException("You tried to remove group's creator from the group");
         }
 
@@ -232,82 +186,82 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
         this.authorityRepository.deleteByUserAndGroup(userToRemove, group);
     }
 
+    @Transactional
     @Override
     public AssignAuthoritiesToUserResponse assignAuthoritiesToUser(Long groupId, UserWithAuthoritiesRequest request, String userEmail) {
-        GroupUserAndAuthorities groupUserAndAuthorities = this.getGroupUserAndHisAuthorities(groupId, userEmail);
-        Group group = groupUserAndAuthorities.group;
-        Set<AuthorityEnum> authorities = groupUserAndAuthorities.authorities;
+        GroupUserAndAuthorities groupUserAndAuthorities = getGroupUserAndHisAuthorities(
+                groupId, userEmail, AuthorityEnum.MODIFY_GROUP, "assign authorities to user"
+        );
+        Group group = groupUserAndAuthorities.group();
+        User user = groupUserAndAuthorities.user();
+        User userToAssignAuthorities;
 
-        if (!authorities.contains(AuthorityEnum.MODIFY_GROUP)) {
-            log.info(String.format("User: %s tried to assign authorities to user without permissions", userEmail));
-            throw new UserPerformedForbiddenActionException("You have no permissions to do that");
+        if (user.getId() == request.userId()) {
+            userToAssignAuthorities = user;
+        } else {
+            userToAssignAuthorities = this.userRepository.findById(request.userId()).orElseThrow(() ->
+                    new ResourceNotFoundException("You tried to assign authorities to non existing user"));
         }
-
-        Optional<User> userToAssignAuthoritiesOptional = this.userRepository.findById(request.userId());
-
-        if (userToAssignAuthoritiesOptional.isEmpty()) {
-            throw new UserPerformedForbiddenActionException("You tried to assign authorities to non existing user");
-        }
-
-        User userToAssignAuthorities = userToAssignAuthoritiesOptional.get();
 
         if (!group.getUsers().contains(userToAssignAuthorities)) {
-            log.info(String.format("User: %s tried to assign authorities to user which is not in the group", userEmail));
+            log.info("User={} tried to assign authorities to user which is not in the group", userEmail);
             throw new UserPerformedForbiddenActionException("You tried to assign authorities to user which is not in the group");
         }
 
-        List<Authority> authoritiesToAssign = this.createAuthoritiesList(userToAssignAuthorities, group, request.authorities());
-
+        Set<Authority> authoritiesToAssign = createAuthoritiesList(userToAssignAuthorities, group, request.authorities());
         authoritiesToAssign = authoritiesToAssign
                 .stream()
                 .filter(authority -> !userToAssignAuthorities.getAuthorities().contains(authority))
-                .toList();
+                .collect(Collectors.toSet());
 
         this.authorityRepository.saveAll(authoritiesToAssign);
 
         return new AssignAuthoritiesToUserResponse(
                 authoritiesToAssign
                         .stream()
-                        .map(this.authorityMapperDTO::apply)
+                        .map(this.authorityMapper::mapToDto)
                         .collect(Collectors.toSet())
         );
     }
 
+    @Transactional
     @Override
     public void removeAuthoritiesFromUser(Long groupId, UserWithAuthoritiesRequest request, String userEmail) {
-        GroupUserAndAuthorities groupUserAndAuthorities = this.getGroupUserAndHisAuthorities(groupId, userEmail);
-        Group group = groupUserAndAuthorities.group;
-        Set<AuthorityEnum> authorities = groupUserAndAuthorities.authorities;
+        GroupUserAndAuthorities groupUserAndAuthorities = getGroupUserAndHisAuthorities(
+                groupId, userEmail, AuthorityEnum.MODIFY_GROUP, "take away authorities from user"
+        );
+        Group group = groupUserAndAuthorities.group();
+        User user = groupUserAndAuthorities.user();
+        User userToTakeAwayAuthorities;
 
-        if (!authorities.contains(AuthorityEnum.MODIFY_GROUP)) {
-            log.info(String.format("User: %s tried to take away authorities from user without permissions", userEmail));
-            throw new UserPerformedForbiddenActionException("You does not have authorities to take away authorities from other users");
+        if (user.getId() == request.userId()) {
+            userToTakeAwayAuthorities = user;
+        } else {
+            userToTakeAwayAuthorities = this.userRepository.findById(request.userId()).orElseThrow(() ->
+                    new ResourceNotFoundException("You tried to take away authorities from non existing user"));
         }
-
-        Optional<User> userToTakeAwayAuthoritiesOptional = this.userRepository.findById(request.userId());
-
-        if (userToTakeAwayAuthoritiesOptional.isEmpty()) {
-            throw new UserPerformedForbiddenActionException("You tried to take away authorities from non existing user");
-        }
-
-        User userToTakeAwayAuthorities = userToTakeAwayAuthoritiesOptional.get();
 
         if (!group.getUsers().contains(userToTakeAwayAuthorities)) {
-            log.info(String.format("User: %s tried to take away authorities from user which is not in the group", userEmail));
+            log.info("User={} tried to take away authorities from user which is not in the group", userEmail);
             throw new UserPerformedForbiddenActionException("You tried to take away authorities from user which is not in the group");
         }
 
-        List<Authority> authoritiesToTakeAway =
+        Set<Authority> authoritiesToTakeAway =
                 userToTakeAwayAuthorities.getAuthorities()
-                .stream()
-                .filter(authority -> request.authorities().contains(authority.getAuthorityName()))
-                .toList();
+                        .stream()
+                        .filter(authority -> request.authorities().contains(authority.getAuthorityName()) &&
+                                authority.getGroup().equals(group))
+                        .collect(Collectors.toSet());
+
+        if (authoritiesToTakeAway.isEmpty()) {
+            return;
+        }
 
         this.authorityRepository.deleteAll(authoritiesToTakeAway);
     }
 
-    private List<Authority> createAuthoritiesList(User user, Group group, Set<AuthorityEnum> authoritiesSet) {
-        List<Authority> authorities = new ArrayList<>();
+    private Set<Authority> createAuthoritiesList(User user, Group group, Set<AuthorityEnum> authoritiesSet) {
+        Set<Authority> authorities = new HashSet<>();
 
         for (AuthorityEnum authorityEnum : authoritiesSet) {
             Authority authority = Authority
@@ -323,34 +277,41 @@ public class GroupServiceImpl extends AbstractCookieService implements GroupServ
         return authorities;
     }
 
+    private GroupUserAndAuthorities getGroupAndUser(long groupId, String userEmail) {
+        User user = super.getUserByEmail(userEmail);
+        Group group = this.groupRepository.findById(groupId).orElseThrow(() ->
+                new ResourceNotFoundException("Group does not exist"));
+
+        return new GroupUserAndAuthorities(group, user, null);
+    }
+
     private GroupUserAndAuthorities getGroupUserAndHisAuthorities(long groupId, String userEmail) {
-        User user = this.getUserByEmail(userEmail);
-        Optional<Group> groupOptional = this.groupRepository.findById(groupId);
-
-        if (groupOptional.isEmpty()) {
-            log.info(String.format("User: %s tried to perform action for non existing group", userEmail));
-            throw new UserPerformedForbiddenActionException("Group does not exists");
-        }
-
-        Group group = groupOptional.get();
-        List<Authority> userAuthoritiesForGroup = this.authorityRepository.findAuthoritiesByUserAndGroup(user, group);
+        GroupUserAndAuthorities groupUserAndAuthorities = getGroupAndUser(groupId, userEmail);
+        Set<Authority> userAuthoritiesForGroup = this.authorityRepository
+                .findAuthoritiesByUserAndGroup(groupUserAndAuthorities.user(), groupUserAndAuthorities.group());
         Set<AuthorityEnum> authorities = userAuthoritiesForGroup
                 .stream()
                 .map(Authority::getAuthorityName)
                 .collect(Collectors.toSet());
 
-        return new GroupUserAndAuthorities(group, user, authorities);
+        return new GroupUserAndAuthorities(groupUserAndAuthorities.group, groupUserAndAuthorities.user, authorities);
     }
 
-    private class GroupUserAndAuthorities {
-        private final Group group;
-        private final User user;
-        private final Set<AuthorityEnum> authorities;
+    private GroupUserAndAuthorities getGroupUserAndHisAuthorities(long groupId,
+                                                                  String userEmail,
+                                                                  AuthorityEnum authority,
+                                                                  String action
+    ) {
+        GroupUserAndAuthorities groupAndAuthorities = getGroupUserAndHisAuthorities(groupId, userEmail);
 
-        public GroupUserAndAuthorities(Group group, User user, Set<AuthorityEnum> authorities) {
-            this.group = group;
-            this.user = user;
-            this.authorities = authorities;
+        if (!groupAndAuthorities.authorities().contains(authority)) {
+            log.info("User={} tried to {} without permissions", userEmail, action);
+            throw new UserPerformedForbiddenActionException("You have no permissions to do that");
         }
+
+        return groupAndAuthorities;
+    }
+
+    private record GroupUserAndAuthorities(Group group, User user, Set<AuthorityEnum> authorities) {
     }
 }

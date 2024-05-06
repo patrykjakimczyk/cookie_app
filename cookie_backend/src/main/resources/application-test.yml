@@ -1,0 +1,18 @@
+spring:
+  config:
+    import: ./env/env-test.yaml
+    activate:
+      on-profile: test
+  datasource:
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    url: ${DB_URL}
+
+server:
+  port: 8080
+
+config:
+  frontendAddress: http://cookie-frontend:80
+  jwtSecret: ${JWT_SECRET}
+  ignoreMatchers: >
+    /api/v1/user

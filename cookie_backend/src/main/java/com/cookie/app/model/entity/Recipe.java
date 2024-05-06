@@ -55,6 +55,8 @@ public class Recipe {
     @JoinColumn(name = "creator_id", referencedColumnName = "id")
     private User creator;
 
-    @OneToMany(mappedBy = "recipe", cascade = { CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE })
+    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.MERGE })
+    @JoinColumn(name = "recipe_id")
+    @OrderBy("id ASC")
     private List<RecipeProduct> recipeProducts;
 }

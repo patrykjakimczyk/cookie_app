@@ -1,5 +1,10 @@
 package com.cookie.app.exception;
 
-import java.time.Instant;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-public record ExceptionMessage(String message, Instant time) {}
+import java.time.LocalDateTime;
+
+public record ExceptionMessage(
+        @Schema(example = "You have no permissions to do that")
+        String message,
+        LocalDateTime time) {}

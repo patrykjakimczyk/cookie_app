@@ -74,7 +74,6 @@ export class ShoppingListProductsComponent implements OnInit {
       [Validators.required, Validators.min(1), Validators.pattern('[0-9]+')],
     ],
     unit: ['', [Validators.required]],
-    purchased: [false],
   });
 
   constructor(
@@ -269,7 +268,7 @@ export class ShoppingListProductsComponent implements OnInit {
       this.shoppingListsService
         .getProductsWithFilter(this.addForm.controls.productName.value)
         .subscribe((response) => {
-          this.filteredProducts = of(response.content);
+          this.filteredProducts = of(response);
         });
     }
   }
@@ -293,7 +292,7 @@ export class ShoppingListProductsComponent implements OnInit {
           : this.addForm.controls.unit.value === Unit.MILLILITERS
           ? Unit.MILLILITERS
           : Unit.PIECES,
-      purchased: this.addForm.controls.purchased.value!,
+      purchased: false,
     });
     form.resetForm();
     this.addForm.reset();
@@ -301,9 +300,9 @@ export class ShoppingListProductsComponent implements OnInit {
   }
 
   private getShoppinglistProducts() {
-    const filterValue = this.searchForm.controls.filterValue.value!;
-    const sortColName = this.searchForm.controls.sortColName.value!;
-    const SortDirection = this.searchForm.controls.sortDirection.value!;
+    const filterValue = this.searchForm.controls.filterValue.value;
+    const sortColName = this.searchForm.controls.sortColName.value;
+    const SortDirection = this.searchForm.controls.sortDirection.value;
 
     if (
       this.shoppingList &&
@@ -313,7 +312,7 @@ export class ShoppingListProductsComponent implements OnInit {
       this.shoppingListsService
         .getShoppingListsProducts(
           this.shoppingList.id,
-          this.page,
+          this.page + 1,
           filterValue,
           sortColName,
           SortDirection

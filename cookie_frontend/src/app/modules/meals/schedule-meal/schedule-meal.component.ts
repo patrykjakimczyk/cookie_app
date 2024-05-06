@@ -125,7 +125,7 @@ export class ScheduleMealComponent implements OnInit {
     this.chosenGroupName = chosenGroup!.groupName;
 
     const request: AddMealRequest = {
-      mealDate: new Date(this.mealForm.controls.mealDate.value!),
+      mealDate: this.getCorrectDate(this.mealForm.controls.mealDate.value!),
       groupId: +this.mealForm.controls.groupId.value!,
       groupName: this.chosenGroupName!,
       recipeId: this.chosenRecipe!.id!,
@@ -135,7 +135,7 @@ export class ScheduleMealComponent implements OnInit {
       this.mealsService
         .modifyMeal(this.mealToModifyId, request)
         .pipe(
-          catchError((error: HttpErrorResponse) => {
+          catchError((_: HttpErrorResponse) => {
             this.snackBar.open(
               `You tried to modify a meal without permission for group: ${request.groupName}`,
               'Okay'
@@ -227,6 +227,7 @@ export class ScheduleMealComponent implements OnInit {
     this.chosenRecipe = null;
     this.mealPlanningService.currentMealPlanning = null;
     this.mealPlanningService.modifyingMeal$.next(null);
+    this.mealForm.controls.groupId.enable();
   }
 
   private addMealSubscription(
@@ -311,5 +312,11 @@ export class ScheduleMealComponent implements OnInit {
       .subscribe((response: GetUserGroupsResponse) => {
         this.userGroups = response.userGroups;
       });
+  }
+
+  private getCorrectDate(dateString: string): Date {
+    const date = new Date(dateString);
+    date.setHours(date.getHours() - date.getTimezoneOffset() / 60);
+    return date;
   }
 }

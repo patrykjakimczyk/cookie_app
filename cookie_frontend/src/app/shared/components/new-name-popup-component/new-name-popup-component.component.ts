@@ -27,7 +27,7 @@ export class NewNamePopupComponentComponent {
   }
 
   changeName(newName: NgModel) {
-    if (!newName.valid) {
+    if (!newName.valid || !newName.value) {
       return;
     }
 

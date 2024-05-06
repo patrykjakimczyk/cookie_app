@@ -1,19 +1,25 @@
 package com.cookie.app.model.request;
 
 import com.cookie.app.validation.MealDateValidation;
-import jakarta.validation.constraints.Min;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 public record AddMealRequest(
-        @NotNull(message = "Meal date cannot be null")
+        @NotNull(message = "Meal must be present")
         @MealDateValidation
-        Timestamp mealDate,
+        LocalDateTime mealDate,
 
-        @Min(value = 1, message = "Group id must be greater than 0")
-        long groupId,
+        @Schema(example = "1")
+        @NotNull(message = "Group id must be present")
+        @Positive(message = "Group id must be greater than 0")
+        Long groupId,
 
-        @Min(value = 1, message = "Recipe id must be greater than 0")
-        long recipeId
-) {}
+        @Schema(example = "1")
+        @NotNull(message = "Recipe id must be present")
+        @Positive(message = "Recipe id must be greater than 0")
+        Long recipeId
+) {
+}

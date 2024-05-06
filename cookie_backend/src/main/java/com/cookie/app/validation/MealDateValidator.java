@@ -2,14 +2,17 @@ package com.cookie.app.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import lombok.RequiredArgsConstructor;
 
-import java.sql.Timestamp;
-import java.time.Instant;
+import java.time.Clock;
+import java.time.LocalDateTime;
 
-public class MealDateValidator implements ConstraintValidator<MealDateValidation, Timestamp> {
+@RequiredArgsConstructor
+public class MealDateValidator implements ConstraintValidator<MealDateValidation, LocalDateTime> {
+    private final Clock clock;
 
     @Override
-    public boolean isValid(Timestamp timestamp, ConstraintValidatorContext constraintValidatorContext) {
-        return timestamp.after(Timestamp.from(Instant.now()));
+    public boolean isValid(LocalDateTime date, ConstraintValidatorContext constraintValidatorContext) {
+        return date.isAfter(LocalDateTime.now(clock));
     }
 }

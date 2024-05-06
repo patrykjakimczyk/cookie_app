@@ -30,15 +30,15 @@ export type RecipeDetailsDTO = {
   cuisine: string;
   portions: number;
   recipeImage: Blob;
-  creatorName: string;
+  creatorUserName: string;
   products: RecipeProductDTO[];
 };
 
 export type GetRecipesParams = {
-  filterValue: string;
+  filterValue: string | null;
   mealTypes: MealType[];
-  prepTime: number;
-  portions: number;
-  sortColName: string;
-  sortDirection: string;
+  prepTime: number | null;
+  portions: number | null;
+  sortColName: string | null;
+  sortDirection: string | null;
 };

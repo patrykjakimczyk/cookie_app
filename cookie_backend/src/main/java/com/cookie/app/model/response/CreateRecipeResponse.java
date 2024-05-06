@@ -1,4 +1,6 @@
 package com.cookie.app.model.response;
 
-public record CreateRecipeResponse(long recipeId) {
+import io.swagger.v3.oas.annotations.media.Schema;
+
+public record CreateRecipeResponse(@Schema(example = "1") long recipeId) {
 }

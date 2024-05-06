@@ -1,7 +1,7 @@
 package com.cookie.app.service.impl;
 
 import com.cookie.app.model.enums.Role;
-import com.cookie.app.model.mapper.AuthorityMapperDTO;
+import com.cookie.app.model.mapper.AuthorityMapper;
 import com.cookie.app.model.request.RegistrationRequest;
 import com.cookie.app.model.entity.User;
 import com.cookie.app.model.response.LoginResponse;
@@ -12,21 +12,21 @@ import com.cookie.app.service.LoginService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
 @Service
-public class LoginServiceImpl extends AbstractCookieService implements LoginService {
+public non-sealed class LoginServiceImpl extends AbstractCookieService implements LoginService {
     private final PasswordEncoder passwordEncoder;
 
     public LoginServiceImpl(UserRepository userRepository,
                             ProductRepository productRepository,
-                            AuthorityMapperDTO authorityMapperDTO,
+                            AuthorityMapper authorityMapper,
                             PasswordEncoder passwordEncoder) {
-        super(userRepository, productRepository, authorityMapperDTO);
+        super(userRepository, productRepository, authorityMapper);
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -37,6 +37,7 @@ public class LoginServiceImpl extends AbstractCookieService implements LoginServ
         return new LoginResponse(user.getUsername());
     }
 
+    @Transactional
     @Override
     public RegistrationResponse userRegistration(RegistrationRequest request) {
         Optional<User> usernameOptional = super.userRepository.findByUsername(request.username());
@@ -61,7 +62,7 @@ public class LoginServiceImpl extends AbstractCookieService implements LoginServ
                 .username(request.username())
                 .email(request.email())
                 .password(this.passwordEncoder.encode(request.password()))
-                .creationDate(Timestamp.from(Instant.now()))
+                .creationDate(LocalDateTime.now())
                 .birthDate(request.birthDate())
                 .gender(request.gender())
                 .build();

@@ -66,7 +66,6 @@ export class PantryProductsListComponent {
       [Validators.required, Validators.min(1), Validators.pattern('[0-9]+')],
     ],
     unit: ['', [Validators.required]],
-    reserved: [0],
     purchaseDate: [''],
     expirationDate: [''],
     placement: ['', [Validators.pattern(RegexConstants.placementRegex)]],
@@ -114,7 +113,7 @@ export class PantryProductsListComponent {
       this.pantriesService
         .getProductsWithFilter(this.addForm.controls.productName.value)
         .subscribe((response) => {
-          this.filteredProducts = of(response.content);
+          this.filteredProducts = of(response);
         });
     }
   }
@@ -184,11 +183,20 @@ export class PantryProductsListComponent {
       },
       quantity: +this.addForm.controls.quantity.value!,
       unit: this.addForm.controls.unit.value as Unit,
-      reserved: this.addForm.controls.reserved.value!,
-      purchaseDate: this.addForm.controls.purchaseDate.value!,
-      expirationDate: this.addForm.controls.expirationDate.value!,
-      placement: this.addForm.controls.placement.value!,
+      reserved: 0,
+      purchaseDate: this.addForm.controls.purchaseDate.value
+        ? new Date(this.addForm.controls.purchaseDate.value).toLocaleDateString(
+            'en-GB'
+          )
+        : '',
+      expirationDate: this.addForm.controls.expirationDate.value
+        ? new Date(
+            this.addForm.controls.expirationDate.value
+          ).toLocaleDateString('en-GB')
+        : '',
+      placement: this.addForm.controls.placement.value || '',
     });
+
     form.resetForm(); // this combination of two resets allows to reset form without displaying form fields as invalid
     this.addForm.reset();
     this.displayProductsToAddPage(0);
@@ -244,15 +252,15 @@ export class PantryProductsListComponent {
   }
 
   private getPantryProducts() {
-    const filterValue = this.searchForm.controls.filterValue.value!;
-    const sortColName = this.searchForm.controls.sortColName.value!;
-    const SortDirection = this.searchForm.controls.sortDirection.value!;
+    const filterValue = this.searchForm.controls.filterValue.value;
+    const sortColName = this.searchForm.controls.sortColName.value;
+    const SortDirection = this.searchForm.controls.sortDirection.value;
 
     if (this.pantry && this.pantry.pantryId && this.pantry.pantryName) {
       this.pantriesService
         .getPantryProducts(
           this.pantry.pantryId,
-          this.page,
+          this.page + 1,
           filterValue,
           sortColName,
           SortDirection

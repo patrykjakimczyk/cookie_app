@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -35,10 +35,10 @@ public class PantryProduct {
     private Product product;
 
     @Column
-    private Timestamp purchaseDate;
+    private LocalDate purchaseDate;
 
     @Column
-    private Timestamp expirationDate;
+    private LocalDate expirationDate;
 
     @Column(nullable = false)
     private int quantity;
