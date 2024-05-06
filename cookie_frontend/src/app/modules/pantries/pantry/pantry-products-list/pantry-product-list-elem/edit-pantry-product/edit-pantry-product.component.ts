@@ -50,8 +50,12 @@ export class EditPantryProductComponent implements OnInit {
       ],
       unit: [this.pantryProduct.unit],
       reserved: [this.pantryProduct.reserved],
-      purchaseDate: [this.pantryProduct.purchaseDate],
-      expirationDate: [this.pantryProduct.expirationDate],
+      purchaseDate: [
+        this.stringToDateTransform(this.pantryProduct.purchaseDate),
+      ],
+      expirationDate: [
+        this.stringToDateTransform(this.pantryProduct.expirationDate),
+      ],
       placement: [this.pantryProduct.placement],
     });
   }
@@ -79,6 +83,22 @@ export class EditPantryProductComponent implements OnInit {
       return;
     }
 
+    this.editForm.controls['purchaseDate'].setValue(
+      this.editForm.controls['purchaseDate'].value
+        ? new Date(
+            this.editForm.controls['purchaseDate'].value
+          ).toLocaleDateString('en-GB')
+        : ''
+    );
+
+    this.editForm.controls['expirationDate'].setValue(
+      this.editForm.controls['expirationDate'].value
+        ? new Date(
+            this.editForm.controls['expirationDate'].value
+          ).toLocaleDateString('en-GB')
+        : ''
+    );
+
     if (this.isPantryProduct) {
       this.pantriesService
         .modifyPantryProduct(this.pantryId, this.editForm.value)
@@ -88,5 +108,17 @@ export class EditPantryProductComponent implements OnInit {
     } else {
       this.dialog.close(this.editForm.value);
     }
+  }
+
+  private stringToDateTransform(value: string | null | undefined): Date | null {
+    if (!value) {
+      return null;
+    }
+
+    return new Date(
+      +value.substring(6, 10),
+      +value.substring(3, 5) - 1,
+      +value.substring(0, 2)
+    );
   }
 }

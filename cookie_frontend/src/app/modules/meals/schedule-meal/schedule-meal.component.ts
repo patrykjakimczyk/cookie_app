@@ -227,6 +227,7 @@ export class ScheduleMealComponent implements OnInit {
     this.chosenRecipe = null;
     this.mealPlanningService.currentMealPlanning = null;
     this.mealPlanningService.modifyingMeal$.next(null);
+    this.mealForm.controls.groupId.enable();
   }
 
   private addMealSubscription(

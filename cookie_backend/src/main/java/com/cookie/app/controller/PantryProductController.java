@@ -32,7 +32,7 @@ import java.util.List;
 @RestController
 public class PantryProductController {
     private static final String GET_PANTRY_PRODUCTS_URL = "/{page}";
-    private static final String PANTRY_PRODUCT_URL = "/{productId}";
+    private static final String PANTRY_PRODUCT_URL = "/{pantryProductId}";
 
     private final PantryProductService pantryProductService;
 

@@ -74,11 +74,9 @@ public abstract sealed class AbstractCookieService permits
             return pageRequest.withSort(idSort);
         }
 
-        if (sortDirection == Sort.Direction.DESC) {
-            sort = Sort.by(Sort.Direction.DESC, sortColName);
-        } else {
-            sort = Sort.by(Sort.Direction.ASC, sortColName);
-        }
+        sort = sortDirection == Sort.Direction.DESC ?
+                Sort.by(Sort.Direction.DESC, sortColName) :
+                Sort.by(Sort.Direction.ASC, sortColName);
 
         sort = sort.and(idSort);
         return pageRequest.withSort(sort);
