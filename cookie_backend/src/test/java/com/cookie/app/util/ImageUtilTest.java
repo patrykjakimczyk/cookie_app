@@ -3,7 +3,7 @@ package com.cookie.app.util;
 import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 class ImageUtilTest {
 
@@ -12,8 +12,8 @@ class ImageUtilTest {
 
         byte[] compressedImage = ImageUtil.compressImage(null);
 
-        assertNotNull(compressedImage);
-        assertEquals(0, compressedImage.length);
+        assertThat(compressedImage).isNotNull();
+        assertThat(compressedImage).hasSize(0);
     }
 
     @Test
@@ -21,8 +21,8 @@ class ImageUtilTest {
 
         byte[] compressedImage = ImageUtil.compressImage(new byte[0]);
 
-        assertNotNull(compressedImage);
-        assertEquals(0, compressedImage.length);
+        assertThat(compressedImage).isNotNull();
+        assertThat(compressedImage).hasSize(0);
     }
 
     @Test
@@ -32,8 +32,8 @@ class ImageUtilTest {
 
         byte[] compressedImage = ImageUtil.compressImage(inputData);
 
-        assertNotNull(compressedImage);
-        assertNotEquals(inputData.length, compressedImage.length);
+        assertThat(compressedImage).isNotNull();
+        assertThat(compressedImage.length).isNotEqualTo(inputData.length);
     }
 
     @Test
@@ -41,8 +41,8 @@ class ImageUtilTest {
 
         byte[] decompressedImage = ImageUtil.decompressImage(null);
 
-        assertNotNull(decompressedImage);
-        assertEquals(0, decompressedImage.length);
+        assertThat(decompressedImage).isNotNull();
+        assertThat(decompressedImage).hasSize(0);
     }
 
     @Test
@@ -50,8 +50,8 @@ class ImageUtilTest {
 
         byte[] decompressedImage = ImageUtil.decompressImage(new byte[0]);
 
-        assertNotNull(decompressedImage);
-        assertEquals(0, decompressedImage.length);
+        assertThat(decompressedImage).isNotNull();
+        assertThat(decompressedImage).hasSize(0);
     }
 
     @Test
@@ -61,12 +61,12 @@ class ImageUtilTest {
 
         byte[] compressedData = ImageUtil.compressImage(inputData);
 
-        assertNotNull(compressedData);
-        assertNotEquals(inputData.length, compressedData.length);
+        assertThat(compressedData).isNotNull();
+        assertThat(compressedData.length).isNotEqualTo(inputData.length);
 
         byte[] decompressedImage = ImageUtil.decompressImage(compressedData);
 
-        assertNotNull(decompressedImage);
-        assertArrayEquals(inputData, decompressedImage);
+        assertThat(decompressedImage).isNotNull();
+        assertThat(decompressedImage).containsExactly(inputData);
     }
 }

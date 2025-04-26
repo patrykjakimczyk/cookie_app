@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import java.util.Collections;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -42,10 +43,10 @@ class ProductServiceImplTest {
         doReturn(pageResponse).when(productRepository).findProductsWithFilter(eq(filterValue), any(PageRequest.class));
         List<ProductDTO> returnValue = this.service.getProductsWithFilter(filterValue);
 
-        assertEquals(pageResponse.getContent().size(), returnValue.size());
-        assertEquals(product.getId(), returnValue.get(0).productId());
-        assertEquals(product.getProductName(), returnValue.get(0).productName());
-        assertEquals(product.getCategory(), returnValue.get(0).category());
+        assertThat(returnValue).hasSize(pageResponse.getContent().size());
+        assertThat(returnValue.get(0).productId()).isEqualTo(product.getId());
+        assertThat(returnValue.get(0).productName()).isEqualTo(product.getProductName());
+        assertThat(returnValue.get(0).category()).isEqualTo(product.getCategory());
     }
 
     @Test
@@ -56,7 +57,6 @@ class ProductServiceImplTest {
         doReturn(pageResponse).when(productRepository).findProductsWithFilter(eq(filterValue), any(PageRequest.class));
         List<ProductDTO> returnValue = this.service.getProductsWithFilter(filterValue);
 
-        assertEquals(pageResponse.getContent().size(), returnValue.size());
-        assertTrue(returnValue.isEmpty());
+        assertThat(returnValue).isEmpty();
     }
 }

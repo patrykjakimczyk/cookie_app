@@ -8,8 +8,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.*;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,18 +27,18 @@ class MealDateValidatorTest {
         doReturn(currentInstant).when(clock).instant();
         doReturn(ZoneOffset.UTC).when(clock).getZone();
 
-        assertFalse(mealDateValidator.isValid(yesterday, constraintValidatorContext));
+        assertThat(mealDateValidator.isValid(yesterday, constraintValidatorContext)).isFalse();
     }
 
     @Test
     void test_isValidReturnsTrueForTomorrowDate() {
         final Instant currentInstant = Instant.now();
-        final LocalDateTime tommorow = LocalDateTime.ofInstant(currentInstant, ZoneOffset.UTC).plusSeconds(86400);
+        final LocalDateTime tomorrow = LocalDateTime.ofInstant(currentInstant, ZoneOffset.UTC).plusSeconds(86400);
 
         doReturn(currentInstant).when(clock).instant();
         doReturn(ZoneOffset.UTC).when(clock).getZone();
 
-        assertTrue(mealDateValidator.isValid(tommorow, constraintValidatorContext));
+        assertThat(mealDateValidator.isValid(tomorrow, constraintValidatorContext)).isTrue();
     }
 
     @Test
@@ -50,7 +49,7 @@ class MealDateValidatorTest {
         doReturn(currentInstant).when(clock).instant();
         doReturn(ZoneOffset.UTC).when(clock).getZone();
 
-        assertTrue(mealDateValidator.isValid(tooLate, constraintValidatorContext));
+        assertThat(mealDateValidator.isValid(tooLate, constraintValidatorContext)).isTrue();
     }
 
     @Test
@@ -61,6 +60,6 @@ class MealDateValidatorTest {
         doReturn(currentInstant).when(clock).instant();
         doReturn(ZoneOffset.UTC).when(clock).getZone();
 
-        assertFalse(mealDateValidator.isValid(secondBefore, constraintValidatorContext));
+        assertThat(mealDateValidator.isValid(secondBefore, constraintValidatorContext)).isFalse();
     }
 }

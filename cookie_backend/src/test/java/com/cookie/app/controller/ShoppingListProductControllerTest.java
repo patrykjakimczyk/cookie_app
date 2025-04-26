@@ -18,7 +18,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,8 +41,9 @@ class ShoppingListProductControllerTest extends AbstractControllerTest {
         doReturn(pageResponse).when(shoppingListProductService).getShoppingListProducts(this.listId, pageNr, filterRequest, authentication.getName());
         ResponseEntity<PageResult<ShoppingListProductDTO>> response = this.controller.getShoppingListProducts(this.listId, pageNr, filterRequest, authentication);
 
-        assertEquals(shoppingListProductDTOS.size(), response.getBody().totalElements());
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().totalElements()).isEqualTo(shoppingListProductDTOS.size());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
@@ -51,7 +52,7 @@ class ShoppingListProductControllerTest extends AbstractControllerTest {
 
         ResponseEntity<Void> response = this.controller.addProductsToShoppingList(this.listId, shoppingListProductDTOS, authentication);
 
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
 
     @Test
@@ -60,7 +61,7 @@ class ShoppingListProductControllerTest extends AbstractControllerTest {
 
         ResponseEntity<Void> response = this.controller.removeProductsFromShoppingList(listId, listProductsIds, authentication);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
@@ -69,7 +70,7 @@ class ShoppingListProductControllerTest extends AbstractControllerTest {
 
         ResponseEntity<Void> response = this.controller.updateShoppingListProduct(listId, shoppingListProductDTO, authentication);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
@@ -78,7 +79,7 @@ class ShoppingListProductControllerTest extends AbstractControllerTest {
 
         ResponseEntity<Void> response = this.controller.changePurchaseStatusForProducts(listId, listProductsIds, authentication);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
@@ -86,9 +87,8 @@ class ShoppingListProductControllerTest extends AbstractControllerTest {
 
         ResponseEntity<Void> response = this.controller.transferProductsToPantry(listId, authentication);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
-
 
     private ShoppingListProductDTO createShoppingListProduct() {
         final ProductDTO productDTO = new ProductDTO(0L, "name", Category.CEREAL);

@@ -25,8 +25,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 
@@ -50,13 +50,12 @@ class RecipeControllerTest extends AbstractControllerTest {
         final List<RecipeDTO> foundRecipes = Collections.singletonList(recipeDTO);
         final PageResult<RecipeDTO> pageResponse = new PageResult<>(foundRecipes, foundRecipes.size(), 1, 0);
 
-        doReturn(pageResponse).when(recipeService)
-                .getRecipes(1, filterRequest);
-        ResponseEntity<PageResult<RecipeDTO>> response = this.controller
-                .getRecipes(1, filterRequest);
+        doReturn(pageResponse).when(recipeService).getRecipes(1, filterRequest);
+        ResponseEntity<PageResult<RecipeDTO>> response = this.controller.getRecipes(1, filterRequest);
 
-        assertEquals(foundRecipes.size(), response.getBody().totalElements());
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().totalElements()).isEqualTo(foundRecipes.size());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
@@ -66,13 +65,12 @@ class RecipeControllerTest extends AbstractControllerTest {
         final List<RecipeDTO> foundRecipes = Collections.singletonList(recipeDTO);
         final PageResult<RecipeDTO> pageResponse = new PageResult<>(foundRecipes, foundRecipes.size(), 1, 0);
 
-        doReturn(pageResponse).when(recipeService)
-                .getUserRecipes(authentication.getName(), 1, filterRequest);
-        ResponseEntity<PageResult<RecipeDTO>> response = this.controller
-                .getUserRecipes(1, filterRequest, authentication);
+        doReturn(pageResponse).when(recipeService).getUserRecipes(authentication.getName(), 1, filterRequest);
+        ResponseEntity<PageResult<RecipeDTO>> response = this.controller.getUserRecipes(1, filterRequest, authentication);
 
-        assertEquals(foundRecipes.size(), response.getBody().totalElements());
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().totalElements()).isEqualTo(foundRecipes.size());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
@@ -83,9 +81,10 @@ class RecipeControllerTest extends AbstractControllerTest {
         doReturn(recipeDetailsDTO).when(recipeService).getRecipeDetails(id);
         ResponseEntity<RecipeDetailsDTO> response = this.controller.getRecipeDetails(id);
 
-        assertEquals(recipeDetailsDTO.id(), response.getBody().id());
-        assertEquals(recipeDetailsDTO.recipeName(), response.getBody().recipeName());
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().id()).isEqualTo(recipeDetailsDTO.id());
+        assertThat(response.getBody().recipeName()).isEqualTo(recipeDetailsDTO.recipeName());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
@@ -100,15 +99,15 @@ class RecipeControllerTest extends AbstractControllerTest {
         doReturn(createRecipeResponse).when(recipeService).createRecipe(authentication.getName(), request, null);
         ResponseEntity<CreateRecipeResponse> response = this.controller.createRecipe(null, objectMapper.writeValueAsString(request), authentication);
 
-        assertEquals(createRecipeResponse.recipeId(), response.getBody().recipeId());
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().recipeId()).isEqualTo(createRecipeResponse.recipeId());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
 
     @Test
     void test_createRecipeIncorrectRequestBodyStructure() {
-
-        assertThrows(MappingJsonToObjectException.class, () ->
-                this.controller.createRecipe(null, "requestbody", authentication));
+        assertThatThrownBy(() -> this.controller.createRecipe(null, "requestbody", authentication))
+                .isInstanceOf(MappingJsonToObjectException.class);
     }
 
     @Test
@@ -119,17 +118,16 @@ class RecipeControllerTest extends AbstractControllerTest {
                 5, MealType.APPETIZER, null, 1, false, Collections.singletonList(recipeProductDTO));
         ObjectMapper objectMapper = new ObjectMapper();
 
-        assertThrows(ConstraintViolationException.class, () ->
-                this.controller.createRecipe(null, objectMapper.writeValueAsString(request), authentication));
+        assertThatThrownBy(() -> this.controller.createRecipe(null, objectMapper.writeValueAsString(request), authentication))
+                .isInstanceOf(ConstraintViolationException.class);
     }
 
     @Test
     void test_deleteRecipeSuccessful() {
-
         doNothing().when(recipeService).deleteRecipe(authentication.getName(), id);
         ResponseEntity<Void> response = this.controller.deleteRecipe(id, authentication);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
@@ -144,14 +142,15 @@ class RecipeControllerTest extends AbstractControllerTest {
         doReturn(createRecipeResponse).when(recipeService).updateRecipe(authentication.getName(), request, null);
         ResponseEntity<CreateRecipeResponse> response = this.controller.updateRecipe(null, objectMapper.writeValueAsString(request), authentication);
 
-        assertEquals(createRecipeResponse.recipeId(), response.getBody().recipeId());
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().recipeId()).isEqualTo(createRecipeResponse.recipeId());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
     void test_updateRecipeIncorrectRequestBodyStructure() {
-
-        assertThrows(MappingJsonToObjectException.class, () -> this.controller.updateRecipe(null, "requestbody", authentication));
+        assertThatThrownBy(() -> this.controller.updateRecipe(null, "requestbody", authentication))
+                .isInstanceOf(MappingJsonToObjectException.class);
     }
 
     @Test
@@ -162,7 +161,7 @@ class RecipeControllerTest extends AbstractControllerTest {
                 5, MealType.APPETIZER, null, 1, false, Collections.singletonList(recipeProductDTO));
         ObjectMapper objectMapper = new ObjectMapper();
 
-        assertThrows(ConstraintViolationException.class, () ->
-                this.controller.updateRecipe(null, objectMapper.writeValueAsString(request), authentication));
+        assertThatThrownBy(() -> this.controller.updateRecipe(null, objectMapper.writeValueAsString(request), authentication))
+                .isInstanceOf(ConstraintViolationException.class);
     }
 }

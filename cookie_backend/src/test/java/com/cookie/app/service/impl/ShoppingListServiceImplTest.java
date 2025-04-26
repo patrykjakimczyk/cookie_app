@@ -25,6 +25,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -90,16 +92,16 @@ class ShoppingListServiceImplTest {
         GetShoppingListResponse response = this.service.createShoppingList(request, email);
 
         verify(shoppingListRepository).save(any(ShoppingList.class));
-        assertEquals(request.shoppingListName(), response.listName());
-        assertFalse(response.authorities().isEmpty());
+        assertThat(response.listName()).isEqualTo(request.shoppingListName());
+        assertThat(response.authorities()).isNotEmpty();
 
         List<AuthorityDTO> responseAuthorities = response.authorities().stream()
                 .filter(authorityDTO -> authorityDTO.groupId() == id)
                 .toList();
 
-        assertEquals(1, responseAuthorities.size());
-        assertEquals(authority.getAuthorityName(), responseAuthorities.get(0).authority());
-        assertEquals(group.getId(), responseAuthorities.get(0).groupId());
+        assertThat(responseAuthorities).hasSize(1);
+        assertThat(responseAuthorities.get(0).authority()).isEqualTo(authority.getAuthorityName());
+        assertThat(responseAuthorities.get(0).groupId()).isEqualTo(group.getId());
     }
 
     @Test
@@ -108,7 +110,8 @@ class ShoppingListServiceImplTest {
 
         doReturn(Optional.empty()).when(userRepository).findByEmail(email);
 
-        assertThrows(UserWasNotFoundAfterAuthException.class, () -> service.createShoppingList(request, email));
+        assertThatThrownBy(() -> service.createShoppingList(request, email))
+                .isInstanceOf(UserWasNotFoundAfterAuthException.class);
         verify(shoppingListRepository, times(0)).save(any(ShoppingList.class));
     }
 
@@ -118,8 +121,9 @@ class ShoppingListServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        Exception ex = assertThrows(ResourceNotFoundException.class, () -> service.createShoppingList(request, email));
-        assertEquals("You tried to create shopping list for non existing group", ex.getMessage());
+        assertThatThrownBy(() -> service.createShoppingList(request, email))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("You tried to create shopping list for non existing group");
         verify(shoppingListRepository, times(0)).save(any(ShoppingList.class));
     }
 
@@ -130,8 +134,9 @@ class ShoppingListServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () -> service.createShoppingList(request, email));
-        assertEquals("You tried to create shopping list without permission", ex.getMessage());
+        assertThatThrownBy(() -> service.createShoppingList(request, email))
+                .isInstanceOf(UserPerformedForbiddenActionException.class)
+                .hasMessage("You tried to create shopping list without permission");
         verify(shoppingListRepository, times(0)).save(any(ShoppingList.class));
     }
 
@@ -141,16 +146,16 @@ class ShoppingListServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         GetShoppingListResponse response = this.service.getShoppingList(id, email);
 
-        assertEquals(shoppingList.getListName(), response.listName());
-        assertFalse(response.authorities().isEmpty());
+        assertThat(response.listName()).isEqualTo(shoppingList.getListName());
+        assertThat(response.authorities()).isNotEmpty();
 
         List<AuthorityDTO> responseAuthorities = response.authorities().stream()
                 .filter(authorityDTO -> authorityDTO.groupId() == id)
                 .toList();
 
-        assertEquals(1, responseAuthorities.size());
-        assertEquals(authority.getAuthorityName(), responseAuthorities.get(0).authority());
-        assertEquals(group.getId(), responseAuthorities.get(0).groupId());
+        assertThat(responseAuthorities).hasSize(1);
+        assertThat(responseAuthorities.get(0).authority()).isEqualTo(authority.getAuthorityName());
+        assertThat(responseAuthorities.get(0).groupId()).isEqualTo(group.getId());
     }
 
     @Test
@@ -158,7 +163,8 @@ class ShoppingListServiceImplTest {
 
         doReturn(Optional.empty()).when(userRepository).findByEmail(email);
 
-        assertThrows(UserWasNotFoundAfterAuthException.class, () -> service.getShoppingList(id, email));
+        assertThatThrownBy(() -> service.getShoppingList(id, email))
+                .isInstanceOf(UserWasNotFoundAfterAuthException.class);
     }
 
     @Test
@@ -167,9 +173,9 @@ class ShoppingListServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         GetShoppingListResponse response = this.service.getShoppingList(2L, email);
 
-        assertEquals(0, response.id());
-        assertNull(response.listName());
-        assertNull(response.authorities());
+        assertThat(response.id()).isEqualTo(0);
+        assertThat(response.listName()).isNull();
+        assertThat(response.authorities()).isNull();
     }
 
     @Test
@@ -178,12 +184,12 @@ class ShoppingListServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         GetUserShoppingListsResponse response = this.service.getUserShoppingLists(email);
 
-        assertFalse(response.shoppingLists().isEmpty());
-        assertEquals(shoppingList.getId(), response.shoppingLists().get(0).listId());
-        assertEquals(shoppingList.getListName(), response.shoppingLists().get(0).listName());
-        assertEquals(1, response.shoppingLists().get(0).nrOfProducts());
-        assertEquals(group.getId(), response.shoppingLists().get(0).groupId());
-        assertEquals(group.getGroupName(), response.shoppingLists().get(0).groupName());
+        assertThat(response.shoppingLists()).isNotEmpty();
+        assertThat(response.shoppingLists().get(0).listId()).isEqualTo(shoppingList.getId());
+        assertThat(response.shoppingLists().get(0).listName()).isEqualTo(shoppingList.getListName());
+        assertThat(response.shoppingLists().get(0).nrOfProducts()).isEqualTo(1);
+        assertThat(response.shoppingLists().get(0).groupId()).isEqualTo(group.getId());
+        assertThat(response.shoppingLists().get(0).groupName()).isEqualTo(group.getGroupName());
     }
 
     @Test
@@ -193,7 +199,7 @@ class ShoppingListServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         GetUserShoppingListsResponse response = this.service.getUserShoppingLists(email);
 
-        assertTrue(response.shoppingLists().isEmpty());
+        assertThat(response.shoppingLists()).isEmpty();
     }
 
     @Test
@@ -201,7 +207,8 @@ class ShoppingListServiceImplTest {
 
         doReturn(Optional.empty()).when(userRepository).findByEmail(email);
 
-        assertThrows(UserWasNotFoundAfterAuthException.class, () -> service.getUserShoppingLists(email));
+        assertThatThrownBy(() -> service.getUserShoppingLists(email))
+                .isInstanceOf(UserWasNotFoundAfterAuthException.class);
     }
 
     @Test
@@ -212,7 +219,7 @@ class ShoppingListServiceImplTest {
         DeleteShoppingListResponse response = this.service.deleteShoppingList(id, email);
 
         verify(shoppingListRepository).delete(shoppingList);
-        assertEquals(shoppingList.getListName(), response.deletedListName());
+        assertThat(response.deletedListName()).isEqualTo(shoppingList.getListName());
     }
 
     @Test
@@ -220,7 +227,8 @@ class ShoppingListServiceImplTest {
 
         doReturn(Optional.empty()).when(userRepository).findByEmail(email);
 
-        assertThrows(UserWasNotFoundAfterAuthException.class, () -> service.deleteShoppingList(id, email));
+        assertThatThrownBy(() -> service.deleteShoppingList(id, email))
+                .isInstanceOf(UserWasNotFoundAfterAuthException.class);
         verify(shoppingListRepository, times(0)).delete(shoppingList);
     }
 
@@ -230,8 +238,9 @@ class ShoppingListServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        Exception ex = assertThrows(ResourceNotFoundException.class, () -> service.deleteShoppingList(2L, email));
-        assertEquals("You cannot access the shopping list because it could not be found in your groups", ex.getMessage());
+        assertThatThrownBy(() -> service.deleteShoppingList(2L, email))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("You cannot access the shopping list because it could not be found in your groups");
         verify(shoppingListRepository, times(0)).delete(shoppingList);
     }
 
@@ -240,8 +249,9 @@ class ShoppingListServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () -> service.deleteShoppingList(id, email));
-        assertEquals("You have not permissions to do that", ex.getMessage());
+        assertThatThrownBy(() -> service.deleteShoppingList(id, email))
+                .isInstanceOf(UserPerformedForbiddenActionException.class)
+                .hasMessage("You have not permissions to do that");
         verify(shoppingListRepository, times(0)).delete(shoppingList);
     }
 
@@ -254,16 +264,16 @@ class ShoppingListServiceImplTest {
         GetShoppingListResponse response = this.service.updateShoppingList(id, request, email);
 
         verify(shoppingListRepository).save(shoppingList);
-        assertEquals(request.shoppingListName(), response.listName());
-        assertFalse(response.authorities().isEmpty());
+        assertThat(response.listName()).isEqualTo(request.shoppingListName());
+        assertThat(response.authorities()).isNotEmpty();
 
         List<AuthorityDTO> responseAuthorities = response.authorities().stream()
                 .filter(authorityDTO -> authorityDTO.groupId() == id)
                 .toList();
 
-        assertEquals(1, responseAuthorities.size());
-        assertEquals(authority.getAuthorityName(), responseAuthorities.get(0).authority());
-        assertEquals(group.getId(), responseAuthorities.get(0).groupId());
+        assertThat(responseAuthorities).hasSize(1);
+        assertThat(responseAuthorities.get(0).authority()).isEqualTo(authority.getAuthorityName());
+        assertThat(responseAuthorities.get(0).groupId()).isEqualTo(group.getId());
     }
 
     @Test
@@ -273,7 +283,8 @@ class ShoppingListServiceImplTest {
 
         doReturn(Optional.empty()).when(userRepository).findByEmail(email);
 
-        assertThrows(UserWasNotFoundAfterAuthException.class, () -> service.updateShoppingList(id, request, email));
+        assertThatThrownBy(() -> service.updateShoppingList(id, request, email))
+                .isInstanceOf(UserWasNotFoundAfterAuthException.class);
         verify(shoppingListRepository, times(0)).save(shoppingList);
     }
 
@@ -284,8 +295,9 @@ class ShoppingListServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        Exception ex = assertThrows(ResourceNotFoundException.class, () -> service.updateShoppingList(2L, request, email));
-        assertEquals("You cannot access the shopping list because it could not be found in your groups", ex.getMessage());
+        assertThatThrownBy(() -> service.updateShoppingList(2L, request, email))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("You cannot access the shopping list because it could not be found in your groups");
         verify(shoppingListRepository, times(0)).save(shoppingList);
     }
 
@@ -295,8 +307,9 @@ class ShoppingListServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () -> service.updateShoppingList(id, request, email));
-        assertEquals("You have not permissions to do that", ex.getMessage());
+        assertThatThrownBy(() -> service.updateShoppingList(id, request, email))
+                .isInstanceOf(UserPerformedForbiddenActionException.class)
+                .hasMessage("You have not permissions to do that");
         verify(shoppingListRepository, times(0)).save(shoppingList);
     }
 }

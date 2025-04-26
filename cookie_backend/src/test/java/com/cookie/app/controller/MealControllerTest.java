@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 
@@ -46,13 +46,14 @@ class MealControllerTest extends AbstractControllerTest {
         doReturn(meals).when(mealService).getMealsForUser(dateAfter, dateBefore, authentication.getName());
         ResponseEntity<List<MealDTO>> response = this.controller.getMealsForUser(dateAfter, dateBefore, authentication);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(meals.size(), response.getBody().size());
-        assertEquals(meals.get(0).id(), response.getBody().get(0).id());
-        assertEquals(meals.get(0).mealDate(), response.getBody().get(0).mealDate());
-        assertEquals(meals.get(0).username(), response.getBody().get(0).username());
-        assertEquals(meals.get(0).group().groupName(), response.getBody().get(0).group().groupName());
-        assertEquals(meals.get(0).recipe().recipeName(), response.getBody().get(0).recipe().recipeName());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody()).hasSize(meals.size());
+        assertThat(response.getBody().get(0).id()).isEqualTo(meals.get(0).id());
+        assertThat(response.getBody().get(0).mealDate()).isEqualTo(meals.get(0).mealDate());
+        assertThat(response.getBody().get(0).username()).isEqualTo(meals.get(0).username());
+        assertThat(response.getBody().get(0).group().groupName()).isEqualTo(meals.get(0).group().groupName());
+        assertThat(response.getBody().get(0).recipe().recipeName()).isEqualTo(meals.get(0).recipe().recipeName());
     }
 
     @Test
@@ -67,12 +68,13 @@ class MealControllerTest extends AbstractControllerTest {
         doReturn(mealDTO).when(mealService).addMeal(request, authentication.getName(), false, id);
         ResponseEntity<MealDTO> response = this.controller.addMeal(false, id, request, authentication);
 
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(mealDTO.id(), response.getBody().id());
-        assertEquals(mealDTO.mealDate(), response.getBody().mealDate());
-        assertEquals(mealDTO.username(), response.getBody().username());
-        assertEquals(mealDTO.group().groupName(), response.getBody().group().groupName());
-        assertEquals(mealDTO.recipe().recipeName(), response.getBody().recipe().recipeName());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().id()).isEqualTo(mealDTO.id());
+        assertThat(response.getBody().mealDate()).isEqualTo(mealDTO.mealDate());
+        assertThat(response.getBody().username()).isEqualTo(mealDTO.username());
+        assertThat(response.getBody().group().groupName()).isEqualTo(mealDTO.group().groupName());
+        assertThat(response.getBody().recipe().recipeName()).isEqualTo(mealDTO.recipe().recipeName());
     }
 
     @Test
@@ -81,7 +83,7 @@ class MealControllerTest extends AbstractControllerTest {
         doNothing().when(mealService).deleteMeal(id, authentication.getName());
         ResponseEntity<Void> response = this.controller.deleteMeal(id, authentication);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
@@ -95,11 +97,12 @@ class MealControllerTest extends AbstractControllerTest {
         doReturn(mealDTO).when(mealService).updateMeal(id, request, authentication.getName());
         ResponseEntity<MealDTO> response = this.controller.updateMeal(id, request, authentication);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(mealDTO.id(), response.getBody().id());
-        assertEquals(mealDTO.mealDate(), response.getBody().mealDate());
-        assertEquals(mealDTO.username(), response.getBody().username());
-        assertEquals(mealDTO.group().groupName(), response.getBody().group().groupName());
-        assertEquals(mealDTO.recipe().recipeName(), response.getBody().recipe().recipeName());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().id()).isEqualTo(mealDTO.id());
+        assertThat(response.getBody().mealDate()).isEqualTo(mealDTO.mealDate());
+        assertThat(response.getBody().username()).isEqualTo(mealDTO.username());
+        assertThat(response.getBody().group().groupName()).isEqualTo(mealDTO.group().groupName());
+        assertThat(response.getBody().recipe().recipeName()).isEqualTo(mealDTO.recipe().recipeName());
     }
 }

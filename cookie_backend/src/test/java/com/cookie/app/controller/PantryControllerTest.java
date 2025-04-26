@@ -19,7 +19,8 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 
@@ -42,10 +43,11 @@ class PantryControllerTest extends AbstractControllerTest {
         doReturn(getPantryResponse).when(pantryService).createPantry(request, authentication.getName());
         ResponseEntity<GetPantryResponse> response = this.controller.createPantry(request, authentication);
 
-        assertSame(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(getPantryResponse.pantryId(), response.getBody().pantryId());
-        assertEquals(getPantryResponse.pantryName(), response.getBody().pantryName());
-        assertTrue(response.getBody().authorities().isEmpty());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().pantryId()).isEqualTo(getPantryResponse.pantryId());
+        assertThat(response.getBody().pantryName()).isEqualTo(getPantryResponse.pantryName());
+        assertThat(response.getBody().authorities()).isEmpty();
     }
 
     @Test
@@ -55,7 +57,9 @@ class PantryControllerTest extends AbstractControllerTest {
         doThrow(new UserWasNotFoundAfterAuthException("User not found"))
                 .when(pantryService).createPantry(request, authentication.getName());
 
-        assertThrows(UserWasNotFoundAfterAuthException.class, () -> this.controller.createPantry(request, authentication));
+        assertThatThrownBy(() -> this.controller.createPantry(request, authentication))
+                .isInstanceOf(UserWasNotFoundAfterAuthException.class)
+                .hasMessage("User not found");
     }
 
     @Test
@@ -65,7 +69,9 @@ class PantryControllerTest extends AbstractControllerTest {
         doThrow(new UserPerformedForbiddenActionException("You tried to create pantry for non existing group"))
                 .when(pantryService).createPantry(request, authentication.getName());
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> this.controller.createPantry(request, authentication));
+        assertThatThrownBy(() -> this.controller.createPantry(request, authentication))
+                .isInstanceOf(UserPerformedForbiddenActionException.class)
+                .hasMessage("You tried to create pantry for non existing group");
     }
 
     @Test
@@ -75,7 +81,9 @@ class PantryControllerTest extends AbstractControllerTest {
         doThrow(new UserPerformedForbiddenActionException("You tried to create pantry for non existing group"))
                 .when(pantryService).createPantry(request, authentication.getName());
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> this.controller.createPantry(request, authentication));
+        assertThatThrownBy(() -> this.controller.createPantry(request, authentication))
+                .isInstanceOf(UserPerformedForbiddenActionException.class)
+                .hasMessage("You tried to create pantry for non existing group");
     }
 
     @Test
@@ -85,23 +93,25 @@ class PantryControllerTest extends AbstractControllerTest {
         doReturn(getPantryResponse).when(pantryService).getPantry(id, authentication.getName());
         ResponseEntity<GetPantryResponse> response = this.controller.getPantry(id, authentication);
 
-        assertSame(HttpStatus.OK, response.getStatusCode());
-        assertEquals(getPantryResponse.pantryId(), response.getBody().pantryId());
-        assertEquals(getPantryResponse.pantryName(), response.getBody().pantryName());
-        assertTrue(response.getBody().authorities().isEmpty());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().pantryId()).isEqualTo(getPantryResponse.pantryId());
+        assertThat(response.getBody().pantryName()).isEqualTo(getPantryResponse.pantryName());
+        assertThat(response.getBody().authorities()).isEmpty();
     }
 
     @Test
     void test_getUserPantryReturnsNullPantry() {
-        final GetPantryResponse getPantryResponse = new GetPantryResponse(0, null, 0, null,null);
+        final GetPantryResponse getPantryResponse = new GetPantryResponse(0, null, 0, null, null);
 
         doReturn(getPantryResponse).when(pantryService).getPantry(id, authentication.getName());
         ResponseEntity<GetPantryResponse> response = this.controller.getPantry(id, authentication);
 
-        assertSame(HttpStatus.OK, response.getStatusCode());
-        assertEquals(0, response.getBody().pantryId());
-        assertNull(response.getBody().pantryName());
-        assertNull(response.getBody().authorities());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().pantryId()).isZero();
+        assertThat(response.getBody().pantryName()).isNull();
+        assertThat(response.getBody().authorities()).isNull();
     }
 
     @Test
@@ -109,7 +119,9 @@ class PantryControllerTest extends AbstractControllerTest {
 
         doThrow(new UserWasNotFoundAfterAuthException("User not found")).when(pantryService).getPantry(id, authentication.getName());
 
-        assertThrows(UserWasNotFoundAfterAuthException.class, () -> this.controller.getPantry(id, authentication));
+        assertThatThrownBy(() -> this.controller.getPantry(id, authentication))
+                .isInstanceOf(UserWasNotFoundAfterAuthException.class)
+                .hasMessage("User not found");
     }
 
     @Test
@@ -120,13 +132,14 @@ class PantryControllerTest extends AbstractControllerTest {
         doReturn(getUserPantriesResponse).when(pantryService).getAllUserPantries(authentication.getName());
         ResponseEntity<GetUserPantriesResponse> receivedResponse = this.controller.getAllUserPantries(authentication);
 
-        assertSame(HttpStatus.OK, receivedResponse.getStatusCode());
-        assertEquals(1, receivedResponse.getBody().pantries().size());
-        assertEquals(pantryDTO.pantryId(), receivedResponse.getBody().pantries().get(0).pantryId());
-        assertEquals(pantryDTO.pantryName(), receivedResponse.getBody().pantries().get(0).pantryName());
-        assertEquals(pantryDTO.nrOfProducts(), receivedResponse.getBody().pantries().get(0).nrOfProducts());
-        assertEquals(pantryDTO.groupId(), receivedResponse.getBody().pantries().get(0).groupId());
-        assertEquals(pantryDTO.groupName(), receivedResponse.getBody().pantries().get(0).groupName());
+        assertThat(receivedResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(receivedResponse.getBody()).isNotNull();
+        assertThat(receivedResponse.getBody().pantries()).hasSize(1);
+        assertThat(receivedResponse.getBody().pantries().get(0).pantryId()).isEqualTo(pantryDTO.pantryId());
+        assertThat(receivedResponse.getBody().pantries().get(0).pantryName()).isEqualTo(pantryDTO.pantryName());
+        assertThat(receivedResponse.getBody().pantries().get(0).nrOfProducts()).isEqualTo(pantryDTO.nrOfProducts());
+        assertThat(receivedResponse.getBody().pantries().get(0).groupId()).isEqualTo(pantryDTO.groupId());
+        assertThat(receivedResponse.getBody().pantries().get(0).groupName()).isEqualTo(pantryDTO.groupName());
     }
 
     @Test
@@ -134,7 +147,9 @@ class PantryControllerTest extends AbstractControllerTest {
 
         doThrow(new UserWasNotFoundAfterAuthException("User not found")).when(pantryService).getAllUserPantries(authentication.getName());
 
-        assertThrows(UserWasNotFoundAfterAuthException.class, () -> this.controller.getAllUserPantries(authentication));
+        assertThatThrownBy(() -> this.controller.getAllUserPantries(authentication))
+                .isInstanceOf(UserWasNotFoundAfterAuthException.class)
+                .hasMessage("User not found");
     }
 
     @Test
@@ -144,8 +159,9 @@ class PantryControllerTest extends AbstractControllerTest {
         doReturn(deletePantryResponse).when(pantryService).deletePantry(id, authentication.getName());
         ResponseEntity<DeletePantryResponse> response = this.controller.deletePantry(id, authentication);
 
-        assertSame(HttpStatus.OK, response.getStatusCode());
-        assertEquals(deletePantryResponse.deletedPantryName(), response.getBody().deletedPantryName());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().deletedPantryName()).isEqualTo(deletePantryResponse.deletedPantryName());
     }
 
     @Test
@@ -154,7 +170,9 @@ class PantryControllerTest extends AbstractControllerTest {
         doThrow(new UserPerformedForbiddenActionException("Pantry not found"))
                 .when(pantryService).deletePantry(id, authentication.getName());
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> this.controller.deletePantry(id, this.authentication));
+        assertThatThrownBy(() -> this.controller.deletePantry(id, this.authentication))
+                .isInstanceOf(UserPerformedForbiddenActionException.class)
+                .hasMessage("Pantry not found");
     }
 
     @Test
@@ -163,7 +181,9 @@ class PantryControllerTest extends AbstractControllerTest {
         doThrow(new UserWasNotFoundAfterAuthException("User not found"))
                 .when(pantryService).deletePantry(id, authentication.getName());
 
-        assertThrows(UserWasNotFoundAfterAuthException.class, () -> this.controller.deletePantry(id, this.authentication));
+        assertThatThrownBy(() -> this.controller.deletePantry(id, this.authentication))
+                .isInstanceOf(UserWasNotFoundAfterAuthException.class)
+                .hasMessage("User not found");
     }
 
     @Test
@@ -174,9 +194,10 @@ class PantryControllerTest extends AbstractControllerTest {
         doReturn(updatePantryResponse).when(pantryService).updatePantry(id, updatePantryRequest, authentication.getName());
         ResponseEntity<GetPantryResponse> response = this.controller.updatePantry(id, updatePantryRequest, authentication);
 
-        assertSame(HttpStatus.OK, response.getStatusCode());
-        assertEquals(updatePantryResponse.pantryId(), response.getBody().pantryId());
-        assertEquals(updatePantryResponse.pantryName(), response.getBody().pantryName());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().pantryId()).isEqualTo(updatePantryResponse.pantryId());
+        assertThat(response.getBody().pantryName()).isEqualTo(updatePantryResponse.pantryName());
     }
 
     @Test
@@ -186,7 +207,9 @@ class PantryControllerTest extends AbstractControllerTest {
         doThrow(new UserPerformedForbiddenActionException("Pantry not found"))
                 .when(pantryService).updatePantry(id, updatePantryRequest, authentication.getName());
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> this.controller.updatePantry(id, updatePantryRequest, authentication));
+        assertThatThrownBy(() -> this.controller.updatePantry(id, updatePantryRequest, authentication))
+                .isInstanceOf(UserPerformedForbiddenActionException.class)
+                .hasMessage("Pantry not found");
     }
 
     @Test
@@ -196,6 +219,8 @@ class PantryControllerTest extends AbstractControllerTest {
         doThrow(new UserWasNotFoundAfterAuthException("User not found"))
                 .when(pantryService).updatePantry(id, updatePantryRequest, authentication.getName());
 
-        assertThrows(UserWasNotFoundAfterAuthException.class, () -> this.controller.updatePantry(id, updatePantryRequest, authentication));
+        assertThatThrownBy(() -> this.controller.updatePantry(id, updatePantryRequest, authentication))
+                .isInstanceOf(UserWasNotFoundAfterAuthException.class)
+                .hasMessage("User not found");
     }
 }

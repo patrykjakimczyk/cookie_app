@@ -16,6 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
@@ -40,8 +42,8 @@ class LoginServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByUsername(userToRegister.username());
         RegistrationResponse response = this.service.userRegistration(userToRegister);
 
-        assertEquals(1, response.duplicates().size());
-        assertEquals("username", response.duplicates().get(0));
+        assertThat(response.duplicates()).hasSize(1);
+        assertThat(response.duplicates().get(0)).isEqualTo("username");
     }
 
     @Test
@@ -52,8 +54,8 @@ class LoginServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(userToRegister.email());
         RegistrationResponse response = this.service.userRegistration(userToRegister);
 
-        assertEquals(1, response.duplicates().size());
-        assertEquals("email", response.duplicates().get(0));
+        assertThat(response.duplicates()).hasSize(1);
+        assertThat(response.duplicates().get(0)).isEqualTo("email");
     }
 
     @Test
@@ -63,7 +65,7 @@ class LoginServiceImplTest {
         doReturn(Optional.empty()).when(userRepository).findByUsername(userToRegister.username());
         RegistrationResponse response = this.service.userRegistration(userToRegister);
 
-        assertEquals(0, response.duplicates().size());
+        assertThat(response.duplicates()).isEmpty();
     }
 
     @Test
@@ -73,14 +75,14 @@ class LoginServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         LoginResponse response = this.service.getLoginInfo(email);
 
-        assertEquals("username", response.username());
+        assertThat(response.username()).isEqualTo("username");
     }
 
     @Test
     void test_getUsernameThrowsException() {
-
         doReturn(Optional.empty()).when(userRepository).findByEmail(email);
 
-        assertThrows(UserWasNotFoundAfterAuthException.class, () -> this.service.getLoginInfo(email));
+        assertThatThrownBy(() -> this.service.getLoginInfo(email))
+                .isInstanceOf(UserWasNotFoundAfterAuthException.class);
     }
 }

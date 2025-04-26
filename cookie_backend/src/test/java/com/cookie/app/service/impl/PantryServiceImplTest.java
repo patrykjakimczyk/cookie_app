@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -91,16 +93,16 @@ class PantryServiceImplTest {
         GetPantryResponse response = service.createPantry(request, email);
 
         verify(pantryRepository).save(any(Pantry.class));
-        assertEquals(request.pantryName(), response.pantryName());
-        assertFalse(response.authorities().isEmpty());
+        assertThat(response.pantryName()).isEqualTo(request.pantryName());
+        assertThat(response.authorities()).isNotEmpty();
 
         List<AuthorityDTO> responseAuthorities = response.authorities().stream()
                 .filter(authorityDTO -> authorityDTO.groupId() == id)
                 .toList();
 
-        assertEquals(1, responseAuthorities.size());
-        assertEquals(authority.getAuthorityName(), responseAuthorities.get(0).authority());
-        assertEquals(group.getId(), responseAuthorities.get(0).groupId());
+        assertThat(responseAuthorities).hasSize(1);
+        assertThat(responseAuthorities.get(0).authority()).isEqualTo(authority.getAuthorityName());
+        assertThat(responseAuthorities.get(0).groupId()).isEqualTo(group.getId());
     }
 
     @Test
@@ -108,7 +110,8 @@ class PantryServiceImplTest {
 
         doReturn(Optional.empty()).when(userRepository).findByEmail(email);
 
-        assertThrows(UserWasNotFoundAfterAuthException.class, () -> service.getAllUserPantries(email));
+        assertThatThrownBy(() -> service.getAllUserPantries(email))
+                .isInstanceOf(UserWasNotFoundAfterAuthException.class);
         verify(pantryRepository, times(0)).save(any(Pantry.class));
     }
 
@@ -118,7 +121,8 @@ class PantryServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        assertThrows(ResourceNotFoundException.class, () -> service.createPantry(request, email));
+        assertThatThrownBy(() -> service.createPantry(request, email))
+                .isInstanceOf(ResourceNotFoundException.class);
         verify(pantryRepository, times(0)).save(any(Pantry.class));
     }
 
@@ -129,7 +133,8 @@ class PantryServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> service.createPantry(request, email));
+        assertThatThrownBy(() -> service.createPantry(request, email))
+                .isInstanceOf(UserPerformedForbiddenActionException.class);
         verify(pantryRepository, times(0)).save(any(Pantry.class));
     }
 
@@ -139,17 +144,17 @@ class PantryServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         GetPantryResponse response = service.getPantry(id, email);
 
-        assertEquals(pantry.getId(), response.pantryId());
-        assertEquals(pantry.getPantryName(), response.pantryName());
-        assertFalse(response.authorities().isEmpty());
+        assertThat(response.pantryId()).isEqualTo(pantry.getId());
+        assertThat(response.pantryName()).isEqualTo(pantry.getPantryName());
+        assertThat(response.authorities()).isNotEmpty();
 
         List<AuthorityDTO> responseAuthorities = response.authorities().stream()
                 .filter(authorityDTO -> authorityDTO.groupId() == id)
                 .toList();
 
-        assertEquals(1, responseAuthorities.size());
-        assertEquals(authority.getAuthorityName(), responseAuthorities.get(0).authority());
-        assertEquals(group.getId(), responseAuthorities.get(0).groupId());
+        assertThat(responseAuthorities).hasSize(1);
+        assertThat(responseAuthorities.get(0).authority()).isEqualTo(authority.getAuthorityName());
+        assertThat(responseAuthorities.get(0).groupId()).isEqualTo(group.getId());
     }
 
     @Test
@@ -157,7 +162,8 @@ class PantryServiceImplTest {
 
         doReturn(Optional.empty()).when(userRepository).findByEmail(email);
 
-        assertThrows(UserWasNotFoundAfterAuthException.class, () -> service.getPantry(id, email));
+        assertThatThrownBy(() -> service.getPantry(id, email))
+                .isInstanceOf(UserWasNotFoundAfterAuthException.class);
     }
 
     @Test
@@ -167,9 +173,9 @@ class PantryServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         GetPantryResponse response = service.getPantry(id, email);
 
-        assertEquals(0, response.pantryId());
-        assertNull(response.pantryName());
-        assertNull(response.authorities());
+        assertThat(response.pantryId()).isEqualTo(0);
+        assertThat(response.pantryName()).isNull();
+        assertThat(response.authorities()).isNull();
     }
 
     @Test
@@ -178,12 +184,12 @@ class PantryServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         GetUserPantriesResponse response = service.getAllUserPantries(email);
 
-        assertFalse(response.pantries().isEmpty());
-        assertEquals(pantry.getId(), response.pantries().get(0).pantryId());
-        assertEquals(pantry.getPantryName(), response.pantries().get(0).pantryName());
-        assertEquals(1, response.pantries().get(0).nrOfProducts());
-        assertEquals(group.getId(), response.pantries().get(0).groupId());
-        assertEquals(group.getGroupName(), response.pantries().get(0).groupName());
+        assertThat(response.pantries()).isNotEmpty();
+        assertThat(response.pantries().get(0).pantryId()).isEqualTo(pantry.getId());
+        assertThat(response.pantries().get(0).pantryName()).isEqualTo(pantry.getPantryName());
+        assertThat(response.pantries().get(0).nrOfProducts()).isEqualTo(1);
+        assertThat(response.pantries().get(0).groupId()).isEqualTo(group.getId());
+        assertThat(response.pantries().get(0).groupName()).isEqualTo(group.getGroupName());
     }
 
     @Test
@@ -193,7 +199,7 @@ class PantryServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
         GetUserPantriesResponse response = service.getAllUserPantries(email);
-        assertTrue(response.pantries().isEmpty());
+        assertThat(response.pantries()).isEmpty();
     }
 
     @Test
@@ -201,7 +207,8 @@ class PantryServiceImplTest {
 
         doReturn(Optional.empty()).when(userRepository).findByEmail(email);
 
-        assertThrows(UserWasNotFoundAfterAuthException.class, () -> service.getAllUserPantries(email));
+        assertThatThrownBy(() -> service.getAllUserPantries(email))
+                .isInstanceOf(UserWasNotFoundAfterAuthException.class);
     }
 
     @Test
@@ -210,7 +217,7 @@ class PantryServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         DeletePantryResponse response = service.deletePantry(id, email);
 
-        assertEquals(pantry.getPantryName(), response.deletedPantryName());
+        assertThat(response.deletedPantryName()).isEqualTo(pantry.getPantryName());
         verify(pantryRepository, times(1)).delete(pantry);
     }
 
@@ -219,7 +226,8 @@ class PantryServiceImplTest {
 
         doReturn(Optional.empty()).when(userRepository).findByEmail(email);
 
-        assertThrows(UserWasNotFoundAfterAuthException.class, () -> service.deletePantry(id, email));
+        assertThatThrownBy(() -> service.deletePantry(id, email))
+                .isInstanceOf(UserWasNotFoundAfterAuthException.class);
         verify(pantryRepository, times(0)).delete(pantry);
     }
 
@@ -228,7 +236,8 @@ class PantryServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        assertThrows(ResourceNotFoundException.class, () -> service.deletePantry(2L, email));
+        assertThatThrownBy(() -> service.deletePantry(2L, email))
+                .isInstanceOf(ResourceNotFoundException.class);
         verify(pantryRepository, times(0)).delete(pantry);
     }
 
@@ -238,7 +247,8 @@ class PantryServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> service.deletePantry(id, email));
+        assertThatThrownBy(() -> service.deletePantry(id, email))
+                .isInstanceOf(UserPerformedForbiddenActionException.class);
         verify(pantryRepository, times(0)).delete(pantry);
     }
 
@@ -249,16 +259,16 @@ class PantryServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         GetPantryResponse response = service.updatePantry(id, request, email);
 
-        assertEquals(request.pantryName(), response.pantryName());
-        assertFalse(response.authorities().isEmpty());
+        assertThat(response.pantryName()).isEqualTo(request.pantryName());
+        assertThat(response.authorities()).isNotEmpty();
 
         List<AuthorityDTO> responseAuthorities = response.authorities().stream()
                 .filter(authorityDTO -> authorityDTO.groupId() == id)
                 .toList();
 
-        assertEquals(1, responseAuthorities.size());
-        assertEquals(authority.getAuthorityName(), responseAuthorities.get(0).authority());
-        assertEquals(group.getId(), responseAuthorities.get(0).groupId());
+        assertThat(responseAuthorities).hasSize(1);
+        assertThat(responseAuthorities.get(0).authority()).isEqualTo(authority.getAuthorityName());
+        assertThat(responseAuthorities.get(0).groupId()).isEqualTo(group.getId());
         verify(pantryRepository, times(1)).save(pantry);
     }
 
@@ -268,7 +278,8 @@ class PantryServiceImplTest {
 
         doReturn(Optional.empty()).when(userRepository).findByEmail(email);
 
-        assertThrows(UserWasNotFoundAfterAuthException.class, () -> service.updatePantry(id, request, email));
+        assertThatThrownBy(() -> service.updatePantry(id, request, email))
+                .isInstanceOf(UserWasNotFoundAfterAuthException.class);
         verify(pantryRepository, times(0)).save(pantry);
     }
 
@@ -278,7 +289,8 @@ class PantryServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        assertThrows(ResourceNotFoundException.class, () -> service.updatePantry(2L, request, email));
+        assertThatThrownBy(() -> service.updatePantry(2L, request, email))
+                .isInstanceOf(ResourceNotFoundException.class);
         verify(pantryRepository, times(0)).save(pantry);
     }
 
@@ -289,7 +301,8 @@ class PantryServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> service.updatePantry(id, request, email));
+        assertThatThrownBy(() -> service.updatePantry(id, request, email))
+                .isInstanceOf(UserPerformedForbiddenActionException.class);
         verify(pantryRepository, times(0)).save(pantry);
     }
 }

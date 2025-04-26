@@ -26,6 +26,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -101,16 +103,15 @@ class GroupServiceImplTest {
         verify(groupRepository).save(this.groupArgCaptor.capture());
         verify(authorityRepository).saveAll(this.authoritiesListArgCaptor.capture());
 
-
         Group group = this.groupArgCaptor.getValue();
-        assertEquals(groupName, group.getGroupName());
-        assertEquals(user, group.getCreator());
-        assertTrue(group.getUsers().contains(user));
-        assertNull(group.getPantry());
-        assertNull(group.getMeals());
-        assertNull(group.getShoppingLists());
+        assertThat(group.getGroupName()).isEqualTo(groupName);
+        assertThat(group.getCreator()).isEqualTo(user);
+        assertThat(group.getUsers()).contains(user);
+        assertThat(group.getPantry()).isNull();
+        assertThat(group.getMeals()).isNull();
+        assertThat(group.getShoppingLists()).isNull();
         Set<Authority> authorities = this.authoritiesListArgCaptor.getValue();
-        assertEquals(AuthorityEnum.values().length, authorities.size());
+        assertThat(authorities).hasSize(AuthorityEnum.values().length);
     }
 
     @Test
@@ -123,26 +124,25 @@ class GroupServiceImplTest {
         verify(groupRepository, times(0)).save(any(Group.class));
         verify(authorityRepository, times(0)).saveAll(anyList());
         verify(userRepository, times(0)).findByEmail(email);
-        assertEquals(0, response.groupId());
+        assertThat(response.groupId()).isZero();
     }
 
     @Test
     void test_getGroupDetailsSuccessful() {
-
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(group)).when(groupRepository).findById(groupId);
         GroupDetailsDTO response = this.service.getGroupDetails(groupId, email);
 
-        assertEquals(group.getId(), response.id());
-        assertEquals(group.getGroupName(), response.groupName());
-        assertEquals(group.getCreator().getId(), response.creator().id());
-        assertEquals(group.getCreator().getUsername(), response.creator().username());
-        assertEquals(group.getUsers().size(), response.users().size());
-        assertEquals(0L, response.pantryId());
-        assertEquals("", response.pantryName());
-        assertEquals(group.getShoppingLists().size(), response.shoppingLists().size());
-        assertEquals(group.getShoppingLists().get(0).getId(), response.shoppingLists().get(0).listId());
-        assertEquals(group.getShoppingLists().get(0).getListName(), response.shoppingLists().get(0).listName());
+        assertThat(response.id()).isEqualTo(group.getId());
+        assertThat(response.groupName()).isEqualTo(group.getGroupName());
+        assertThat(response.creator().id()).isEqualTo(group.getCreator().getId());
+        assertThat(response.creator().username()).isEqualTo(group.getCreator().getUsername());
+        assertThat(response.users()).hasSize(group.getUsers().size());
+        assertThat(response.pantryId()).isZero();
+        assertThat(response.pantryName()).isEmpty();
+        assertThat(response.shoppingLists()).hasSize(group.getShoppingLists().size());
+        assertThat(response.shoppingLists().get(0).listId()).isEqualTo(group.getShoppingLists().get(0).getId());
+        assertThat(response.shoppingLists().get(0).listName()).isEqualTo(group.getShoppingLists().get(0).getListName());
     }
 
     @Test
@@ -153,7 +153,8 @@ class GroupServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(group)).when(groupRepository).findById(groupId);
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> this.service.getGroupDetails(groupId, email));
+        assertThatThrownBy(() -> this.service.getGroupDetails(groupId, email))
+                .isInstanceOf(UserPerformedForbiddenActionException.class);
     }
 
     @Test
@@ -164,22 +165,22 @@ class GroupServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.empty()).when(groupRepository).findById(groupId);
 
-       assertThrows(ResourceNotFoundException.class, () -> this.service.getGroupDetails(groupId, email));
+        assertThatThrownBy(() -> this.service.getGroupDetails(groupId, email))
+                .isInstanceOf(ResourceNotFoundException.class);
     }
 
     @Test
     void test_getUserGroupsSuccessful() {
-
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         GetUserGroupsResponse response = this.service.getUserGroups(email);
 
-        assertEquals(user.getGroups().size(), response.userGroups().size());
-        assertEquals(user.getGroups().get(0).getId(), response.userGroups().get(0).id());
-        assertEquals(user.getGroups().get(0).getGroupName(), response.userGroups().get(0).groupName());
-        assertEquals(user.getGroups().get(0).getCreator().getId(), response.userGroups().get(0).creator().id());
-        assertEquals(user.getGroups().get(0).getCreator().getUsername(), response.userGroups().get(0).creator().username());
-        assertEquals(user.getGroups().get(0).getUsers().size(), response.userGroups().get(0).users());
-        assertEquals(0L, response.userGroups().get(0).pantryId());
+        assertThat(response.userGroups()).hasSize(user.getGroups().size());
+        assertThat(response.userGroups().get(0).id()).isEqualTo(user.getGroups().get(0).getId());
+        assertThat(response.userGroups().get(0).groupName()).isEqualTo(user.getGroups().get(0).getGroupName());
+        assertThat(response.userGroups().get(0).creator().id()).isEqualTo(user.getGroups().get(0).getCreator().getId());
+        assertThat(response.userGroups().get(0).creator().username()).isEqualTo(user.getGroups().get(0).getCreator().getUsername());
+        assertThat(response.userGroups().get(0).users()).isEqualTo(user.getGroups().get(0).getUsers().size());
+        assertThat(response.userGroups().get(0).pantryId()).isZero();
     }
 
     @Test
@@ -189,7 +190,7 @@ class GroupServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         GetUserGroupsResponse response = this.service.getUserGroups(email);
 
-        assertTrue(response.userGroups().isEmpty());
+        assertThat(response.userGroups()).isEmpty();
     }
 
     @Test
@@ -205,9 +206,9 @@ class GroupServiceImplTest {
         verify(groupRepository).save(this.groupArgCaptor.capture());
 
         Group group = this.groupArgCaptor.getValue();
-        assertEquals(updateGroupRequest.newGroupName(), group.getGroupName());
-        assertEquals(user, group.getCreator());
-        assertTrue(group.getUsers().contains(user));
+        assertThat(group.getGroupName()).isEqualTo(updateGroupRequest.newGroupName());
+        assertThat(group.getCreator()).isEqualTo(user);
+        assertThat(group.getUsers()).contains(user);
     }
 
     @Test
@@ -221,7 +222,7 @@ class GroupServiceImplTest {
         verify(userRepository, times(0)).findByEmail(email);
         verify(groupRepository, times(0)).findById(groupId);
         verify(authorityRepository, times(0)).findAuthoritiesByUserAndGroup(user, group);
-        assertEquals(0, response.groupId());
+        assertThat(response.groupId()).isZero();
     }
 
     @Test
@@ -234,7 +235,8 @@ class GroupServiceImplTest {
         doReturn(Optional.of(group)).when(groupRepository).findById(groupId);
         doReturn(Set.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> this.service.updateGroup(groupId, updateGroupRequest, email));
+        assertThatThrownBy(() -> this.service.updateGroup(groupId, updateGroupRequest, email))
+                .isInstanceOf(UserPerformedForbiddenActionException.class);
     }
 
     @Test
@@ -248,7 +250,7 @@ class GroupServiceImplTest {
         verify(authorityRepository).deleteByGroup(this.groupArgCaptor.capture());
         verify(groupRepository).delete(group);
         Group deletedGroup = this.groupArgCaptor.getValue();
-        assertEquals(group, deletedGroup);
+        assertThat(deletedGroup).isEqualTo(group);
     }
 
     @Test
@@ -259,7 +261,8 @@ class GroupServiceImplTest {
         doReturn(Optional.of(group)).when(groupRepository).findById(groupId);
         doReturn(Set.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> this.service.deleteGroup(groupId, email));
+        assertThatThrownBy(() -> this.service.deleteGroup(groupId, email))
+                .isInstanceOf(UserPerformedForbiddenActionException.class);
     }
 
     @Test
@@ -277,7 +280,7 @@ class GroupServiceImplTest {
         verify(groupRepository).save(group);
         verify(authorityRepository).saveAll(this.authoritiesListArgCaptor.capture());
         Set<Authority> authorities = this.authoritiesListArgCaptor.getValue();
-        assertEquals(AuthorityEnum.BASIC_AUTHORITIES.size(), authorities.size());
+        assertThat(authorities).hasSize(AuthorityEnum.BASIC_AUTHORITIES.size());
     }
 
     @Test
@@ -290,7 +293,8 @@ class GroupServiceImplTest {
         doReturn(Set.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
         doReturn(Optional.empty()).when(userRepository).findByUsername(usernameToAdd);
 
-        assertThrows(ResourceNotFoundException.class, () -> this.service.addUserToGroup(groupId, usernameToAdd, email));
+        assertThatThrownBy(() -> this.service.addUserToGroup(groupId, usernameToAdd, email))
+                .isInstanceOf(ResourceNotFoundException.class);
         verify(groupRepository, times(0)).save(group);
         verify(authorityRepository, times(0)).saveAll(this.authoritiesListArgCaptor.capture());
     }
@@ -307,7 +311,8 @@ class GroupServiceImplTest {
         doReturn(Set.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
         doReturn(Optional.of(userToAdd)).when(userRepository).findByUsername(usernameToAdd);
 
-        assertThrows(UserAlreadyAddedToGroupException.class, () -> this.service.addUserToGroup(groupId, usernameToAdd, email));
+        assertThatThrownBy(() -> this.service.addUserToGroup(groupId, usernameToAdd, email))
+                .isInstanceOf(UserAlreadyAddedToGroupException.class);
         verify(groupRepository, times(0)).save(group);
         verify(authorityRepository, times(0)).saveAll(this.authoritiesListArgCaptor.capture());
     }
@@ -327,7 +332,7 @@ class GroupServiceImplTest {
 
         verify(groupRepository).save(group);
         verify(authorityRepository).deleteByUserAndGroup(userToRemove, group);
-        assertFalse(group.getUsers().contains(userToRemove));
+        assertThat(group.getUsers()).doesNotContain(userToRemove);
     }
 
     @Test
@@ -345,7 +350,7 @@ class GroupServiceImplTest {
 
         verify(groupRepository).save(group);
         verify(authorityRepository).deleteByUserAndGroup(user, group);
-        assertFalse(group.getUsers().contains(user));
+        assertThat(group.getUsers()).doesNotContain(user);
     }
 
     @Test
@@ -548,8 +553,8 @@ class GroupServiceImplTest {
 
         verify(authorityRepository).deleteAll(this.authoritiesListArgCaptor.capture());
         Set<Authority> removedAutorities = this.authoritiesListArgCaptor.getValue();
-        assertEquals(request.authorities().size(), removedAutorities.size());
-        assertTrue(removedAutorities.contains(authority));
+        assertThat(removedAutorities).hasSize(request.authorities().size());
+        assertThat(removedAutorities).contains(authority);
     }
 
     @Test
@@ -569,9 +574,9 @@ class GroupServiceImplTest {
         doReturn(Set.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
         doReturn(Optional.empty()).when(userRepository).findById(userIdToRemoveAuthorities);
 
-        Exception ex = assertThrows(ResourceNotFoundException.class, () ->
-                this.service.removeAuthoritiesFromUser(groupId, request, email));
-        assertEquals("You tried to take away authorities from non existing user", ex.getMessage());
+        assertThatThrownBy(() -> this.service.removeAuthoritiesFromUser(groupId, request, email))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("You tried to take away authorities from non existing user");
         verify(authorityRepository, times(0)).deleteAll(anyList());
     }
 
@@ -592,9 +597,9 @@ class GroupServiceImplTest {
         doReturn(Set.of(authority)).when(authorityRepository).findAuthoritiesByUserAndGroup(user, group);
         doReturn(Optional.of(userToRemoveAuthorities)).when(userRepository).findById(userIdToRemoveAuthorities);
 
-        Exception ex = assertThrows(UserPerformedForbiddenActionException.class, () ->
-                this.service.removeAuthoritiesFromUser(groupId, request, email));
-        assertEquals("You tried to take away authorities from user which is not in the group", ex.getMessage());
+        assertThatThrownBy(() -> this.service.removeAuthoritiesFromUser(groupId, request, email))
+                .isInstanceOf(UserPerformedForbiddenActionException.class)
+                .hasMessage("You tried to take away authorities from user which is not in the group");
         verify(authorityRepository, times(0)).deleteAll(anyList());
     }
 }

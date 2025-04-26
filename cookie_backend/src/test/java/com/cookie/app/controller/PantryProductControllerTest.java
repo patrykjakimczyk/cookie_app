@@ -20,7 +20,8 @@ import org.springframework.http.ResponseEntity;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,8 +47,8 @@ class PantryProductControllerTest extends AbstractControllerTest {
         ResponseEntity<PageResult<PantryProductDTO>> response =
                 this.controller.getPantryProducts(pantryId, pageNr, filterRequest, authentication);
 
-        assertEquals(pantryProductDTOS.size(), response.getBody().totalElements());
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThat(response.getBody().totalElements()).isEqualTo(pantryProductDTOS.size());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
@@ -58,8 +59,9 @@ class PantryProductControllerTest extends AbstractControllerTest {
         doThrow(new UserPerformedForbiddenActionException("Pantry not found"))
                 .when(pantryProductService).getPantryProducts(pantryId, pageNr, filterRequest, authentication.getName());
 
-        assertThrows(UserPerformedForbiddenActionException.class, () ->
-                this.controller.getPantryProducts(pantryId, 1, filterRequest, authentication));
+        assertThatThrownBy(() -> this.controller.getPantryProducts(pantryId, 1, filterRequest, authentication))
+                .isInstanceOf(UserPerformedForbiddenActionException.class)
+                .hasMessage("Pantry not found");
     }
 
     @Test
@@ -68,7 +70,7 @@ class PantryProductControllerTest extends AbstractControllerTest {
 
         ResponseEntity<Void> response = this.controller.addProductsToPantry(pantryId, pantryProductDTOS, authentication);
 
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
 
     @Test
@@ -78,7 +80,9 @@ class PantryProductControllerTest extends AbstractControllerTest {
         doThrow(new UserPerformedForbiddenActionException("Pantry not found"))
                 .when(pantryProductService).addProductsToPantry(pantryId, pantryProductDTOS, authentication.getName());
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> this.controller.addProductsToPantry(pantryId, pantryProductDTOS, authentication));
+        assertThatThrownBy(() -> this.controller.addProductsToPantry(pantryId, pantryProductDTOS, authentication))
+                .isInstanceOf(UserPerformedForbiddenActionException.class)
+                .hasMessage("Pantry not found");
     }
 
     @Test
@@ -88,7 +92,9 @@ class PantryProductControllerTest extends AbstractControllerTest {
         doThrow(new ValidationException("Invalid data"))
                 .when(pantryProductService).addProductsToPantry(pantryId, pantryProductDTOS, authentication.getName());
 
-        assertThrows(ValidationException.class, () -> this.controller.addProductsToPantry(pantryId, pantryProductDTOS, authentication));
+        assertThatThrownBy(() -> this.controller.addProductsToPantry(pantryId, pantryProductDTOS, authentication))
+                .isInstanceOf(ValidationException.class)
+                .hasMessage("Invalid data");
     }
 
     @Test
@@ -97,7 +103,7 @@ class PantryProductControllerTest extends AbstractControllerTest {
 
         ResponseEntity<Void> response = this.controller.removeProductsFromPantry(pantryId, pantryProductsIds, authentication);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
@@ -107,8 +113,9 @@ class PantryProductControllerTest extends AbstractControllerTest {
         doThrow(new UserPerformedForbiddenActionException("User tried to access wrong pantry"))
                 .when(pantryProductService).removeProductsFromPantry(pantryId, pantryProductsIds, authentication.getName());
 
-        assertThrows(UserPerformedForbiddenActionException.class, () ->
-                this.controller.removeProductsFromPantry(pantryId, pantryProductsIds, authentication));
+        assertThatThrownBy(() -> this.controller.removeProductsFromPantry(pantryId, pantryProductsIds, authentication))
+                .isInstanceOf(UserPerformedForbiddenActionException.class)
+                .hasMessage("User tried to access wrong pantry");
     }
 
     @Test
@@ -117,7 +124,7 @@ class PantryProductControllerTest extends AbstractControllerTest {
 
         ResponseEntity<Void> response = this.controller.updatePantryProduct(pantryId, pantryProductDTO, authentication);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
@@ -127,8 +134,9 @@ class PantryProductControllerTest extends AbstractControllerTest {
         doThrow(new UserPerformedForbiddenActionException("User tried to access wrong pantry"))
                 .when(pantryProductService).updatePantryProduct(pantryId, pantryProductDTO, authentication.getName());
 
-        assertThrows(UserPerformedForbiddenActionException.class, () ->
-                this.controller.updatePantryProduct(pantryId, pantryProductDTO, authentication));
+        assertThatThrownBy(() -> this.controller.updatePantryProduct(pantryId, pantryProductDTO, authentication))
+                .isInstanceOf(UserPerformedForbiddenActionException.class)
+                .hasMessage("User tried to access wrong pantry");
     }
 
     @Test
@@ -139,8 +147,8 @@ class PantryProductControllerTest extends AbstractControllerTest {
         doReturn(pantryProductDTO).when(pantryProductService).reservePantryProduct(pantryId, pantryProductId, request.reserved(), authentication.getName());
         ResponseEntity<PantryProductDTO> response = this.controller.reservePantryProduct(pantryId, pantryProductId, request, authentication);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(1L, pantryProductDTO.id());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().id()).isEqualTo(1L);
     }
 
     @Test
@@ -150,8 +158,9 @@ class PantryProductControllerTest extends AbstractControllerTest {
         doThrow(new UserPerformedForbiddenActionException("User tried to access wrong pantry"))
                 .when(pantryProductService).reservePantryProduct(pantryId, pantryProductId, request.reserved(), authentication.getName());
 
-        assertThrows(UserPerformedForbiddenActionException.class, () ->
-                this.controller.reservePantryProduct(pantryId, pantryProductId, request, authentication));
+        assertThatThrownBy(() -> this.controller.reservePantryProduct(pantryId, pantryProductId, request, authentication))
+                .isInstanceOf(UserPerformedForbiddenActionException.class)
+                .hasMessage("User tried to access wrong pantry");
     }
 
     @Test
@@ -161,8 +170,9 @@ class PantryProductControllerTest extends AbstractControllerTest {
         doThrow(new UserPerformedForbiddenActionException("Pantry product not found"))
                 .when(pantryProductService).reservePantryProduct(pantryId, pantryProductId, request.reserved(), authentication.getName());
 
-        assertThrows(UserPerformedForbiddenActionException.class, () ->
-                this.controller.reservePantryProduct(pantryId, pantryProductId, request, authentication));
+        assertThatThrownBy(() -> this.controller.reservePantryProduct(pantryId, pantryProductId, request, authentication))
+                .isInstanceOf(UserPerformedForbiddenActionException.class)
+                .hasMessage("Pantry product not found");
     }
 
     @Test
@@ -172,8 +182,8 @@ class PantryProductControllerTest extends AbstractControllerTest {
         doReturn(null).when(pantryProductService).reservePantryProduct(pantryId, pantryProductId, request.reserved(), authentication.getName());
         ResponseEntity<PantryProductDTO> response = this.controller.reservePantryProduct(pantryId, pantryProductId, request, authentication);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNull(response.getBody());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNull();
     }
 
     private PantryProductDTO createPantryProduct() {

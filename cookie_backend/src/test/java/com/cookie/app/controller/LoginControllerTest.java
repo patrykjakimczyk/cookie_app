@@ -18,7 +18,8 @@ import org.springframework.security.core.Authentication;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,8 +37,8 @@ class LoginControllerTest extends AbstractControllerTest {
         when(loginService.getLoginInfo(authentication.getName())).thenReturn(new LoginResponse(username));
 
         ResponseEntity<LoginResponse> response = this.controller.login(authentication);
-        assertEquals(username, response.getBody().username());
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThat(response.getBody().username()).isEqualTo(username);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
@@ -45,7 +46,9 @@ class LoginControllerTest extends AbstractControllerTest {
 
         when(loginService.getLoginInfo(authentication.getName())).thenThrow(new UserWasNotFoundAfterAuthException("User not found after authorization"));
 
-        assertThrows(UserWasNotFoundAfterAuthException.class, () -> this.controller.login(authentication));
+        assertThatThrownBy(() -> this.controller.login(authentication))
+                .isInstanceOf(UserWasNotFoundAfterAuthException.class)
+                .hasMessage("User not found after authorization");
     }
 
     @Test
@@ -56,8 +59,8 @@ class LoginControllerTest extends AbstractControllerTest {
                 .thenReturn(new RegistrationResponse(Collections.emptyList()));
         ResponseEntity<RegistrationResponse> response = this.controller.registerUser(request);
 
-        assertEquals(0, response.getBody().duplicates().size());
-        assertSame(HttpStatus.CREATED, response.getStatusCode());
+        assertThat(response.getBody().duplicates()).isEmpty();
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
 
     @Test
@@ -69,8 +72,8 @@ class LoginControllerTest extends AbstractControllerTest {
                 .thenReturn(new RegistrationResponse(List.of(duplicate)));
         ResponseEntity<RegistrationResponse> response = this.controller.registerUser(request);
 
-        assertEquals(1, response.getBody().duplicates().size());
-        assertEquals(duplicate, response.getBody().duplicates().get(0));
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThat(response.getBody().duplicates()).hasSize(1);
+        assertThat(response.getBody().duplicates().get(0)).isEqualTo(duplicate);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 }

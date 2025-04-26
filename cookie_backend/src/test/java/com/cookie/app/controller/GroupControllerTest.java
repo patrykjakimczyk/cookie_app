@@ -19,11 +19,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import java.util.Collections;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 
@@ -45,8 +45,9 @@ class GroupControllerTest extends AbstractControllerTest {
         doReturn(serviceResponse).when(groupService).createGroup(createGroupRequest, authentication.getName());
         ResponseEntity<GetGroupResponse> response = this.controller.createGroup(createGroupRequest, authentication);
 
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(serviceResponse.groupId(), response.getBody().groupId());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().groupId()).isEqualTo(serviceResponse.groupId());
     }
 
     @Test
@@ -56,9 +57,10 @@ class GroupControllerTest extends AbstractControllerTest {
         doReturn(groupDetailsDTO).when(groupService).getGroupDetails(groupId, authentication.getName());
         ResponseEntity<GroupDetailsDTO> response = this.controller.getGroupDetails(groupId, authentication);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(groupDetailsDTO.id(), response.getBody().id());
-        assertEquals(groupDetailsDTO.groupName(), response.getBody().groupName());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().id()).isEqualTo(groupDetailsDTO.id());
+        assertThat(response.getBody().groupName()).isEqualTo(groupDetailsDTO.groupName());
     }
 
     @Test
@@ -69,10 +71,11 @@ class GroupControllerTest extends AbstractControllerTest {
         doReturn(serviceResponse).when(groupService).getUserGroups(authentication.getName());
         ResponseEntity<GetUserGroupsResponse> response = this.controller.getUserGroups(authentication);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(serviceResponse.userGroups().size(), response.getBody().userGroups().size());
-        assertEquals(serviceResponse.userGroups().get(0).id(), response.getBody().userGroups().get(0).id());
-        assertEquals(serviceResponse.userGroups().get(0).groupName(), response.getBody().userGroups().get(0).groupName());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().userGroups()).hasSize(serviceResponse.userGroups().size());
+        assertThat(response.getBody().userGroups().get(0).id()).isEqualTo(serviceResponse.userGroups().get(0).id());
+        assertThat(response.getBody().userGroups().get(0).groupName()).isEqualTo(serviceResponse.userGroups().get(0).groupName());
     }
 
     @Test
@@ -83,17 +86,17 @@ class GroupControllerTest extends AbstractControllerTest {
         doReturn(serviceResponse).when(groupService).updateGroup(groupId, updateGroupRequest, authentication.getName());
         ResponseEntity<GetGroupResponse> response = this.controller.updateGroup(groupId, updateGroupRequest, authentication);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(serviceResponse.groupId(), response.getBody().groupId());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().groupId()).isEqualTo(serviceResponse.groupId());
     }
 
     @Test
     void test_deleteGroupSuccessful() {
-
         doNothing().when(groupService).deleteGroup(groupId, authentication.getName());
         ResponseEntity<Void> response = this.controller.deleteGroup(groupId, authentication);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
@@ -104,7 +107,7 @@ class GroupControllerTest extends AbstractControllerTest {
         doNothing().when(groupService).addUserToGroup(groupId, userName, authentication.getName());
         ResponseEntity<Void> response = this.controller.addUserToGroup(groupId, request, authentication);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
@@ -114,7 +117,7 @@ class GroupControllerTest extends AbstractControllerTest {
         doNothing().when(groupService).removeUserFromGroup(groupId, userId, authentication.getName());
         ResponseEntity<Void> response = this.controller.removeUserFromGroup(groupId, userId, authentication);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
@@ -128,9 +131,10 @@ class GroupControllerTest extends AbstractControllerTest {
         ResponseEntity<AssignAuthoritiesToUserResponse> response =
                 this.controller.assignAuthoritiesToUser(groupId, request, authentication);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(serviceResponse.assignedAuthorities().size(), response.getBody().assignedAuthorities().size());
-        assertTrue(response.getBody().assignedAuthorities().contains(authorityDTO));
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().assignedAuthorities()).hasSize(serviceResponse.assignedAuthorities().size());
+        assertThat(response.getBody().assignedAuthorities()).contains(authorityDTO);
     }
 
     @Test
@@ -142,6 +146,6 @@ class GroupControllerTest extends AbstractControllerTest {
         ResponseEntity<Void> response =
                 this.controller.removeAuthoritiesFromUser(groupId, request, authentication);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 }

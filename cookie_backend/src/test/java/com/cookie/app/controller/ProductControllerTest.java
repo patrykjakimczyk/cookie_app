@@ -8,16 +8,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,11 +33,12 @@ class ProductControllerTest {
         doReturn(listResponse).when(productService).getProductsWithFilter(filterValue);
         ResponseEntity<List<ProductDTO>> response = this.controller.getProductsWithFilter(filterValue);
 
-        assertEquals(listResponse.size(), response.getBody().size());
-        assertEquals(product.productId(), response.getBody().get(0).productId());
-        assertEquals(product.productName(), response.getBody().get(0).productName());
-        assertEquals(product.category(), response.getBody().get(0).category());
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody()).hasSize(listResponse.size());
+        assertThat(response.getBody().get(0).productId()).isEqualTo(product.productId());
+        assertThat(response.getBody().get(0).productName()).isEqualTo(product.productName());
+        assertThat(response.getBody().get(0).category()).isEqualTo(product.category());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
@@ -51,7 +49,8 @@ class ProductControllerTest {
         doReturn(listResponse).when(productService).getProductsWithFilter(filterValue);
         ResponseEntity<List<ProductDTO>> response = this.controller.getProductsWithFilter(filterValue);
 
-        assertTrue(response.getBody().isEmpty());
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody()).isEmpty();
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 }

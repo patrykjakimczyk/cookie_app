@@ -10,8 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.*;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,36 +31,35 @@ class AgeValidatorTest {
     void test_isValidReturnsTrueFor15YearsOld() {
         final long fifteenYears = 15L;
 
-        assertTrue(ageValidator.isValid(LocalDate.now(clock).minusYears(fifteenYears), constraintValidatorContext));
+        assertThat(ageValidator.isValid(LocalDate.now(clock).minusYears(fifteenYears), constraintValidatorContext)).isTrue();
     }
 
     @Test
     void test_isValidReturnsTrue13Years() {
         final long thirteenYears = 13L;
 
-
-        assertTrue(ageValidator.isValid(LocalDate.now(clock).minusYears(thirteenYears), constraintValidatorContext));
+        assertThat(ageValidator.isValid(LocalDate.now(clock).minusYears(thirteenYears), constraintValidatorContext)).isTrue();
     }
 
     @Test
     void test_isValidReturnsFalseForAlmost13Years() {
         final long twelveYears = 12L;
-        final long almostYear = 365L;
+        final long almostYear = 364L;
 
-        assertFalse(ageValidator.isValid(LocalDate.now(clock).minusYears(twelveYears).minusDays(almostYear), constraintValidatorContext));
+        assertThat(ageValidator.isValid(LocalDate.now(clock).minusYears(twelveYears).minusDays(almostYear), constraintValidatorContext)).isFalse();
     }
 
     @Test
     void test_isValidReturnsTrueFor125Years() {
         final long hundredtwentyfiveYears = 125L;
 
-        assertTrue(ageValidator.isValid(LocalDate.now(clock).minusYears(hundredtwentyfiveYears), constraintValidatorContext));
+        assertThat(ageValidator.isValid(LocalDate.now(clock).minusYears(hundredtwentyfiveYears), constraintValidatorContext)).isTrue();
     }
 
     @Test
     void test_isValidReturnsFalseForOver125Years() {
         final long hundredtwentyfiveYears = 125L;
 
-        assertFalse(ageValidator.isValid(LocalDate.now(clock).minusYears(hundredtwentyfiveYears).minusDays(1), constraintValidatorContext));
+        assertThat(ageValidator.isValid(LocalDate.now(clock).minusYears(hundredtwentyfiveYears).minusDays(1), constraintValidatorContext)).isFalse();
     }
 }

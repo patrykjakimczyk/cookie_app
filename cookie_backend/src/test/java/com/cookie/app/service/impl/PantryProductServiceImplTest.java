@@ -26,6 +26,8 @@ import org.springframework.data.domain.Sort;
 
 import java.util.*;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -116,12 +118,12 @@ class PantryProductServiceImplTest {
         PageRequest pageRequest = this.pageRequestArgCaptor.getValue();
 
         verify(pantryProductRepository).findPantryProductByPantryId(eq(id), any(PageRequest.class));
-        assertEquals(pageResponse.getTotalElements(), result.totalElements());
-        assertEquals(pageResponse.getContent().get(0).getProduct().getProductName(), result.content().get(0).product().productName());
-        assertEquals(pageResponse.getContent().get(0).getId(), result.content().get(0).id());
-        assertNotNull(pageRequest.getSort().getOrderFor(col));
-        assertEquals(Sort.Direction.ASC, pageRequest.getSort().getOrderFor(col).getDirection());
-        assertEquals(0, pageRequest.getPageNumber());
+        assertThat(result.totalElements()).isEqualTo(pageResponse.getTotalElements());
+        assertThat(result.content().get(0).product().productName()).isEqualTo(pageResponse.getContent().get(0).getProduct().getProductName());
+        assertThat(result.content().get(0).id()).isEqualTo(pageResponse.getContent().get(0).getId());
+        assertThat(pageRequest.getSort().getOrderFor(col)).isNotNull();
+        assertThat(pageRequest.getSort().getOrderFor(col).getDirection()).isEqualTo(Sort.Direction.ASC);
+        assertThat(pageRequest.getPageNumber()).isEqualTo(0);
     }
 
     @Test
@@ -140,14 +142,14 @@ class PantryProductServiceImplTest {
         PageRequest pageRequest = this.pageRequestArgCaptor.getValue();
 
         verify(pantryProductRepository).findProductsInPantryWithFilter(eq(id), eq(filter), any(PageRequest.class));
-        assertEquals(pageResponse.getTotalElements(), result.totalElements());
-        assertEquals(pageResponse.getContent().get(0).getProduct().getProductName(), result.content().get(0).product().productName());
-        assertEquals(pageResponse.getContent().get(0).getId(), result.content().get(0).id());
-        assertNotNull(pageRequest.getSort().getOrderFor(idCol));
-        assertEquals(Sort.Direction.DESC, pageRequest.getSort().getOrderFor(idCol).getDirection());
-        assertNotNull(pageRequest.getSort().getOrderFor(col));
-        assertEquals(Sort.Direction.DESC, pageRequest.getSort().getOrderFor(col).getDirection());
-        assertEquals(0, pageRequest.getPageNumber());
+        assertThat(result.totalElements()).isEqualTo(pageResponse.getTotalElements());
+        assertThat(result.content().get(0).product().productName()).isEqualTo(pageResponse.getContent().get(0).getProduct().getProductName());
+        assertThat(result.content().get(0).id()).isEqualTo(pageResponse.getContent().get(0).getId());
+        assertThat(pageRequest.getSort().getOrderFor(idCol)).isNotNull();
+        assertThat(pageRequest.getSort().getOrderFor(idCol).getDirection()).isEqualTo(Sort.Direction.DESC);
+        assertThat(pageRequest.getSort().getOrderFor(col)).isNotNull();
+        assertThat(pageRequest.getSort().getOrderFor(col).getDirection()).isEqualTo(Sort.Direction.DESC);
+        assertThat(pageRequest.getPageNumber()).isEqualTo(0);
     }
 
     @Test
@@ -166,12 +168,12 @@ class PantryProductServiceImplTest {
         PageRequest pageRequest = this.pageRequestArgCaptor.getValue();
 
         verify(pantryProductRepository).findProductsInPantryWithFilter(eq(id), eq(filter), any(PageRequest.class));
-        assertEquals(pageResponse.getTotalElements(), result.totalElements());
-        assertEquals(pageResponse.getContent().get(0).getProduct().getProductName(), result.content().get(0).product().productName());
-        assertEquals(pageResponse.getContent().get(0).getId(), result.content().get(0).id());
-        assertNotNull(pageRequest.getSort().getOrderFor(idCol));
-        assertEquals(Sort.Direction.DESC, pageRequest.getSort().getOrderFor(idCol).getDirection());
-        assertEquals(0, pageRequest.getPageNumber());
+        assertThat(result.totalElements()).isEqualTo(pageResponse.getTotalElements());
+        assertThat(result.content().get(0).product().productName()).isEqualTo(pageResponse.getContent().get(0).getProduct().getProductName());
+        assertThat(result.content().get(0).id()).isEqualTo(pageResponse.getContent().get(0).getId());
+        assertThat(pageRequest.getSort().getOrderFor(idCol)).isNotNull();
+        assertThat(pageRequest.getSort().getOrderFor(idCol).getDirection()).isEqualTo(Sort.Direction.DESC);
+        assertThat(pageRequest.getPageNumber()).isEqualTo(0);
     }
 
     @Test
@@ -197,17 +199,16 @@ class PantryProductServiceImplTest {
         verify(productRepository, times(2)).findByProductNameAndCategory(anyString(), anyString());
         verify(productRepository, times(2)).save(any(Product.class));
         verify(pantryProductRepository, times(0)).deleteByIdIn(anyList());
-        assertEquals(productDTO.productName(), addedProducts.get(0).getProduct().getProductName());
-        assertEquals(productDTO.category(), addedProducts.get(0).getProduct().getCategory());
-        assertEquals(pantryProductDTO.quantity(), addedProducts.get(0).getQuantity());
-        assertEquals(pantryProductDTO.unit(), addedProducts.get(0).getUnit());
-        assertEquals(productDTO2.productName(), addedProducts.get(1).getProduct().getProductName());
-        assertEquals(productDTO2.category(), addedProducts.get(1).getProduct().getCategory());
-        assertEquals(pantryProductDTO2.quantity(), addedProducts.get(1).getQuantity());
-        assertEquals(pantryProductDTO2.unit(), addedProducts.get(1).getUnit());
-        assertEquals(3, pantry.getPantryProducts().size());
-        assertTrue(pantry.getPantryProducts().contains(addedProducts.get(0)));
-        assertTrue(pantry.getPantryProducts().contains(addedProducts.get(1)));
+        assertThat(addedProducts.get(0).getProduct().getProductName()).isEqualTo(productDTO.productName());
+        assertThat(addedProducts.get(0).getProduct().getCategory()).isEqualTo(productDTO.category());
+        assertThat(addedProducts.get(0).getQuantity()).isEqualTo(pantryProductDTO.quantity());
+        assertThat(addedProducts.get(0).getUnit()).isEqualTo(pantryProductDTO.unit());
+        assertThat(addedProducts.get(1).getProduct().getProductName()).isEqualTo(productDTO2.productName());
+        assertThat(addedProducts.get(1).getProduct().getCategory()).isEqualTo(productDTO2.category());
+        assertThat(addedProducts.get(1).getQuantity()).isEqualTo(pantryProductDTO2.quantity());
+        assertThat(addedProducts.get(1).getUnit()).isEqualTo(pantryProductDTO2.unit());
+        assertThat(pantry.getPantryProducts()).hasSize(3);
+        assertThat(pantry.getPantryProducts()).contains(addedProducts.get(0), addedProducts.get(1));
     }
 
     @Test
@@ -234,17 +235,16 @@ class PantryProductServiceImplTest {
         verify(productRepository, times(2)).findByProductNameAndCategory(anyString(), anyString());
         verify(productRepository, times(0)).save(any(Product.class));
         verify(pantryProductRepository, times(0)).deleteByIdIn(anyList());
-        assertEquals(productDTO.productName(), addedProducts.get(0).getProduct().getProductName());
-        assertEquals(productDTO.category(), addedProducts.get(0).getProduct().getCategory());
-        assertEquals(pantryProductDTO.quantity(), addedProducts.get(0).getQuantity());
-        assertEquals(pantryProductDTO.unit(), addedProducts.get(0).getUnit());
-        assertEquals(productDTO2.productName(), addedProducts.get(1).getProduct().getProductName());
-        assertEquals(productDTO2.category(), addedProducts.get(1).getProduct().getCategory());
-        assertEquals(pantryProductDTO2.quantity(), addedProducts.get(1).getQuantity());
-        assertEquals(pantryProductDTO2.unit(), addedProducts.get(1).getUnit());
-        assertEquals(2, pantry.getPantryProducts().size());
-        assertTrue(pantry.getPantryProducts().contains(addedProducts.get(0)));
-        assertTrue(pantry.getPantryProducts().contains(addedProducts.get(1)));
+        assertThat(addedProducts.get(0).getProduct().getProductName()).isEqualTo(productDTO.productName());
+        assertThat(addedProducts.get(0).getProduct().getCategory()).isEqualTo(productDTO.category());
+        assertThat(addedProducts.get(0).getQuantity()).isEqualTo(pantryProductDTO.quantity());
+        assertThat(addedProducts.get(0).getUnit()).isEqualTo(pantryProductDTO.unit());
+        assertThat(addedProducts.get(1).getProduct().getProductName()).isEqualTo(productDTO2.productName());
+        assertThat(addedProducts.get(1).getProduct().getCategory()).isEqualTo(productDTO2.category());
+        assertThat(addedProducts.get(1).getQuantity()).isEqualTo(pantryProductDTO2.quantity());
+        assertThat(addedProducts.get(1).getUnit()).isEqualTo(pantryProductDTO2.unit());
+        assertThat(pantry.getPantryProducts()).hasSize(2);
+        assertThat(pantry.getPantryProducts()).contains(addedProducts.get(0), addedProducts.get(1));
     }
 
     @Test
@@ -272,17 +272,16 @@ class PantryProductServiceImplTest {
         verify(productRepository, times(2)).findByProductNameAndCategory(anyString(), anyString());
         verify(productRepository, times(0)).save(any(Product.class));
         verify(pantryProductRepository, times(0)).deleteByIdIn(anyList());
-        assertEquals(productDTO.productName(), addedProducts.get(0).getProduct().getProductName());
-        assertEquals(productDTO.category(), addedProducts.get(0).getProduct().getCategory());
-        assertEquals(pantryProductDTO.quantity() + productQuantityBeforeModifing, pantry.getPantryProducts().get(0).getQuantity());
-        assertEquals(pantryProductDTO.unit(), addedProducts.get(0).getUnit());
-        assertEquals(productDTO2.productName(), addedProducts.get(1).getProduct().getProductName());
-        assertEquals(productDTO2.category(), addedProducts.get(1).getProduct().getCategory());
-        assertEquals(pantryProductDTO2.quantity(), addedProducts.get(1).getQuantity());
-        assertEquals(pantryProductDTO2.unit(), addedProducts.get(1).getUnit());
-        assertEquals(2, pantry.getPantryProducts().size());
-        assertTrue(pantry.getPantryProducts().contains(addedProducts.get(0)));
-        assertTrue(pantry.getPantryProducts().contains(addedProducts.get(1)));
+        assertThat(addedProducts.get(0).getProduct().getProductName()).isEqualTo(productDTO.productName());
+        assertThat(addedProducts.get(0).getProduct().getCategory()).isEqualTo(productDTO.category());
+        assertThat(pantry.getPantryProducts().get(0).getQuantity()).isEqualTo(pantryProductDTO.quantity() + productQuantityBeforeModifing);
+        assertThat(addedProducts.get(0).getUnit()).isEqualTo(pantryProductDTO.unit());
+        assertThat(addedProducts.get(1).getProduct().getProductName()).isEqualTo(productDTO2.productName());
+        assertThat(addedProducts.get(1).getProduct().getCategory()).isEqualTo(productDTO2.category());
+        assertThat(addedProducts.get(1).getQuantity()).isEqualTo(pantryProductDTO2.quantity());
+        assertThat(addedProducts.get(1).getUnit()).isEqualTo(pantryProductDTO2.unit());
+        assertThat(pantry.getPantryProducts()).hasSize(2);
+        assertThat(pantry.getPantryProducts()).contains(addedProducts.get(0), addedProducts.get(1));
     }
 
     @Test
@@ -294,8 +293,9 @@ class PantryProductServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        Exception exception = assertThrows(ValidationException.class, () -> this.service.addProductsToPantry(id, productsToAdd, email));
-        assertEquals("Pantry product id must be 0 while inserting it to pantry", exception.getMessage());
+        assertThatThrownBy(() -> this.service.addProductsToPantry(id, productsToAdd, email))
+                .isInstanceOf(ValidationException.class)
+                .hasMessage("Pantry product id must be 0 while inserting it to pantry");
     }
 
     @Test
@@ -307,8 +307,9 @@ class PantryProductServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        Exception exception = assertThrows(ValidationException.class, () -> this.service.addProductsToPantry(id, productsToAdd, email));
-        assertEquals("Pantry product reserved quantity must be 0 while inserting it to pantry", exception.getMessage());
+        assertThatThrownBy(() -> this.service.addProductsToPantry(id, productsToAdd, email))
+                .isInstanceOf(ValidationException.class)
+                .hasMessage("Pantry product reserved quantity must be 0 while inserting it to pantry");
     }
 
     @Test
@@ -333,17 +334,16 @@ class PantryProductServiceImplTest {
         verify(productRepository, times(2)).findByProductNameAndCategory(anyString(), anyString());
         verify(productRepository, times(2)).save(any(Product.class));
         verify(pantryProductRepository, times(0)).deleteByIdIn(anyList());
-        assertEquals(productDTO.productName(), addedProducts.get(0).getProduct().getProductName());
-        assertEquals(productDTO.category(), addedProducts.get(0).getProduct().getCategory());
-        assertEquals(pantryProductDTO.quantity(), addedProducts.get(0).getQuantity());
-        assertEquals(pantryProductDTO.unit(), addedProducts.get(0).getUnit());
-        assertEquals(productDTO2.productName(), addedProducts.get(1).getProduct().getProductName());
-        assertEquals(productDTO2.category(), addedProducts.get(1).getProduct().getCategory());
-        assertEquals(pantryProductDTO2.quantity(), addedProducts.get(1).getQuantity());
-        assertEquals(pantryProductDTO2.unit(), addedProducts.get(1).getUnit());
-        assertEquals(3, pantry.getPantryProducts().size());
-        assertTrue(pantry.getPantryProducts().contains(addedProducts.get(0)));
-        assertTrue(pantry.getPantryProducts().contains(addedProducts.get(1)));
+        assertThat(addedProducts.get(0).getProduct().getProductName()).isEqualTo(productDTO.productName());
+        assertThat(addedProducts.get(0).getProduct().getCategory()).isEqualTo(productDTO.category());
+        assertThat(addedProducts.get(0).getQuantity()).isEqualTo(pantryProductDTO.quantity());
+        assertThat(addedProducts.get(0).getUnit()).isEqualTo(pantryProductDTO.unit());
+        assertThat(addedProducts.get(1).getProduct().getProductName()).isEqualTo(productDTO2.productName());
+        assertThat(addedProducts.get(1).getProduct().getCategory()).isEqualTo(productDTO2.category());
+        assertThat(addedProducts.get(1).getQuantity()).isEqualTo(pantryProductDTO2.quantity());
+        assertThat(addedProducts.get(1).getUnit()).isEqualTo(pantryProductDTO2.unit());
+        assertThat(pantry.getPantryProducts()).hasSize(3);
+        assertThat(pantry.getPantryProducts()).contains(addedProducts.get(0), addedProducts.get(1));
     }
 
     @Test
@@ -364,7 +364,8 @@ class PantryProductServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> this.service.removeProductsFromPantry(id, productsToRemoveIds, email));
+        assertThatThrownBy(() -> this.service.removeProductsFromPantry(id, productsToRemoveIds, email))
+                .isInstanceOf(UserPerformedForbiddenActionException.class);
         verify(pantryProductRepository, times(0)).deleteByIdIn(productsToRemoveIds);
     }
 
@@ -386,14 +387,14 @@ class PantryProductServiceImplTest {
 
         verify(pantryProductRepository).save(foundPantryProduct);
         verify(pantryProductRepository, times(0)).deleteById(pantryProductDTO.id());
-        assertEquals(pantryProductDTO.product().productName(), modifiedProduct.getProduct().getProductName());
-        assertEquals(pantryProductDTO.product().category(), modifiedProduct.getProduct().getCategory());
-        assertEquals(pantryProductDTO.quantity(), modifiedProduct.getQuantity());
-        assertEquals(pantryProductDTO.unit(), modifiedProduct.getUnit());
-        assertEquals(pantryProductDTO.reserved(), modifiedProduct.getReserved());
-        assertEquals(pantryProductDTO.purchaseDate(), modifiedProduct.getPurchaseDate());
-        assertEquals(pantryProductDTO.expirationDate(), modifiedProduct.getExpirationDate());
-        assertEquals(pantryProductDTO.placement(), modifiedProduct.getPlacement());
+        assertThat(modifiedProduct.getProduct().getProductName()).isEqualTo(pantryProductDTO.product().productName());
+        assertThat(modifiedProduct.getProduct().getCategory()).isEqualTo(pantryProductDTO.product().category());
+        assertThat(modifiedProduct.getQuantity()).isEqualTo(pantryProductDTO.quantity());
+        assertThat(modifiedProduct.getUnit()).isEqualTo(pantryProductDTO.unit());
+        assertThat(modifiedProduct.getReserved()).isEqualTo(pantryProductDTO.reserved());
+        assertThat(modifiedProduct.getPurchaseDate()).isEqualTo(pantryProductDTO.purchaseDate());
+        assertThat(modifiedProduct.getExpirationDate()).isEqualTo(pantryProductDTO.expirationDate());
+        assertThat(modifiedProduct.getPlacement()).isEqualTo(pantryProductDTO.placement());
     }
 
     @Test
@@ -415,15 +416,15 @@ class PantryProductServiceImplTest {
 
         verify(pantryProductRepository).save(pantryProduct);
         verify(pantryProductRepository).deleteById(pantryProductDTO.id());
-        assertEquals(pantryProductDTO.product().productName(), modifiedProduct.getProduct().getProductName());
-        assertEquals(pantryProductDTO.product().category(), modifiedProduct.getProduct().getCategory());
-        assertEquals(pantryProductDTO.quantity() + productQuantityBeforeModifing, modifiedProduct.getQuantity());
-        assertEquals(pantryProductDTO.unit(), modifiedProduct.getUnit());
-        assertEquals(pantryProductDTO.reserved(), modifiedProduct.getReserved());
-        assertEquals(pantryProductDTO.purchaseDate(), modifiedProduct.getPurchaseDate());
-        assertEquals(pantryProductDTO.expirationDate(), modifiedProduct.getExpirationDate());
-        assertEquals(pantryProductDTO.placement(), modifiedProduct.getPlacement());
-        assertEquals(productIdBeforeModifing, modifiedProduct.getId());
+        assertThat(modifiedProduct.getProduct().getProductName()).isEqualTo(pantryProductDTO.product().productName());
+        assertThat(modifiedProduct.getProduct().getCategory()).isEqualTo(pantryProductDTO.product().category());
+        assertThat(modifiedProduct.getQuantity()).isEqualTo(pantryProductDTO.quantity() + productQuantityBeforeModifing);
+        assertThat(modifiedProduct.getUnit()).isEqualTo(pantryProductDTO.unit());
+        assertThat(modifiedProduct.getReserved()).isEqualTo(pantryProductDTO.reserved());
+        assertThat(modifiedProduct.getPurchaseDate()).isEqualTo(pantryProductDTO.purchaseDate());
+        assertThat(modifiedProduct.getExpirationDate()).isEqualTo(pantryProductDTO.expirationDate());
+        assertThat(modifiedProduct.getPlacement()).isEqualTo(pantryProductDTO.placement());
+        assertThat(modifiedProduct.getId()).isEqualTo(productIdBeforeModifing);
     }
 
     @Test
@@ -435,8 +436,9 @@ class PantryProductServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.empty()).when(pantryProductRepository).findById(pantryProductDTO.id());
 
-        Exception exception = assertThrows(ResourceNotFoundException.class, () -> this.service.updatePantryProduct(id, pantryProductDTO, email));
-        assertEquals("Pantry product was not found", exception.getMessage());
+        assertThatThrownBy(() -> this.service.updatePantryProduct(id, pantryProductDTO, email))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("Pantry product was not found");
         verify(pantryProductRepository, times(0)).save(pantryProduct);
         verify(pantryProductRepository, times(0)).deleteById(pantryProductDTO.id());
     }
@@ -451,8 +453,9 @@ class PantryProductServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(foundPantryProduct)).when(pantryProductRepository).findById(pantryProductDTO.id());
 
-        Exception exception = assertThrows(UserPerformedForbiddenActionException.class, () -> this.service.updatePantryProduct(id, pantryProductDTO, email));
-        assertEquals("Cannot modify products from different pantry", exception.getMessage());
+        assertThatThrownBy(() -> this.service.updatePantryProduct(id, pantryProductDTO, email))
+                .isInstanceOf(UserPerformedForbiddenActionException.class)
+                .hasMessage("Cannot modify products from different pantry");
         verify(pantryProductRepository, times(0)).save(pantryProduct);
         verify(pantryProductRepository, times(0)).deleteById(pantryProductDTO.id());
     }
@@ -467,8 +470,9 @@ class PantryProductServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(foundPantryProduct)).when(pantryProductRepository).findById(pantryProductDTO.id());
 
-        Exception exception = assertThrows(UserPerformedForbiddenActionException.class, () -> this.service.updatePantryProduct(id, pantryProductDTO, email));
-        assertEquals("Cannot modify invalid pantry product", exception.getMessage());
+        assertThatThrownBy(() -> this.service.updatePantryProduct(id, pantryProductDTO, email))
+                .isInstanceOf(UserPerformedForbiddenActionException.class)
+                .hasMessage("Cannot modify invalid pantry product");
         verify(pantryProductRepository, times(0)).save(pantryProduct);
         verify(pantryProductRepository, times(0)).deleteById(pantryProductDTO.id());
     }
@@ -479,8 +483,9 @@ class PantryProductServiceImplTest {
         final ProductDTO productDTO = new ProductDTO(0L, "productName", Category.ANIMAL_PRODUCTS);
         final PantryProductDTO pantryProductDTO = new PantryProductDTO(0L, productDTO, null, null, 200, Unit.GRAMS, 100, null);
 
-        Exception exception = assertThrows(ValidationException.class, () -> this.service.updatePantryProduct(id, pantryProductDTO, email));
-        assertEquals("Cannot modify product because it doesn't exist", exception.getMessage());
+        assertThatThrownBy(() -> this.service.updatePantryProduct(id, pantryProductDTO, email))
+                .isInstanceOf(ValidationException.class)
+                .hasMessage("Cannot modify product because it doesn't exist");
         verify(pantryProductRepository, times(0)).save(pantryProduct);
         verify(pantryProductRepository, times(0)).deleteById(pantryProductDTO.id());
     }
@@ -496,8 +501,8 @@ class PantryProductServiceImplTest {
         PantryProductDTO productAfterReserve = this.service.reservePantryProduct(id, id, reservedQuantity, email);
 
         verify(pantryProductRepository).save(pantryProduct);
-        assertEquals(reservedQuantity, productAfterReserve.reserved());
-        assertEquals(quantityBeforeReserving - reservedQuantity, productAfterReserve.quantity());
+        assertThat(productAfterReserve.reserved()).isEqualTo(reservedQuantity);
+        assertThat(productAfterReserve.quantity()).isEqualTo(quantityBeforeReserving - reservedQuantity);
     }
 
     @Test
@@ -513,8 +518,8 @@ class PantryProductServiceImplTest {
         PantryProductDTO productAfterUnreserve = this.service.reservePantryProduct(id, id, reserveQuantity, email);
 
         verify(pantryProductRepository).save(pantryProduct);
-        assertEquals(reservedQuantityBeforeUnreserving + reserveQuantity, productAfterUnreserve.reserved());
-        assertEquals(quantityBeforeUnreserving - reserveQuantity, productAfterUnreserve.quantity());
+        assertThat(productAfterUnreserve.reserved()).isEqualTo(reservedQuantityBeforeUnreserving + reserveQuantity);
+        assertThat(productAfterUnreserve.quantity()).isEqualTo(quantityBeforeUnreserving - reserveQuantity);
     }
 
     @Test
@@ -527,7 +532,7 @@ class PantryProductServiceImplTest {
         PantryProductDTO productAfterReserve = this.service.reservePantryProduct(id, id, reservedQuantity, email);
 
         verify(pantryProductRepository, times(0)).save(pantryProduct);
-        assertNull(productAfterReserve);
+        assertThat(productAfterReserve).isNull();
     }
 
     @Test
@@ -540,7 +545,7 @@ class PantryProductServiceImplTest {
         PantryProductDTO productAfterReserve = this.service.reservePantryProduct(id, id, reservedQuantity, email);
 
         verify(pantryProductRepository, times(0)).save(pantryProduct);
-        assertNull(productAfterReserve);
+        assertThat(productAfterReserve).isNull();
     }
 
     @Test
@@ -553,9 +558,9 @@ class PantryProductServiceImplTest {
 
         List<RecipeProduct> unreservedProducts = this.service.reservePantryProductsFromRecipe(id, user, recipeProducts);
 
-        assertTrue(unreservedProducts.isEmpty());
-        assertEquals(reservedQuantityBeforeReserving + recipeProduct.getQuantity(), pantryProduct.getReserved());
-        assertEquals(quantityBeforeReserving - recipeProduct.getQuantity(), pantryProduct.getQuantity());
+        assertThat(unreservedProducts).isEmpty();
+        assertThat(pantryProduct.getReserved()).isEqualTo(reservedQuantityBeforeReserving + recipeProduct.getQuantity());
+        assertThat(pantryProduct.getQuantity()).isEqualTo(quantityBeforeReserving - recipeProduct.getQuantity());
         verify(pantryProductRepository).save(pantryProduct);
     }
 
@@ -567,8 +572,7 @@ class PantryProductServiceImplTest {
 
         List<RecipeProduct> unreservedProducts = this.service.reservePantryProductsFromRecipe(id, user, recipeProducts);
 
-        assertEquals(recipeProducts.size(), unreservedProducts.size());
-        assertTrue(unreservedProducts.contains(recipeProduct));
+        assertThat(unreservedProducts).hasSize(recipeProducts.size()).contains(recipeProduct);
         verify(pantryProductRepository, times(0)).save(pantryProduct);
     }
 
@@ -579,8 +583,7 @@ class PantryProductServiceImplTest {
 
         List<RecipeProduct> missingProducts = this.service.getRecipeProductsNotInPantry(pantry, recipeProducts);
 
-        assertEquals(recipeProducts.size(), missingProducts.size());
-        assertTrue(missingProducts.contains(recipeProduct));
+        assertThat(missingProducts).hasSize(recipeProducts.size()).contains(recipeProduct);
     }
 
     @Test
@@ -590,7 +593,7 @@ class PantryProductServiceImplTest {
 
         List<RecipeProduct> missingProducts = this.service.getRecipeProductsNotInPantry(pantry, recipeProducts);
 
-        assertTrue(missingProducts.isEmpty());
+        assertThat(missingProducts).isEmpty();
     }
 
     @Test
@@ -600,7 +603,6 @@ class PantryProductServiceImplTest {
 
         List<RecipeProduct> missingProducts = this.service.getRecipeProductsNotInPantry(null, recipeProducts);
 
-        assertEquals(recipeProducts.size(), missingProducts.size());
-        assertTrue(missingProducts.contains(recipeProduct));
+        assertThat(missingProducts).hasSize(recipeProducts.size()).contains(recipeProduct);
     }
 }

@@ -18,7 +18,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,8 +38,9 @@ class ShoppingListControllerTest extends AbstractControllerTest {
         doReturn(serviceResponse).when(shoppingListService).createShoppingList(request, username);
         ResponseEntity<GetShoppingListResponse> response = this.controller.createShoppingList(request, authentication);
 
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(serviceResponse.listName(), response.getBody().listName());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().listName()).isEqualTo(serviceResponse.listName());
     }
 
     @Test
@@ -49,8 +50,9 @@ class ShoppingListControllerTest extends AbstractControllerTest {
         doReturn(serviceResponse).when(shoppingListService).getShoppingList(id, username);
         ResponseEntity<GetShoppingListResponse> response = this.controller.getShoppingList(id, authentication);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(serviceResponse.listName(), response.getBody().listName());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().listName()).isEqualTo(serviceResponse.listName());
     }
 
     @Test
@@ -60,8 +62,9 @@ class ShoppingListControllerTest extends AbstractControllerTest {
         doReturn(serviceResponse).when(shoppingListService).getShoppingList(id, username);
         ResponseEntity<GetShoppingListResponse> response = this.controller.getShoppingList(id, authentication);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(serviceResponse.listName(), response.getBody().listName());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().listName()).isEqualTo(serviceResponse.listName());
     }
 
     @Test
@@ -72,9 +75,10 @@ class ShoppingListControllerTest extends AbstractControllerTest {
         doReturn(serviceResponse).when(shoppingListService).getUserShoppingLists(username);
         ResponseEntity<GetUserShoppingListsResponse> response = this.controller.getAllUserShoppingLists(authentication);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(1, response.getBody().shoppingLists().size());
-        assertEquals(shoppingListDTO, response.getBody().shoppingLists().get(0));
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().shoppingLists()).hasSize(1);
+        assertThat(response.getBody().shoppingLists().get(0)).isEqualTo(shoppingListDTO);
     }
 
     @Test
@@ -84,8 +88,9 @@ class ShoppingListControllerTest extends AbstractControllerTest {
         doReturn(serviceResponse).when(shoppingListService).deleteShoppingList(id, username);
         ResponseEntity<DeleteShoppingListResponse> response = this.controller.deleteShoppingList(id, authentication);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(serviceResponse.deletedListName(), response.getBody().deletedListName());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().deletedListName()).isEqualTo(serviceResponse.deletedListName());
     }
 
     @Test
@@ -96,7 +101,8 @@ class ShoppingListControllerTest extends AbstractControllerTest {
         doReturn(serviceResponse).when(shoppingListService).updateShoppingList(id, updateRequest, username);
         ResponseEntity<GetShoppingListResponse> response = this.controller.updateShoppingList(id, updateRequest, authentication);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(serviceResponse.listName(), response.getBody().listName());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().listName()).isEqualTo(serviceResponse.listName());
     }
 }

@@ -29,6 +29,8 @@ import org.springframework.data.domain.Sort;
 import java.time.LocalDate;
 import java.util.*;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -129,12 +131,12 @@ class ShoppingListProductServiceImplTest {
         PageRequest pageRequest = this.pageRequestArgCaptor.getValue();
 
         verify(shoppingListProductRepository).findShoppingListProductByShoppingListId(eq(id), any(PageRequest.class));
-        assertEquals(pageResponse.getTotalElements(), result.totalElements());
-        assertEquals(pageResponse.getContent().get(0).getProduct().getProductName(), result.content().get(0).product().productName());
-        assertEquals(pageResponse.getContent().get(0).getId(), result.content().get(0).id());
-        assertNotNull(pageRequest.getSort().getOrderFor(col));
-        assertEquals(Sort.Direction.ASC, pageRequest.getSort().getOrderFor(col).getDirection());
-        assertEquals(0, pageRequest.getPageNumber());
+        assertThat(result.totalElements()).isEqualTo(pageResponse.getTotalElements());
+        assertThat(result.content().get(0).product().productName()).isEqualTo(pageResponse.getContent().get(0).getProduct().getProductName());
+        assertThat(result.content().get(0).id()).isEqualTo(pageResponse.getContent().get(0).getId());
+        assertThat(pageRequest.getSort().getOrderFor(col)).isNotNull();
+        assertThat(pageRequest.getSort().getOrderFor(col).getDirection()).isEqualTo(Sort.Direction.ASC);
+        assertThat(pageRequest.getPageNumber()).isEqualTo(0);
     }
 
     @Test
@@ -153,14 +155,14 @@ class ShoppingListProductServiceImplTest {
         PageRequest pageRequest = this.pageRequestArgCaptor.getValue();
 
         verify(shoppingListProductRepository).findProductsInShoppingListWithFilter(eq(id), eq(filter), any(PageRequest.class));
-        assertEquals(pageResponse.getTotalElements(), result.totalElements());
-        assertEquals(pageResponse.getContent().get(0).getProduct().getProductName(), result.content().get(0).product().productName());
-        assertEquals(pageResponse.getContent().get(0).getId(), result.content().get(0).id());
-        assertNotNull(pageRequest.getSort().getOrderFor(idCol));
-        assertEquals(Sort.Direction.DESC, pageRequest.getSort().getOrderFor(idCol).getDirection());
-        assertNotNull(pageRequest.getSort().getOrderFor(col));
-        assertEquals(Sort.Direction.DESC, pageRequest.getSort().getOrderFor(col).getDirection());
-        assertEquals(0, pageRequest.getPageNumber());
+        assertThat(result.totalElements()).isEqualTo(pageResponse.getTotalElements());
+        assertThat(result.content().get(0).product().productName()).isEqualTo(pageResponse.getContent().get(0).getProduct().getProductName());
+        assertThat(result.content().get(0).id()).isEqualTo(pageResponse.getContent().get(0).getId());
+        assertThat(pageRequest.getSort().getOrderFor(idCol)).isNotNull();
+        assertThat(pageRequest.getSort().getOrderFor(idCol).getDirection()).isEqualTo(Sort.Direction.DESC);
+        assertThat(pageRequest.getSort().getOrderFor(col)).isNotNull();
+        assertThat(pageRequest.getSort().getOrderFor(col).getDirection()).isEqualTo(Sort.Direction.DESC);
+        assertThat(pageRequest.getPageNumber()).isEqualTo(0);
     }
 
     @Test
@@ -179,12 +181,12 @@ class ShoppingListProductServiceImplTest {
         PageRequest pageRequest = this.pageRequestArgCaptor.getValue();
 
         verify(shoppingListProductRepository).findProductsInShoppingListWithFilter(eq(id), eq(filter), any(PageRequest.class));
-        assertEquals(pageResponse.getTotalElements(), result.totalElements());
-        assertEquals(pageResponse.getContent().get(0).getProduct().getProductName(), result.content().get(0).product().productName());
-        assertEquals(pageResponse.getContent().get(0).getId(), result.content().get(0).id());
-        assertNotNull(pageRequest.getSort().getOrderFor(idCol));
-        assertEquals(Sort.Direction.DESC, pageRequest.getSort().getOrderFor(idCol).getDirection());
-        assertEquals(0, pageRequest.getPageNumber());
+        assertThat(result.totalElements()).isEqualTo(pageResponse.getTotalElements());
+        assertThat(result.content().get(0).product().productName()).isEqualTo(pageResponse.getContent().get(0).getProduct().getProductName());
+        assertThat(result.content().get(0).id()).isEqualTo(pageResponse.getContent().get(0).getId());
+        assertThat(pageRequest.getSort().getOrderFor(idCol)).isNotNull();
+        assertThat(pageRequest.getSort().getOrderFor(idCol).getDirection()).isEqualTo(Sort.Direction.DESC);
+        assertThat(pageRequest.getPageNumber()).isEqualTo(0);
     }
 
     @Test
@@ -210,17 +212,16 @@ class ShoppingListProductServiceImplTest {
         verify(productRepository, times(2)).findByProductNameAndCategory(anyString(), anyString());
         verify(productRepository, times(2)).save(any(Product.class));
         verify(shoppingListProductRepository, times(0)).deleteByIdIn(anyList());
-        assertEquals(productDTO.productName(), addedProducts.get(0).getProduct().getProductName());
-        assertEquals(productDTO.category(), addedProducts.get(0).getProduct().getCategory());
-        assertEquals(listProductDTO.quantity(), addedProducts.get(0).getQuantity());
-        assertEquals(listProductDTO.unit(), addedProducts.get(0).getUnit());
-        assertEquals(productDTO2.productName(), addedProducts.get(1).getProduct().getProductName());
-        assertEquals(productDTO2.category(), addedProducts.get(1).getProduct().getCategory());
-        assertEquals(listProductDTO2.quantity(), addedProducts.get(1).getQuantity());
-        assertEquals(listProductDTO2.unit(), addedProducts.get(1).getUnit());
-        assertEquals(3, shoppingList.getProductsList().size());
-        assertTrue(shoppingList.getProductsList().contains(addedProducts.get(0)));
-        assertTrue(shoppingList.getProductsList().contains(addedProducts.get(1)));
+        assertThat(addedProducts.get(0).getProduct().getProductName()).isEqualTo(productDTO.productName());
+        assertThat(addedProducts.get(0).getProduct().getCategory()).isEqualTo(productDTO.category());
+        assertThat(addedProducts.get(0).getQuantity()).isEqualTo(listProductDTO.quantity());
+        assertThat(addedProducts.get(0).getUnit()).isEqualTo(listProductDTO.unit());
+        assertThat(addedProducts.get(1).getProduct().getProductName()).isEqualTo(productDTO2.productName());
+        assertThat(addedProducts.get(1).getProduct().getCategory()).isEqualTo(productDTO2.category());
+        assertThat(addedProducts.get(1).getQuantity()).isEqualTo(listProductDTO2.quantity());
+        assertThat(addedProducts.get(1).getUnit()).isEqualTo(listProductDTO2.unit());
+        assertThat(shoppingList.getProductsList()).hasSize(3);
+        assertThat(shoppingList.getProductsList()).contains(addedProducts.get(0), addedProducts.get(1));
     }
 
     @Test
@@ -247,17 +248,16 @@ class ShoppingListProductServiceImplTest {
         verify(productRepository, times(2)).findByProductNameAndCategory(anyString(), anyString());
         verify(productRepository, times(0)).save(any(Product.class));
         verify(shoppingListProductRepository, times(0)).deleteByIdIn(anyList());
-        assertEquals(productDTO.productName(), addedProducts.get(0).getProduct().getProductName());
-        assertEquals(productDTO.category(), addedProducts.get(0).getProduct().getCategory());
-        assertEquals(listProductDTO.quantity(), addedProducts.get(0).getQuantity());
-        assertEquals(listProductDTO.unit(), addedProducts.get(0).getUnit());
-        assertEquals(productDTO2.productName(), addedProducts.get(1).getProduct().getProductName());
-        assertEquals(productDTO2.category(), addedProducts.get(1).getProduct().getCategory());
-        assertEquals(listProductDTO2.quantity(), addedProducts.get(1).getQuantity());
-        assertEquals(listProductDTO2.unit(), addedProducts.get(1).getUnit());
-        assertEquals(2, shoppingList.getProductsList().size());
-        assertTrue(shoppingList.getProductsList().contains(addedProducts.get(0)));
-        assertTrue(shoppingList.getProductsList().contains(addedProducts.get(1)));
+        assertThat(addedProducts.get(0).getProduct().getProductName()).isEqualTo(productDTO.productName());
+        assertThat(addedProducts.get(0).getProduct().getCategory()).isEqualTo(productDTO.category());
+        assertThat(addedProducts.get(0).getQuantity()).isEqualTo(listProductDTO.quantity());
+        assertThat(addedProducts.get(0).getUnit()).isEqualTo(listProductDTO.unit());
+        assertThat(addedProducts.get(1).getProduct().getProductName()).isEqualTo(productDTO2.productName());
+        assertThat(addedProducts.get(1).getProduct().getCategory()).isEqualTo(productDTO2.category());
+        assertThat(addedProducts.get(1).getQuantity()).isEqualTo(listProductDTO2.quantity());
+        assertThat(addedProducts.get(1).getUnit()).isEqualTo(listProductDTO2.unit());
+        assertThat(shoppingList.getProductsList()).hasSize(2);
+        assertThat(shoppingList.getProductsList()).contains(addedProducts.get(0), addedProducts.get(1));
     }
 
     @Test
@@ -285,17 +285,16 @@ class ShoppingListProductServiceImplTest {
         verify(productRepository, times(2)).findByProductNameAndCategory(anyString(), anyString());
         verify(productRepository, times(0)).save(any(Product.class));
         verify(shoppingListProductRepository, times(0)).deleteByIdIn(anyList());
-        assertEquals(productDTO.productName(), addedProducts.get(0).getProduct().getProductName());
-        assertEquals(productDTO.category(), addedProducts.get(0).getProduct().getCategory());
-        assertEquals(listProductDTO.quantity() + productQuantityBeforeModifing, shoppingList.getProductsList().get(0).getQuantity());
-        assertEquals(listProductDTO.unit(), addedProducts.get(0).getUnit());
-        assertEquals(productDTO2.productName(), addedProducts.get(1).getProduct().getProductName());
-        assertEquals(productDTO2.category(), addedProducts.get(1).getProduct().getCategory());
-        assertEquals(listProductDTO2.quantity(), addedProducts.get(1).getQuantity());
-        assertEquals(listProductDTO2.unit(), addedProducts.get(1).getUnit());
-        assertEquals(2, shoppingList.getProductsList().size());
-        assertTrue(shoppingList.getProductsList().contains(addedProducts.get(0)));
-        assertTrue(shoppingList.getProductsList().contains(addedProducts.get(1)));
+        assertThat(addedProducts.get(0).getProduct().getProductName()).isEqualTo(productDTO.productName());
+        assertThat(addedProducts.get(0).getProduct().getCategory()).isEqualTo(productDTO.category());
+        assertThat(shoppingList.getProductsList().get(0).getQuantity()).isEqualTo(listProductDTO.quantity() + productQuantityBeforeModifing);
+        assertThat(addedProducts.get(0).getUnit()).isEqualTo(listProductDTO.unit());
+        assertThat(addedProducts.get(1).getProduct().getProductName()).isEqualTo(productDTO2.productName());
+        assertThat(addedProducts.get(1).getProduct().getCategory()).isEqualTo(productDTO2.category());
+        assertThat(addedProducts.get(1).getQuantity()).isEqualTo(listProductDTO2.quantity());
+        assertThat(addedProducts.get(1).getUnit()).isEqualTo(listProductDTO2.unit());
+        assertThat(shoppingList.getProductsList()).hasSize(2);
+        assertThat(shoppingList.getProductsList()).contains(addedProducts.get(0), addedProducts.get(1));
     }
 
     @Test
@@ -307,8 +306,9 @@ class ShoppingListProductServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        Exception exception = assertThrows(ValidationException.class, () -> this.service.addProductsToShoppingList(id, productsToAdd, email));
-        assertEquals("Shopping list product id must be not set while inserting it to shopping list", exception.getMessage());
+        assertThatThrownBy(() -> this.service.addProductsToShoppingList(id, productsToAdd, email))
+                .isInstanceOf(ValidationException.class)
+                .hasMessage("Shopping list product id must be not set while inserting it to shopping list");
     }
 
     @Test
@@ -320,8 +320,9 @@ class ShoppingListProductServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        Exception exception = assertThrows(ValidationException.class, () -> this.service.addProductsToShoppingList(id, productsToAdd, email));
-        assertEquals("Shopping list product cannot be purchased while inserting it to shopping list", exception.getMessage());
+        assertThatThrownBy(() -> this.service.addProductsToShoppingList(id, productsToAdd, email))
+                .isInstanceOf(ValidationException.class)
+                .hasMessage("Shopping list product cannot be purchased while inserting it to shopping list");
     }
 
     @Test
@@ -340,7 +341,8 @@ class ShoppingListProductServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        assertThrows(UserPerformedForbiddenActionException.class, () -> this.service.removeProductsFromShoppingList(id, productsToRemoveIds, email));
+        assertThatThrownBy(() -> this.service.removeProductsFromShoppingList(id, productsToRemoveIds, email))
+                .isInstanceOf(UserPerformedForbiddenActionException.class);
         verify(shoppingListProductRepository, times(0)).deleteByIdIn(productsToRemoveIds);
     }
 
@@ -361,11 +363,11 @@ class ShoppingListProductServiceImplTest {
 
         verify(shoppingListProductRepository).save(foundPantryProduct);
         verify(shoppingListProductRepository, times(0)).deleteById(shoppingListProductDTO.id());
-        assertEquals(shoppingListProductDTO.product().productName(), modifiedProduct.getProduct().getProductName());
-        assertEquals(shoppingListProductDTO.product().category(), modifiedProduct.getProduct().getCategory());
-        assertEquals(shoppingListProductDTO.quantity(), modifiedProduct.getQuantity());
-        assertEquals(shoppingListProductDTO.unit(), modifiedProduct.getUnit());
-        assertEquals(shoppingListProductDTO.purchased(), modifiedProduct.isPurchased());
+        assertThat(modifiedProduct.getProduct().getProductName()).isEqualTo(shoppingListProductDTO.product().productName());
+        assertThat(modifiedProduct.getProduct().getCategory()).isEqualTo(shoppingListProductDTO.product().category());
+        assertThat(modifiedProduct.getQuantity()).isEqualTo(shoppingListProductDTO.quantity());
+        assertThat(modifiedProduct.getUnit()).isEqualTo(shoppingListProductDTO.unit());
+        assertThat(modifiedProduct.isPurchased()).isEqualTo(shoppingListProductDTO.purchased());
     }
 
     @Test
@@ -386,12 +388,12 @@ class ShoppingListProductServiceImplTest {
 
         verify(shoppingListProductRepository).save(shoppingListProduct);
         verify(shoppingListProductRepository).deleteById(shoppingListProductDTO.id());
-        assertEquals(shoppingListProductDTO.product().productName(), modifiedProduct.getProduct().getProductName());
-        assertEquals(shoppingListProductDTO.product().category(), modifiedProduct.getProduct().getCategory());
-        assertEquals(shoppingListProductDTO.quantity() + productQuantityBeforeModifing, modifiedProduct.getQuantity());
-        assertEquals(shoppingListProductDTO.unit(), modifiedProduct.getUnit());
-        assertEquals(shoppingListProductDTO.purchased(), modifiedProduct.isPurchased());
-        assertEquals(productIdBeforeModifing, modifiedProduct.getId());
+        assertThat(modifiedProduct.getProduct().getProductName()).isEqualTo(shoppingListProductDTO.product().productName());
+        assertThat(modifiedProduct.getProduct().getCategory()).isEqualTo(shoppingListProductDTO.product().category());
+        assertThat(modifiedProduct.getQuantity()).isEqualTo(shoppingListProductDTO.quantity() + productQuantityBeforeModifing);
+        assertThat(modifiedProduct.getUnit()).isEqualTo(shoppingListProductDTO.unit());
+        assertThat(modifiedProduct.isPurchased()).isEqualTo(shoppingListProductDTO.purchased());
+        assertThat(modifiedProduct.getId()).isEqualTo(productIdBeforeModifing);
     }
 
     @Test
@@ -402,9 +404,9 @@ class ShoppingListProductServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.empty()).when(shoppingListProductRepository).findById(shoppingListProductDTO.id());
 
-        Exception exception = assertThrows(ResourceNotFoundException.class, () ->
-                this.service.updateShoppingListProduct(id, shoppingListProductDTO, email));
-        assertEquals("Shopping list product was not found", exception.getMessage());
+        assertThatThrownBy(() -> this.service.updateShoppingListProduct(id, shoppingListProductDTO, email))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("Shopping list product was not found");
         verify(shoppingListProductRepository, times(0)).save(shoppingListProduct);
         verify(shoppingListProductRepository, times(0)).deleteById(shoppingListProductDTO.id());
     }
@@ -418,9 +420,9 @@ class ShoppingListProductServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(foundPantryProduct)).when(shoppingListProductRepository).findById(shoppingListProductDTO.id());
 
-        Exception exception = assertThrows(UserPerformedForbiddenActionException.class, () ->
-                this.service.updateShoppingListProduct(id, shoppingListProductDTO, email));
-        assertEquals("Cannot update products from different shopping list", exception.getMessage());
+        assertThatThrownBy(() -> this.service.updateShoppingListProduct(id, shoppingListProductDTO, email))
+                .isInstanceOf(UserPerformedForbiddenActionException.class)
+                .hasMessage("Cannot update products from different shopping list");
         verify(shoppingListProductRepository, times(0)).save(shoppingListProduct);
         verify(shoppingListProductRepository, times(0)).deleteById(shoppingListProductDTO.id());
     }
@@ -434,9 +436,9 @@ class ShoppingListProductServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         doReturn(Optional.of(foundPantryProduct)).when(shoppingListProductRepository).findById(shoppingListProductDTO.id());
 
-        Exception exception = assertThrows(UserPerformedForbiddenActionException.class, () ->
-                this.service.updateShoppingListProduct(id, shoppingListProductDTO, email));
-        assertEquals("Cannot modify invalid shopping list product", exception.getMessage());
+        assertThatThrownBy(() -> this.service.updateShoppingListProduct(id, shoppingListProductDTO, email))
+                .isInstanceOf(UserPerformedForbiddenActionException.class)
+                .hasMessage("Cannot modify invalid shopping list product");
         verify(shoppingListProductRepository, times(0)).save(shoppingListProduct);
         verify(shoppingListProductRepository, times(0)).deleteById(shoppingListProductDTO.id());
     }
@@ -446,9 +448,9 @@ class ShoppingListProductServiceImplTest {
         final ProductDTO productDTO = new ProductDTO(0L, "productName", Category.ANIMAL_PRODUCTS);
         final ShoppingListProductDTO shoppingListProductDTO = new ShoppingListProductDTO(0L, productDTO, 200, Unit.GRAMS, false);
 
-        Exception exception = assertThrows(ValidationException.class, () ->
-                this.service.updateShoppingListProduct(id, shoppingListProductDTO, email));
-        assertEquals("Cannot modify product because it doesn't exist", exception.getMessage());
+        assertThatThrownBy(() -> this.service.updateShoppingListProduct(id, shoppingListProductDTO, email))
+                .isInstanceOf(ValidationException.class)
+                .hasMessage("Cannot modify product because it doesn't exist");
         verify(shoppingListProductRepository, times(0)).save(shoppingListProduct);
         verify(shoppingListProductRepository, times(0)).deleteById(shoppingListProductDTO.id());
     }
@@ -470,8 +472,8 @@ class ShoppingListProductServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        assertThrows(UserPerformedForbiddenActionException.class, () ->
-                this.service.changePurchaseStatusForProducts(id, productsToStatusChangeIds, email));
+        assertThatThrownBy(() -> this.service.changePurchaseStatusForProducts(id, productsToStatusChangeIds, email))
+                .isInstanceOf(UserPerformedForbiddenActionException.class);
         verify(shoppingListProductRepository, times(0)).saveAll(anyList());
     }
 
@@ -490,12 +492,12 @@ class ShoppingListProductServiceImplTest {
         List<PantryProductDTO> transferedProducts = this.listOfPantryProductsArgCaptor.getValue();
 
         verify(shoppingListProductRepository).deleteAll(shoppingList.getProductsList());
-        assertEquals(shoppingList.getProductsList().size(), transferedProducts.size());
-        assertEquals(shoppingList.getProductsList().get(0).getProduct().getId(), transferedProducts.get(0).product().productId());
-        assertEquals(shoppingList.getProductsList().get(0).getProduct().getCategory(), transferedProducts.get(0).product().category());
-        assertEquals(shoppingList.getProductsList().get(0).getQuantity(), transferedProducts.get(0).quantity());
-        assertEquals(shoppingList.getProductsList().get(0).getUnit(), transferedProducts.get(0).unit());
-        assertEquals(LocalDate.now(), transferedProducts.get(0).purchaseDate());
+        assertThat(transferedProducts).hasSize(shoppingList.getProductsList().size());
+        assertThat(transferedProducts.get(0).product().productId()).isEqualTo(shoppingList.getProductsList().get(0).getProduct().getId());
+        assertThat(transferedProducts.get(0).product().category()).isEqualTo(shoppingList.getProductsList().get(0).getProduct().getCategory());
+        assertThat(transferedProducts.get(0).quantity()).isEqualTo(shoppingList.getProductsList().get(0).getQuantity());
+        assertThat(transferedProducts.get(0).unit()).isEqualTo(shoppingList.getProductsList().get(0).getUnit());
+        assertThat(transferedProducts.get(0).purchaseDate()).isEqualTo(LocalDate.now());
     }
 
     @Test
@@ -506,9 +508,9 @@ class ShoppingListProductServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        Exception exception = assertThrows(UserPerformedForbiddenActionException.class, () ->
-                this.service.transferProductsToPantry(id, email));
-        assertEquals("Cannot transfer products because your group does not have assigned pantry", exception.getMessage());
+        assertThatThrownBy(() -> this.service.transferProductsToPantry(id, email))
+                .isInstanceOf(UserPerformedForbiddenActionException.class)
+                .hasMessage("Cannot transfer products because your group does not have assigned pantry");
         verify(shoppingListProductRepository, times(0)).deleteAll(shoppingList.getProductsList());
         verify(pantryProductService, times(0)).addProductsToPantryFromList(any(Pantry.class), anyList());
     }
@@ -521,12 +523,11 @@ class ShoppingListProductServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        Exception exception = assertThrows(UserPerformedForbiddenActionException.class, () ->
-                this.service.transferProductsToPantry(id, email));
-        assertEquals("You have not permissions to do that", exception.getMessage());
+        assertThatThrownBy(() -> this.service.transferProductsToPantry(id, email))
+                .isInstanceOf(UserPerformedForbiddenActionException.class)
+                .hasMessage("You have not permissions to do that");
         verify(shoppingListProductRepository, times(0)).deleteAll(shoppingList.getProductsList());
         verify(pantryProductService, times(0)).addProductsToPantryFromList(any(Pantry.class), anyList());
-
     }
 
     @Test
@@ -538,9 +539,9 @@ class ShoppingListProductServiceImplTest {
 
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
 
-        Exception exception = assertThrows(UserPerformedForbiddenActionException.class, () ->
-                this.service.transferProductsToPantry(id, email));
-        assertEquals("Cannot transfer unpurchased shopping list products", exception.getMessage());
+        assertThatThrownBy(() -> this.service.transferProductsToPantry(id, email))
+                .isInstanceOf(UserPerformedForbiddenActionException.class)
+                .hasMessage("Cannot transfer unpurchased shopping list products");
         verify(shoppingListProductRepository, times(0)).deleteAll(shoppingList.getProductsList());
         verify(pantryProductService, times(0)).addProductsToPantryFromList(any(Pantry.class), anyList());
     }
@@ -556,9 +557,9 @@ class ShoppingListProductServiceImplTest {
 
         verify(shoppingListProductRepository).save(shoppingListProduct);
         verify(shoppingListProductRepository, times(0)).saveAll(anyList());
-        assertEquals(recipeProduct.getProduct(), shoppingListProduct.getProduct());
-        assertEquals(recipeProduct.getUnit(), shoppingListProduct.getUnit());
-        assertEquals(recipeProduct.getQuantity() + quantityBeforeAdding, shoppingListProduct.getQuantity());
+        assertThat(shoppingListProduct.getProduct()).isEqualTo(recipeProduct.getProduct());
+        assertThat(shoppingListProduct.getUnit()).isEqualTo(recipeProduct.getUnit());
+        assertThat(shoppingListProduct.getQuantity()).isEqualTo(recipeProduct.getQuantity() + quantityBeforeAdding);
     }
 
     @Test
@@ -573,8 +574,8 @@ class ShoppingListProductServiceImplTest {
         verify(shoppingListProductRepository, times(0)).save(shoppingListProduct);
         verify(shoppingListProductRepository).saveAll(this.listOfProductsArgCaptor.capture());
         List<ShoppingListProduct> addedProducts = this.listOfProductsArgCaptor.getValue();
-        assertEquals(recipeProduct.getProduct(), addedProducts.get(0).getProduct());
-        assertEquals(recipeProduct.getUnit(), addedProducts.get(0).getUnit());
-        assertEquals(recipeProduct.getQuantity(), addedProducts.get(0).getQuantity());
+        assertThat(addedProducts.get(0).getProduct()).isEqualTo(recipeProduct.getProduct());
+        assertThat(addedProducts.get(0).getUnit()).isEqualTo(recipeProduct.getUnit());
+        assertThat(addedProducts.get(0).getQuantity()).isEqualTo(recipeProduct.getQuantity());
     }
 }
