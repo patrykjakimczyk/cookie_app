@@ -37,51 +37,50 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RecipeServiceImplTest {
-    final String email = "email@email.com";
-    final String recipeName = "recipeName";
-    final String productName = "productName";
-    final String filter = "filter";
-    final String col = "col";
-    final Sort.Direction direction = Sort.Direction.DESC;
-    final Long id = 1L;
+    private final String email = "email@email.com";
+    private final String recipeName = "recipeName";
+    private final String productName = "productName";
+    private final String filter = "filter";
+    private final String col = "col";
+    private final Sort.Direction direction = Sort.Direction.DESC;
+    private final Long id = 1L;
 
     @Captor
-    ArgumentCaptor<Recipe> recipeArgumentCaptor;
+    private ArgumentCaptor<Recipe> recipeArgumentCaptor;
 
-    RecipeProductMapper recipeProductMapper = new RecipeProductMapperImpl(new ProductMapperImpl());
+    private RecipeProductMapper recipeProductMapper = new RecipeProductMapperImpl(new ProductMapperImpl());
     @Spy
-    RecipeDetailsMapper recipeDetailsMapperDTO = new RecipeDetailsMapperImpl(recipeProductMapper);
+    private RecipeDetailsMapper recipeDetailsMapperDTO = new RecipeDetailsMapperImpl(recipeProductMapper);
     @Spy
-    RecipeMapper recipeMapper = new RecipeMapperImpl();
+    private RecipeMapper recipeMapper = new RecipeMapperImpl();
     @Spy
-    AuthorityMapper authorityMapper = new AuthorityMapperImpl();
+    private AuthorityMapper authorityMapper = new AuthorityMapperImpl();
     @Mock
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Mock
-    ProductRepository productRepository;
+    private ProductRepository productRepository;
     @Mock
-    RecipeRepository recipeRepository;
+    private RecipeRepository recipeRepository;
     @Mock
-    RecipeProductRepository recipeProductRepository;
+    private RecipeProductRepository recipeProductRepository;
     @Mock
-    PantryProductService pantryProductService;
+    private PantryProductService pantryProductService;
     @Mock
-    ShoppingListProductService shoppingListProductService;
+    private ShoppingListProductService shoppingListProductService;
     @InjectMocks
-    RecipeServiceImpl service;
+    private RecipeServiceImpl service;
 
-    RecipeProduct recipeProduct;
-    Recipe recipe;
-    User user;
-    Group group;
-    Authority authority;
+    private RecipeProduct recipeProduct;
+    private Recipe recipe;
+    private User user;
+    private Group group;
+    private Authority authority;
 
     @BeforeEach
     void init() {
@@ -127,7 +126,7 @@ class RecipeServiceImplTest {
             PageResult<RecipeDTO> response = this.service.getRecipes(1, filterRequest);
 
             verify(recipeRepository, times(0)).findRecipes(anyInt(), anyInt(), anySet(), any(PageRequest.class));
-            assertThat(response.pageNr()).isEqualTo(0);
+            assertThat(response.pageNr()).isZero();
             assertThat(response.totalElements()).isEqualTo(pageResponse.getTotalElements());
             assertThat(response.content().get(0).id()).isEqualTo(pageResponse.getContent().get(0).getId());
             assertThat(response.content().get(0).recipeName()).isEqualTo(pageResponse.getContent().get(0).getRecipeName());
@@ -152,7 +151,7 @@ class RecipeServiceImplTest {
             PageResult<RecipeDTO> response = this.service.getRecipes(1, filterRequest);
 
             verify(recipeRepository, times(0)).findRecipes(anyInt(), anyInt(), anySet(), any(PageRequest.class));
-            assertThat(response.pageNr()).isEqualTo(0);
+            assertThat(response.pageNr()).isZero();
             assertThat(response.totalElements()).isEqualTo(pageResponse.getTotalElements());
             assertThat(response.content().get(0).id()).isEqualTo(pageResponse.getContent().get(0).getId());
             assertThat(response.content().get(0).recipeName()).isEqualTo(pageResponse.getContent().get(0).getRecipeName());
@@ -173,7 +172,7 @@ class RecipeServiceImplTest {
             PageResult<RecipeDTO> response = this.service.getRecipes(1, filterRequest);
 
             verify(recipeRepository, times(0)).findRecipesByFilter(anyString(), anyInt(), anyInt(), anySet(), any(PageRequest.class));
-            assertThat(response.pageNr()).isEqualTo(0);
+            assertThat(response.pageNr()).isZero();
             assertThat(response.totalElements()).isEqualTo(pageResponse.getTotalElements());
             assertThat(response.content().get(0).id()).isEqualTo(pageResponse.getContent().get(0).getId());
             assertThat(response.content().get(0).recipeName()).isEqualTo(pageResponse.getContent().get(0).getRecipeName());
@@ -195,7 +194,7 @@ class RecipeServiceImplTest {
             PageResult<RecipeDTO> response = this.service.getUserRecipes(email, 1, filterRequest);
 
             verify(recipeRepository, times(0)).findUserRecipes(anyLong(), anyInt(), anyInt(), anySet(), any(PageRequest.class));
-            assertThat(response.pageNr()).isEqualTo(0);
+            assertThat(response.pageNr()).isZero();
             assertThat(response.totalElements()).isEqualTo(pageResponse.getTotalElements());
             assertThat(response.content().get(0).id()).isEqualTo(pageResponse.getContent().get(0).getId());
             assertThat(response.content().get(0).recipeName()).isEqualTo(pageResponse.getContent().get(0).getRecipeName());
@@ -221,7 +220,7 @@ class RecipeServiceImplTest {
             PageResult<RecipeDTO> response = this.service.getUserRecipes(email, 1, filterRequest);
 
             verify(recipeRepository, times(0)).findUserRecipes(anyLong(), anyInt(), anyInt(), anySet(), any(PageRequest.class));
-            assertThat(response.pageNr()).isEqualTo(0);
+            assertThat(response.pageNr()).isZero();
             assertThat(response.totalElements()).isEqualTo(pageResponse.getTotalElements());
             assertThat(response.content().get(0).id()).isEqualTo(pageResponse.getContent().get(0).getId());
             assertThat(response.content().get(0).recipeName()).isEqualTo(pageResponse.getContent().get(0).getRecipeName());
@@ -243,7 +242,7 @@ class RecipeServiceImplTest {
             PageResult<RecipeDTO> response = this.service.getUserRecipes(email, 1, filterRequest);
 
             verify(recipeRepository, times(0)).findUserRecipesByFilter(anyLong(), anyString(), anyInt(), anyInt(), anySet(), any(PageRequest.class));
-            assertThat(response.pageNr()).isEqualTo(0);
+            assertThat(response.pageNr()).isZero();
             assertThat(response.totalElements()).isEqualTo(pageResponse.getTotalElements());
             assertThat(response.content().get(0).id()).isEqualTo(pageResponse.getContent().get(0).getId());
             assertThat(response.content().get(0).recipeName()).isEqualTo(pageResponse.getContent().get(0).getRecipeName());
@@ -272,7 +271,7 @@ class RecipeServiceImplTest {
             assertThat(response.products().get(0).unit()).isEqualTo(recipe.getRecipeProducts().get(0).getUnit());
             assertThat(response.products().get(0).quantity()).isEqualTo(recipe.getRecipeProducts().get(0).getQuantity());
             assertThat(response.products().get(0).product().productName()).isEqualTo(recipe.getRecipeProducts().get(0).getProduct().getProductName());
-            assertThat(response.recipeImage()).hasSize(0);
+            assertThat(response.recipeImage()).isEmpty();
             assertThat(response.cuisine()).isNull();
         }
     }
@@ -283,11 +282,11 @@ class RecipeServiceImplTest {
         doReturn(Optional.empty()).when(recipeRepository).findById(id);
         RecipeDetailsDTO response = this.service.getRecipeDetails(id);
 
-        assertThat(response.id()).isEqualTo(0);
+        assertThat(response.id()).isZero();
         assertThat(response.recipeName()).isNull();
         assertThat(response.mealType()).isNull();
-        assertThat(response.portions()).isEqualTo(0);
-        assertThat(response.preparationTime()).isEqualTo(0);
+        assertThat(response.portions()).isZero();
+        assertThat(response.preparationTime()).isZero();
         assertThat(response.preparation()).isNull();
         assertThat(response.creatorUserName()).isNull();
         assertThat(response.products()).isNull();

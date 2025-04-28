@@ -29,34 +29,33 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PantryServiceImplTest {
-    final String email = "email@email.com";
-    final String pantryName = "pantryName";
-    final Long id = 1L;
+    private final String email = "email@email.com";
+    private final String pantryName = "pantryName";
+    private final Long id = 1L;
 
     @Spy
-    PantryMapper pantryMapper = new PantryMapperImpl();
+    private PantryMapper pantryMapper = new PantryMapperImpl();
     @Spy
-    AuthorityMapper authorityMapper = new AuthorityMapperImpl();
+    private AuthorityMapper authorityMapper = new AuthorityMapperImpl();
     @Mock
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Mock
-    ProductRepository productRepository;
+    private ProductRepository productRepository;
     @Mock
-    PantryRepository pantryRepository;
+    private PantryRepository pantryRepository;
     @InjectMocks
-    PantryServiceImpl service;
+    private PantryServiceImpl service;
 
-    PantryProduct pantryProduct;
-    Pantry pantry;
-    Group group;
-    Authority authority;
-    User user;
+    private PantryProduct pantryProduct;
+    private Pantry pantry;
+    private Group group;
+    private Authority authority;
+    private User user;
 
     @BeforeEach
     void init() {
@@ -173,7 +172,7 @@ class PantryServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         GetPantryResponse response = service.getPantry(id, email);
 
-        assertThat(response.pantryId()).isEqualTo(0);
+        assertThat(response.pantryId()).isZero();
         assertThat(response.pantryName()).isNull();
         assertThat(response.authorities()).isNull();
     }

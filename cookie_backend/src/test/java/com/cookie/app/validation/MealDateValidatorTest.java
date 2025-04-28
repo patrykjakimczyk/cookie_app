@@ -14,10 +14,10 @@ import static org.mockito.Mockito.doReturn;
 @ExtendWith(MockitoExtension.class)
 class MealDateValidatorTest {
     @Mock
-    ConstraintValidatorContext constraintValidatorContext;
+    private ConstraintValidatorContext constraintValidatorContext;
 
-    Clock clock = Mockito.mock(Clock.class);
-    MealDateValidator mealDateValidator = new MealDateValidator(clock);
+    private final Clock clock = Mockito.mock(Clock.class);
+    private final MealDateValidator mealDateValidator = new MealDateValidator(clock);
 
     @Test
     void test_isValidReturnsFalseForYesterdayDate() {

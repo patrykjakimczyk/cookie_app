@@ -16,10 +16,10 @@ import static org.mockito.Mockito.doReturn;
 @ExtendWith(MockitoExtension.class)
 class AgeValidatorTest {
     @Mock
-    ConstraintValidatorContext constraintValidatorContext;
+    private ConstraintValidatorContext constraintValidatorContext;
 
-    Clock clock = Mockito.mock(Clock.class);
-    AgeValidator ageValidator = new AgeValidator(clock);
+    private final Clock clock = Mockito.mock(Clock.class);
+    private final AgeValidator ageValidator = new AgeValidator(clock);
 
     @BeforeEach
     void init() {

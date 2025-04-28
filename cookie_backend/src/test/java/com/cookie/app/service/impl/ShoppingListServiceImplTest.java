@@ -27,34 +27,33 @@ import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ShoppingListServiceImplTest {
-    final String email = "email@email.com";
-    final String listName = "listName";
-    final Long id = 1L;
+    private final String email = "email@email.com";
+    private final String listName = "listName";
+    private final Long id = 1L;
 
     @Spy
-    ShoppingListMapper shoppingListMapper = new ShoppingListMapperImpl();
+    private ShoppingListMapper shoppingListMapper = new ShoppingListMapperImpl();
     @Spy
-    AuthorityMapper authorityMapper = new AuthorityMapperImpl();
+    private AuthorityMapper authorityMapper = new AuthorityMapperImpl();
     @Mock
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Mock
-    ProductRepository productRepository;
+    private ProductRepository productRepository;
     @Mock
-    ShoppingListRepository shoppingListRepository;
+    private ShoppingListRepository shoppingListRepository;
     @InjectMocks
-    ShoppingListServiceImpl service;
+    private ShoppingListServiceImpl service;
 
-    ShoppingListProduct product;
-    ShoppingList shoppingList;
-    Group group;
-    Authority authority;
-    User user;
+    private ShoppingListProduct product;
+    private ShoppingList shoppingList;
+    private Group group;
+    private Authority authority;
+    private User user;
 
     @BeforeEach
     void init() {
@@ -173,7 +172,7 @@ class ShoppingListServiceImplTest {
         doReturn(Optional.of(user)).when(userRepository).findByEmail(email);
         GetShoppingListResponse response = this.service.getShoppingList(2L, email);
 
-        assertThat(response.id()).isEqualTo(0);
+        assertThat(response.id()).isZero();
         assertThat(response.listName()).isNull();
         assertThat(response.authorities()).isNull();
     }

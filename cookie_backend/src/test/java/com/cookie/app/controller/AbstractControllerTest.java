@@ -7,9 +7,10 @@ import org.springframework.security.core.Authentication;
 import java.util.Collections;
 
 abstract class AbstractControllerTest {
-    final String username = "username";
-    final String password = "password";
-    Authentication authentication;
+    protected final String username = "username";
+    protected final String password = "password";
+
+    protected Authentication authentication;
 
     @BeforeEach
     void init() {

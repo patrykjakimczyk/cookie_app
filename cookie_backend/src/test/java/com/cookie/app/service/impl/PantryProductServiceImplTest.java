@@ -28,44 +28,43 @@ import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PantryProductServiceImplTest {
-    final String email = "email@email.com";
-    final String pantryName = "pantryName";
-    final String filter = "filter";
-    final String col = "col";
-    final String idCol = "id";
-    final Long id = 1L;
+    private final String email = "email@email.com";
+    private final String pantryName = "pantryName";
+    private final String filter = "filter";
+    private final String col = "col";
+    private final String idCol = "id";
+    private final Long id = 1L;
 
     @Spy
-    AuthorityMapper authorityMapper = new AuthorityMapperImpl();
+    private AuthorityMapper authorityMapper = new AuthorityMapperImpl();
     @Spy
-    PantryProductMapper pantryProductMapper = new PantryProductMapperImpl(new ProductMapperImpl());
+    private PantryProductMapper pantryProductMapper = new PantryProductMapperImpl(new ProductMapperImpl());
     @Mock
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Mock
-    PantryProductRepository pantryProductRepository;
+    private PantryProductRepository pantryProductRepository;
     @Mock
-    ProductRepository productRepository;
+    private ProductRepository productRepository;
     @InjectMocks
-    PantryProductServiceImpl service;
+    private PantryProductServiceImpl service;
 
     @Captor
-    ArgumentCaptor<PageRequest> pageRequestArgCaptor;
+    private ArgumentCaptor<PageRequest> pageRequestArgCaptor;
     @Captor
-    ArgumentCaptor<List<PantryProduct>> listOfProductsArgCaptor;
+    private ArgumentCaptor<List<PantryProduct>> listOfProductsArgCaptor;
     @Captor
-    ArgumentCaptor<PantryProduct> pantryProductArgCaptor;
+    private ArgumentCaptor<PantryProduct> pantryProductArgCaptor;
 
-    Product product;
-    PantryProduct pantryProduct;
-    Pantry pantry;
-    Authority authority;
-    User user;
+    private Product product;
+    private PantryProduct pantryProduct;
+    private Pantry pantry;
+    private Authority authority;
+    private User user;
 
     @BeforeEach
     void init() {
@@ -123,7 +122,7 @@ class PantryProductServiceImplTest {
         assertThat(result.content().get(0).id()).isEqualTo(pageResponse.getContent().get(0).getId());
         assertThat(pageRequest.getSort().getOrderFor(col)).isNotNull();
         assertThat(pageRequest.getSort().getOrderFor(col).getDirection()).isEqualTo(Sort.Direction.ASC);
-        assertThat(pageRequest.getPageNumber()).isEqualTo(0);
+        assertThat(pageRequest.getPageNumber()).isZero();
     }
 
     @Test
@@ -146,10 +145,10 @@ class PantryProductServiceImplTest {
         assertThat(result.content().get(0).product().productName()).isEqualTo(pageResponse.getContent().get(0).getProduct().getProductName());
         assertThat(result.content().get(0).id()).isEqualTo(pageResponse.getContent().get(0).getId());
         assertThat(pageRequest.getSort().getOrderFor(idCol)).isNotNull();
-        assertThat(pageRequest.getSort().getOrderFor(idCol).getDirection()).isEqualTo(Sort.Direction.DESC);
+        assertThat(Objects.requireNonNull(pageRequest.getSort().getOrderFor(idCol)).getDirection()).isEqualTo(Sort.Direction.DESC);
         assertThat(pageRequest.getSort().getOrderFor(col)).isNotNull();
-        assertThat(pageRequest.getSort().getOrderFor(col).getDirection()).isEqualTo(Sort.Direction.DESC);
-        assertThat(pageRequest.getPageNumber()).isEqualTo(0);
+        assertThat(Objects.requireNonNull(pageRequest.getSort().getOrderFor(col)).getDirection()).isEqualTo(Sort.Direction.DESC);
+        assertThat(pageRequest.getPageNumber()).isZero();
     }
 
     @Test
@@ -172,8 +171,8 @@ class PantryProductServiceImplTest {
         assertThat(result.content().get(0).product().productName()).isEqualTo(pageResponse.getContent().get(0).getProduct().getProductName());
         assertThat(result.content().get(0).id()).isEqualTo(pageResponse.getContent().get(0).getId());
         assertThat(pageRequest.getSort().getOrderFor(idCol)).isNotNull();
-        assertThat(pageRequest.getSort().getOrderFor(idCol).getDirection()).isEqualTo(Sort.Direction.DESC);
-        assertThat(pageRequest.getPageNumber()).isEqualTo(0);
+        assertThat(Objects.requireNonNull(pageRequest.getSort().getOrderFor(idCol)).getDirection()).isEqualTo(Sort.Direction.DESC);
+        assertThat(pageRequest.getPageNumber()).isZero();
     }
 
     @Test

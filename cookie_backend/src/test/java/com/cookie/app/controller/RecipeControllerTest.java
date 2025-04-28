@@ -32,16 +32,16 @@ import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
 class RecipeControllerTest extends AbstractControllerTest {
-    final long id = 1L;
-    final String recipeName = "recipe name";
-    final List<MealType> mealTypes = Collections.singletonList(MealType.APPETIZER);
+    private final long id = 1L;
+    private final String recipeName = "recipe name";
+    private final List<MealType> mealTypes = Collections.singletonList(MealType.APPETIZER);
 
     @Spy
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
     @Mock
-    RecipeService recipeService;
+    private RecipeService recipeService;
     @InjectMocks
-    RecipeController controller;
+    private RecipeController controller;
 
     @Test
     void test_getRecipesSuccessful() {

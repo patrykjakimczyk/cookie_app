@@ -1,6 +1,7 @@
 package com.cookie.app.util;
 
 import org.junit.jupiter.api.Test;
+
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.*;
@@ -12,8 +13,9 @@ class ImageUtilTest {
 
         byte[] compressedImage = ImageUtil.compressImage(null);
 
-        assertThat(compressedImage).isNotNull();
-        assertThat(compressedImage).hasSize(0);
+        assertThat(compressedImage)
+                .isNotNull()
+                .isEmpty();
     }
 
     @Test
@@ -21,8 +23,9 @@ class ImageUtilTest {
 
         byte[] compressedImage = ImageUtil.compressImage(new byte[0]);
 
-        assertThat(compressedImage).isNotNull();
-        assertThat(compressedImage).hasSize(0);
+        assertThat(compressedImage)
+                .isNotNull()
+                .isEmpty();
     }
 
     @Test
@@ -41,8 +44,9 @@ class ImageUtilTest {
 
         byte[] decompressedImage = ImageUtil.decompressImage(null);
 
-        assertThat(decompressedImage).isNotNull();
-        assertThat(decompressedImage).hasSize(0);
+        assertThat(decompressedImage)
+                .isNotNull()
+                .isEmpty();
     }
 
     @Test
@@ -50,8 +54,9 @@ class ImageUtilTest {
 
         byte[] decompressedImage = ImageUtil.decompressImage(new byte[0]);
 
-        assertThat(decompressedImage).isNotNull();
-        assertThat(decompressedImage).hasSize(0);
+        assertThat(decompressedImage)
+                .isNotNull()
+                .isEmpty();
     }
 
     @Test
@@ -66,7 +71,8 @@ class ImageUtilTest {
 
         byte[] decompressedImage = ImageUtil.decompressImage(compressedData);
 
-        assertThat(decompressedImage).isNotNull();
-        assertThat(decompressedImage).containsExactly(inputData);
+        assertThat(decompressedImage)
+                .isNotNull()
+                .containsExactly(inputData);
     }
 }

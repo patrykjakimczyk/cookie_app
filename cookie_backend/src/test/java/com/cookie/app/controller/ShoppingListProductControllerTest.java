@@ -23,8 +23,8 @@ import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
 class ShoppingListProductControllerTest extends AbstractControllerTest {
-    final long listProductId = 1L;
-    final long listId = 1L;
+    private final long listProductId = 1L;
+    private final long listId = 1L;
 
     @Mock
     ShoppingListProductService shoppingListProductService;
@@ -38,8 +38,8 @@ class ShoppingListProductControllerTest extends AbstractControllerTest {
         final List<ShoppingListProductDTO> shoppingListProductDTOS = Collections.singletonList(createShoppingListProduct());
         final PageResult<ShoppingListProductDTO> pageResponse = new PageResult<>(shoppingListProductDTOS, shoppingListProductDTOS.size(), 1, 0);
 
-        doReturn(pageResponse).when(shoppingListProductService).getShoppingListProducts(this.listId, pageNr, filterRequest, authentication.getName());
-        ResponseEntity<PageResult<ShoppingListProductDTO>> response = this.controller.getShoppingListProducts(this.listId, pageNr, filterRequest, authentication);
+        doReturn(pageResponse).when(shoppingListProductService).getShoppingListProducts(listId, pageNr, filterRequest, authentication.getName());
+        ResponseEntity<PageResult<ShoppingListProductDTO>> response = controller.getShoppingListProducts(listId, pageNr, filterRequest, authentication);
 
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody().totalElements()).isEqualTo(shoppingListProductDTOS.size());
@@ -50,7 +50,7 @@ class ShoppingListProductControllerTest extends AbstractControllerTest {
     void test_addProductsToShoppingListSuccessful() {
         final List<ShoppingListProductDTO> shoppingListProductDTOS = Collections.singletonList(createShoppingListProduct());
 
-        ResponseEntity<Void> response = this.controller.addProductsToShoppingList(this.listId, shoppingListProductDTOS, authentication);
+        ResponseEntity<Void> response = controller.addProductsToShoppingList(listId, shoppingListProductDTOS, authentication);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
@@ -59,7 +59,7 @@ class ShoppingListProductControllerTest extends AbstractControllerTest {
     void test_removeProductsFromShoppingListSuccessful() {
         final List<Long> listProductsIds = Collections.singletonList(listProductId);
 
-        ResponseEntity<Void> response = this.controller.removeProductsFromShoppingList(listId, listProductsIds, authentication);
+        ResponseEntity<Void> response = controller.removeProductsFromShoppingList(listId, listProductsIds, authentication);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
@@ -68,7 +68,7 @@ class ShoppingListProductControllerTest extends AbstractControllerTest {
     void test_updateShoppingListProductSuccessful() {
         final ShoppingListProductDTO shoppingListProductDTO = createShoppingListProduct();
 
-        ResponseEntity<Void> response = this.controller.updateShoppingListProduct(listId, shoppingListProductDTO, authentication);
+        ResponseEntity<Void> response = controller.updateShoppingListProduct(listId, shoppingListProductDTO, authentication);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
@@ -77,7 +77,7 @@ class ShoppingListProductControllerTest extends AbstractControllerTest {
     void test_changePurchaseStatusForProductsSuccessful() {
         final List<Long> listProductsIds = Collections.singletonList(listProductId);
 
-        ResponseEntity<Void> response = this.controller.changePurchaseStatusForProducts(listId, listProductsIds, authentication);
+        ResponseEntity<Void> response = controller.changePurchaseStatusForProducts(listId, listProductsIds, authentication);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
@@ -85,7 +85,7 @@ class ShoppingListProductControllerTest extends AbstractControllerTest {
     @Test
     void test_transferProductsToPantrySuccessful() {
 
-        ResponseEntity<Void> response = this.controller.transferProductsToPantry(listId, authentication);
+        ResponseEntity<Void> response = controller.transferProductsToPantry(listId, authentication);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }

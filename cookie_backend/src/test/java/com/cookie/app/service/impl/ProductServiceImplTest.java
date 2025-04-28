@@ -19,8 +19,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -28,11 +26,11 @@ import static org.mockito.Mockito.doReturn;
 @ExtendWith(MockitoExtension.class)
 class ProductServiceImplTest {
     @Spy
-    ProductMapper productMapper = new ProductMapperImpl();
+    private ProductMapper productMapper = new ProductMapperImpl();
     @Mock
-    ProductRepository productRepository;
+    private ProductRepository productRepository;
     @InjectMocks
-    ProductServiceImpl service;
+    private ProductServiceImpl service;
 
     @Test
     void test_getProductsWithFilterSuccessful() {

@@ -25,13 +25,13 @@ import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
 class MealControllerTest extends AbstractControllerTest {
-    final String username = "username";
-    final Long id = 1L;
+    private final String username = "username";
+    private final Long id = 1L;
 
     @Mock
-    MealService mealService;
+    private MealService mealService;
     @InjectMocks
-    MealController controller;
+    private MealController controller;
 
     @Test
     void test_getMealsForUserSuccessful() {
@@ -44,7 +44,7 @@ class MealControllerTest extends AbstractControllerTest {
         final List<MealDTO> meals = Collections.singletonList(mealDTO);
 
         doReturn(meals).when(mealService).getMealsForUser(dateAfter, dateBefore, authentication.getName());
-        ResponseEntity<List<MealDTO>> response = this.controller.getMealsForUser(dateAfter, dateBefore, authentication);
+        ResponseEntity<List<MealDTO>> response = controller.getMealsForUser(dateAfter, dateBefore, authentication);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
@@ -66,7 +66,7 @@ class MealControllerTest extends AbstractControllerTest {
         final MealDTO mealDTO = new MealDTO(id, LocalDateTime.now().minusSeconds(3600), username, groupDTO, recipeDTO);
 
         doReturn(mealDTO).when(mealService).addMeal(request, authentication.getName(), false, id);
-        ResponseEntity<MealDTO> response = this.controller.addMeal(false, id, request, authentication);
+        ResponseEntity<MealDTO> response = controller.addMeal(false, id, request, authentication);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getBody()).isNotNull();
@@ -81,7 +81,7 @@ class MealControllerTest extends AbstractControllerTest {
     void test_deleteMealSuccessful() {
 
         doNothing().when(mealService).deleteMeal(id, authentication.getName());
-        ResponseEntity<Void> response = this.controller.deleteMeal(id, authentication);
+        ResponseEntity<Void> response = controller.deleteMeal(id, authentication);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
@@ -95,7 +95,7 @@ class MealControllerTest extends AbstractControllerTest {
         final MealDTO mealDTO = new MealDTO(id, LocalDateTime.now().minusSeconds(3600), username, groupDTO, recipeDTO);
 
         doReturn(mealDTO).when(mealService).updateMeal(id, request, authentication.getName());
-        ResponseEntity<MealDTO> response = this.controller.updateMeal(id, request, authentication);
+        ResponseEntity<MealDTO> response = controller.updateMeal(id, request, authentication);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();

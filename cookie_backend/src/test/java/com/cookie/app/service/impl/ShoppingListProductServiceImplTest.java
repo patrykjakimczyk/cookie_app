@@ -31,8 +31,6 @@ import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -42,43 +40,43 @@ import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 class ShoppingListProductServiceImplTest {
-    final String email = "email@email.com";
-    final String pantryName = "pantryName";
-    final String filter = "filter";
-    final String col = "col";
-    final String idCol = "id";
-    final Long id = 1L;
+    private final String email = "email@email.com";
+    private final String pantryName = "pantryName";
+    private final String filter = "filter";
+    private final String col = "col";
+    private final String idCol = "id";
+    private final Long id = 1L;
 
     @Captor
-    ArgumentCaptor<PageRequest> pageRequestArgCaptor;
+    private ArgumentCaptor<PageRequest> pageRequestArgCaptor;
     @Captor
-    ArgumentCaptor<List<ShoppingListProduct>> listOfProductsArgCaptor;
+    private ArgumentCaptor<List<ShoppingListProduct>> listOfProductsArgCaptor;
     @Captor
-    ArgumentCaptor<List<PantryProductDTO>> listOfPantryProductsArgCaptor;
+    private ArgumentCaptor<List<PantryProductDTO>> listOfPantryProductsArgCaptor;
     @Captor
-    ArgumentCaptor<ShoppingListProduct> listProductArgCaptor;
+    private ArgumentCaptor<ShoppingListProduct> listProductArgCaptor;
 
     @Spy
-    AuthorityMapper authorityMapper = new AuthorityMapperImpl();
+    private AuthorityMapper authorityMapper = new AuthorityMapperImpl();
     @Spy
-    ShoppingListProductMapper shoppingListProductMapper = new ShoppingListProductMapperImpl(new ProductMapperImpl());
+    private ShoppingListProductMapper shoppingListProductMapper = new ShoppingListProductMapperImpl(new ProductMapperImpl());
     @Mock
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Mock
-    ProductRepository productRepository;
+    private ProductRepository productRepository;
     @Mock
-    ShoppingListProductRepository shoppingListProductRepository;
+    private ShoppingListProductRepository shoppingListProductRepository;
     @Mock
-    PantryProductService pantryProductService;
+    private PantryProductService pantryProductService;
     @InjectMocks
-    ShoppingListProductServiceImpl service;
+    private ShoppingListProductServiceImpl service;
 
-    Product product;
-    ShoppingListProduct shoppingListProduct;
-    ShoppingList shoppingList;
-    Authority authority;
-    User user;
-    Group group;
+    private Product product;
+    private ShoppingListProduct shoppingListProduct;
+    private ShoppingList shoppingList;
+    private Authority authority;
+    private User user;
+    private Group group;
 
     @BeforeEach
     void init() {
@@ -135,8 +133,8 @@ class ShoppingListProductServiceImplTest {
         assertThat(result.content().get(0).product().productName()).isEqualTo(pageResponse.getContent().get(0).getProduct().getProductName());
         assertThat(result.content().get(0).id()).isEqualTo(pageResponse.getContent().get(0).getId());
         assertThat(pageRequest.getSort().getOrderFor(col)).isNotNull();
-        assertThat(pageRequest.getSort().getOrderFor(col).getDirection()).isEqualTo(Sort.Direction.ASC);
-        assertThat(pageRequest.getPageNumber()).isEqualTo(0);
+        assertThat(Objects.requireNonNull(pageRequest.getSort().getOrderFor(col)).getDirection()).isEqualTo(Sort.Direction.ASC);
+        assertThat(pageRequest.getPageNumber()).isZero();
     }
 
     @Test
@@ -159,10 +157,10 @@ class ShoppingListProductServiceImplTest {
         assertThat(result.content().get(0).product().productName()).isEqualTo(pageResponse.getContent().get(0).getProduct().getProductName());
         assertThat(result.content().get(0).id()).isEqualTo(pageResponse.getContent().get(0).getId());
         assertThat(pageRequest.getSort().getOrderFor(idCol)).isNotNull();
-        assertThat(pageRequest.getSort().getOrderFor(idCol).getDirection()).isEqualTo(Sort.Direction.DESC);
+        assertThat(Objects.requireNonNull(pageRequest.getSort().getOrderFor(idCol)).getDirection()).isEqualTo(Sort.Direction.DESC);
         assertThat(pageRequest.getSort().getOrderFor(col)).isNotNull();
-        assertThat(pageRequest.getSort().getOrderFor(col).getDirection()).isEqualTo(Sort.Direction.DESC);
-        assertThat(pageRequest.getPageNumber()).isEqualTo(0);
+        assertThat(Objects.requireNonNull(pageRequest.getSort().getOrderFor(col)).getDirection()).isEqualTo(Sort.Direction.DESC);
+        assertThat(pageRequest.getPageNumber()).isZero();
     }
 
     @Test
@@ -185,8 +183,8 @@ class ShoppingListProductServiceImplTest {
         assertThat(result.content().get(0).product().productName()).isEqualTo(pageResponse.getContent().get(0).getProduct().getProductName());
         assertThat(result.content().get(0).id()).isEqualTo(pageResponse.getContent().get(0).getId());
         assertThat(pageRequest.getSort().getOrderFor(idCol)).isNotNull();
-        assertThat(pageRequest.getSort().getOrderFor(idCol).getDirection()).isEqualTo(Sort.Direction.DESC);
-        assertThat(pageRequest.getPageNumber()).isEqualTo(0);
+        assertThat(Objects.requireNonNull(pageRequest.getSort().getOrderFor(idCol)).getDirection()).isEqualTo(Sort.Direction.DESC);
+        assertThat(pageRequest.getPageNumber()).isZero();
     }
 
     @Test

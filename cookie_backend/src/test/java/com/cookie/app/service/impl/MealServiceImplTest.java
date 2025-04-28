@@ -32,40 +32,38 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class MealServiceImplTest {
-    final String email = "email@email.com";
-    final Long id = 1L;
+    private final String email = "email@email.com";
+    private final Long id = 1L;
 
     @Spy
-    AuthorityMapper authorityMapper = new AuthorityMapperImpl();
-    UserMapper userMapper = new UserMapperImpl(authorityMapper);
+    private AuthorityMapper authorityMapper = new AuthorityMapperImpl();
+    private UserMapper userMapper = new UserMapperImpl(authorityMapper);
     @Spy
-    MealMapper mealMapperDTO = new MealMapperImpl(new GroupMapperImpl(userMapper), new RecipeMapperImpl());
+    private MealMapper mealMapperDTO = new MealMapperImpl(new GroupMapperImpl(userMapper), new RecipeMapperImpl());
     @Mock
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Mock
-    ProductRepository productRepository;
+    private ProductRepository productRepository;
     @Mock
-    MealRepository mealRepository;
+    private MealRepository mealRepository;
     @Mock
-    RecipeRepository recipeRepository;
+    private RecipeRepository recipeRepository;
     @Mock
-    RecipeService recipeService;
+    private RecipeService recipeService;
     @InjectMocks
-    MealServiceImpl service;
+    private MealServiceImpl service;
 
-    Authority authority;
-    User user;
-    Group group;
-    Recipe recipe;
-    Meal meal;
+    private Authority authority;
+    private User user;
+    private Group group;
+    private Recipe recipe;
+    private Meal meal;
 
     @BeforeEach
     void init() {

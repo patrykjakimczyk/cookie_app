@@ -31,7 +31,7 @@ class ProductControllerTest {
         final List<ProductDTO> listResponse = List.of(product);
 
         doReturn(listResponse).when(productService).getProductsWithFilter(filterValue);
-        ResponseEntity<List<ProductDTO>> response = this.controller.getProductsWithFilter(filterValue);
+        ResponseEntity<List<ProductDTO>> response = controller.getProductsWithFilter(filterValue);
 
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody()).hasSize(listResponse.size());
@@ -47,7 +47,7 @@ class ProductControllerTest {
         final List<ProductDTO> listResponse = Collections.emptyList();
 
         doReturn(listResponse).when(productService).getProductsWithFilter(filterValue);
-        ResponseEntity<List<ProductDTO>> response = this.controller.getProductsWithFilter(filterValue);
+        ResponseEntity<List<ProductDTO>> response = controller.getProductsWithFilter(filterValue);
 
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody()).isEmpty();
