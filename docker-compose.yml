@@ -1,6 +1,6 @@
 services:
   cookie-backend:
-    build: ./cookie_backend
+    build: ./cookie_backend/backend
     image: patrykjakimczyk/cookie-backend
     container_name: cookie-backend
     networks:
@@ -9,6 +9,16 @@ services:
       - "8080:8080"
     depends_on:
       - postgres
+    restart: on-failure
+    
+  mail-api:
+    build: ./cookie_backend/mail
+    image: patrykjakimczyk/mail-api
+    container_name: mail-api
+    networks:
+      - cookie-network
+    ports:
+      - "8090:8090"
     restart: on-failure
 
   cookie-frontend:
