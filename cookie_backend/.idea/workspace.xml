@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="52b69efe-cf13-4245-871b-5486015dbe81" name="Changes" comment="Refactored test classes to use private access modifiers for fields and improved assertion statements for clarity">
+      <change afterPath="$PROJECT_DIR$/../.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/cookie_app.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mail/mail/.gitattributes" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mail/mail/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mail/mail/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mail/mail/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mail/mail/mvnw" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mail/mail/mvnw.cmd" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mail/mail/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mail/mail/src/main/java/com/cookie/mail/MailApplication.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mail/mail/src/main/java/com/cookie/mail/controller/MailController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mail/mail/src/main/resources/application.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mail/mail/src/test/java/com/cookie/mail/MailApplicationTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/backend/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.jar" beforeDir="false" afterPath="$PROJECT_DIR$/backend/.mvn/wrapper/maven-wrapper.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/backend/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw" beforeDir="false" afterPath="$PROJECT_DIR$/backend/mvnw" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw.cmd" beforeDir="false" afterPath="$PROJECT_DIR$/backend/mvnw.cmd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/AppApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/AppApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/ExampleDataLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/ExampleDataLoader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/config/AppConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/config/AppConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/config/ConfigProperties.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/config/ConfigProperties.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/config/CookieAuthenticationProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/config/CookieAuthenticationProvider.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/config/JwtConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/config/JwtConstants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/config/OpenApiConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/config/OpenApiConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/config/security/CsrfCookieFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/config/security/CsrfCookieFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/config/security/JwtGeneratorFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/config/security/JwtGeneratorFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/config/security/JwtValidatorFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/config/security/JwtValidatorFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/controller/GroupController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/controller/GroupController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/controller/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/controller/LoginController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/controller/MealController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/controller/MealController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/controller/PantryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/controller/PantryController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/controller/PantryProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/controller/PantryProductController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/controller/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/controller/ProductController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/controller/RecipeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/controller/RecipeController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/controller/ShoppingListController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/controller/ShoppingListController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/controller/ShoppingListProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/controller/ShoppingListProductController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/exception/ExceptionMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/exception/ExceptionMessage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/exception/MappingJsonToObjectException.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/exception/MappingJsonToObjectException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/exception/ResourceNotFoundException.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/exception/ResourceNotFoundException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/exception/ResponseExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/exception/ResponseExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/exception/UserAlreadyAddedToGroupException.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/exception/UserAlreadyAddedToGroupException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/exception/UserPerformedForbiddenActionException.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/exception/UserPerformedForbiddenActionException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/exception/UserWasNotFoundAfterAuthException.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/exception/UserWasNotFoundAfterAuthException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/exception/ValidationException.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/exception/ValidationException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/RegexConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/RegexConstants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/dto/AuthorityDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/dto/AuthorityDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/dto/GroupDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/dto/GroupDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/dto/GroupDetailsDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/dto/GroupDetailsDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/dto/GroupDetailsShoppingListDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/dto/GroupDetailsShoppingListDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/dto/MealDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/dto/MealDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/dto/PageResult.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/dto/PageResult.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/dto/PantryDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/dto/PantryDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/dto/PantryProductDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/dto/PantryProductDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/dto/ProductDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/dto/ProductDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/dto/RecipeDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/dto/RecipeDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/dto/RecipeDetailsDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/dto/RecipeDetailsDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/dto/RecipeProductDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/dto/RecipeProductDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/dto/ShoppingListDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/dto/ShoppingListDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/dto/ShoppingListProductDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/dto/ShoppingListProductDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/dto/UserDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/dto/UserDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/entity/Authority.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/entity/Authority.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/entity/Group.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/entity/Group.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/entity/Meal.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/entity/Meal.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/entity/Pantry.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/entity/Pantry.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/entity/PantryProduct.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/entity/PantryProduct.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/entity/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/entity/Product.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/entity/Recipe.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/entity/Recipe.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/entity/RecipeProduct.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/entity/RecipeProduct.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/entity/ShoppingList.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/entity/ShoppingList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/entity/ShoppingListProduct.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/entity/ShoppingListProduct.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/entity/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/enums/AuthorityEnum.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/enums/AuthorityEnum.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/enums/Category.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/enums/Category.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/enums/Gender.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/enums/Gender.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/enums/MealType.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/enums/MealType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/enums/Role.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/enums/Role.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/enums/Unit.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/enums/Unit.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/mapper/AuthorityMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/mapper/AuthorityMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/mapper/GroupDetailsMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/mapper/GroupDetailsMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/mapper/GroupDetailsShoppingListMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/mapper/GroupDetailsShoppingListMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/mapper/GroupMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/mapper/GroupMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/mapper/MealMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/mapper/MealMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/mapper/PantryMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/mapper/PantryMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/mapper/PantryProductMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/mapper/PantryProductMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/mapper/ProductMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/mapper/ProductMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/mapper/RecipeDetailsMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/mapper/RecipeDetailsMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/mapper/RecipeMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/mapper/RecipeMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/mapper/RecipeProductMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/mapper/RecipeProductMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/mapper/ShoppingListMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/mapper/ShoppingListMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/mapper/ShoppingListProductMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/mapper/ShoppingListProductMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/mapper/UserMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/mapper/UserMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/request/AddMealRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/request/AddMealRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/request/AddUserToGroupRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/request/AddUserToGroupRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/request/CreateGroupRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/request/CreateGroupRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/request/CreatePantryRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/request/CreatePantryRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/request/CreateRecipeRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/request/CreateRecipeRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/request/CreateShoppingListRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/request/CreateShoppingListRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/request/FilterRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/request/FilterRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/request/RecipeFilterRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/request/RecipeFilterRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/request/RegistrationRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/request/RegistrationRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/request/ReservePantryProductRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/request/ReservePantryProductRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/request/UpdateGroupRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/request/UpdateGroupRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/request/UpdatePantryRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/request/UpdatePantryRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/request/UpdateRecipeRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/request/UpdateRecipeRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/request/UpdateShoppingListRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/request/UpdateShoppingListRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/request/UserWithAuthoritiesRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/request/UserWithAuthoritiesRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/response/AssignAuthoritiesToUserResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/response/AssignAuthoritiesToUserResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/response/CreateRecipeResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/response/CreateRecipeResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/response/DeletePantryResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/response/DeletePantryResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/response/DeleteShoppingListResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/response/DeleteShoppingListResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/response/GetGroupResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/response/GetGroupResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/response/GetPantryResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/response/GetPantryResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/response/GetShoppingListResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/response/GetShoppingListResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/response/GetUserGroupsResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/response/GetUserGroupsResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/response/GetUserPantriesResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/response/GetUserPantriesResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/response/GetUserShoppingListsResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/response/GetUserShoppingListsResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/response/LoginResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/response/LoginResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/model/response/RegistrationResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/model/response/RegistrationResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/repository/AuthorityRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/repository/AuthorityRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/repository/GroupRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/repository/GroupRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/repository/MealRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/repository/MealRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/repository/PantryProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/repository/PantryProductRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/repository/PantryRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/repository/PantryRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/repository/ProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/repository/ProductRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/repository/RecipeProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/repository/RecipeProductRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/repository/RecipeRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/repository/RecipeRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/repository/ShoppingListProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/repository/ShoppingListProductRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/repository/ShoppingListRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/repository/ShoppingListRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/repository/UserRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/service/GroupService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/service/GroupService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/service/LoginService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/service/LoginService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/service/MealService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/service/MealService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/service/PantryProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/service/PantryProductService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/service/PantryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/service/PantryService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/service/ProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/service/ProductService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/service/RecipeService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/service/RecipeService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/service/ShoppingListProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/service/ShoppingListProductService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/service/ShoppingListService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/service/ShoppingListService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/service/impl/AbstractCookieService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/service/impl/AbstractCookieService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/service/impl/AbstractPantryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/service/impl/AbstractPantryService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/service/impl/AbstractShoppingListService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/service/impl/AbstractShoppingListService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/service/impl/GroupServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/service/impl/GroupServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/service/impl/LoginServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/service/impl/LoginServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/service/impl/MealServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/service/impl/MealServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/service/impl/PantryProductServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/service/impl/PantryProductServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/service/impl/PantryServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/service/impl/PantryServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/service/impl/ProductServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/service/impl/ProductServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/service/impl/RecipeServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/service/impl/RecipeServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/service/impl/ShoppingListProductServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/service/impl/ShoppingListProductServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/service/impl/ShoppingListServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/service/impl/ShoppingListServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/util/ImageUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/util/ImageUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/validation/AgeValidation.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/validation/AgeValidation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/validation/AgeValidator.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/validation/AgeValidator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/validation/MealDateValidation.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/validation/MealDateValidation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/cookie/app/validation/MealDateValidator.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/cookie/app/validation/MealDateValidator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/application-dev.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application-test.yml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/application-test.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/db/changelog/changelog.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/db/changelog/changelog.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/example_images/pancake.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/example_images/pancake.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/example_images/pizza_salami.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/example_images/pizza_salami.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/example_images/spaghetti.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/example_images/spaghetti.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/cookie/app/config/AppConfigTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/com/cookie/app/config/AppConfigTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/cookie/app/controller/AbstractControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/com/cookie/app/controller/AbstractControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/cookie/app/controller/GroupControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/com/cookie/app/controller/GroupControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/cookie/app/controller/LoginControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/com/cookie/app/controller/LoginControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/cookie/app/controller/MealControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/com/cookie/app/controller/MealControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/cookie/app/controller/PantryControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/com/cookie/app/controller/PantryControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/cookie/app/controller/PantryProductControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/com/cookie/app/controller/PantryProductControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/cookie/app/controller/ProductControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/com/cookie/app/controller/ProductControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/cookie/app/controller/RecipeControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/com/cookie/app/controller/RecipeControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/cookie/app/controller/ShoppingListControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/com/cookie/app/controller/ShoppingListControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/cookie/app/controller/ShoppingListProductControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/com/cookie/app/controller/ShoppingListProductControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/cookie/app/service/impl/GroupServiceImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/com/cookie/app/service/impl/GroupServiceImplTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/cookie/app/service/impl/LoginServiceImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/com/cookie/app/service/impl/LoginServiceImplTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/cookie/app/service/impl/MealServiceImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/com/cookie/app/service/impl/MealServiceImplTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/cookie/app/service/impl/PantryProductServiceImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/com/cookie/app/service/impl/PantryProductServiceImplTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/cookie/app/service/impl/PantryServiceImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/com/cookie/app/service/impl/PantryServiceImplTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/cookie/app/service/impl/ProductServiceImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/com/cookie/app/service/impl/ProductServiceImplTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/cookie/app/service/impl/RecipeServiceImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/com/cookie/app/service/impl/RecipeServiceImplTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/cookie/app/service/impl/ShoppingListProductServiceImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/com/cookie/app/service/impl/ShoppingListProductServiceImplTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/cookie/app/service/impl/ShoppingListServiceImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/com/cookie/app/service/impl/ShoppingListServiceImplTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/cookie/app/util/ImageUtilTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/com/cookie/app/util/ImageUtilTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/cookie/app/validation/AgeValidatorTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/com/cookie/app/validation/AgeValidatorTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/cookie/app/validation/MealDateValidatorTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/test/java/com/cookie/app/validation/MealDateValidatorTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../docker-compose.yml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="JpbToolWindowState">
+    <option name="isToolWindowVisible" value="false" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="2wG2zrQmcdApK30rnHszyR41n2m" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "JUnit.AgeValidatorTest.test_isValidReturnsFalseForAlmost13Years.executor": "Run",
+    "JUnit.ImageUtilTest.executor": "Run",
+    "JUnit.com.cookie.app in app.executor": "Coverage",
+    "Maven.app [clean].executor": "Run",
+    "Maven.app [install].executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SONARLINT_PRECOMMIT_ANALYSIS": "true",
+    "git-widget-placeholder": "master",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/home/patrykj/repos/cookie_app",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager" selected="JUnit.com.cookie.app in app">
+    <configuration name="Unnamed" type="Application" factoryName="Application" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.cookie.app.AppApplication" />
+      <module name="app" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AgeValidatorTest.test_isValidReturnsFalseForAlmost13Years" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="app" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.cookie.app.validation.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.cookie.app.validation" />
+      <option name="MAIN_CLASS_NAME" value="com.cookie.app.validation.AgeValidatorTest" />
+      <option name="METHOD_NAME" value="test_isValidReturnsFalseForAlmost13Years" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ImageUtilTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="app" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.cookie.app.util.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.cookie.app.util" />
+      <option name="MAIN_CLASS_NAME" value="com.cookie.app.util.ImageUtilTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="com.cookie.app in app" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="app" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.cookie.app.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.cookie.app" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AppApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="app" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.cookie.app.AppApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.Unnamed" />
+      <item itemvalue="JUnit.ImageUtilTest" />
+      <item itemvalue="JUnit.AgeValidatorTest.test_isValidReturnsFalseForAlmost13Years" />
+      <item itemvalue="JUnit.com.cookie.app in app" />
+      <item itemvalue="Spring Boot.AppApplication" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.com.cookie.app in app" />
+        <item itemvalue="JUnit.ImageUtilTest" />
+        <item itemvalue="JUnit.AgeValidatorTest.test_isValidReturnsFalseForAlmost13Years" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.25659.59" />
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.25659.59" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="52b69efe-cf13-4245-871b-5486015dbe81" name="Changes" comment="" />
+      <created>1745653854570</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1745653854570</updated>
+      <workItem from="1745653856622" duration="89000" />
+      <workItem from="1745654235624" duration="4863000" />
+      <workItem from="1745660127881" duration="1337000" />
+      <workItem from="1745870285538" duration="2717000" />
+      <workItem from="1746966609790" duration="1055000" />
+      <workItem from="1747159949798" duration="1410000" />
+      <workItem from="1747161753613" duration="59000" />
+      <workItem from="1747162415599" duration="553000" />
+    </task>
+    <task id="LOCAL-00001" summary="Updated test assertions to use AssertJ">
+      <option name="closed" value="true" />
+      <created>1745661324402</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1745661324402</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Updated test assertions to use AssertJ" />
+    <MESSAGE value="Refactored test classes to use private access modifiers for fields and improved assertion statements for clarity" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactored test classes to use private access modifiers for fields and improved assertion statements for clarity" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/cookie_backend$com_cookie_app_in_app.ic" NAME="com.cookie.app in app Coverage Results" MODIFIED="1746966817090" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+      <FILTER>com.cookie.app.*</FILTER>
+    </SUITE>
+  </component>
+</project>
