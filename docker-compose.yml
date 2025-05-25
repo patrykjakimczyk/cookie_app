@@ -21,6 +21,16 @@ services:
       - "8090:8090"
     restart: on-failure
 
+  eureka-server:
+    build: ./cookie_backend/eureka-server
+    image: patrykjakimczyk/eureka-server
+    container_name: eureka-server
+    networks:
+      - cookie-network
+    ports:
+      - "8070:8070"
+    restart: on-failure
+
   cookie-frontend:
     build: ./cookie_frontend
     image: patrykjakimczyk/cookie-frontend
